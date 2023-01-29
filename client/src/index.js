@@ -1,12 +1,27 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import "assets/styles/index.css";
-import App from "App";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+// scroll bar
+import 'simplebar/dist/simplebar.css';
+
+// third-party
+import { Provider as ReduxProvider } from "react-redux";
+
+// project import
+import App from "./App";
+import { store } from "store";
+
+// ==============================|| MAIN - REACT DOM RENDER  ||============================== //
+
+const container = document.getElementById("root");
+const root = createRoot(container);
 root.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
+  <StrictMode>
+    <ReduxProvider store={store}>
+      <BrowserRouter basename="/">
+        <App />
+      </BrowserRouter>
+    </ReduxProvider>
+  </StrictMode>
 );
