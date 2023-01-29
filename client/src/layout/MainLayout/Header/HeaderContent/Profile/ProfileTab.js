@@ -15,7 +15,7 @@ import { EditOutlined, UserOutlined, WalletOutlined } from "@ant-design/icons";
 
 // ==============================|| HEADER PROFILE - PROFILE TAB ||============================== //
 
-const ProfileTab = ({}) => {
+const ProfileTab = () => {
   const theme = useTheme();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
