@@ -122,7 +122,7 @@ const Notification = () => {
             >
               <ClickAwayListener onClickAway={handleClose}>
                 <MainCard
-                  title="Notification"
+                  title="Bildirimler"
                   elevation={0}
                   border={false}
                   content={false}
@@ -160,17 +160,18 @@ const Notification = () => {
                       <ListItemText
                         primary={
                           <Typography variant="h6">
-                            Your Profile is Complete &nbsp;
+                            Ödeme tarihi geçmiş &nbsp;
                             <Typography component="span" variant="subtitle1">
-                              60%
+                              14
                             </Typography>{" "}
+                            hasta var
                           </Typography>
                         }
                         secondary="7 hours ago"
                       />
                       <ListItemSecondaryAction>
                         <Typography variant="caption" noWrap>
-                          2:45 PM
+                          22:35
                         </Typography>
                       </ListItemSecondaryAction>
                     </ListItemButton>
@@ -181,7 +182,7 @@ const Notification = () => {
                       <ListItemText
                         primary={
                           <Typography variant="h6" color="primary">
-                            View All
+                            Tüm Bildirimler
                           </Typography>
                         }
                       />
