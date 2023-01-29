@@ -3,7 +3,7 @@ import { Box, useMediaQuery } from "@mui/material";
 
 // project import
 import Search from "./Search";
-import Profile from "./Profile";
+import Profile from "./Profile/Profile";
 import Notification from "./Notification";
 import MobileSection from "./MobileSection";
 

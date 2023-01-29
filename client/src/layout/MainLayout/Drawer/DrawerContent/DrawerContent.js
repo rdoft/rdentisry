@@ -1,5 +1,5 @@
 // project import
-import Navigation from './Navigation';
+import Navigation from './Navigation/Navigation';
 import SimpleBar from 'components/SimpleBar';
 
 // ==============================|| DRAWER CONTENT ||============================== //
