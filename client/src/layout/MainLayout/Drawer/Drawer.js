@@ -6,8 +6,8 @@ import { useTheme } from "@mui/material/styles";
 import { Box, Drawer, useMediaQuery } from "@mui/material";
 
 // project import
-import DrawerHeader from "./DrawerHeader";
-import DrawerContent from "./DrawerContent";
+import DrawerHeader from "./DrawerHeader/DrawerHeader";
+import DrawerContent from "./DrawerContent/DrawerContent";
 import MiniDrawerStyled from "./MiniDrawerStyled";
 import { drawerWidth } from "config/theme.config";
 

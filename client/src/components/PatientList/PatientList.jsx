@@ -8,7 +8,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import FactCheckRoundedIcon from "@mui/icons-material/FactCheckRounded";
 import List from "@mui/material/List";
 
-import Patient from "components/Patient/Patient.component";
+import Patient from "./Patient";
 import PatientService from "services/Patient.service";
 
 // import classes from "assets/styles/PatientList.module.css";

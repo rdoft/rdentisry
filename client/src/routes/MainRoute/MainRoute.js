@@ -2,11 +2,11 @@ import { lazy } from "react";
 
 // project import
 import Loadable from "components/Loadable";
-import MainLayout from "layout/MainLayout";
+import { MainLayout } from "layout";
 
-// render - sample page
-const Patients = Loadable(lazy(() => import("pages/patient")));
-const Overview = Loadable(lazy(() => import("pages/overview")));
+// render - pages
+const Patients = Loadable(lazy(() => import("pages/Patients/PatientsPage")));
+const Overview = Loadable(lazy(() => import("pages/Overview/OverviewPage")));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
