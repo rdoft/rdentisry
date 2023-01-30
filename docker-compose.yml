@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile
+    image: "recepdemrci/rdentistry-server:1.0"
+    volumes:
+      - ./server/:/usr/src/server
+      - /usr/src/server/node_modules
+    ports:
+      - "8080:8080"
+    env_file:
+      "./server/.env"
+  client:
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile
+    image: "recepdemrci/rdentistry-client:1.0"
+    volumes:
+     - ./client/:/usr/src/client
+     - /usr/src/client/node_modules
+    ports:
+      - "3000:3000"
+    env_file:
+      "./client/.env"
+    depends_on:
+      - "server"
+  
