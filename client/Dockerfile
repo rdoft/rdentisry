@@ -1,6 +1,9 @@
 FROM node:18.12.1
 
-LABEL version="1.0"
+ARG VERSION
+ARG PORT_CLIENT
+
+LABEL version=${VERSION}
 LABEL description="This is the dental management software aplication API"
 LABEL maintainer = ["abdullah.keskin1598@gmail.com", "r.cancorduk@gmail.com", "recepdemiric.14@gmail.com", "tnhnatalay@gmail.com"]
 
@@ -16,6 +19,6 @@ RUN npm install
 COPY . .
 
 #Your app binds to port 3000 so you’ll use the EXPOSE instruction to have it mapped by the docker daemon:
-EXPOSE 3000
+EXPOSE ${PORT_CLIENT}
 
 CMD ["npm", "start"]

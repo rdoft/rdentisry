@@ -5,26 +5,35 @@ services:
     build:
       context: ./server
       dockerfile: ./Dockerfile
-    image: "recepdemrci/rdentistry-server:1.0"
+    image: "recepdemrci/rdentistry-server:${VERSION}"
     volumes:
       - ./server/:/usr/src/server
       - /usr/src/server/node_modules
     ports:
-      - "8080:8080"
+      - "${PORT_SERVER}:${PORT_SERVER}"
     env_file:
-      "./server/.env"
+      - .env
+    depends_on:
+      - db
   client:
     build:
       context: ./client
       dockerfile: ./Dockerfile
-    image: "recepdemrci/rdentistry-client:1.0"
+    image: "recepdemrci/rdentistry-client:${VERSION}"
     volumes:
-     - ./client/:/usr/src/client
-     - /usr/src/client/node_modules
+      - ./client/:/usr/src/client
+      - /usr/src/client/node_modules
     ports:
-      - "3000:3000"
+      - "${PORT_CLIENT}:${PORT_CLIENT}"
     env_file:
-      "./client/.env"
+      - .env
     depends_on:
-      - "server"
-  
+      - server
+  db:
+    image: postgres:14.6
+    ports: 
+      - "${PORT_DB}:${PORT_DB}"
+    environment:
+      - POSTGRES_DB=${DB_DB}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
