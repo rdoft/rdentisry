@@ -11,13 +11,14 @@ import {
 import Feature from "components/cards/Feature";
 
 // assets
-import AppointmentIcon from "assets/images/icons/appointment.png";
-import PatientsIcon from "assets/images/icons/patients.png";
-import CalenderIcon from "assets/images/icons/calender.png";
-import ToDoIcon from "assets/images/icons/todo.png";
-import DentistIcon from "assets/images/icons/dentist.png";
-import BarChartIcon from "assets/images/icons/barchart.png";
-import PaymentIcon from "assets/images/icons/wallet.png";
+import {
+  PatientsIcon,
+  CalenderIcon,
+  ToDoIcon,
+  DentistIcon,
+  BarChartIcon,
+  PaymentIcon,
+} from "assets/images/icons";
 
 const HomePage = () => {
   return (
@@ -26,27 +27,27 @@ const HomePage = () => {
         <Typography variant="h5">Anasayfa</Typography>
       </Grid>
 
-      <Grid item xs={6} sm={4} md={3} lg={2}>
+      <Grid item xs={6} sm={6} md={3} lg={2}>
         <Feature image={PatientsIcon} title="Hastalar" />
       </Grid>
 
-      <Grid item xs={6} sm={4} md={3} lg={2}>
+      <Grid item xs={6} sm={6} md={3} lg={2}>
         <Feature image={DentistIcon} title="Doktorlar" />
       </Grid>
-      
-      <Grid item xs={6} sm={4} md={3} lg={2}>
+
+      <Grid item xs={6} sm={6} md={3} lg={2}>
         <Feature image={CalenderIcon} title="Takvim" />
       </Grid>
 
-      <Grid item xs={6} sm={4} md={3} lg={2}>
+      <Grid item xs={6} sm={6} md={3} lg={2}>
         <Feature image={ToDoIcon} title="İşlemler" />
       </Grid>
 
-      <Grid item xs={6} sm={4} md={3} lg={2}>
+      <Grid item xs={6} sm={6} md={3} lg={2}>
         <Feature image={PaymentIcon} title="Ödemeler" />
       </Grid>
 
-      <Grid item xs={6} sm={4} md={3} lg={2}>
+      <Grid item xs={6} sm={6} md={3} lg={2}>
         <Feature image={BarChartIcon} title="Finansal" />
       </Grid>
     </Grid>
