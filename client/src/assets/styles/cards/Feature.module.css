@@ -11,12 +11,12 @@
 
 .media {
   width: 45%;
-  margin: auto;
+  margin: 1rem auto;
 }
 
 .text {
-  padding: 2.5px;
-  margin: auto;
+  padding: 2.5px ;
+  margin: -15px auto 0px;
   text-align: center;
 }
 
@@ -25,4 +25,5 @@ pre {
   padding: 16px !important;
   font-family: var(--typography-fontFamily);
   font-size: 0.75rem;
+
 }
