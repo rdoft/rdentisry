@@ -2,25 +2,19 @@
 import { Grid, Typography } from "@mui/material";
 
 // project import
-import OrdersTable from "./OrdersTable";
-import MainCard from "components/MainCard";
+// import OrdersTable from "./OrdersTable";
+import PatientList from "components/PatientList/PatientList";
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
 const Patients = () => {
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
-      {/* row 3 */}
+      <Grid item xs={12} sx={{ mb: -2.25 }}>
+        <Typography variant="h5">Hastalar</Typography>
+      </Grid>
       <Grid item xs={12}>
-        <Grid container alignItems="center" justifyContent="space-between">
-          <Grid item>
-            <Typography variant="h5">Hasta Listesi</Typography>
-          </Grid>
-          <Grid item />
-        </Grid>
-        <MainCard sx={{ mt: 2 }} content={false}>
-          <OrdersTable />
-        </MainCard>
+        <PatientList />
       </Grid>
     </Grid>
   );

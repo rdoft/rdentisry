@@ -15,7 +15,7 @@ const patients = {
   children: [
     {
       id: "patients-list",
-      title: "Hasta Listesi",
+      title: "Hastalar",
       type: "item",
       url: "/patients",
       icon: icons.TeamOutlined,

@@ -2,7 +2,7 @@ import API from "config/api.config";
 
 let Patient = { };
 
-Patient.getAll = () => {
+Patient.getPatients = () => {
   return API.get("patients");
 };
 

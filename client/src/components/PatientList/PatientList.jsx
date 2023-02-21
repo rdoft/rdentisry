@@ -1,96 +1,513 @@
-import React, { useState, useEffect, useCallback } from "react";
-import Alert from "@mui/material/Alert";
-import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CircularProgress from "@mui/material/CircularProgress";
-import FactCheckRoundedIcon from "@mui/icons-material/FactCheckRounded";
-import List from "@mui/material/List";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 
+import { Avatar } from "@mui/material";
+import { classNames } from "primereact/utils";
+import {
+  DataTable,
+  Column,
+  Toast,
+  Button,
+  Toolbar,
+  Dialog,
+  InputText,
+} from "primereact";
 import Patient from "./Patient";
-import PatientService from "services/Patient.service";
 
+// services
+import { PatientService } from "services";
+
+// assets
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+import "primeflex/primeflex.css";
 // import classes from "assets/styles/PatientList.module.css";
+import avatarPatient from "assets/images/avatars/patient-avatar.png";
 
 function PatientList() {
-  // Set the default values
-  const [patients, setPatients] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  let emptyPatient;
 
+  // Set default empty Patient
+  emptyPatient = {
+    id: null,
+    name: "",
+    surname: "",
+    phone: "",
+    idNumber: "",
+  };
+
+  // Set the default values
+  const [patient, setPatient] = useState(emptyPatient);
+  const [patients, setPatients] = useState(null);
+  const [patientDialog, setPatientDialog] = useState(false);
+  const [deletePatientDialog, setDeletePatientDialog] = useState(false);
+  const [deletePatientsDialog, setDeletePatientsDialog] = useState(false);
+  const [selectedPatients, setSelectedPatients] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [globalFilter, setGlobalFilter] = useState(null);
+  const [error, setError] = useState(null);
+  const toast = useRef(null);
+  const dt = useRef(null);
+
+  // TODO: Make components individual functions
   // Get the list of patients and set patients value
-  const getPatientsHandler = useCallback(async () => {
-    setLoading(true);
+  const getPatients = useCallback(async () => {
     setError(null);
     let response;
     let patients;
 
     try {
-      response = await PatientService.getAll();
+      response = await PatientService.getPatients();
       patients = response.data.map((patient) => {
         return {
           id: patient.PatientId,
           name: patient.Name,
           surname: patient.Surname,
           phone: patient.Phone,
+          idNumber: patient.IdNumber,
         };
       });
 
       setPatients(patients);
-      setLoading(false);
     } catch (error) {
       setError(error.message);
     }
-    setLoading(false);
   }, []);
 
   // Set the page on loading
   useEffect(() => {
-    getPatientsHandler();
-  }, [getPatientsHandler]);
+    getPatients();
+  }, [getPatients]);
+
+  // SHOW/HIDE OPTIONS --------------------------------------------------------
+  // Show add patient dialog
+  const showAddPatientDialog = () => {
+    setPatient(emptyPatient);
+    setSubmitted(false);
+    setPatientDialog(true);
+  };
+  // Show edit patient dialog
+  const showEditPatientDialog = (patient) => {
+    setPatient({ ...patient });
+    setPatientDialog(true);
+  };
+  // Show confirm delete patient dialog
+  const showConfirmDeletePatientDialog = (patient) => {
+    setPatient(patient);
+    setDeletePatientDialog(true);
+  };
+  // Show confirm delete patients dialog
+  const showConfirmDeletePatientsDialog = () => {
+    setDeletePatientsDialog(true);
+  };
+
+  // Hide patient dialog
+  const hidePatientDialog = () => {
+    setSubmitted(false);
+    setPatientDialog(false);
+  };
+  // Hide delete patient dialog
+  const hideDeletePatientDialog = () => {
+    setDeletePatientDialog(false);
+  };
+  // Hide delete patients dialog
+  const hideDeletePatientsDialog = () => {
+    setDeletePatientsDialog(false);
+  };
+
+  // SERVICES -----------------------------------------------------------------
+  const createId = () => {
+    let id = "";
+    let chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (let i = 0; i < 5; i++) {
+      id += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return id;
+  };
+  // Save patient (create/update)
+  const savePatient = () => {
+    setSubmitted(true);
+    let index;
+    let _patient;
+    let _patients;
+
+    if (patient.name.trim()) {
+      _patients = [...patients];
+      _patient = { ...patient };
+
+      if (patient.id) {
+        // TODO: service update patient
+        index = patients.findIndex((item) => item.id === patient.id);
+        _patients[index] = patient;
+        toast.current.show({
+          severity: "success",
+          summary: "Successful",
+          detail: "Patient Updated",
+          life: 3000,
+        });
+      } else {
+        // TODO: service create new patient
+        _patient.id = createId();
+        _patients.push(_patient);
+        toast.current.show({
+          severity: "success",
+          summary: "Successful",
+          detail: "Patient Created",
+          life: 3000,
+        });
+      }
+
+      setPatients(_patients);
+      setPatientDialog(false);
+      setPatient(emptyPatient);
+    }
+  };
+  //  Delete patient
+  const deletePatient = () => {
+    // TODO: service delete patient
+    let _patients = patients.filter((item) => item.id !== patient.id);
+    setPatients(_patients);
+    setDeletePatientDialog(false);
+    setPatient(emptyPatient);
+    toast.current.show({
+      severity: "success",
+      summary: "Successful",
+      detail: "Patient Deleted",
+      life: 3000,
+    });
+  };
+  // Delete selected patients
+  const deletePatients = () => {
+    let _patients;
+    // TODO: delete patients
+    _patients = patients.filter((item) => !selectedPatients.includes(item));
+    setPatients(_patients);
+    setDeletePatientsDialog(false);
+    setSelectedPatients(null);
+    toast.current.show({
+      severity: "success",
+      summary: "Successful",
+      detail: "Patients Deleted",
+      life: 3000,
+    });
+  };
+
+  // HANDLERS -----------------------------------------------------------------
+  // onChange handler
+  const handleChange = (event, attr) => {
+    const value = (event.target && event.target.value) || "";
+    let _patient;
+
+    _patient = { ...patient };
+    patient[`${attr}`] = value;
+    setPatient(_patient);
+  };
+  // onInput handler for search
+  const handleSearchInput = (event) => {
+    setGlobalFilter(event.target.value);
+  };
+  // onSelectedChange handler
+  const handleSelectionChange = (event) => {
+    setSelectedPatients(event.value);
+  };
 
   // Get the content of the Patients list
   // and control the loading/error state
-  function getContent() {
-    let content = <Alert severity="info">Hiç kayıt yok</Alert>;
-    if (patients.length > 0) {
-      // <ul className={classes["patient-list"]}>
-      content = (
-        <List className="patient-list">
-          {patients.map((patient) => (
-            <Patient
-              name={patient.name}
-              surname={patient.surname}
-              phone={patient.phone}
-            />
-          ))}
-        </List>
-      );
-    }
-    if (error) {
-      content = <Alert severity="error">{error}</Alert>;
-    }
-    if (loading) {
-      content = <CircularProgress />;
-    }
-    return content;
-  }
+  // function getContent() {
+  //   let content = <Alert severity="info">Hiç kayıt yok</Alert>;
+  //   if (patients.length > 0) {
+  //     // <ul className={classes["patient-list"]}>
+  //     content = (
+  //       <List className="patient-list">
+  //         {patients.map((patient) => (
+  //           <Patient
+  //             name={patient.name}
+  //             surname={patient.surname}
+  //             phone={patient.phone}
+  //           />
+  //         ))}
+  //       </List>
+  //     );
+  //   }
+  //   if (error) {
+  //     content = <Alert severity="error">{error}</Alert>;
+  //   }
+  //   if (loading) {
+  //     content = <CircularProgress />;
+  //   }
+  //   return content;
+  // }
+
+  // TEMPLATES ----------------------------------------------------------------
+  // Toolbar template
+  const toolbarTemplate = () => {
+    return (
+      <React.Fragment>
+        <Button
+          label="Ekle"
+          icon="pi pi-plus"
+          className="p-button-success mr-2"
+          onClick={showAddPatientDialog}
+        />
+        <Button
+          label="Sil"
+          icon="pi pi-trash"
+          className="p-button-danger"
+          onClick={showConfirmDeletePatientsDialog}
+          disabled={!selectedPatients || !selectedPatients.length}
+        />
+      </React.Fragment>
+    );
+  };
+  // Action body template
+  const actionBodyTemplate = (patient) => {
+    return (
+      <React.Fragment>
+        <Button
+          icon="pi pi-pencil"
+          className="p-button-rounded p-button-success mr-2"
+          onClick={() => showEditPatientDialog(patient)}
+        />
+        <Button
+          icon="pi pi-trash"
+          className="p-button-rounded p-button-warning"
+          onClick={() => showConfirmDeletePatientDialog(patient)}
+        />
+      </React.Fragment>
+    );
+  };
+  // Header
+  const header = () => {
+    return (
+      <div className="table-header">
+        <span className="p-input-icon-left">
+          <i className="pi pi-search" />
+          <InputText
+            type="search"
+            onInput={handleSearchInput}
+            placeholder="Ara..."
+          />
+        </span>
+      </div>
+    );
+  };
+  // Patient dialog footer
+  const patientDialogFooter = () => {
+    return (
+      <React.Fragment>
+        <Button
+          label="İptal"
+          icon="pi pi-times"
+          className="p-button-text"
+          onClick={hidePatientDialog}
+        />
+        <Button
+          label="Kaydet"
+          icon="pi pi-check"
+          className="p-button-text"
+          onClick={savePatient}
+        />
+      </React.Fragment>
+    );
+  };
+  // Delete Patient dialog footer
+  const deletePatientDialogFooter = () => {
+    return (
+      <React.Fragment>
+        <Button
+          label="Hayır"
+          icon="pi pi-times"
+          className="p-button-text"
+          onClick={hideDeletePatientDialog}
+        />
+        <Button
+          label="Evet"
+          icon="pi pi-check"
+          className="p-button-text"
+          onClick={deletePatient}
+        />
+      </React.Fragment>
+    );
+  };
+  // Delete Patients dialog footer
+  const deletePatientsDialogFooter = () => {
+    return (
+      <React.Fragment>
+        <Button
+          label="Hayır"
+          icon="pi pi-times"
+          className="p-button-text"
+          onClick={hideDeletePatientsDialog}
+        />
+        <Button
+          label="Evet"
+          icon="pi pi-check"
+          className="p-button-text"
+          onClick={deletePatients}
+        />
+      </React.Fragment>
+    );
+  };
 
   return (
-    <Card>
-      <CardActions>
-        <Button
-          variant="outlined"
-          size="medium"
-          startIcon={<FactCheckRoundedIcon />}
-          onClick={getPatientsHandler}
+    <div className="datatable-crud">
+      <Toast ref={toast} />
+
+      <div className="card">
+        <Toolbar className="mb-4" left={toolbarTemplate}></Toolbar>
+
+        <DataTable
+          ref={dt}
+          value={patients}
+          selection={selectedPatients}
+          onSelectionChange={handleSelectionChange}
+          dataKey="id"
+          paginator
+          rows={10}
+          currentPageReportTemplate="Toplam hasta sayısı: {totalRecords}"
+          globalFilter={globalFilter}
+          header={header}
+          responsiveLayout="scroll"
         >
-          Hastaları listele
-        </Button>
-      </CardActions>
-      <CardContent>{getContent()}</CardContent>
-    </Card>
+          <Column
+            selectionMode="multiple"
+            headerStyle={{ width: "3rem" }}
+            exportable={false}
+          ></Column>
+          <Column
+            field="idNumber"
+            header="Kimlik Numarası"
+            sortable
+            style={{ minWidth: "12rem" }}
+          ></Column>
+          <Column
+            field="name"
+            header="Ad"
+            sortable
+            style={{ minWidth: "16rem" }}
+          ></Column>
+          <Column
+            field="surname"
+            header="Soyad"
+            sortable
+            style={{ minWidth: "16rem" }}
+          ></Column>
+          <Column
+            field="phone"
+            header="Telefon"
+            style={{ minWidth: "12rem" }}
+          ></Column>
+          {/* <Column field="patment" header="Kalan Ödeme" body={} sortable style={{ minWidth: '8rem' }}></Column> */}
+          {/* <Column field="category" header="Category" sortable style={{ minWidth: '10rem' }}></Column> */}
+          {/* <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column> */}
+          <Column
+            body={actionBodyTemplate}
+            exportable={false}
+            style={{ minWidth: "8rem" }}
+          ></Column>
+        </DataTable>
+      </div>
+
+      <Dialog
+        visible={patientDialog}
+        style={{ width: "450px" }}
+        header="Hasta Bilgileri"
+        modal
+        className="p-fluid"
+        footer={patientDialogFooter}
+        onHide={hidePatientDialog}
+      >
+        <Avatar
+          alt="patient-avatar"
+          src={avatarPatient}
+          sx={{ width: 32, height: 32 }}
+        />
+        <div className="field">
+          <label htmlFor="idNumber">TC Kimlik Numarası</label>
+          <InputText
+            id="idNumber"
+            value={patient.idNumber}
+            onChange={(e) => handleChange(e, "idNumber")}
+            required
+            autoFocus
+            className={classNames({
+              "p-invalid": submitted && !patient.idNumber,
+            })}
+          />
+          {submitted && !patient.idNumber && (
+            <small className="p-error">TC kimlik numarası girilmelidir.</small>
+          )}
+        </div>
+        <div className="field">
+          <label htmlFor="name">Ad-Soyad</label>
+          <InputText
+            id="name"
+            value={`${patient.name} ${patient.surname}`}
+            onChange={(e) => handleChange(e, "name")}
+            required
+            className={classNames({ "p-invalid": submitted && !patient.name })}
+          />
+          {submitted && !patient.name && (
+            <small className="p-error">Ad-Soyad girilmelidir.</small>
+          )}
+        </div>
+        <div className="field">
+          <label htmlFor="phone">Telefon</label>
+          <InputText
+            id="phone"
+            value={patient.phone}
+            onChange={(e) => handleChange(e, "phone")}
+            required
+            className={classNames({ "p-invalid": submitted && !patient.phone })}
+          />
+          {submitted && !patient.phone && (
+            <small className="p-error">Telefon numarası girilmelidir.</small>
+          )}
+        </div>
+      </Dialog>
+
+      <Dialog
+        visible={deletePatientDialog}
+        style={{ width: "450px" }}
+        header="Confirm"
+        modal
+        footer={deletePatientDialogFooter}
+        onHide={hideDeletePatientDialog}
+      >
+        <div className="confirmation-content">
+          <i
+            className="pi pi-exclamation-triangle mr-3"
+            style={{ fontSize: "2rem" }}
+          />
+          {patient && (
+            <span>
+              <b>{patient.name + patient.surname}</b> isimli hastayı silmek
+              istediğinize emin misiniz?
+            </span>
+          )}
+        </div>
+      </Dialog>
+
+      <Dialog
+        visible={deletePatientsDialog}
+        style={{ width: "450px" }}
+        header="Confirm"
+        modal
+        footer={deletePatientsDialogFooter}
+        onHide={hideDeletePatientsDialog}
+      >
+        <div className="confirmation-content">
+          <i
+            className="pi pi-exclamation-triangle mr-3"
+            style={{ fontSize: "2rem" }}
+          />
+          {patient && (
+            <span>Seçili hastaları silmek istediğinize emin misiniz?</span>
+          )}
+        </div>
+      </Dialog>
+    </div>
   );
 }
 
