@@ -247,13 +247,13 @@ function PatientList() {
         <Button
           label="Ekle"
           icon="pi pi-plus"
-          className="p-button-success mr-2"
+          className="p-button-text p-button-info mr-2"
           onClick={showAddPatientDialog}
         />
         <Button
           label="Sil"
           icon="pi pi-trash"
-          className="p-button-danger"
+          className="p-button-text p-button-danger"
           onClick={showConfirmDeletePatientsDialog}
           disabled={!selectedPatients || !selectedPatients.length}
         />
@@ -266,12 +266,12 @@ function PatientList() {
       <React.Fragment>
         <Button
           icon="pi pi-pencil"
-          className="p-button-rounded p-button-success mr-2"
+          className="p-button-text p-button-secondary mr-2"
           onClick={() => showEditPatientDialog(patient)}
         />
         <Button
           icon="pi pi-trash"
-          className="p-button-rounded p-button-warning"
+          className="p-button-text p-button-danger"
           onClick={() => showConfirmDeletePatientDialog(patient)}
         />
       </React.Fragment>
@@ -299,13 +299,13 @@ function PatientList() {
         <Button
           label="İptal"
           icon="pi pi-times"
-          className="p-button-text"
+          className="p-button-text p-button-secondary"
           onClick={hidePatientDialog}
         />
         <Button
           label="Kaydet"
           icon="pi pi-check"
-          className="p-button-text"
+          className="p-button-text p-button-info"
           onClick={savePatient}
         />
       </React.Fragment>
@@ -316,16 +316,14 @@ function PatientList() {
     return (
       <React.Fragment>
         <Button
-          label="Hayır"
-          icon="pi pi-times"
-          className="p-button-text"
-          onClick={hideDeletePatientDialog}
+          label="Sil"
+          className="p-button-danger"
+          onClick={deletePatient}
         />
         <Button
-          label="Evet"
-          icon="pi pi-check"
-          className="p-button-text"
-          onClick={deletePatient}
+          label="İptal"
+          className="p-button-text p-button-secondary"
+          onClick={hideDeletePatientDialog}
         />
       </React.Fragment>
     );
@@ -335,16 +333,14 @@ function PatientList() {
     return (
       <React.Fragment>
         <Button
-          label="Hayır"
-          icon="pi pi-times"
-          className="p-button-text"
-          onClick={hideDeletePatientsDialog}
+          label="Sil"
+          className="p-button-danger"
+          onClick={deletePatients}
         />
         <Button
-          label="Evet"
-          icon="pi pi-check"
-          className="p-button-text"
-          onClick={deletePatients}
+          label="İptal"
+          className="p-button-text p-button-secondary"
+          onClick={hideDeletePatientsDialog}
         />
       </React.Fragment>
     );
@@ -470,20 +466,19 @@ function PatientList() {
       <Dialog
         visible={deletePatientDialog}
         style={{ width: "450px" }}
-        header="Confirm"
+        header="Emin misiniz?"
         modal
         footer={deletePatientDialogFooter}
         onHide={hideDeletePatientDialog}
       >
         <div className="confirmation-content">
           <i
-            className="pi pi-exclamation-triangle mr-3"
-            style={{ fontSize: "2rem" }}
+            className="pi pi-exclamation-triangle mr-2"
+            style={{ fontSize: "1.5rem", color: '#EF4444' }}
           />
           {patient && (
             <span>
-              <b>{patient.name + patient.surname}</b> isimli hastayı silmek
-              istediğinize emin misiniz?
+              <b>{`${patient.name} ${patient.surname}`}</b> isimli hastayı kalıcı olarak silmek üzeresiniz. Bu işleme devam etmek istiyor musunuz?
             </span>
           )}
         </div>
@@ -492,7 +487,7 @@ function PatientList() {
       <Dialog
         visible={deletePatientsDialog}
         style={{ width: "450px" }}
-        header="Confirm"
+        header="Emin misiniz?"
         modal
         footer={deletePatientsDialogFooter}
         onHide={hideDeletePatientsDialog}
@@ -500,10 +495,10 @@ function PatientList() {
         <div className="confirmation-content">
           <i
             className="pi pi-exclamation-triangle mr-3"
-            style={{ fontSize: "2rem" }}
+            style={{ fontSize: "1.5rem", color: '#EF4444' }}
           />
           {patient && (
-            <span>Seçili hastaları silmek istediğinize emin misiniz?</span>
+            <span>Seçili hastaları kalıcı olarak silmek üzeresiniz. Bu işleme devam etmek istiyor musunuz?</span>
           )}
         </div>
       </Dialog>
