@@ -11,7 +11,14 @@ import {
 import Feature from "components/cards/Feature";
 
 // assets
-import AppointmentIcon from "assets/images/icons/appointment.png";
+import {
+  PatientsIcon,
+  CalenderIcon,
+  ToDoIcon,
+  DentistIcon,
+  BarChartIcon,
+  PaymentIcon,
+} from "assets/images/icons";
 
 const HomePage = () => {
   return (
@@ -20,8 +27,28 @@ const HomePage = () => {
         <Typography variant="h5">Anasayfa</Typography>
       </Grid>
 
-      <Grid item xs={12} sm={6} md={4} lg={3}>
-        <Feature image={AppointmentIcon} title="Upcomming Appointment" />
+      <Grid item xs={6} sm={6} md={3} lg={2}>
+        <Feature image={PatientsIcon} title="Hastalar" />
+      </Grid>
+
+      <Grid item xs={6} sm={6} md={3} lg={2}>
+        <Feature image={DentistIcon} title="Doktorlar" />
+      </Grid>
+
+      <Grid item xs={6} sm={6} md={3} lg={2}>
+        <Feature image={CalenderIcon} title="Takvim" />
+      </Grid>
+
+      <Grid item xs={6} sm={6} md={3} lg={2}>
+        <Feature image={ToDoIcon} title="İşlemler" />
+      </Grid>
+
+      <Grid item xs={6} sm={6} md={3} lg={2}>
+        <Feature image={PaymentIcon} title="Ödemeler" />
+      </Grid>
+
+      <Grid item xs={6} sm={6} md={3} lg={2}>
+        <Feature image={BarChartIcon} title="Finansal" />
       </Grid>
     </Grid>
   );

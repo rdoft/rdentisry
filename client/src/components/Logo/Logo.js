@@ -17,9 +17,9 @@ const Logo = ({ sx, to }) => (
     to={!to ? config.defaultPath : to}
     sx={sx}
   >
-    <Stack direction="row" spacing={3} alignItems="center">
+    <Stack direction="row" spacing={2} alignItems="center">
       <LogoImage />
-      <Typography variant="h4">Uygulama İsmi</Typography>
+      <Typography variant="h4">Esterno</Typography>
     </Stack>
   </ButtonBase>
 );
