@@ -417,7 +417,7 @@ function PatientList() {
         <Avatar
           alt="patient-avatar"
           src={avatarPatient}
-          sx={{ width: 32, height: 32 }}
+          sx={{ width: 100, height: 100, mb: 2, mx: "auto" }}
         />
         <div className="field">
           <label htmlFor="idNumber">TC Kimlik Numarası</label>
@@ -474,11 +474,13 @@ function PatientList() {
         <div className="confirmation-content">
           <i
             className="pi pi-exclamation-triangle mr-2"
-            style={{ fontSize: "1.5rem", color: '#EF4444' }}
+            style={{ fontSize: "1.5rem", color: "#EF4444" }}
           />
           {patient && (
             <span>
-              <b>{`${patient.name} ${patient.surname}`}</b> isimli hastayı kalıcı olarak silmek üzeresiniz. Bu işleme devam etmek istiyor musunuz?
+              <b>{`${patient.name} ${patient.surname}`}</b> isimli hastayı
+              kalıcı olarak silmek üzeresiniz. Bu işleme devam etmek istiyor
+              musunuz?
             </span>
           )}
         </div>
@@ -495,10 +497,13 @@ function PatientList() {
         <div className="confirmation-content">
           <i
             className="pi pi-exclamation-triangle mr-3"
-            style={{ fontSize: "1.5rem", color: '#EF4444' }}
+            style={{ fontSize: "1.5rem", color: "#EF4444" }}
           />
           {patient && (
-            <span>Seçili hastaları kalıcı olarak silmek üzeresiniz. Bu işleme devam etmek istiyor musunuz?</span>
+            <span>
+              Seçili hastaları kalıcı olarak silmek üzeresiniz. Bu işleme devam
+              etmek istiyor musunuz?
+            </span>
           )}
         </div>
       </Dialog>
