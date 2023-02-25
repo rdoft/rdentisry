@@ -132,14 +132,25 @@ function PatientList() {
     let _patient;
     let _patients;
 
-    if (patient.name.trim()) {
-      _patients = [...patients];
-      _patient = { ...patient };
+    _patients = [...patients];
+    _patient = {
+      id: patient.id,
+      idNumber: patient.idNumber.trim(),
+      name: patient.name.trim(),
+      surname: patient.surname.trim(),
+      phone: patient.phone.trim(),
+    };
 
+    if (
+      _patient.idNumber &&
+      _patient.name &&
+      _patient.surname &&
+      _patient.phone
+    ) {
       if (patient.id) {
         // TODO: service update patient
         index = patients.findIndex((item) => item.id === patient.id);
-        _patients[index] = patient;
+        _patients[index] = _patient;
         toast.current.show({
           severity: "success",
           summary: "Successful",
@@ -160,14 +171,18 @@ function PatientList() {
 
       setPatients(_patients);
       setPatientDialog(false);
-      setPatient(emptyPatient);
+      // setPatient(emptyPatient);
     }
   };
   //  Delete patient
   const deletePatient = () => {
     // TODO: service delete patient
     let _patients = patients.filter((item) => item.id !== patient.id);
+    let _selectedPatients = selectedPatients
+      ? selectedPatients.filter((item) => item.id !== patient.id)
+      : null;
     setPatients(_patients);
+    setSelectedPatients(_selectedPatients);
     setDeletePatientDialog(false);
     setPatient(emptyPatient);
     toast.current.show({
@@ -200,7 +215,7 @@ function PatientList() {
     let _patient;
 
     _patient = { ...patient };
-    patient[`${attr}`] = value;
+    _patient[`${attr}`] = value;
     setPatient(_patient);
   };
   // onInput handler for search
@@ -436,16 +451,31 @@ function PatientList() {
           )}
         </div>
         <div className="field">
-          <label htmlFor="name">Ad-Soyad</label>
+          <label htmlFor="name">Ad</label>
           <InputText
             id="name"
-            value={`${patient.name} ${patient.surname}`}
+            value={patient.name}
             onChange={(e) => handleChange(e, "name")}
             required
             className={classNames({ "p-invalid": submitted && !patient.name })}
           />
           {submitted && !patient.name && (
-            <small className="p-error">Ad-Soyad girilmelidir.</small>
+            <small className="p-error">Hasta adı girilmelidir.</small>
+          )}
+        </div>
+        <div className="field">
+          <label htmlFor="name">Soyad</label>
+          <InputText
+            id="surname"
+            value={patient.surname}
+            onChange={(e) => handleChange(e, "surname")}
+            required
+            className={classNames({
+              "p-invalid": submitted && !patient.surname,
+            })}
+          />
+          {submitted && !patient.surname && (
+            <small className="p-error">Hasta soyadı girilmelidir.</small>
           )}
         </div>
         <div className="field">
