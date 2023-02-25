@@ -16,11 +16,6 @@ import Patient from "./Patient";
 // services
 import { PatientService } from "services";
 
-// assets
-import "primereact/resources/themes/lara-light-indigo/theme.css";
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
-import "primeflex/primeflex.css";
 // import classes from "assets/styles/PatientList.module.css";
 import avatarPatient from "assets/images/avatars/patient-avatar.png";
 
