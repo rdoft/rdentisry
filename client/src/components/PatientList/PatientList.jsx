@@ -146,22 +146,22 @@ function PatientList() {
         // TODO: service update patient
         index = patients.findIndex((item) => item.id === patient.id);
         _patients[index] = _patient;
-        toast.current.show({
-          severity: "success",
-          summary: "Successful",
-          detail: "Patient Updated",
-          life: 3000,
-        });
+        // toast.current.show({
+        //   severity: "success",
+        //   summary: "Successful",
+        //   detail: "Patient Updated",
+        //   life: 3000,
+        // });
       } else {
         // TODO: service create new patient
         _patient.id = createId();
         _patients.push(_patient);
-        toast.current.show({
-          severity: "success",
-          summary: "Successful",
-          detail: "Patient Created",
-          life: 3000,
-        });
+        // toast.current.show({
+        //   severity: "success",
+        //   summary: "Successful",
+        //   detail: "Patient Created",
+        //   life: 3000,
+        // });
       }
 
       setPatients(_patients);
@@ -180,12 +180,11 @@ function PatientList() {
     setSelectedPatients(_selectedPatients);
     setDeletePatientDialog(false);
     setPatient(emptyPatient);
-    toast.current.show({
-      severity: "success",
-      summary: "Successful",
-      detail: "Patient Deleted",
-      life: 3000,
-    });
+    // toast.current.show({
+    //   severity: "success",
+    //   summary: "Silindi",
+    //   life: 3000,
+    // });
   };
   // Delete selected patients
   const deletePatients = () => {
@@ -195,12 +194,11 @@ function PatientList() {
     setPatients(_patients);
     setDeletePatientsDialog(false);
     setSelectedPatients(null);
-    toast.current.show({
-      severity: "success",
-      summary: "Successful",
-      detail: "Patients Deleted",
-      life: 3000,
-    });
+    // toast.current.show({
+    //   severity: "success",
+    //   summary: "Silindi",
+    //   life: 3000,
+    // });
   };
 
   // HANDLERS -----------------------------------------------------------------
@@ -255,7 +253,7 @@ function PatientList() {
     return (
       <React.Fragment>
         <Button
-          label="Ekle"
+          label="Hasta Ekle"
           icon="pi pi-plus"
           className="p-button-text p-button-info mr-2"
           onClick={showAddPatientDialog}
@@ -265,7 +263,7 @@ function PatientList() {
           icon="pi pi-trash"
           className="p-button-text p-button-danger"
           onClick={showConfirmDeletePatientsDialog}
-          disabled={!selectedPatients || !selectedPatients.length}
+          visible={selectedPatients?.length ? true : false}
         />
       </React.Fragment>
     );
@@ -418,7 +416,7 @@ function PatientList() {
       <Dialog
         visible={patientDialog}
         style={{ width: "450px" }}
-        header="Hasta Bilgileri"
+        header={!patient.id ? "Yeni Hasta" : "Hasta Bilgileri"}
         modal
         className="p-fluid"
         footer={patientDialogFooter}
@@ -442,7 +440,7 @@ function PatientList() {
             })}
           />
           {submitted && !patient.idNumber && (
-            <small className="p-error">TC kimlik numarası girilmelidir.</small>
+            <small className="p-error">Gerekli</small>
           )}
         </div>
         <div className="field">
@@ -455,7 +453,7 @@ function PatientList() {
             className={classNames({ "p-invalid": submitted && !patient.name })}
           />
           {submitted && !patient.name && (
-            <small className="p-error">Hasta adı girilmelidir.</small>
+            <small className="p-error">Gerekli</small>
           )}
         </div>
         <div className="field">
@@ -470,7 +468,7 @@ function PatientList() {
             })}
           />
           {submitted && !patient.surname && (
-            <small className="p-error">Hasta soyadı girilmelidir.</small>
+            <small className="p-error">Gerekli</small>
           )}
         </div>
         <div className="field">
@@ -483,7 +481,7 @@ function PatientList() {
             className={classNames({ "p-invalid": submitted && !patient.phone })}
           />
           {submitted && !patient.phone && (
-            <small className="p-error">Telefon numarası girilmelidir.</small>
+            <small className="p-error">Gerekli</small>
           )}
         </div>
       </Dialog>
@@ -491,21 +489,16 @@ function PatientList() {
       <Dialog
         visible={deletePatientDialog}
         style={{ width: "450px" }}
-        header="Emin misiniz?"
+        header="Hastayı Sil"
         modal
         footer={deletePatientDialogFooter}
         onHide={hideDeletePatientDialog}
       >
         <div className="confirmation-content">
-          <i
-            className="pi pi-exclamation-triangle mr-2"
-            style={{ fontSize: "1.5rem", color: "#EF4444" }}
-          />
           {patient && (
             <span>
               <b>{`${patient.name} ${patient.surname}`}</b> isimli hastayı
-              kalıcı olarak silmek üzeresiniz. Bu işleme devam etmek istiyor
-              musunuz?
+              silmek istediğinizden emin misiniz?
             </span>
           )}
         </div>
@@ -514,21 +507,14 @@ function PatientList() {
       <Dialog
         visible={deletePatientsDialog}
         style={{ width: "450px" }}
-        header="Emin misiniz?"
+        header={`${selectedPatients?.length ?? 0} Hastayı Sil`}
         modal
         footer={deletePatientsDialogFooter}
         onHide={hideDeletePatientsDialog}
       >
         <div className="confirmation-content">
-          <i
-            className="pi pi-exclamation-triangle mr-3"
-            style={{ fontSize: "1.5rem", color: "#EF4444" }}
-          />
           {patient && (
-            <span>
-              Seçili hastaları kalıcı olarak silmek üzeresiniz. Bu işleme devam
-              etmek istiyor musunuz?
-            </span>
+            <span>Seçili hastaları silmek istediğinizden emin misiniz?</span>
           )}
         </div>
       </Dialog>
