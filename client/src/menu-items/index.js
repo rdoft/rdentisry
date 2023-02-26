@@ -1,12 +1,12 @@
 // project import
 import overview from "./overview";
-import patients from './patients';
-import reports from './reports';
+import patients from "./patients";
+// import reports from './reports';
 
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-    items: [overview, patients, reports]
+  items: [overview, patients],
 };
 
 export default menuItems;

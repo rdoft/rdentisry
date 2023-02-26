@@ -3,7 +3,7 @@ import { Grid, Typography } from "@mui/material";
 
 // project import
 // import OrdersTable from "./OrdersTable";
-import PatientList from "components/PatientList/PatientList";
+import PatientsTable from "components/PatientTable/PatientsTable";
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
@@ -14,7 +14,7 @@ const Patients = () => {
         <Typography variant="h5">Hastalar</Typography>
       </Grid>
       <Grid item xs={12}>
-        <PatientList />
+        <PatientsTable />
       </Grid>
     </Grid>
   );
