@@ -13,4 +13,16 @@ module.exports = function(app) {
    * Get patient list
    */
   app.get("/api/patients", controller.getPatients);
+
+  /**
+   * Add a patient
+   * @body Patient informations
+   */
+  app.post("/api/patients", controller.addPatient);
+
+  /**
+   * Delete the patient
+   * @param id: Id of the patient
+   */
+  app.delete("/api/patients/:id", controller.deletePatient);
 };
