@@ -1,3 +1,5 @@
+const router  = require('express').Router();
+const API_URL = "/api/patients";
 const controller = require("../controller/patient.controller");
 
 module.exports = function(app) {
@@ -9,20 +11,14 @@ module.exports = function(app) {
       next();
   });
 
-  /**
-   * Get patient list
-   */
-  app.get("/api/patients", controller.getPatients);
+  router.route(``)
+    .get(controller.getPatients)  // Get patients
+    .post(controller.savePatient) // Save patient
+    .delete(controller.deletePatients) // Delete patients
+  router.route(`/:patientId`)
+    // .get(controller.getPatient)  // Get a patient
+    // .put(controller.updatePatient)  // Update a patient
+    .delete(controller.deletePatient) // Delete a patient
 
-  /**
-   * Add a patient
-   * @body Patient informations
-   */
-  app.post("/api/patients", controller.addPatient);
-
-  /**
-   * Delete the patient
-   * @param id: Id of the patient
-   */
-  app.delete("/api/patients/:id", controller.deletePatient);
+  app.use(API_URL, router);
 };

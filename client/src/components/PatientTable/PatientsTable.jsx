@@ -12,6 +12,9 @@ import { PatientService } from "services";
 
 // import classes from "assets/styles/PatientList.module.css";
 
+// TODO: [RDEN-29] Add controll mechanism for the services
+// TODO: [RDEN-32] Add comments in the save,delete,get patient functions
+
 function PatientsTable() {
   // Set default empty Patient
   let emptyPatient = {
@@ -34,7 +37,6 @@ function PatientsTable() {
   const toast = useRef(null);
   const dt = useRef(null);
 
-  // TODO: Make components individual functions
   // Get the list of patients and set patients value
   const getPatients = useCallback(async () => {
     setError(null);
@@ -42,16 +44,9 @@ function PatientsTable() {
     let patients;
 
     try {
+      // GET /patients
       response = await PatientService.getPatients();
-      patients = response.data.map((patient) => {
-        return {
-          id: patient.PatientId,
-          name: patient.Name,
-          surname: patient.Surname,
-          phone: patient.Phone,
-          idNumber: patient.IdNumber,
-        };
-      });
+      patients = response.data;
 
       setPatients(patients);
     } catch (error) {
@@ -99,17 +94,9 @@ function PatientsTable() {
   };
 
   // SERVICES -----------------------------------------------------------------
-  const createId = () => {
-    let id = "";
-    let chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (let i = 0; i < 5; i++) {
-      id += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return id;
-  };
   // Save patient (create/update)
-  const savePatient = (patient) => {
+  const savePatient = async (patient) => {
+    let response;
     let index;
     let _patients = [...patients];
 
@@ -124,8 +111,9 @@ function PatientsTable() {
       //   life: 3000,
       // });
     } else {
-      // TODO: service create new patient
-      patient.id = createId();
+      // POST /patients
+      response = await PatientService.savePatient(patient);
+      patient.id = response.data.id;
       _patients.push(patient);
       // toast.current.show({
       //   severity: "success",
@@ -139,12 +127,18 @@ function PatientsTable() {
     setPatientDialog(false);
   };
   //  Delete patient
-  const deletePatient = () => {
-    // TODO: service delete patient
-    let _patients = patients.filter((item) => item.id !== patient.id);
-    let _selectedPatients = selectedPatients
+  const deletePatient = async () => {
+    let _patients;
+    let _selectedPatients;
+
+    // DELETE /patients/:patientId
+    await PatientService.deletePatient(patient.id);
+
+    _patients = patients.filter((item) => item.id !== patient.id);
+    _selectedPatients = selectedPatients
       ? selectedPatients.filter((item) => item.id !== patient.id)
       : null;
+
     setPatients(_patients);
     setSelectedPatients(_selectedPatients);
     setDeletePatientDialog(false);
@@ -156,10 +150,18 @@ function PatientsTable() {
     // });
   };
   // Delete selected patients
-  const deletePatients = () => {
+  const deletePatients = async () => {
     let _patients;
-    // TODO: delete patients
+    let selectedIds;
+
+    // Get IDs of selected patients
+    selectedIds = selectedPatients.map((item) => item.id);
+    // DELETE /patients?patientId=
+    await PatientService.deletePatients(selectedIds);
+    // Filter patients 
     _patients = patients.filter((item) => !selectedPatients.includes(item));
+
+    // Update states
     setPatients(_patients);
     setDeletePatientsDialog(false);
     setSelectedPatients(null);
