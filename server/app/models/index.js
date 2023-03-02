@@ -9,8 +9,8 @@ const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
     max: config.pool.max,
     min: config.pool.min,
     acquire: config.pool.acquire,
-    idle: config.pool.idle
-  }
+    idle: config.pool.idle,
+  },
 });
 
 const db = {};
