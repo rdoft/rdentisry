@@ -19,10 +19,11 @@ function PatientsTable() {
   // Set default empty Patient
   let emptyPatient = {
     id: null,
+    idNumber: "",
     name: "",
     surname: "",
     phone: "",
-    idNumber: "",
+    birthYear: "",
   };
 
   // Set the default values
@@ -37,8 +38,53 @@ function PatientsTable() {
   const toast = useRef(null);
   const dt = useRef(null);
 
+  // Set the page on loading
+  useEffect(() => {
+    getPatients();
+  }, []);
+
+  // SHOW/HIDE OPTIONS --------------------------------------------------------
+  // Show add patient dialog
+  const showAddPatientDialog = () => {
+    setPatient(emptyPatient);
+    setPatientDialog(true);
+  };
+
+  // Show edit patient dialog
+  const showEditPatientDialog = (patient) => {
+    setPatient({ ...patient });
+    setPatientDialog(true);
+  };
+
+  // Show confirm delete patient dialog
+  const showConfirmDeletePatientDialog = (patient) => {
+    setPatient(patient);
+    setDeletePatientDialog(true);
+  };
+
+  // Show confirm delete patients dialog
+  const showConfirmDeletePatientsDialog = () => {
+    setDeletePatientsDialog(true);
+  };
+
+  // Hide patient dialog
+  const hidePatientDialog = () => {
+    setPatientDialog(false);
+  };
+
+  // Hide delete patient dialog
+  const hideDeletePatientDialog = () => {
+    setDeletePatientDialog(false);
+  };
+
+  // Hide delete patients dialog
+  const hideDeletePatientsDialog = () => {
+    setDeletePatientsDialog(false);
+  };
+
+  // SERVICES -----------------------------------------------------------------
   // Get the list of patients and set patients value
-  const getPatients = useCallback(async () => {
+  const getPatients = async () => {
     setError(null);
     let response;
     let patients;
@@ -52,48 +98,8 @@ function PatientsTable() {
     } catch (error) {
       setError(error.message);
     }
-  }, []);
-
-  // Set the page on loading
-  useEffect(() => {
-    getPatients();
-  }, [getPatients]);
-
-  // SHOW/HIDE OPTIONS --------------------------------------------------------
-  // Show add patient dialog
-  const showAddPatientDialog = () => {
-    setPatient(emptyPatient);
-    setPatientDialog(true);
-  };
-  // Show edit patient dialog
-  const showEditPatientDialog = (patient) => {
-    setPatient({ ...patient });
-    setPatientDialog(true);
-  };
-  // Show confirm delete patient dialog
-  const showConfirmDeletePatientDialog = (patient) => {
-    setPatient(patient);
-    setDeletePatientDialog(true);
-  };
-  // Show confirm delete patients dialog
-  const showConfirmDeletePatientsDialog = () => {
-    setDeletePatientsDialog(true);
   };
 
-  // Hide patient dialog
-  const hidePatientDialog = () => {
-    setPatientDialog(false);
-  };
-  // Hide delete patient dialog
-  const hideDeletePatientDialog = () => {
-    setDeletePatientDialog(false);
-  };
-  // Hide delete patients dialog
-  const hideDeletePatientsDialog = () => {
-    setDeletePatientsDialog(false);
-  };
-
-  // SERVICES -----------------------------------------------------------------
   // Save patient (create/update)
   const savePatient = async (patient) => {
     let response;
@@ -126,6 +132,7 @@ function PatientsTable() {
     setPatients(_patients);
     setPatientDialog(false);
   };
+
   //  Delete patient
   const deletePatient = async () => {
     let _patients;
@@ -149,6 +156,7 @@ function PatientsTable() {
     //   life: 3000,
     // });
   };
+
   // Delete selected patients
   const deletePatients = async () => {
     let _patients;
@@ -158,7 +166,7 @@ function PatientsTable() {
     selectedIds = selectedPatients.map((item) => item.id);
     // DELETE /patients?patientId=
     await PatientService.deletePatients(selectedIds);
-    // Filter patients 
+    // Filter patients
     _patients = patients.filter((item) => !selectedPatients.includes(item));
 
     // Update states

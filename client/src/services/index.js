@@ -1,3 +1,3 @@
-import PatientService from "./Patient.service";
+import PatientService from "services/patient.service";
 
 export { PatientService };

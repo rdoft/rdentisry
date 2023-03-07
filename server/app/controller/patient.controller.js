@@ -14,10 +14,11 @@ exports.getPatients = async (req, res) => {
     patients = patients.map((patient) => {
       return {
         id: patient.PatientId,
+        idNumber: patient.IdNumber,
         name: patient.Name,
         surname: patient.Surname,
         phone: patient.Phone,
-        idNumber: patient.IdNumber,
+        birthYear: patient.BirthYear,
       };
     });
 
@@ -33,10 +34,10 @@ exports.getPatients = async (req, res) => {
  */
 exports.savePatient = async (req, res) => {
   const {
+    idNumber: IdNumber,
     name: Name,
     surname: Surname,
     phone: Phone,
-    idNumber: IdNumber,
     birthYear: BirthYear,
   } = req.body;
   let values = { Name, Surname, Phone, IdNumber, BirthYear: BirthYear ?? null };

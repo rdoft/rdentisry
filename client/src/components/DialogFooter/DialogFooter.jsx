@@ -1,11 +1,12 @@
 import React from "react";
 import { Button } from "primereact";
 
-function DialogFooter({ onHide, onSubmit, onDelete }) {
+function DialogFooter({ disabled, onHide, onSubmit, onDelete }) {
   return (
     <React.Fragment>
       {onSubmit && (
         <Button
+          disabled={disabled}
           label="Kaydet"
           className="p-button p-button-info"
           onClick={onSubmit}

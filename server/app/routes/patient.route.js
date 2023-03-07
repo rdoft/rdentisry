@@ -33,7 +33,7 @@ module.exports = function (app) {
      * If patientIds not given then delete all patients
      * @query patientId: Id list of patients
      */
-    .delete(validate(schema.patientIds, "query"), controller.deletePatients);
+    .delete(validate(schema.ids, "query"), controller.deletePatients);
 
   router
     .route(`/:patientId`)
@@ -43,7 +43,7 @@ module.exports = function (app) {
      * Delete the patient
      * @param patientId: Id of the patient
      */
-    .delete(validate(schema.patientId, "params"), controller.deletePatient);
+    .delete(validate(schema.id, "params"), controller.deletePatient);
 
   app.use(API_URL, router);
 };
