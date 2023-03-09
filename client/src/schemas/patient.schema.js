@@ -14,7 +14,11 @@ const patient = Joi.object({
     .length(10)
     .pattern(/^\d{10}$/)
     .required(),
-  birthYear: Joi.number().integer().min(1900).max(new Date().getFullYear()),
+  birthYear: Joi.number()
+    .empty("")
+    .integer()
+    .min(1900)
+    .max(new Date().getFullYear()),
 });
 
 const id = Joi.object({
@@ -41,6 +45,7 @@ const phone = Joi.string()
   .pattern(/^\d{10}$/)
   .required();
 const birthYear = Joi.number()
+  .empty("")
   .integer()
   .min(1900)
   .max(new Date().getFullYear());
