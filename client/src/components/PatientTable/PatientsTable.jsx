@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { DataTable, Column, Toast } from "primereact";
 import PatientDialog from "./PatientDialog";
@@ -34,7 +34,6 @@ function PatientsTable() {
   const [deletePatientsDialog, setDeletePatientsDialog] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
-  const [error, setError] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
 
@@ -85,7 +84,6 @@ function PatientsTable() {
   // SERVICES -----------------------------------------------------------------
   // Get the list of patients and set patients value
   const getPatients = async () => {
-    setError(null);
     let response;
     let patients;
 
@@ -93,10 +91,16 @@ function PatientsTable() {
       // GET /patients
       response = await PatientService.getPatients();
       patients = response.data;
-
+      // Set new patients 
       setPatients(patients);
     } catch (error) {
-      setError(error.message);
+      // Set error status and show error toast message
+      toast.current.show({
+        severity: "error",
+        summary: "Oops!",
+        detail: "Bağlantı hatası, bir süre sonra yeniden deneyiniz",
+        life: 3000,
+      });
     }
   };
 
@@ -104,8 +108,10 @@ function PatientsTable() {
   const savePatient = async (patient) => {
     let response;
     let index;
-    let _patients = [...patients];
+    let _patients;
 
+    // Copy patients into new variable
+    _patients = [...patients];
     if (patient.id) {
       // TODO: service update patient
       index = patients.findIndex((item) => item.id === patient.id);
@@ -117,18 +123,25 @@ function PatientsTable() {
       //   life: 3000,
       // });
     } else {
-      // POST /patients
-      response = await PatientService.savePatient(patient);
-      patient.id = response.data.id;
-      _patients.push(patient);
-      // toast.current.show({
-      //   severity: "success",
-      //   summary: "Successful",
-      //   detail: "Patient Created",
-      //   life: 3000,
-      // });
+      try {
+        // POST /patients
+        response = await PatientService.savePatient(patient);
+
+        // Set created patient's id, and add into patients
+        patient.id = response.data.id;
+        _patients.push(patient);
+      } catch (error) {
+        // Set error status and show error toast message
+        toast.current.show({
+          severity: "error",
+          summary: "Oops!",
+          detail: "Hasta kaydedilemedi",
+          life: 3000,
+        });
+      }
     }
 
+    // Set the states
     setPatients(_patients);
     setPatientDialog(false);
   };
@@ -138,23 +151,31 @@ function PatientsTable() {
     let _patients;
     let _selectedPatients;
 
-    // DELETE /patients/:patientId
-    await PatientService.deletePatient(patient.id);
+    try {
+      // DELETE /patients/:patientId
+      await PatientService.deletePatient(patient.id);
 
-    _patients = patients.filter((item) => item.id !== patient.id);
-    _selectedPatients = selectedPatients
-      ? selectedPatients.filter((item) => item.id !== patient.id)
-      : null;
+      // Remove deleted patient from patients and selectedPatients
+      _patients = patients.filter((item) => item.id !== patient.id);
+      _selectedPatients = selectedPatients
+        ? selectedPatients.filter((item) => item.id !== patient.id)
+        : null;
+      // Set the list of patients and selected patients
+      setPatients(_patients);
+      setSelectedPatients(_selectedPatients);
+    } catch (error) {
+      // Set error status and show error toast message
+      toast.current.show({
+        severity: "error",
+        summary: "Opps!",
+        detail: "Hasta silinemedi",
+        life: 3000,
+      });
+    }
 
-    setPatients(_patients);
-    setSelectedPatients(_selectedPatients);
+    // Close delete dialog and empty patient variable
     setDeletePatientDialog(false);
     setPatient(emptyPatient);
-    // toast.current.show({
-    //   severity: "success",
-    //   summary: "Silindi",
-    //   life: 3000,
-    // });
   };
 
   // Delete selected patients
@@ -164,20 +185,29 @@ function PatientsTable() {
 
     // Get IDs of selected patients
     selectedIds = selectedPatients.map((item) => item.id);
-    // DELETE /patients?patientId=
-    await PatientService.deletePatients(selectedIds);
-    // Filter patients
-    _patients = patients.filter((item) => !selectedPatients.includes(item));
 
-    // Update states
-    setPatients(_patients);
+    try {
+      // DELETE /patients?patientId=
+      await PatientService.deletePatients(selectedIds);
+
+      // Remove deleted patients from the patients
+      _patients = patients.filter((item) => !selectedPatients.includes(item));
+      // Set patients with new value
+      // And set selected patients to empty
+      setPatients(_patients);
+      setSelectedPatients(null);
+    } catch (error) {
+      // Set error status and show error toast message
+      toast.current.show({
+        severity: "error",
+        summary: "Opps!",
+        detail: "Seçilen hastalar silinemedi",
+        life: 3000,
+      });
+    }
+
+    // Close the dialog and set selec
     setDeletePatientsDialog(false);
-    setSelectedPatients(null);
-    // toast.current.show({
-    //   severity: "success",
-    //   summary: "Silindi",
-    //   life: 3000,
-    // });
   };
 
   // HANDLERS -----------------------------------------------------------------
@@ -196,33 +226,6 @@ function PatientsTable() {
     setSelectedPatients(event.value);
   };
 
-  // Get the content of the Patients list
-  // and control the loading/error state
-  // function getContent() {
-  //   let content = <Alert severity="info">Hiç kayıt yok</Alert>;
-  //   if (patients.length > 0) {
-  //     // <ul className={classes["patient-list"]}>
-  //     content = (
-  //       <List className="patient-list">
-  //         {patients.map((patient) => (
-  //           <Patient
-  //             name={patient.name}
-  //             surname={patient.surname}
-  //             phone={patient.phone}
-  //           />
-  //         ))}
-  //       </List>
-  //     );
-  //   }
-  //   if (error) {
-  //     content = <Alert severity="error">{error}</Alert>;
-  //   }
-  //   if (loading) {
-  //     content = <CircularProgress />;
-  //   }
-  //   return content;
-  // }
-
   // TEMPLATES ----------------------------------------------------------------
   // Patient action buttons template
   const getPatientAction = (patient) => {
@@ -236,7 +239,7 @@ function PatientsTable() {
 
   return (
     <div className="datatable-crud">
-      <Toast ref={toast} />
+      <Toast ref={toast} position="bottom-right" />
 
       <div className="card">
         {/* Patient table toolbar */}
