@@ -3,11 +3,12 @@ const Joi = require("joi");
 const validate = (schema, property) => {
   return (req, res, next) => {
     // Validate the request body with given schema
-    const { error } = schema.validate(req[property]);
+    const { value, error } = schema.validate(req[property]);
   
 
     if (!error) {
       // If ıt is valid, then return
+      req[property] = value;
       next();
     } else {
       // Get error message

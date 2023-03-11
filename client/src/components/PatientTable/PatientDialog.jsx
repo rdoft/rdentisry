@@ -151,7 +151,7 @@ function PatientDialog({ visible, patient, onChange, onHide, onSubmit }) {
           onChange={(event) => handleChange(event, "phone")}
           required
           keyfilter="num"
-          placeholder="(ÖR: 5554443322)"
+          placeholder="5XXXXXXXXX"
         />
         {isError["phone"] && (
           <small className="p-error">Geçersiz telefon numarası</small>

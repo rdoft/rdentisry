@@ -46,7 +46,14 @@ exports.savePatient = async (req, res) => {
   try {
     // Create patient record
     patient = await Patient.create(values);
-
+    patient = {
+      id: patient.PatientId,
+      idNumber: patient.IdNumber,
+      name: patient.Name,
+      surname: patient.Surname,
+      phone: patient.Phone,
+      birthYear: patient.BirthYear,
+    };
     res.status(201).send(patient);
   } catch (error) {
     res.status(500).send(error);
@@ -105,7 +112,7 @@ exports.deletePatient = async (req, res) => {
     if (patient) {
       await patient.destroy();
 
-      res.status(200).send(patientId);
+      res.status(200).send({ id: patientId });
     } else {
       res.status(404).send(Error("Hasta bulunamadı"));
     }

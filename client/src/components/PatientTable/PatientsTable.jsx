@@ -124,12 +124,23 @@ function PatientsTable() {
       // });
     } else {
       try {
-        // POST /patients
-        response = await PatientService.savePatient(patient);
-
-        // Set created patient's id, and add into patients
-        patient.id = response.data.id;
-        _patients.push(patient);
+        // Control if same TC is not exists in the patients
+        if (!patients.find(item => item.idNumber === patient.idNumber)) {  
+          // POST /patients
+          response = await PatientService.savePatient(patient);
+          
+          // Set created patient's id, and add into patients
+          patient.id = response.data.id;
+          _patients.push(patient);
+        } else {
+          // Set warning status and show error toast message
+          toast.current.show({
+            severity: "warn",
+            summary: "Hasta zaten mevcut",
+            detail: "Aynı TC kimlik numarasında bir hasta olduğundan yeni hasta eklenmedi",
+            life: 3000,
+          });
+        }
       } catch (error) {
         // Set error status and show error toast message
         toast.current.show({
@@ -251,6 +262,7 @@ function PatientsTable() {
         />
 
         <DataTable
+          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
           ref={dt}
           value={patients}
           selection={selectedPatients}
@@ -258,9 +270,9 @@ function PatientsTable() {
           dataKey="id"
           paginator
           rows={10}
-          currentPageReportTemplate="Toplam hasta sayısı: {totalRecords}"
           globalFilter={globalFilter}
           responsiveLayout="scroll"
+          currentPageReportTemplate="({totalRecords} hasta)"
         >
           {/* Checkbox */}
           <Column

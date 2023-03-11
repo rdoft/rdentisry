@@ -35,11 +35,16 @@ module.exports = (sequelize, Sequelize) => {
         validate: {
           min: 1900,
           max: new Date().getFullYear(),
-        }
+        },
       },
     },
     {
-      // TODO: Specify unique fields 
+      indexes: [
+        {
+          unique: true,
+          fields: ["IdNumber"],
+        },
+      ],
       timestamps: false,
       tableName: "Patient",
     }
