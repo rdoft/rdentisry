@@ -3,22 +3,28 @@ const Joi = require("joi");
 const patient = Joi.object({
   id: Joi.number().empty(null).id(),
   idNumber: Joi.string()
-    .empty("")
     .length(11)
     .pattern(/^\d{11}$/)
+    .empty("")
     .required(),
   name: Joi.string().trim().empty("").required(),
-  surname: Joi.string().trim().empty(" ").required(),
+  surname: Joi.string().trim().empty("").required(),
   phone: Joi.string()
-    .empty("")
     .length(10)
     .pattern(/^\d{10}$/)
+    .empty("")
     .required(),
-  birthYear: Joi.number().integer().min(1900).max(new Date().getFullYear()),
+  birthYear: Joi.number()
+    .integer()
+    .min(1900)
+    .max(new Date().getFullYear())
+    .default(null)
+    .empty("")
+    .allow(null),
 });
 
 const id = Joi.object({
-  patientId: Joi.number().integer().empty().required(),
+  patientId: Joi.number().empty(null).id(),
 });
 
 const ids = Joi.object({
@@ -29,21 +35,24 @@ const ids = Joi.object({
 });
 
 const idNumber = Joi.string()
-  .empty("")
   .length(11)
   .pattern(/^\d{11}$/)
+  .empty("")
   .required();
 const name = Joi.string().trim().empty("").required();
 const surname = Joi.string().trim().empty("").required();
 const phone = Joi.string()
-  .empty("")
   .length(10)
   .pattern(/^\d{10}$/)
+  .empty("")
   .required();
 const birthYear = Joi.number()
   .integer()
   .min(1900)
-  .max(new Date().getFullYear());
+  .max(new Date().getFullYear())
+  .default(null)
+  .empty("")
+  .allow(null);
 
 module.exports = {
   patient,

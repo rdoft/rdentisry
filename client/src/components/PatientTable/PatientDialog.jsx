@@ -100,7 +100,7 @@ function PatientDialog({ visible, patient, onChange, onHide, onSubmit }) {
 
       {/* TC */}
       <div className="field mb-3">
-        <label htmlFor="idNumber">TC Kimlik Numarası</label>
+        <label htmlFor="idNumber">TC Kimlik Numarası <small className="p-error">*</small></label>
         <InputText
           id="idNumber"
           value={patient.idNumber}
@@ -118,7 +118,7 @@ function PatientDialog({ visible, patient, onChange, onHide, onSubmit }) {
 
       {/* Name */}
       <div className="field mb-3">
-        <label htmlFor="name">Ad</label>
+        <label htmlFor="name">Ad <small className="p-error">*</small></label>
         <InputText
           id="name"
           value={patient.name}
@@ -131,7 +131,7 @@ function PatientDialog({ visible, patient, onChange, onHide, onSubmit }) {
 
       {/* Surname */}
       <div className="field mb-3">
-        <label htmlFor="name">Soyad</label>
+        <label htmlFor="name">Soyad <small className="p-error">*</small></label>
         <InputText
           id="surname"
           value={patient.surname}
@@ -144,14 +144,14 @@ function PatientDialog({ visible, patient, onChange, onHide, onSubmit }) {
 
       {/* Phone */}
       <div className="field mb-3">
-        <label htmlFor="phone">Telefon</label>
+        <label htmlFor="phone">Telefon <small className="p-error">*</small></label>
         <InputText
           id="phone"
           value={patient.phone}
           onChange={(event) => handleChange(event, "phone")}
           required
           keyfilter="num"
-          placeholder="(ÖR: 5554443322)"
+          placeholder="5XXXXXXXXX"
         />
         {isError["phone"] && (
           <small className="p-error">Geçersiz telefon numarası</small>
