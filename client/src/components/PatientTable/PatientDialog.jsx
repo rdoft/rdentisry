@@ -124,20 +124,18 @@ function PatientDialog({ visible, patient, onChange, onHide, onSubmit }) {
           value={patient.name}
           onChange={(event) => handleChange(event, "name")}
           required
-          keyfilter="alpha"
         />
         {isError["name"] && <small className="p-error">Zorunlu</small>}
       </div>
 
       {/* Surname */}
       <div className="field mb-3">
-        <label htmlFor="name">Soyad <small className="p-error">*</small></label>
+        <label htmlFor="surname">Soyad <small className="p-error">*</small></label>
         <InputText
           id="surname"
           value={patient.surname}
           onChange={(event) => handleChange(event, "surname")}
           required
-          keyfilter="alpha"
         />
         {isError["surname"] && <small className="p-error">Zorunlu</small>}
       </div>
