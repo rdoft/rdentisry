@@ -17,14 +17,14 @@ module.exports = (sequelize, Sequelize) => {
       },
       IdNumber: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
         validate: {
           is: /^\d{11}$/,
         },
       },
       Phone: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
         validate: {
           is: /^\d{10}$/,
         },

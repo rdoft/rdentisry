@@ -56,7 +56,55 @@ exports.savePatient = async (req, res) => {
     };
     res.status(201).send(patient);
   } catch (error) {
-    res.status(500).send(error);
+    if (
+      error instanceof Sequelize.ValidationError &&
+      error.name === "SequelizeUniqueConstraintError"
+    ) {
+      res.status(400).send("Aynı TC kimlik numarasına sahip iki hasta olamaz");
+    } else {
+      res.status(500).send(error);
+    }
+  }
+};
+
+/**
+ * Update the patient
+ * @param patientId id of the patient
+ * @body Patient informations
+ */
+exports.updatePatient = async (req, res) => {
+  const { patientId } = req.params;
+  const {
+    idNumber: IdNumber,
+    name: Name,
+    surname: Surname,
+    phone: Phone,
+    birthYear: BirthYear,
+  } = req.body;
+  let values = { Name, Surname, Phone, IdNumber, BirthYear: BirthYear ?? null };
+  let patient;
+
+  try {
+    // Find the patient record
+    patient = await Patient.findByPk(patientId);
+
+    if (patient) {
+      // Update patient record
+      await patient.update(values);
+
+      res.status(200).send({ id: patientId });
+    } else {
+      res.status(404).send({ message: "Böyle bir hasta mevcut değil" });
+    }
+  } catch (error) {
+    if (
+      error instanceof Sequelize.ValidationError &&
+      error.name === "SequelizeUniqueConstraintError"
+    ) {
+      res.status(400).send("Aynı TC kimlik numarasına sahip iki hasta olamaz");
+    } else {
+      res.status(500).send(error);
+    }
   }
 };
 
@@ -114,7 +162,7 @@ exports.deletePatient = async (req, res) => {
 
       res.status(200).send({ id: patientId });
     } else {
-      res.status(404).send(Error("Hasta bulunamadı"));
+      res.status(404).send({ message: "Hasta bulunamadı" });
     }
   } catch (error) {
     res.status(500).send(error);

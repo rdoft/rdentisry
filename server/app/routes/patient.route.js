@@ -38,7 +38,12 @@ module.exports = function (app) {
   router
     .route(`/:patientId`)
     // .get(controller.getPatient)
-    // .put(controller.updatePatient)
+    /**
+     * Update the patient
+     * @param patientId id of the patient
+     * @body Patient informations
+     */
+    .put(validate(schema.id, "params"), validate(schema.patient, "body"), controller.updatePatient)
     /**
      * Delete the patient
      * @param patientId: Id of the patient

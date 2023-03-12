@@ -19,6 +19,15 @@ patient.savePatient = (patient) => {
 };
 
 /**
+ * Update the patient
+ * @param id id of the patient
+ * @body Patient informations
+ */
+patient.updatePatient = (patient) => {
+  return API.put(`${API_URL}/${patient.id}`, patient);
+};
+
+/**
  * Delete the patient
  * @param id: Id of the patient
  */

@@ -91,7 +91,7 @@ function PatientsTable() {
       // GET /patients
       response = await PatientService.getPatients();
       patients = response.data;
-      // Set new patients 
+      // Set new patients
       setPatients(patients);
     } catch (error) {
       // Set error status and show error toast message
@@ -110,51 +110,41 @@ function PatientsTable() {
     let index;
     let _patients;
 
-    // Copy patients into new variable
-    _patients = [...patients];
-    if (patient.id) {
-      // TODO: service update patient
-      index = patients.findIndex((item) => item.id === patient.id);
-      _patients[index] = patient;
-      // toast.current.show({
-      //   severity: "success",
-      //   summary: "Successful",
-      //   detail: "Patient Updated",
-      //   life: 3000,
-      // });
-    } else {
-      try {
-        // Control if same TC is not exists in the patients
-        if (!patients.find(item => item.idNumber === patient.idNumber)) {  
-          // POST /patients
-          response = await PatientService.savePatient(patient);
-          
-          // Set created patient's id, and add into patients
-          patient.id = response.data.id;
-          _patients.push(patient);
-        } else {
-          // Set warning status and show error toast message
-          toast.current.show({
-            severity: "warn",
-            summary: "Hasta zaten mevcut",
-            detail: "Aynı TC kimlik numarasında bir hasta olduğundan yeni hasta eklenmedi",
-            life: 3000,
-          });
-        }
-      } catch (error) {
-        // Set error status and show error toast message
-        toast.current.show({
-          severity: "error",
-          summary: "Oops!",
-          detail: "Hasta kaydedilemedi",
-          life: 3000,
-        });
-      }
-    }
+    try {
+      // Copy patients into new variable
+      _patients = [...patients];
 
-    // Set the states
-    setPatients(_patients);
-    setPatientDialog(false);
+      if (patient.id) {
+        // Update the patient
+        // PUT /patients/:patientId
+        await PatientService.updatePatient(patient);
+        // Find the index of the patinet in the patients array
+        index = patients.findIndex((item) => item.id === patient.id);
+        _patients[index] = patient;
+      } else {
+        // Create a new patient
+        // POST /patients
+        response = await PatientService.savePatient(patient);
+        // Set created patient's id, and add into patients
+        patient.id = response.data.id;
+        _patients.push(patient);
+      }
+
+      // Set the patients and close the dialog
+      setPatients(_patients);
+      setPatientDialog(false);
+    } catch (error) {
+      // Set error status and show error toast message
+      toast.current.show({
+        severity: "error",
+        life: 3000,
+        summary: "Opps!",
+        detail:
+          error.response?.status < 500
+            ? error.response.data
+            : "Bağlantı hatası, bir süre sonra yeniden deneyiniz",
+      });
+    }
   };
 
   //  Delete patient
@@ -178,8 +168,8 @@ function PatientsTable() {
       // Set error status and show error toast message
       toast.current.show({
         severity: "error",
-        summary: "Opps!",
-        detail: "Hasta silinemedi",
+        summary: "Hasta silinemedi",
+        detail: "Bağlantı hatası, bir süre sonra yeniden deneyiniz",
         life: 3000,
       });
     }
@@ -211,8 +201,8 @@ function PatientsTable() {
       // Set error status and show error toast message
       toast.current.show({
         severity: "error",
-        summary: "Opps!",
-        detail: "Seçilen hastalar silinemedi",
+        summary: "Seçilen hastalar silinemedi",
+        detail: "Bağlantı hatası, bir süre sonra yeniden deneyiniz",
         life: 3000,
       });
     }
