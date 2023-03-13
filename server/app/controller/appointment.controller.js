@@ -1,30 +1,46 @@
 const { Sequelize } = require("../models");
 const db = require("../models");
-const Appointment = db.Appointment;
+const Appointment = db.appointment;
+const Patient = db.patient;
+const Doctor = db.doctor;
+
+
+
 
 /**
  * Get appointment list
  */
-exports.getAppointment = async (req, res) => {
-    let appointment;
+exports.getAppointments = async (req, res) => {
+    let appointments;
   
     try {
       // Find appointment list
-      appointment = await Appointment.findAll();
-      appointment = appointment.map((appointment) => {
+      appointments = await Appointment.findAll({
+        include:[
+          {
+            model: Patient,
+            as: "Patient"
+          },
+          {
+            model: Doctor,
+            as: 'Doctor'
+          }
+        ]
+      });
+      appointments = appointments.map((appointment) => {
         return {
           id: appointment.AppointmentId,
-          patientid:appointment.patientid,
-          doctorid:appointment.doctorid,
-          date:appointment.date,
-          starttime:appointment.starttime,
-          endtime:appointment.endtime,
-          didcome:appointment.didcome,
-          didaction:appointment.didaction
+          patientName: appointment.Patient.Name + ' ' + appointment.Patient.Surname,
+          doctorName:appointment.Doctor.Name + ' ' + appointment.Doctor.Surname,
+          date:appointment.Date,
+          startTime:appointment.StartTime,
+          endTime:appointment.EndTime,
+          didCome:appointment.DidCome,
+          didAction:appointment.DidAction
         };
       });
   
-      res.status(200).send(appointment);
+      res.status(200).send(appointments);
     } catch (error) {
       res.status(500).send(error);
     }
@@ -35,29 +51,29 @@ exports.getAppointment = async (req, res) => {
  */
 exports.AddAppointment = async (req,res) => {
   const {
-    patientid: PatientId,
-    doctorid: DoctorId,
+    patientId: PatientId,
+    doctorId: DoctorId,
     date: Date,
-    starttime: StartTime,
-    endtime: EndTime,
-    didcome: DidCome,
-    didaction: DidAction,
+    startTime: StartTime,
+    endTime: EndTime,
+    didCome: DidCome,
+    didAction: DidAction,
   } = req.body;
   let values = { PatientId, DoctorId, StartTime, EndTime, DidCome, DidAction, Date: Date ?? null };
   let appointment;
 
   try {
     // Create Appointment record
-    appointment = await p.create(values);
+    appointment = await Appointment.create(values);
     appointment = {
       id: appointment.AppointmentId,
-      patientid:appointment.patientid,
-      doctorid:appointment.doctorid,
-      date:appointment.date,
-      starttime:appointment.starttime,
-      endtime:appointment.endtime,
-      didcome:appointment.didcome,
-      didaction:appointment.didaction,
+      patientId:appointment.Patientid,
+      doctorId:appointment.Doctorid,
+      date:appointment.Date,
+      startTime:appointment.StartTime,
+      endTime:appointment.EndTime,
+      didCome:appointment.DidCome,
+      didAction:appointment.DidAction,
     };
     res.status(201).send(appointment);
   } catch (error) {

@@ -19,14 +19,13 @@ module.exports = function (app) {
   router
     .route(``)
     /**
-     * Get appointment list
+     * Get Appointment list
      */
-    .get(controller.getAppointment)
+    .get(controller.getAppointments)
      /**
      * Add a Appointment
-     * @body Appointment informations
      */
-     .post(validate(schema.appointment, "body"), controller.AddAppointment)
+     .post(controller.AddAppointment)
      
   app.use(API_URL, router);
 };
