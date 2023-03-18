@@ -82,3 +82,31 @@ exports.AddAppointment = async (req,res) => {
   }
 
 };
+/**
+ * Delete the Appointment
+ * @param appointmentId: Id of the Appointment
+ */
+exports.deleteAppointment = async (req, res) => {
+  const { appointmentId } = req.params;
+  let appointment;
+
+  try {
+    // Find Appointment
+    appointment = await Appointment.findOne({
+      where: {
+        AppointmentId: appointmentId,
+      },
+    });
+
+    // Delete the Appointment if it exists
+    if (appointment) {
+      await appointment.destroy();
+
+      res.status(200).send({ id: appointmentId });
+    } else {
+      res.status(404).send({ message: "Hasta bulunamadı" });
+    }
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};

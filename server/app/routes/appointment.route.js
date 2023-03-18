@@ -26,6 +26,12 @@ module.exports = function (app) {
      * Add a Appointment
      */
      .post(controller.AddAppointment)
+
+     /**
+     * Delete the Appointment
+     * @param appointmentId: Id of the Appointment
+     */
+    .delete(controller.deleteAppointment);
      
   app.use(API_URL, router);
 };
