@@ -5,7 +5,7 @@ import PatientDialog from "./PatientDialog";
 import DeletePatientDialog from "./DeletePatientDialog";
 import DeletePatientsDialog from "./DeletePatientsDialog";
 import PatientTableToolbar from "./PatientTableToolbar";
-import PatientAction from "./PatientAction";
+import ActionGroup from "components/ActionGroup/ActionGroup";
 
 // services
 import { PatientService } from "services";
@@ -33,6 +33,7 @@ function PatientsTable() {
   const [deletePatientDialog, setDeletePatientDialog] = useState(false);
   const [deletePatientsDialog, setDeletePatientsDialog] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState(null);
+  const [rowIndex, setRowIndex] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
@@ -65,6 +66,9 @@ function PatientsTable() {
   const showConfirmDeletePatientsDialog = () => {
     setDeletePatientsDialog(true);
   };
+
+  // Show add appointment dialog
+  const showAddAppointmentDialog = (patient) => {};
 
   // Hide patient dialog
   const hidePatientDialog = () => {
@@ -227,17 +231,17 @@ function PatientsTable() {
     setSelectedPatients(event.value);
   };
 
-  // TEMPLATES ----------------------------------------------------------------
-  // Patient action buttons template
-  const getPatientAction = (patient) => {
-    return (
-      <PatientAction
-        onClickEdit={() => showEditPatientDialog(patient)}
-        onClickDelete={() => showConfirmDeletePatientDialog(patient)}
-      />
-    );
+  // onRowMouseEnter handler for display buttons
+  const handleRowMouseEnter = (event) => {
+    setRowIndex(event.data.id);
   };
 
+  // onRowMouseLeave handler for hide buttons
+  const handleRowMouseLeave = (event) => {
+    setRowIndex(null);
+  };
+
+  // Return the PatientTable
   return (
     <div className="datatable-crud">
       <Toast ref={toast} position="bottom-right" />
@@ -255,13 +259,16 @@ function PatientsTable() {
           paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
           ref={dt}
           value={patients}
+          globalFilter={globalFilter}
           selection={selectedPatients}
           onSelectionChange={handleChangeSelection}
+          onRowMouseEnter={handleRowMouseEnter}
+          onRowMouseLeave={handleRowMouseLeave}
+          selectionMode="checkbox"
+          responsiveLayout="scroll"
           dataKey="id"
           paginator
           rows={10}
-          globalFilter={globalFilter}
-          responsiveLayout="scroll"
           currentPageReportTemplate="({totalRecords} hasta)"
         >
           {/* Checkbox */}
@@ -275,33 +282,49 @@ function PatientsTable() {
             field="idNumber"
             header="Kimlik Numarası"
             sortable
-            style={{ minWidth: "12rem" }}
+            style={{ width: "12rem" }}
           ></Column>
           {/* Name */}
           <Column
             field="name"
             header="Ad"
             sortable
-            style={{ minWidth: "16rem" }}
+            style={{ width: "12rem" }}
           ></Column>
           {/* Surname */}
           <Column
             field="surname"
             header="Soyad"
             sortable
-            style={{ minWidth: "16rem" }}
+            style={{ width: "12rem" }}
           ></Column>
           {/* Phone */}
           <Column
             field="phone"
             header="Telefon"
-            style={{ minWidth: "12rem" }}
+            style={{ width: "10rem" }}
+          ></Column>
+          {/* Patient action buttons */}
+          <Column
+            body={(patient) => (
+              <ActionGroup
+                onClickEdit={() => showEditPatientDialog(patient)}
+                onClickDelete={() => showConfirmDeletePatientDialog(patient)}
+              />
+            )}
+            style={{ minWidth: "4rem" }}
           ></Column>
           {/* Action buttons */}
           <Column
-            body={getPatientAction}
-            exportable={false}
-            style={{ minWidth: "8rem" }}
+            body={(patient) =>
+              patient.id === rowIndex ? (
+                <ActionGroup
+                  label="Randevu"
+                  onClickAdd={() => showAddAppointmentDialog(patient)}
+                />
+              ) : null
+            }
+            style={{ width: "4rem" }}
           ></Column>
         </DataTable>
       </div>
