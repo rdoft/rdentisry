@@ -8,7 +8,7 @@ function ActionGroup({ onClickEdit, onClickDelete, onClickAdd, label }) {
         <Button
           text
           outlined
-          size="small"
+          size="sm"
           icon="pi pi-plus"
           severity="secondary"
           label={label}
@@ -19,9 +19,9 @@ function ActionGroup({ onClickEdit, onClickDelete, onClickAdd, label }) {
         <Button
           text
           outlined
-          size="small"
-          severity="secondary"
+          size="sm"
           icon="pi pi-pencil"
+          severity="secondary"
           onClick={onClickEdit}
         />
       )}
@@ -29,9 +29,9 @@ function ActionGroup({ onClickEdit, onClickDelete, onClickAdd, label }) {
         <Button
           text
           outlined
-          size="small"
-          severity="danger"
+          size="sm"
           icon="pi pi-trash"
+          severity="danger"
           onClick={onClickDelete}
         />
       )}

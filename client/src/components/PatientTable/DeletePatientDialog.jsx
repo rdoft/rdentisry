@@ -2,10 +2,10 @@ import React from "react";
 import { Dialog } from "primereact";
 import DialogFooter from "components/DialogFooter/DialogFooter";
 
-function DeletePatientDialog({ visible, patient, onHide, onDelete }) {
+function DeletePatientDialog({ patient, onHide, onDelete }) {
   return (
     <Dialog
-      visible={visible}
+      visible
       style={{ width: "450px" }}
       header="Hastayı Sil"
       modal

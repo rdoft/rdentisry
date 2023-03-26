@@ -7,13 +7,13 @@ import DeletePatientsDialog from "./DeletePatientsDialog";
 import PatientTableToolbar from "./PatientTableToolbar";
 import ActionGroup from "components/ActionGroup/ActionGroup";
 
-// services
-import { PatientService } from "services";
-
+// assets
 // import classes from "assets/styles/PatientList.module.css";
 
-// TODO: [RDEN-29] Add controll mechanism for the services
-// TODO: [RDEN-32] Add comments in the save,delete,get patient functions
+// services
+import { PatientService } from "services";
+import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
+
 
 function PatientsTable() {
   // Set default empty Patient
@@ -33,6 +33,7 @@ function PatientsTable() {
   const [deletePatientDialog, setDeletePatientDialog] = useState(false);
   const [deletePatientsDialog, setDeletePatientsDialog] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState(null);
+  const [appointmentDialog, setAppointmentDialog] = useState(false);
   const [rowIndex, setRowIndex] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
@@ -68,7 +69,11 @@ function PatientsTable() {
   };
 
   // Show add appointment dialog
-  const showAddAppointmentDialog = (patient) => {};
+  const showAppointmentDialog = (patient) => {
+    setPatient({ ...patient });
+    // setAppointment({ ...appointment, patientId: patient.id });
+    setAppointmentDialog(true);
+  };
 
   // Hide patient dialog
   const hidePatientDialog = () => {
@@ -83,6 +88,11 @@ function PatientsTable() {
   // Hide delete patients dialog
   const hideDeletePatientsDialog = () => {
     setDeletePatientsDialog(false);
+  };
+
+  // Hide add appointment dialog
+  const hideAppointmentDialog = () => {
+    setAppointmentDialog(false);
   };
 
   // SERVICES -----------------------------------------------------------------
@@ -237,7 +247,7 @@ function PatientsTable() {
   };
 
   // onRowMouseLeave handler for hide buttons
-  const handleRowMouseLeave = (event) => {
+  const handleRowMouseLeave = () => {
     setRowIndex(null);
   };
 
@@ -304,6 +314,17 @@ function PatientsTable() {
             header="Telefon"
             style={{ width: "10rem" }}
           ></Column>
+          {/* Action buttons */}
+          <Column
+            body={(patient) =>
+              patient.id === rowIndex ? (
+                <ActionGroup
+                  label="Randevu"
+                  onClickAdd={() => showAppointmentDialog(patient)}
+                />
+              ) : null
+            }
+          ></Column>
           {/* Patient action buttons */}
           <Column
             body={(patient) => (
@@ -312,45 +333,45 @@ function PatientsTable() {
                 onClickDelete={() => showConfirmDeletePatientDialog(patient)}
               />
             )}
-            style={{ minWidth: "4rem" }}
-          ></Column>
-          {/* Action buttons */}
-          <Column
-            body={(patient) =>
-              patient.id === rowIndex ? (
-                <ActionGroup
-                  label="Randevu"
-                  onClickAdd={() => showAddAppointmentDialog(patient)}
-                />
-              ) : null
-            }
-            style={{ width: "4rem" }}
+            style={{ width: "8rem" }}
           ></Column>
         </DataTable>
       </div>
 
-      {/* Patient information dialog  */}
-      <PatientDialog
-        patient={patient}
-        visible={patientDialog}
-        onChange={handleChangePatient}
-        onHide={hidePatientDialog}
-        onSubmit={savePatient}
-      />
+      {/* Patient information and confirmation dialogs  */}
+      {patientDialog && (
+        <PatientDialog
+          patient={patient}
+          onChange={handleChangePatient}
+          onHide={hidePatientDialog}
+          onSubmit={savePatient}
+        />
+      )}
 
-      <DeletePatientDialog
-        visible={deletePatientDialog}
-        patient={patient}
-        onHide={hideDeletePatientDialog}
-        onDelete={deletePatient}
-      />
+      {deletePatientDialog && (
+        <DeletePatientDialog
+          patient={patient}
+          onHide={hideDeletePatientDialog}
+          onDelete={deletePatient}
+        />
+      )}
 
-      <DeletePatientsDialog
-        visible={deletePatientsDialog}
-        selectedPatients={selectedPatients}
-        onHide={hideDeletePatientsDialog}
-        onDelete={deletePatients}
-      />
+      {deletePatientsDialog && (
+        <DeletePatientsDialog
+          selectedPatients={selectedPatients}
+          onHide={hideDeletePatientsDialog}
+          onDelete={deletePatients}
+        />
+      )}
+
+      {/* Appointment dialog */}
+      {appointmentDialog && (
+        <AppointmentDialog
+          _appointment={{patient}}
+          onHide={hideAppointmentDialog}
+          // onSubmit={saveAppointment}
+        />
+      )}
     </div>
   );
 }
