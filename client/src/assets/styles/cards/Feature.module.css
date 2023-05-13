@@ -1,0 +1,29 @@
+.card {
+  box-shadow: inherit;
+  border: 1px solid;
+  border-radius: 8px;
+  border-color: grey;
+}
+
+.card:hover {
+  box-shadow: inherit;
+}
+
+.media {
+  width: 45%;
+  margin: 1rem auto;
+}
+
+.text {
+  padding: 2.5px ;
+  margin: -15px auto 0px;
+  text-align: center;
+}
+
+pre {
+  margin: 0;
+  padding: 16px !important;
+  font-family: var(--typography-fontFamily);
+  font-size: 0.75rem;
+
+}
