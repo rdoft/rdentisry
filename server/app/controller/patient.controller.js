@@ -60,7 +60,7 @@ exports.savePatient = async (req, res) => {
       error instanceof Sequelize.ValidationError &&
       error.name === "SequelizeUniqueConstraintError"
     ) {
-      res.status(400).send("Aynı TC kimlik numarasına sahip iki hasta olamaz");
+      res.status(400).send({ message: "Aynı TC kimlik numarasına sahip iki hasta olamaz" });
     } else {
       res.status(500).send(error);
     }
@@ -101,7 +101,7 @@ exports.updatePatient = async (req, res) => {
       error instanceof Sequelize.ValidationError &&
       error.name === "SequelizeUniqueConstraintError"
     ) {
-      res.status(400).send("Aynı TC kimlik numarasına sahip iki hasta olamaz");
+      res.status(400).send({ message: "Aynı TC kimlik numarasına sahip iki hasta olamaz" });
     } else {
       res.status(500).send(error);
     }

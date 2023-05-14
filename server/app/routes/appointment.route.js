@@ -3,6 +3,7 @@ const { validate } = require("../middleware/validation");
 
 // Appointment specific imports
 const controller = require("../controller/appointment.controller");
+const schema = require("../schemas/appointment.schema");
 
 // Constants
 const API_URL = "/api/appointments";
@@ -22,16 +23,15 @@ module.exports = function (app) {
      * Get Appointment list
      */
     .get(controller.getAppointments)
-     /**
+    /**
      * Add a Appointment
      */
-     .post(controller.AddAppointment)
-
-     /**
+    .post(validate(schema.appointment, "body"), controller.saveAppointment)
+    /**
      * Delete the Appointment
      * @param appointmentId: Id of the Appointment
      */
-    .delete(controller.deleteAppointment);
-     
+    .delete(validate(schema.id, "params"), controller.deleteAppointment);
+
   app.use(API_URL, router);
 };
