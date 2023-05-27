@@ -8,6 +8,7 @@ const Doctor = db.doctor;
  * Get appointment list
  */
 exports.getAppointments = async (req, res) => {
+  const { patientId: PatientId } = req.query;
   let appointments;
 
   try {
@@ -26,6 +27,9 @@ exports.getAppointments = async (req, res) => {
         {
           model: Patient,
           as: "Patient",
+          where: PatientId && {
+            PatientId: PatientId
+          }
         },
         {
           model: Doctor,

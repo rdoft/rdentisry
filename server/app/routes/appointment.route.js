@@ -26,7 +26,10 @@ module.exports = function (app) {
     /**
      * Add a Appointment
      */
-    .post(validate(schema.appointment, "body"), controller.saveAppointment)
+    .post(validate(schema.appointment, "body"), controller.saveAppointment);
+
+  router
+    .route(`/:appointmentId`)
     /**
      * Delete the Appointment
      * @param appointmentId: Id of the Appointment
