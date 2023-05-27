@@ -8,7 +8,7 @@ const Doctor = db.doctor;
  * Get appointment list
  */
 exports.getAppointments = async (req, res) => {
-  const { patientId: PatientId } = req.query;
+  const { patientId: PatientId, from: from, to: to } = req.query;
   let appointments;
 
   try {
@@ -23,13 +23,19 @@ exports.getAppointments = async (req, res) => {
         "DidAction",
         [Sequelize.literal("DATEDIFF(MINUTE, StartTime, EndTime)"), "Duration"],
       ],
+      where: (from || to) && {
+        Date: {
+          ...(from) && {[Sequelize.Op.gte]: new Date(from)},
+          ...(to) && {[Sequelize.Op.lte]: new Date(to)},
+        },
+      },
       include: [
         {
           model: Patient,
           as: "Patient",
           where: PatientId && {
-            PatientId: PatientId
-          }
+            PatientId: PatientId,
+          },
         },
         {
           model: Doctor,
@@ -120,9 +126,9 @@ exports.saveAppointment = async (req, res) => {
       error instanceof Sequelize.ValidationError &&
       error.name === "SequelizeUniqueConstraintError"
     ) {
-      res
-        .status(400)
-        .send({ message: "Aynı doktora veya hastaya aynı saatte randevu oluşturulamaz" });
+      res.status(400).send({
+        message: "Aynı doktora veya hastaya aynı saatte randevu oluşturulamaz",
+      });
     } else {
       res.status(500).send(error);
     }
