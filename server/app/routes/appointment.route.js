@@ -35,6 +35,15 @@ module.exports = function (app) {
      */
     .get(validate(schema.id, "params"), controller.getAppointment)
     /**
+     * Update the Appointment
+     * @param appointmentId: Id of the Appointment
+     */
+    .put(
+      validate(schema.id, "params"),
+      validate(schema.appointment, "body"),
+      controller.updateAppointment
+    )
+    /**
      * Delete the Appointment
      * @param appointmentId: Id of the Appointment
      */

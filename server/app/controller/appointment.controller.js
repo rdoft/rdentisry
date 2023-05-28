@@ -75,7 +75,7 @@ exports.getAppointments = async (req, res) => {
 };
 
 /**
- * Get appointment list
+ * Get an Appointment
  */
 exports.getAppointment = async (req, res) => {
   const { appointmentId } = req.params;
@@ -83,7 +83,7 @@ exports.getAppointment = async (req, res) => {
 
   try {
     // Find appointment list
-    appointment = await Appointment.findOne({
+    appointment = await Appointment.findByPk(appointmentId, {
       attributes: [
         "AppointmentId",
         "Date",
@@ -93,9 +93,6 @@ exports.getAppointment = async (req, res) => {
         "DidAction",
         [Sequelize.literal("DATEDIFF(MINUTE, StartTime, EndTime)"), "Duration"],
       ],
-      where: {
-        AppointmentId: appointmentId,
-      },
       include: [
         {
           model: Patient,
@@ -110,27 +107,32 @@ exports.getAppointment = async (req, res) => {
       nest: true,
     });
 
-    appointment = {
-      id: appointment.AppointmentId,
-      patientName: `${appointment.Patient.Name} ${appointment.Patient.Surname}`,
-      doctorName: `${appointment.Doctor.Name} ${appointment.Doctor.Surname}`,
-      date: appointment.Date,
-      startTime: appointment.StartTime.toLocaleTimeString("tr-TR", {
-        timeZone: "Etc/GMT-3",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      endTime: appointment.EndTime.toLocaleTimeString("tr-TR", {
-        timeZone: "Etc/GMT-3",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      duration: appointment.Duration,
-      didCome: appointment.DidCome,
-      didAction: appointment.DidAction,
-    };
-
-    res.status(200).send(appointment);
+    if (appointment) {
+      appointment = {
+        id: appointment.AppointmentId,
+        patientName: `${appointment.Patient.Name} ${appointment.Patient.Surname}`,
+        doctorName: `${appointment.Doctor.Name} ${appointment.Doctor.Surname}`,
+        date: appointment.Date,
+        startTime: appointment.StartTime.toLocaleTimeString("tr-TR", {
+          timeZone: "Etc/GMT-3",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        endTime: appointment.EndTime.toLocaleTimeString("tr-TR", {
+          timeZone: "Etc/GMT-3",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        duration: appointment.Duration,
+        didCome: appointment.DidCome,
+        didAction: appointment.DidAction,
+      };
+  
+      res.status(200).send(appointment);  
+    } else {
+      res.status(404).send({ message: "Randevu bulunamadı" });
+    }
+    
   } catch (error) {
     res.status(500).send(error);
   }
@@ -198,6 +200,58 @@ exports.saveAppointment = async (req, res) => {
 };
 
 /**
+ * Update the Appointment
+ * @param appointmentId: Id of the Appointment
+ */
+exports.updateAppointment = async (req, res) => {
+  const { appointmentId } = req.params;
+  const {
+    patientId: PatientId,
+    doctorId: DoctorId,
+    date: Date,
+    startTime: StartTime,
+    endTime: EndTime,
+    didCome: DidCome,
+    didAction: DidAction,
+  } = req.body;
+  let values = {
+    PatientId,
+    DoctorId: DoctorId ?? null,
+    Date: Date,
+    StartTime: Sequelize.cast(StartTime, "TIME"),
+    EndTime: Sequelize.cast(EndTime, "TIME"),
+    DidCome: DidCome ?? null,
+    DidAction: DidAction ?? null,
+  };
+  let appointment;
+
+  try {
+    // Find Appointment
+    appointment = await Appointment.findByPk(appointmentId);
+
+    if (appointment) {
+      // Update the Appointment
+      await appointment.update(values);
+
+      res.status(200).send({ id: appointmentId });
+    } else {
+      res.status(404).send({ message: "Böyle bir randevu mevcut değil" });
+    }
+  } catch (error) {
+    if (
+      error instanceof Sequelize.ValidationError &&
+      error.name === "SequelizeUniqueConstraintError"
+    ) {
+      res.status(400).send({
+        message: "Aynı doktora veya hastaya aynı saatte randevu oluşturulamaz",
+      });
+    } else {
+      res.status(500).send(error);
+    }
+  }
+};
+
+/**
  * Delete the Appointment
  * @param appointmentId: Id of the Appointment
  */
@@ -207,11 +261,7 @@ exports.deleteAppointment = async (req, res) => {
 
   try {
     // Find Appointment
-    appointment = await Appointment.findOne({
-      where: {
-        AppointmentId: appointmentId,
-      },
-    });
+    appointment = await Appointment.findByPk(appointmentId);
 
     // Delete the Appointment if it exists
     if (appointment) {
