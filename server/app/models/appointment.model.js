@@ -39,6 +39,9 @@ module.exports = (sequelize, Sequelize) => {
           max: "23:59:59",
         },
       },
+      Description: {
+        type: Sequelize.TEXT,
+      },
       DidCome: {
         type: Sequelize.BOOLEAN,
       },
