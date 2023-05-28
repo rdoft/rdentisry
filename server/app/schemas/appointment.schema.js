@@ -14,6 +14,7 @@ const appointment = Joi.object({
     .min(Joi.ref("startTime"))
     .format("HH:mm")
     .required(),
+  description: Joi.string().default(null).empty("").allow(null),
   didCome: Joi.boolean().empty(null).allow(null),
   didAction: Joi.boolean().empty(null).allow(null),
 });

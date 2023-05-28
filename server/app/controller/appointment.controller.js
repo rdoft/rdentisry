@@ -19,6 +19,7 @@ exports.getAppointments = async (req, res) => {
         "Date",
         "StartTime",
         "EndTime",
+        "Description",
         "DidCome",
         "DidAction",
         [Sequelize.literal("DATEDIFF(MINUTE, StartTime, EndTime)"), "Duration"],
@@ -63,6 +64,7 @@ exports.getAppointments = async (req, res) => {
           minute: "2-digit",
         }),
         duration: appointment.Duration,
+        description: appointment.Description,
         didCome: appointment.DidCome,
         didAction: appointment.DidAction,
       };
@@ -89,6 +91,7 @@ exports.getAppointment = async (req, res) => {
         "Date",
         "StartTime",
         "EndTime",
+        "Description",
         "DidCome",
         "DidAction",
         [Sequelize.literal("DATEDIFF(MINUTE, StartTime, EndTime)"), "Duration"],
@@ -124,6 +127,7 @@ exports.getAppointment = async (req, res) => {
           minute: "2-digit",
         }),
         duration: appointment.Duration,
+        description: appointment.Description,
         didCome: appointment.DidCome,
         didAction: appointment.DidAction,
       };
@@ -149,6 +153,7 @@ exports.saveAppointment = async (req, res) => {
     date: Date,
     startTime: StartTime,
     endTime: EndTime,
+    description: Description,
     didCome: DidCome,
     didAction: DidAction,
   } = req.body;
@@ -158,6 +163,7 @@ exports.saveAppointment = async (req, res) => {
     Date: Date,
     StartTime: Sequelize.cast(StartTime, "TIME"),
     EndTime: Sequelize.cast(EndTime, "TIME"),
+    Description: Description ?? null,
     DidCome: DidCome ?? null,
     DidAction: DidAction ?? null,
   };
@@ -181,6 +187,7 @@ exports.saveAppointment = async (req, res) => {
         hour: "2-digit",
         minute: "2-digit",
       }),
+      description: appointment.Description,
       didCome: appointment.DidCome,
       didAction: appointment.DidAction,
     };
@@ -211,6 +218,7 @@ exports.updateAppointment = async (req, res) => {
     date: Date,
     startTime: StartTime,
     endTime: EndTime,
+    description: Description,
     didCome: DidCome,
     didAction: DidAction,
   } = req.body;
@@ -220,6 +228,7 @@ exports.updateAppointment = async (req, res) => {
     Date: Date,
     StartTime: Sequelize.cast(StartTime, "TIME"),
     EndTime: Sequelize.cast(EndTime, "TIME"),
+    Description: Description ?? null,
     DidCome: DidCome ?? null,
     DidAction: DidAction ?? null,
   };
