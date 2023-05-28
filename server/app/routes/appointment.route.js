@@ -31,6 +31,10 @@ module.exports = function (app) {
   router
     .route(`/:appointmentId`)
     /**
+     * Get an Appointment
+     */
+    .get(validate(schema.id, "params"), controller.getAppointment)
+    /**
      * Delete the Appointment
      * @param appointmentId: Id of the Appointment
      */

@@ -25,8 +25,8 @@ exports.getAppointments = async (req, res) => {
       ],
       where: (from || to) && {
         Date: {
-          ...(from) && {[Sequelize.Op.gte]: new Date(from)},
-          ...(to) && {[Sequelize.Op.lte]: new Date(to)},
+          ...(from && { [Sequelize.Op.gte]: new Date(from) }),
+          ...(to && { [Sequelize.Op.lte]: new Date(to) }),
         },
       },
       include: [
@@ -69,6 +69,68 @@ exports.getAppointments = async (req, res) => {
     });
 
     res.status(200).send(appointments);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+/**
+ * Get appointment list
+ */
+exports.getAppointment = async (req, res) => {
+  const { appointmentId } = req.params;
+  let appointment;
+
+  try {
+    // Find appointment list
+    appointment = await Appointment.findOne({
+      attributes: [
+        "AppointmentId",
+        "Date",
+        "StartTime",
+        "EndTime",
+        "DidCome",
+        "DidAction",
+        [Sequelize.literal("DATEDIFF(MINUTE, StartTime, EndTime)"), "Duration"],
+      ],
+      where: {
+        AppointmentId: appointmentId,
+      },
+      include: [
+        {
+          model: Patient,
+          as: "Patient",
+        },
+        {
+          model: Doctor,
+          as: "Doctor",
+        },
+      ],
+      raw: true,
+      nest: true,
+    });
+
+    appointment = {
+      id: appointment.AppointmentId,
+      patientName: `${appointment.Patient.Name} ${appointment.Patient.Surname}`,
+      doctorName: `${appointment.Doctor.Name} ${appointment.Doctor.Surname}`,
+      date: appointment.Date,
+      startTime: appointment.StartTime.toLocaleTimeString("tr-TR", {
+        timeZone: "Etc/GMT-3",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      endTime: appointment.EndTime.toLocaleTimeString("tr-TR", {
+        timeZone: "Etc/GMT-3",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      duration: appointment.Duration,
+      didCome: appointment.DidCome,
+      didAction: appointment.DidAction,
+    };
+
+    res.status(200).send(appointment);
   } catch (error) {
     res.status(500).send(error);
   }
