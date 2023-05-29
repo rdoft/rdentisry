@@ -30,7 +30,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     date: new Date(),
     startTime: new Date(),
     endTime: new Date(),
-    duration: "0h",
+    duration: "",
   };
 
   // Dropdown selected Item
@@ -97,22 +97,33 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
   const handleChange = (event, attr) => {
-    const value =
-      (event.target && event.target.value) || emptyAppointment[`${attr}`];
-    let _appointment;
-    let _isError;
+    let value = (event.target && event.target.value) || emptyAppointment[attr];
 
-    // set appointment new value
-    _appointment = { ...appointment };
-    _appointment[`${attr}`] = value;
+    let _appointment = { ...appointment };
+    let _isError = { ...isError };
 
-    // Set isError
-    _isError = { ...isError };
-    // _isError[`${attr}`] = schema[`${attr}`].validate(value).error
+    if (attr === "duration") {
+      // Adjust the end time according to the duration
+      let newEndTime = new Date(_appointment.startTime);
+      newEndTime.setMinutes(newEndTime.getMinutes() + parseInt(value));
+      _appointment.endTime = newEndTime;
+      _appointment[attr] = value;
+    } else if (attr === "startTime" || attr === "endTime") {
+      _appointment.duration = (_appointment.endTime - _appointment.startTime) / 60000;
+    } else if (attr === "startTime" && value > _appointment.endTime) {
+      _appointment.endTime = value;
+    } else if (attr === "endTime" && value < _appointment.startTime) {
+      _appointment.startTime = value;
+    } else {
+      _appointment[attr] = value;
+    }
+    // Here you should check the validation and update isError accordingly
+    // For now, I commented out the original code
+
+    // _isError[attr] = schema[attr].validate(value).error
     //   ? true
     //   : false;
 
-    // Set isError and patient
     setIsError(_isError);
     setAppointment(_appointment);
   };
@@ -279,6 +290,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
           <InputText
             id="duration"
             className="w-full"
+            placeholder={"dk"}
             value={appointment.duration}
             onChange={(event) => handleChange(event, "duration")}
           />
