@@ -5,15 +5,15 @@ import PatientDialog from "./PatientDialog";
 import DeletePatientDialog from "./DeletePatientDialog";
 import DeletePatientsDialog from "./DeletePatientsDialog";
 import PatientTableToolbar from "./PatientTableToolbar";
-import PatientAction from "./PatientAction";
+import ActionGroup from "components/ActionGroup/ActionGroup";
+
+// assets
+// import classes from "assets/styles/PatientList.module.css";
 
 // services
 import { PatientService } from "services";
+import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
 
-// import classes from "assets/styles/PatientList.module.css";
-
-// TODO: [RDEN-29] Add controll mechanism for the services
-// TODO: [RDEN-32] Add comments in the save,delete,get patient functions
 
 function PatientsTable() {
   // Set default empty Patient
@@ -33,6 +33,8 @@ function PatientsTable() {
   const [deletePatientDialog, setDeletePatientDialog] = useState(false);
   const [deletePatientsDialog, setDeletePatientsDialog] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState(null);
+  const [appointmentDialog, setAppointmentDialog] = useState(false);
+  const [rowIndex, setRowIndex] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
@@ -66,6 +68,13 @@ function PatientsTable() {
     setDeletePatientsDialog(true);
   };
 
+  // Show add appointment dialog
+  const showAppointmentDialog = (patient) => {
+    setPatient({ ...patient });
+    // setAppointment({ ...appointment, patientId: patient.id });
+    setAppointmentDialog(true);
+  };
+
   // Hide patient dialog
   const hidePatientDialog = () => {
     setPatientDialog(false);
@@ -79,6 +88,11 @@ function PatientsTable() {
   // Hide delete patients dialog
   const hideDeletePatientsDialog = () => {
     setDeletePatientsDialog(false);
+  };
+
+  // Hide add appointment dialog
+  const hideAppointmentDialog = () => {
+    setAppointmentDialog(false);
   };
 
   // SERVICES -----------------------------------------------------------------
@@ -227,17 +241,17 @@ function PatientsTable() {
     setSelectedPatients(event.value);
   };
 
-  // TEMPLATES ----------------------------------------------------------------
-  // Patient action buttons template
-  const getPatientAction = (patient) => {
-    return (
-      <PatientAction
-        onClickEdit={() => showEditPatientDialog(patient)}
-        onClickDelete={() => showConfirmDeletePatientDialog(patient)}
-      />
-    );
+  // onRowMouseEnter handler for display buttons
+  const handleRowMouseEnter = (event) => {
+    setRowIndex(event.data.id);
   };
 
+  // onRowMouseLeave handler for hide buttons
+  const handleRowMouseLeave = () => {
+    setRowIndex(null);
+  };
+
+  // Return the PatientTable
   return (
     <div className="datatable-crud">
       <Toast ref={toast} position="bottom-right" />
@@ -255,13 +269,16 @@ function PatientsTable() {
           paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
           ref={dt}
           value={patients}
+          globalFilter={globalFilter}
           selection={selectedPatients}
           onSelectionChange={handleChangeSelection}
+          onRowMouseEnter={handleRowMouseEnter}
+          onRowMouseLeave={handleRowMouseLeave}
+          selectionMode="checkbox"
+          responsiveLayout="scroll"
           dataKey="id"
           paginator
           rows={10}
-          globalFilter={globalFilter}
-          responsiveLayout="scroll"
           currentPageReportTemplate="({totalRecords} hasta)"
         >
           {/* Checkbox */}
@@ -275,59 +292,86 @@ function PatientsTable() {
             field="idNumber"
             header="Kimlik Numarası"
             sortable
-            style={{ minWidth: "12rem" }}
+            style={{ width: "12rem" }}
           ></Column>
           {/* Name */}
           <Column
             field="name"
             header="Ad"
             sortable
-            style={{ minWidth: "16rem" }}
+            style={{ width: "12rem" }}
           ></Column>
           {/* Surname */}
           <Column
             field="surname"
             header="Soyad"
             sortable
-            style={{ minWidth: "16rem" }}
+            style={{ width: "12rem" }}
           ></Column>
           {/* Phone */}
           <Column
             field="phone"
             header="Telefon"
-            style={{ minWidth: "12rem" }}
+            style={{ width: "10rem" }}
           ></Column>
           {/* Action buttons */}
           <Column
-            body={getPatientAction}
-            exportable={false}
-            style={{ minWidth: "8rem" }}
+            body={(patient) =>
+              patient.id === rowIndex ? (
+                <ActionGroup
+                  label="Randevu"
+                  onClickAdd={() => showAppointmentDialog(patient)}
+                />
+              ) : null
+            }
+          ></Column>
+          {/* Patient action buttons */}
+          <Column
+            body={(patient) => (
+              <ActionGroup
+                onClickEdit={() => showEditPatientDialog(patient)}
+                onClickDelete={() => showConfirmDeletePatientDialog(patient)}
+              />
+            )}
+            style={{ width: "8rem" }}
           ></Column>
         </DataTable>
       </div>
 
-      {/* Patient information dialog  */}
-      <PatientDialog
-        patient={patient}
-        visible={patientDialog}
-        onChange={handleChangePatient}
-        onHide={hidePatientDialog}
-        onSubmit={savePatient}
-      />
+      {/* Patient information and confirmation dialogs  */}
+      {patientDialog && (
+        <PatientDialog
+          patient={patient}
+          onChange={handleChangePatient}
+          onHide={hidePatientDialog}
+          onSubmit={savePatient}
+        />
+      )}
 
-      <DeletePatientDialog
-        visible={deletePatientDialog}
-        patient={patient}
-        onHide={hideDeletePatientDialog}
-        onDelete={deletePatient}
-      />
+      {deletePatientDialog && (
+        <DeletePatientDialog
+          patient={patient}
+          onHide={hideDeletePatientDialog}
+          onDelete={deletePatient}
+        />
+      )}
 
-      <DeletePatientsDialog
-        visible={deletePatientsDialog}
-        selectedPatients={selectedPatients}
-        onHide={hideDeletePatientsDialog}
-        onDelete={deletePatients}
-      />
+      {deletePatientsDialog && (
+        <DeletePatientsDialog
+          selectedPatients={selectedPatients}
+          onHide={hideDeletePatientsDialog}
+          onDelete={deletePatients}
+        />
+      )}
+
+      {/* Appointment dialog */}
+      {appointmentDialog && (
+        <AppointmentDialog
+          _appointment={{patient}}
+          onHide={hideAppointmentDialog}
+          // onSubmit={saveAppointment}
+        />
+      )}
     </div>
   );
 }
