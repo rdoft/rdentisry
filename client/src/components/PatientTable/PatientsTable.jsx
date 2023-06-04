@@ -219,7 +219,7 @@ function PatientsTable() {
 
   // onInput handler for search
   const handleInputSearch = (event) => {
-    setGlobalFilter(event.target.value);
+    setTimeout(() => setGlobalFilter(event.target.value), 400);
   };
 
   // onSelectedChange handler
