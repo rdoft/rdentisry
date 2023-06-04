@@ -16,7 +16,7 @@ const appointment = Joi.object({
     .required(),
   description: Joi.string().default(null).empty("").allow(null),
   didCome: Joi.boolean().empty(null).allow(null),
-  didAction: Joi.boolean().empty(null).allow(null),
+  status: Joi.string().default("active").empty(null),
 });
 
 const id = Joi.object({
@@ -34,6 +34,7 @@ const endTime = Joi.date()
   .format("HH:mm")
   // .pattern(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
   .required();
+const status = Joi.string().default("active").empty(null);
 
 module.exports = {
   appointment,
@@ -43,4 +44,5 @@ module.exports = {
   date,
   startTime,
   endTime,
+  status,
 };

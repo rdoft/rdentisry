@@ -8,7 +8,12 @@ const Doctor = db.doctor;
  * Get appointment list
  */
 exports.getAppointments = async (req, res) => {
-  const { patientId: PatientId, from: from, to: to } = req.query;
+  const {
+    patientId: patientId,
+    from: from,
+    to: to,
+    status: status,
+  } = req.query;
   let appointments;
 
   try {
@@ -21,21 +26,24 @@ exports.getAppointments = async (req, res) => {
         "EndTime",
         "Description",
         "DidCome",
-        "DidAction",
+        "Status",
         [Sequelize.literal("DATEDIFF(MINUTE, StartTime, EndTime)"), "Duration"],
       ],
-      where: (from || to) && {
-        Date: {
-          ...(from && { [Sequelize.Op.gte]: new Date(from) }),
-          ...(to && { [Sequelize.Op.lte]: new Date(to) }),
-        },
+      where: {
+        ...(status && { Status: status }),
+        ...((from || to) && {
+          Date: {
+            ...(from && { [Sequelize.Op.gte]: new Date(from) }),
+            ...(to && { [Sequelize.Op.lte]: new Date(to) }),
+          },
+        }),
       },
       include: [
         {
           model: Patient,
           as: "Patient",
-          where: PatientId && {
-            PatientId: PatientId,
+          where: patientId && {
+            PatientId: patientId,
           },
         },
         {
@@ -66,7 +74,7 @@ exports.getAppointments = async (req, res) => {
         duration: appointment.Duration,
         description: appointment.Description,
         didCome: appointment.DidCome,
-        didAction: appointment.DidAction,
+        status: appointment.Status,
       };
     });
 
@@ -93,7 +101,7 @@ exports.getAppointment = async (req, res) => {
         "EndTime",
         "Description",
         "DidCome",
-        "DidAction",
+        "Status",
         [Sequelize.literal("DATEDIFF(MINUTE, StartTime, EndTime)"), "Duration"],
       ],
       include: [
@@ -129,14 +137,13 @@ exports.getAppointment = async (req, res) => {
         duration: appointment.Duration,
         description: appointment.Description,
         didCome: appointment.DidCome,
-        didAction: appointment.DidAction,
+        status: appointment.Status,
       };
-  
-      res.status(200).send(appointment);  
+
+      res.status(200).send(appointment);
     } else {
       res.status(404).send({ message: "Randevu bulunamadı" });
     }
-    
   } catch (error) {
     res.status(500).send(error);
   }
@@ -155,7 +162,7 @@ exports.saveAppointment = async (req, res) => {
     endTime: EndTime,
     description: Description,
     didCome: DidCome,
-    didAction: DidAction,
+    status: Status,
   } = req.body;
   let values = {
     PatientId,
@@ -165,7 +172,7 @@ exports.saveAppointment = async (req, res) => {
     EndTime: Sequelize.cast(EndTime, "TIME"),
     Description: Description ?? null,
     DidCome: DidCome ?? null,
-    DidAction: DidAction ?? null,
+    Status: Status,
   };
   let appointment;
 
@@ -189,7 +196,7 @@ exports.saveAppointment = async (req, res) => {
       }),
       description: appointment.Description,
       didCome: appointment.DidCome,
-      didAction: appointment.DidAction,
+      status: appointment.Status,
     };
     res.status(201).send(appointment);
   } catch (error) {
@@ -220,7 +227,7 @@ exports.updateAppointment = async (req, res) => {
     endTime: EndTime,
     description: Description,
     didCome: DidCome,
-    didAction: DidAction,
+    status: Status,
   } = req.body;
   let values = {
     PatientId,
@@ -230,7 +237,7 @@ exports.updateAppointment = async (req, res) => {
     EndTime: Sequelize.cast(EndTime, "TIME"),
     Description: Description ?? null,
     DidCome: DidCome ?? null,
-    DidAction: DidAction ?? null,
+    Status: Status,
   };
   let appointment;
 
