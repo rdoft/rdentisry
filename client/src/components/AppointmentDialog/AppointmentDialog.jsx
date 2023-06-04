@@ -16,7 +16,7 @@ import avatarPatient from "assets/images/avatars/patient-avatar.png";
 import avatarDoctor from "assets/images/avatars/doctor-avatar.png";
 import appointmentIcon from "assets/images/icons/appointment.png";
 
-// import schema from "schemas/appointment.schema";
+import schema from "schemas/appointment.schema";
 
 // services
 import { PatientService, DoctorService } from "services";
@@ -55,11 +55,20 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
   // Set the doctors from dropdown on loading
   useEffect(() => {
     // Initialize the appointment, merge with emptyAppointment
-    _appointment = { ...emptyAppointment, ..._appointment };
+    _appointment = {
+      ...emptyAppointment,
+      ..._appointment,
+    };
     setAppointment(_appointment);
     getDoctors();
     getPatients();
   }, []);
+
+  useEffect(() => {
+    const _isValid = !schema.appointment.validate(appointment).error;
+
+    setIsValid(_isValid);
+  }, [appointment]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of doctors and set doctors value
@@ -108,17 +117,16 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
       newEndTime.setMinutes(newEndTime.getMinutes() + parseInt(value));
       _appointment.endTime = newEndTime;
       _appointment[attr] = value;
-    } else if (attr === "startTime" || attr === "endTime") {
-      _appointment.duration = (_appointment.endTime - _appointment.startTime) / 60000;
     } else if (attr === "startTime" && value > _appointment.endTime) {
       _appointment.endTime = value;
     } else if (attr === "endTime" && value < _appointment.startTime) {
       _appointment.startTime = value;
+    } else if (attr === "startTime" || attr === "endTime") {
+      _appointment.duration =
+        (_appointment.endTime - _appointment.startTime) / 60000;
     } else {
       _appointment[attr] = value;
     }
-    // Here you should check the validation and update isError accordingly
-    // For now, I commented out the original code
 
     // _isError[attr] = schema[attr].validate(value).error
     //   ? true
@@ -142,8 +150,8 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
   };
 
   // onSubmit handler
-  const handleSubmit = () => {
-    // onSubmit(patient);
+  const handleSubmit = async () => {
+    await onSubmit(appointment);
   };
 
   // onSubmit handler

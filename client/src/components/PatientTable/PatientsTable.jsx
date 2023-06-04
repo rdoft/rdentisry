@@ -13,7 +13,7 @@ import ActionGroup from "components/ActionGroup/ActionGroup";
 // services
 import { PatientService } from "services";
 import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
-
+import { AppointmentService } from "services/index";
 
 function PatientsTable() {
   // Set default empty Patient
@@ -158,6 +158,17 @@ function PatientsTable() {
             ? error.response.data
             : "Bağlantı hatası, bir süre sonra yeniden deneyiniz",
       });
+    }
+  };
+
+  // save appointment
+  const saveAppointment = async (appointment) => {
+    try {
+      const response = await AppointmentService.saveAppointment(appointment);
+
+      console.log(response)
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -367,9 +378,9 @@ function PatientsTable() {
       {/* Appointment dialog */}
       {appointmentDialog && (
         <AppointmentDialog
-          _appointment={{patient}}
+          _appointment={{ patient }}
           onHide={hideAppointmentDialog}
-          // onSubmit={saveAppointment}
+          onSubmit={saveAppointment}
         />
       )}
     </div>

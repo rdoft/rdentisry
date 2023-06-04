@@ -2,8 +2,8 @@ const Joi = require("joi").extend(require("@joi/date"));
 
 const appointment = Joi.object({
   id: Joi.number().empty(null).id(),
-  patientId: Joi.number().required(),
-  doctorId: Joi.number().empty(null),
+  patient: Joi.object().required(),
+  doctor: Joi.object().empty(null),
   date: Joi.date().min("now").required(),
   startTime: Joi.date()
     // .format("HH:mm")
@@ -17,6 +17,7 @@ const appointment = Joi.object({
   description: Joi.string().default(null).empty("").allow(null),
   didCome: Joi.boolean().empty(null).allow(null),
   didAction: Joi.boolean().empty(null).allow(null),
+  duration: Joi.number().empty(null).allow(null)
 });
 
 const id = Joi.object({
