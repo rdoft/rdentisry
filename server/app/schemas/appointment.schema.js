@@ -27,11 +27,11 @@ const patientId = Joi.number().required();
 const doctorId = Joi.number().empty(null);
 const date = Joi.date().min("now").required();
 const startTime = Joi.date()
-  .format("HH:mm")
+  // .format("HH:mm")
   // .pattern(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
   .required();
 const endTime = Joi.date()
-  .format("HH:mm")
+  // .format("HH:mm")
   // .pattern(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
   .required();
 
