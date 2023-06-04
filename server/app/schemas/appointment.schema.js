@@ -6,13 +6,13 @@ const appointment = Joi.object({
   doctorId: Joi.number().empty(null),
   date: Joi.date().min("now").required(),
   startTime: Joi.date()
-    .format("HH:mm")
+    // .format("HH:mm")
     // .pattern(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
     .required(),
   endTime: Joi.date()
     // .pattern(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
     .min(Joi.ref("startTime"))
-    .format("HH:mm")
+    // .format("HH:mm")
     .required(),
   description: Joi.string().default(null).empty("").allow(null),
   didCome: Joi.boolean().empty(null).allow(null),
