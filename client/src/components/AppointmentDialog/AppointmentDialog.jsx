@@ -10,6 +10,7 @@ import {
 } from "primereact";
 import DialogFooter from "components/DialogFooter/DialogFooter";
 import DropdownItem from "components/DropdownItem/DropdownItem";
+import { toast } from "react-hot-toast";
 
 // assets
 import avatarPatient from "assets/images/avatars/patient-avatar.png";
@@ -20,6 +21,7 @@ import schema from "schemas/appointment.schema";
 
 // services
 import { PatientService, DoctorService } from "services";
+import { toastErrorMessage } from "components/errorMesage";
 
 function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
   // Set default empty Appointment
@@ -84,6 +86,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
       setDoctors(doctors);
     } catch (error) {
       // Set error status and show error toast message
+      toast.error(toastErrorMessage(error));
     }
   };
 

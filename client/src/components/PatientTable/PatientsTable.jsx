@@ -14,6 +14,8 @@ import ActionGroup from "components/ActionGroup/ActionGroup";
 import { PatientService } from "services";
 import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
 import { AppointmentService } from "services/index";
+import { toast } from "react-hot-toast";
+import { toastErrorMessage } from "components/errorMesage";
 
 function PatientsTable() {
   // Set default empty Patient
@@ -36,7 +38,6 @@ function PatientsTable() {
   const [appointmentDialog, setAppointmentDialog] = useState(false);
   const [rowIndex, setRowIndex] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
-  const toast = useRef(null);
   const dt = useRef(null);
 
   // Set the page on loading
@@ -109,12 +110,7 @@ function PatientsTable() {
       setPatients(patients);
     } catch (error) {
       // Set error status and show error toast message
-      toast.current.show({
-        severity: "error",
-        summary: "Oops!",
-        detail: "Bağlantı hatası, bir süre sonra yeniden deneyiniz",
-        life: 3000,
-      });
+      toast.error(toastErrorMessage(error));
     }
   };
 
@@ -147,17 +143,10 @@ function PatientsTable() {
       // Set the patients and close the dialog
       setPatients(_patients);
       setPatientDialog(false);
+      toast.success("Yeni hasta başarıyla eklendi!");
     } catch (error) {
       // Set error status and show error toast message
-      toast.current.show({
-        severity: "error",
-        life: 3000,
-        summary: "Opps!",
-        detail:
-          error.response?.status < 500
-            ? error.response.data
-            : "Bağlantı hatası, bir süre sonra yeniden deneyiniz",
-      });
+      toast.error(toastErrorMessage(error));
     }
   };
 
@@ -165,10 +154,10 @@ function PatientsTable() {
   const saveAppointment = async (appointment) => {
     try {
       const response = await AppointmentService.saveAppointment(appointment);
-
-      console.log(response)
+      setAppointmentDialog(false);
+      toast.success("Yeni randevu başarıyla oluşturuldu!");
     } catch (error) {
-      console.log(error);
+      toast.erorr(toastErrorMessage(error));
     }
   };
 
@@ -191,12 +180,7 @@ function PatientsTable() {
       setSelectedPatients(_selectedPatients);
     } catch (error) {
       // Set error status and show error toast message
-      toast.current.show({
-        severity: "error",
-        summary: "Hasta silinemedi",
-        detail: "Bağlantı hatası, bir süre sonra yeniden deneyiniz",
-        life: 3000,
-      });
+      toast.error(toastErrorMessage(error));
     }
 
     // Close delete dialog and empty patient variable
@@ -224,12 +208,7 @@ function PatientsTable() {
       setSelectedPatients(null);
     } catch (error) {
       // Set error status and show error toast message
-      toast.current.show({
-        severity: "error",
-        summary: "Seçilen hastalar silinemedi",
-        detail: "Bağlantı hatası, bir süre sonra yeniden deneyiniz",
-        life: 3000,
-      });
+      toast.erorr(toastErrorMessage(error));
     }
 
     // Close the dialog and set selec
@@ -265,8 +244,6 @@ function PatientsTable() {
   // Return the PatientTable
   return (
     <div className="datatable-crud">
-      <Toast ref={toast} position="bottom-right" />
-
       <div className="card">
         {/* Patient table toolbar */}
         <PatientTableToolbar
