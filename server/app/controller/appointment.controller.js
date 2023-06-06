@@ -58,19 +58,11 @@ exports.getAppointments = async (req, res) => {
     appointments = appointments.map((appointment) => {
       return {
         id: appointment.AppointmentId,
-        patientName: `${appointment.Patient.Name} ${appointment.Patient.Surname}`,
-        doctorName: `${appointment.Doctor.Name} ${appointment.Doctor.Surname}`,
+        patient: appointment.Patient,
+        doctor: appointment.Doctor,
         date: appointment.Date,
-        startTime: appointment.StartTime.toLocaleTimeString("tr-TR", {
-          timeZone: "Etc/GMT-3",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        endTime: appointment.EndTime.toLocaleTimeString("tr-TR", {
-          timeZone: "Etc/GMT-3",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
+        startTime: appointment.StartTime,
+        endTime: appointment.EndTime,
         duration: appointment.Duration,
         description: appointment.Description,
         didCome: appointment.DidCome,
@@ -121,19 +113,11 @@ exports.getAppointment = async (req, res) => {
     if (appointment) {
       appointment = {
         id: appointment.AppointmentId,
-        patientName: `${appointment.Patient.Name} ${appointment.Patient.Surname}`,
-        doctorName: `${appointment.Doctor.Name} ${appointment.Doctor.Surname}`,
+        patient: appointment.Patient,
+        doctor: appointment.Doctor,
         date: appointment.Date,
-        startTime: appointment.StartTime.toLocaleTimeString("tr-TR", {
-          timeZone: "Etc/GMT-3",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        endTime: appointment.EndTime.toLocaleTimeString("tr-TR", {
-          timeZone: "Etc/GMT-3",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
+        startTime: appointment.StartTime,
+        endTime: appointment.EndTime,
         duration: appointment.Duration,
         description: appointment.Description,
         didCome: appointment.DidCome,
@@ -155,8 +139,8 @@ exports.getAppointment = async (req, res) => {
  */
 exports.saveAppointment = async (req, res) => {
   const {
-    patientId: PatientId,
-    doctorId: DoctorId,
+    patient: Patient,
+    doctor: Doctor,
     date: Date,
     startTime: StartTime,
     endTime: EndTime,
@@ -165,8 +149,8 @@ exports.saveAppointment = async (req, res) => {
     status: Status,
   } = req.body;
   let values = {
-    PatientId,
-    DoctorId: DoctorId ?? null,
+    PatientId: Patient.id,
+    DoctorId: Doctor ? Doctor.id : null,
     Date: Date,
     StartTime: Sequelize.cast(StartTime, "TIME"),
     EndTime: Sequelize.cast(EndTime, "TIME"),
@@ -184,16 +168,8 @@ exports.saveAppointment = async (req, res) => {
       patientId: appointment.PatientId,
       doctorId: appointment.DoctorId,
       date: appointment.Date,
-      startTime: appointment.StartTime.toLocaleTimeString("tr-TR", {
-        timeZone: "Etc/GMT-3",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      endTime: appointment.EndTime.toLocaleTimeString("tr-TR", {
-        timeZone: "Etc/GMT-3",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      startTime: appointment.StartTime,
+      endTime: appointment.EndTime,
       description: appointment.Description,
       didCome: appointment.DidCome,
       status: appointment.Status,
@@ -220,8 +196,8 @@ exports.saveAppointment = async (req, res) => {
 exports.updateAppointment = async (req, res) => {
   const { appointmentId } = req.params;
   const {
-    patientId: PatientId,
-    doctorId: DoctorId,
+    patient: Patient,
+    doctor: Doctor,
     date: Date,
     startTime: StartTime,
     endTime: EndTime,
@@ -230,8 +206,8 @@ exports.updateAppointment = async (req, res) => {
     status: Status,
   } = req.body;
   let values = {
-    PatientId,
-    DoctorId: DoctorId ?? null,
+    PatientId: Patient.id,
+    DoctorId: Doctor ? Doctor.id : null,
     Date: Date,
     StartTime: Sequelize.cast(StartTime, "TIME"),
     EndTime: Sequelize.cast(EndTime, "TIME"),
