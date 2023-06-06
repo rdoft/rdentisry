@@ -21,9 +21,10 @@ db.sequelize = sequelize;
 db.patient = require("./patient.model")(sequelize, Sequelize);
 db.doctor = require("./doctor.model")(sequelize, Sequelize);
 db.appointment = require("./appointment.model")(sequelize, Sequelize);
+db.note = require("./note.model")(sequelize, Sequelize);
 
 // Relationships
-// patient - appointment (ont to many)
+// patient - appointment (one to many)
 db.patient.hasMany(db.appointment, {
   as: "Appointments",
   foreignKey: "PatientId",
@@ -33,9 +34,21 @@ db.patient.hasMany(db.appointment, {
 db.appointment.belongsTo(db.patient, {
   as: "Patient",
   foreignKey: "PatientId",
-})
+});
 
-// doctor - appointment (ont to many)
+// patient - note (one to many)
+db.patient.hasMany(db.note, {
+  as: "Notes",
+  foreignKey: "PatientId",
+  onDelete: "cascade",
+  hooks: true,
+});
+db.note.belongsTo(db.patient, {
+  as: "Patient",
+  foreignKey: "PatientId",
+});
+
+// doctor - appointment (one to many)
 db.doctor.hasMany(db.appointment, {
   as: "Appointments",
   foreignKey: "DoctorId",
@@ -43,15 +56,17 @@ db.doctor.hasMany(db.appointment, {
 db.appointment.belongsTo(db.doctor, {
   as: "Doctor",
   foreignKey: "DoctorId",
-})
+});
 
 // Hooks
 // Control If doctor has any appointments before destroy
 db.doctor.beforeDestroy(async (doctor) => {
   const appointmentCount = await doctor.countAppointments();
   if (appointmentCount > 0) {
-    throw new Error("Cannot destroy doctor before removing his/her appointments");
+    throw new Error(
+      "Cannot destroy doctor before removing his/her appointments"
+    );
   }
-})
+});
 
 module.exports = db;
