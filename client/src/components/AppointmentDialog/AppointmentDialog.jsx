@@ -15,7 +15,6 @@ import { toast } from "react-hot-toast";
 // assets
 import avatarPatient from "assets/images/avatars/patient-avatar.png";
 import avatarDoctor from "assets/images/avatars/doctor-avatar.png";
-import appointmentIcon from "assets/images/icons/appointment.png";
 
 import schema from "schemas/appointment.schema";
 
@@ -38,8 +37,6 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
   // Dropdown selected Item
   const [doctors, setDoctors] = useState(null);
   const [patients, setPatients] = useState(null);
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
-  // const [selectedPatient, setSelectedPatient] = useState(patient);
   const [appointment, setAppointment] = useState(emptyAppointment);
   // Validation of appointment object
   const [isValid, setIsValid] = useState(false);

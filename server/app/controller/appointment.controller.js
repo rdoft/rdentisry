@@ -10,6 +10,7 @@ const Doctor = db.doctor;
 exports.getAppointments = async (req, res) => {
   const {
     patientId: patientId,
+    doctorId: doctorId,
     from: from,
     to: to,
     status: status,
@@ -49,6 +50,9 @@ exports.getAppointments = async (req, res) => {
         {
           model: Doctor,
           as: "Doctor",
+          where: doctorId && {
+            DoctorId: doctorId,
+          },
         },
       ],
       raw: true,

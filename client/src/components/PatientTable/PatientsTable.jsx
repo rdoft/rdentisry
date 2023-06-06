@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-import { DataTable, Column, Toast } from "primereact";
+import { DataTable, Column } from "primereact";
 import PatientDialog from "./PatientDialog";
 import DeletePatientDialog from "./DeletePatientDialog";
 import DeletePatientsDialog from "./DeletePatientsDialog";
@@ -11,9 +11,8 @@ import ActionGroup from "components/ActionGroup/ActionGroup";
 // import classes from "assets/styles/PatientList.module.css";
 
 // services
-import { PatientService } from "services";
+import { PatientService, AppointmentService } from "services";
 import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
-import { AppointmentService } from "services/index";
 import { toast } from "react-hot-toast";
 import { toastErrorMessage } from "components/errorMesage";
 
@@ -131,6 +130,7 @@ function PatientsTable() {
         // Find the index of the patinet in the patients array
         index = patients.findIndex((item) => item.id === patient.id);
         _patients[index] = patient;
+        toast.success("Hasta başarıyla güncellendi");
       } else {
         // Create a new patient
         // POST /patients
@@ -138,12 +138,12 @@ function PatientsTable() {
         // Set created patient's id, and add into patients
         patient.id = response.data.id;
         _patients.push(patient);
+        toast.success("Yeni hasta başarıyla eklendi");
       }
 
       // Set the patients and close the dialog
       setPatients(_patients);
       setPatientDialog(false);
-      toast.success("Yeni hasta başarıyla eklendi!");
     } catch (error) {
       // Set error status and show error toast message
       toast.error(toastErrorMessage(error));
@@ -153,9 +153,9 @@ function PatientsTable() {
   // save appointment
   const saveAppointment = async (appointment) => {
     try {
-      const response = await AppointmentService.saveAppointment(appointment);
+      await AppointmentService.saveAppointment(appointment);
       setAppointmentDialog(false);
-      toast.success("Yeni randevu başarıyla oluşturuldu!");
+      toast.success("Yeni randevu başarıyla eklendi");
     } catch (error) {
       toast.erorr(toastErrorMessage(error));
     }
