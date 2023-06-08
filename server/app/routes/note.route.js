@@ -24,6 +24,10 @@ module.exports = function (app) {
      * @param {string} patientId id of the patient
      */
     .get(controller.getNotes)
+    /**
+     * Add a note
+     */
+    .post(validate(schema.note, "body"), controller.saveNote);
     
   app.use(API_URL, router);
 };

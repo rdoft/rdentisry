@@ -41,3 +41,38 @@ exports.getNotes = async (req, res) => {
     res.status(500).send(error);
   }
 };
+
+/**
+ * Add a Note
+ * @body Note information
+ */
+exports.saveNote = async (req, res) => {
+  const { patient: Patient, date: Date, detail: Detail } = req.body;
+  let values = {
+    PatientId: Patient.id,
+    Date: Date,
+    Detail: Detail,
+  };
+  let note;
+
+  try {
+    // Create Note record
+    note = await Note.create(values);
+    note = {
+      id: note.NoteId,
+      patientId: note.PatientId,
+      date: note.Date,
+      detail: note.Detail,
+    };
+    
+    res.status(200).send(note);
+  } catch (error) {
+    if (error instanceof Sequelize.ForeignKeyConstraintError) {
+      res.status(400).send({
+        message: "Not eklenmek istenen hasta mevcut değil",
+      });
+    } else {
+      res.status(500).send(error);
+    }
+  }
+};
