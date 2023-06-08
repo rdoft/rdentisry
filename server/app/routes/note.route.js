@@ -28,6 +28,12 @@ module.exports = function (app) {
      * Add a note
      */
     .post(validate(schema.note, "body"), controller.saveNote);
-    
+
+  router
+    .route(`/:noteId`)
+    /**
+     * Get an Note
+     */
+    .get(validate(schema.id, "params"), controller.getNote);
   app.use(API_URL, router);
 };

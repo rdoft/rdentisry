@@ -43,15 +43,53 @@ exports.getNotes = async (req, res) => {
 };
 
 /**
+ * Get a Note
+ * @param noteId: Id of the Note
+ */
+exports.getNote = async (req, res) => {
+  const { noteId } = req.params;
+  let note;
+
+  try {
+    // Find Note record
+    note = await Note.findByPk(noteId, {
+      include: [
+        {
+          model: Patient,
+          as: "Patient",
+        },
+      ],
+      raw: true,
+      nest: true,
+    });
+
+    if (note) {
+      note = {
+        id: note.NoteId,
+        patient: note.Patient,
+        date: note.Date,
+        detail: note.Detail,
+      };
+
+      res.status(200).send(note);
+    } else {
+      res.status(404).send({ message: "Not bulunamadı" });
+    }
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+/**
  * Add a Note
  * @body Note information
  */
 exports.saveNote = async (req, res) => {
-  const { patient: Patient, date: Date, detail: Detail } = req.body;
+  const { patient: Patient, detail: Detail } = req.body;
   let values = {
     PatientId: Patient.id,
-    Date: Date,
     Detail: Detail,
+    Date: new Date(),
   };
   let note;
 
@@ -64,7 +102,7 @@ exports.saveNote = async (req, res) => {
       date: note.Date,
       detail: note.Detail,
     };
-    
+
     res.status(200).send(note);
   } catch (error) {
     if (error instanceof Sequelize.ForeignKeyConstraintError) {

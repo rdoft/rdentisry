@@ -3,7 +3,7 @@ const Joi = require("joi").extend(require("@joi/date"));
 const note = Joi.object({
   id: Joi.number().empty(null).id(),
   patient: Joi.object().required(),
-  date: Joi.date().min("now").required(),
+  date: Joi.date().min("now"),
   detail: Joi.string().default(null).empty("").allow(null),
 });
 
