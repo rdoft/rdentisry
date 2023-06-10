@@ -16,7 +16,7 @@ module.exports = function (app) {
     );
     next();
   });
-  
+
   router
     .route(`/patients/:patientId/notes`)
     /**
@@ -24,7 +24,7 @@ module.exports = function (app) {
      * @param {string} patientId id of the patient
      */
     .get(controller.getNotes)
-    
+
     /**
      * Delete all notes of given patient
      * @param patientId: Id of the patient
@@ -44,6 +44,15 @@ module.exports = function (app) {
      * Get an Note
      */
     .get(validate(schema.id, "params"), controller.getNote)
+    /**
+     * Update the Note
+     * @param noteId: Id of the Note
+     */
+    .put(
+      validate(schema.id, "params"),
+      validate(schema.note, "body"),
+      controller.updateNote
+    )
     /**
      * Delete the Note
      * @param noteId: Id of the Note
