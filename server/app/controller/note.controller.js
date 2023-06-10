@@ -8,7 +8,7 @@ const Patient = db.patient;
  * @param {string} patientId id of the patient
  */
 exports.getNotes = async (req, res) => {
-  const { patientId: patientId } = req.query;
+  const { patientId } = req.params;
   let notes;
 
   try {
@@ -144,13 +144,11 @@ exports.deleteNote = async (req, res) => {
  * @param patientId: Id of the patient
  */
 exports.deleteNotes = async (req, res) => {
-  const { patientId } = req.query;
+  const { patientId } = req.params;
   let count;
 
   try {
     // Find Note
-    // patient = await Patient.findByPk(patientId);
-
     count = await Note.destroy({
       where: {
         PatientId: patientId,
