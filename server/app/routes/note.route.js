@@ -27,13 +27,25 @@ module.exports = function (app) {
     /**
      * Add a note
      */
-    .post(validate(schema.note, "body"), controller.saveNote);
+    .post(validate(schema.note, "body"), controller.saveNote)
+    /**
+     * Delete all notes of given patient
+     * @param patientId: Id of the patient
+     */
+    .delete(controller.deleteNotes);
 
   router
     .route(`/:noteId`)
     /**
      * Get an Note
      */
-    .get(validate(schema.id, "params"), controller.getNote);
+    .get(validate(schema.id, "params"), controller.getNote)
+    /**
+     * Delete the Note
+     * @param noteId: Id of the Note
+     */
+    .delete(validate(schema.id, "params"), controller.deleteNote);
+
+
   app.use(API_URL, router);
 };

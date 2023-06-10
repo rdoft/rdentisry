@@ -114,3 +114,51 @@ exports.saveNote = async (req, res) => {
     }
   }
 };
+
+/**
+ * Delete the Note
+ * @param noteId: Id of the Note
+ */
+exports.deleteNote = async (req, res) => {
+  const { noteId } = req.params;
+  let note;
+
+  try {
+    // Find Note
+    note = await Note.findByPk(noteId);
+
+    if (note) {
+      note.destroy();
+
+      res.status(200).send({ id : note.id });
+    } else {
+      res.status(404).send({ message: "Not bulunamadı" });
+    }
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+/**
+ * Delete all Notes of given patient
+ * @param patientId: Id of the patient
+ */
+exports.deleteNotes = async (req, res) => {
+  const { patientId } = req.query;
+  let count;
+
+  try {
+    // Find Note
+    // patient = await Patient.findByPk(patientId);
+
+    count = await Note.destroy({
+      where: {
+        PatientId: patientId,
+      }
+    });
+    
+    res.status(200).send({ count: count });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
