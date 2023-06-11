@@ -23,6 +23,12 @@ db.doctor = require("./doctor.model")(sequelize, Sequelize);
 db.appointment = require("./appointment.model")(sequelize, Sequelize);
 db.note = require("./note.model")(sequelize, Sequelize);
 db.payment = require("./payment.model")(sequelize, Sequelize);
+db.procedure = require("./procedure.model")(sequelize, Sequelize);
+db.procedureCategory = require("./procedureCategory.model")(
+  sequelize,
+  Sequelize
+);
+db.patientProcedure = require("./patientProcedure.model")(sequelize, Sequelize);
 
 // Relationships
 // patient - appointment (one to many)
@@ -69,7 +75,29 @@ db.appointment.belongsTo(db.doctor, {
   foreignKey: "DoctorId",
 });
 
-// Hooks
+// procedureCategory - procedure (one to many)
+db.procedureCategory.hasMany(db.procedure, {
+  as: "Procedures",
+  foreignKey: "ProcedureCategoryId",
+});
+db.procedure.belongsTo(db.procedureCategory, {
+  as: "ProcedureCategory",
+  foreignKey: "ProcedureCategoryId",
+});
+
+// patient - procedure (many to many)
+db.patient.belongsToMany(db.procedure, {
+  through: "PatientProcedure",
+  as: "Procedures",
+  foreignKey: "PatientId",
+});
+db.procedure.belongsToMany(db.patient, {
+  through: "PatientProcedure",
+  as: "Patients",
+  foreignKey: "ProcedureId",
+});
+
+// HOOKS
 // Control If doctor has any appointments before destroy
 db.doctor.beforeDestroy(async (doctor) => {
   const appointmentCount = await doctor.countAppointments();
