@@ -15,7 +15,6 @@ import { toast } from "react-hot-toast";
 // assets
 import avatarPatient from "assets/images/avatars/patient-avatar.png";
 import avatarDoctor from "assets/images/avatars/doctor-avatar.png";
-import appointmentIcon from "assets/images/icons/appointment.png";
 
 import schema from "schemas/appointment.schema";
 
@@ -38,9 +37,9 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
   // Dropdown selected Item
   const [doctors, setDoctors] = useState(null);
   const [patients, setPatients] = useState(null);
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
-  // const [selectedPatient, setSelectedPatient] = useState(patient);
-  const [appointment, setAppointment] = useState(emptyAppointment);
+  const [appointment, setAppointment] = useState(
+    _appointment || emptyAppointment
+  );
   // Validation of appointment object
   const [isValid, setIsValid] = useState(false);
   // Validation(error) of appointment properties
@@ -56,15 +55,11 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
 
   // Set the doctors from dropdown on loading
   useEffect(() => {
-    // Initialize the appointment, merge with emptyAppointment
-    _appointment = {
-      ...emptyAppointment,
-      ..._appointment,
-    };
-    setAppointment(_appointment);
     getDoctors();
     getPatients();
   }, []);
+
+  console.log(appointment.doctor);
 
   useEffect(() => {
     const _isValid = !schema.appointment.validate(appointment).error;
@@ -123,10 +118,9 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
       _appointment.endTime = value;
     } else if (attr === "endTime" && value && value < _appointment.startTime) {
       _appointment.startTime = value;
+    } else {
+      _appointment[attr] = value;
     }
-
-    _appointment[attr] = value;
-
     // _isError[attr] = schema[attr].validate(value).error
     //   ? true
     //   : false;
@@ -135,15 +129,25 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     setAppointment(_appointment);
   };
 
-  //appointment duration controller
+  //old appointment for update
   useEffect(() => {
     let _appointment = { ...appointment };
 
+    
+    if (_appointment.endTime) {
+      _appointment.endTime = new Date(_appointment.endTime);
+    }
+    if (_appointment.startTime) {
+      _appointment.startTime = new Date(_appointment.startTime);
+    }
+    if (_appointment.date) {
+      _appointment.date = new Date(_appointment.date);
+    }
     if (_appointment.endTime && _appointment.startTime) {
-      const hoursDiff =
-        _appointment.endTime.getHours() - _appointment.startTime.getHours();
-      const minutesDiff =
-        _appointment.endTime.getMinutes() - _appointment.startTime.getMinutes();
+      const a = new Date(_appointment.endTime);
+      const b = new Date(_appointment.startTime);
+      const hoursDiff = a.getHours() - b.getHours();
+      const minutesDiff = a.getMinutes() - b.getMinutes();
       _appointment.duration = hoursDiff * 60 + minutesDiff;
     }
 

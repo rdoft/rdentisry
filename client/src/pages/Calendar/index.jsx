@@ -26,7 +26,7 @@ const localizer = dateFnsLocalizer({
 
 function convertDataArray(dataArray) {
   const convertedEvents = dataArray.map((data) => {
-    const { date, description, startTime, endTime } = data;
+    const { date, description, startTime, endTime, id } = data;
     const { Name } = data.patient;
 
     const startDate = new Date(startTime);
@@ -48,6 +48,7 @@ function convertDataArray(dataArray) {
       title: `${Name} - ${description}`,
       start: startDate,
       end: endDate,
+      id,
     };
   });
 
@@ -57,15 +58,21 @@ function convertDataArray(dataArray) {
 const Index = () => {
   const [allEvents, setAllEvents] = useState([]);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
+  const [currentAppId, setCurrentAppId] = useState(null);
+  const [currentAppointment, setCurrentAppointment] = useState(null);
 
-  // save appointment
   const saveAppointment = async (appointment) => {
     try {
-      await AppointmentService.saveAppointment(appointment);
+      if (appointment.id) {
+        await AppointmentService.updateAppointment(currentAppId, appointment);
+        toast.success("Randevu bilgileri başarıyla güncellendi!");
+      } else {
+        await AppointmentService.saveAppointment(appointment);
+        toast.success("Yeni randevu başarıyla kaydedildi!");
+      }
       setAppointmentDialog(false);
-      toast.success("Yeni randevu başarıyla oluşturuldu!");
     } catch (error) {
-      toast.erorr(toastErrorMessage(error));
+      toast.error(toastErrorMessage(error));
     }
   };
 
@@ -78,6 +85,11 @@ const Index = () => {
     setAppointmentDialog(true);
   };
 
+  const handleEventSelection = (e) => {
+    setCurrentAppId(e.id);
+    setTimeout(showAppointmentDialog, 100);
+  };
+
   useEffect(() => {
     (async () => {
       const response = await appointment.getAppointments();
@@ -87,6 +99,15 @@ const Index = () => {
       setAllEvents(convertedResponse);
     })();
   }, [appointmentDialog]);
+
+  useEffect(() => {
+    currentAppId &&
+      (async () => {
+        const response = await appointment.getAppointment(currentAppId);
+
+        setCurrentAppointment(response.data);
+      })();
+  }, [currentAppId]);
 
   const today = new Date();
 
@@ -104,6 +125,7 @@ const Index = () => {
         events={allEvents}
         startAccessor={"start"}
         endAccessor={"end"}
+        onSelectEvent={handleEventSelection}
         style={{ height: "calc(100vh - 200px)", margin: "50px" }}
         min={
           new Date(today.getFullYear(), today.getMonth(), today.getDate(), 8)
@@ -114,6 +136,7 @@ const Index = () => {
       />
       {appointmentDialog && (
         <AppointmentDialog
+          _appointment={currentAppointment}
           onHide={hideAppointmentDialog}
           onSubmit={saveAppointment}
         />

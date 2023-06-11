@@ -154,11 +154,11 @@ function PatientsTable() {
   // save appointment
   const saveAppointment = async (appointment) => {
     try {
-      const response = await AppointmentService.saveAppointment(appointment);
+      await AppointmentService.saveAppointment(appointment);
       setAppointmentDialog(false);
       toast.success("Yeni randevu başarıyla oluşturuldu!");
     } catch (error) {
-      toast.erorr(toastErrorMessage(error));
+      toast.error(toastErrorMessage(error));
     }
   };
 
@@ -209,7 +209,7 @@ function PatientsTable() {
       setSelectedPatients(null);
     } catch (error) {
       // Set error status and show error toast message
-      toast.erorr(toastErrorMessage(error));
+      toast.error(toastErrorMessage(error));
     }
 
     // Close the dialog and set selec
