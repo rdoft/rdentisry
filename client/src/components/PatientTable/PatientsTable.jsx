@@ -131,6 +131,7 @@ function PatientsTable() {
         // Find the index of the patinet in the patients array
         index = patients.findIndex((item) => item.id === patient.id);
         _patients[index] = patient;
+        toast.success("Hasta bilgileri başarıyla güncellendi!");
       } else {
         // Create a new patient
         // POST /patients
@@ -138,12 +139,12 @@ function PatientsTable() {
         // Set created patient's id, and add into patients
         patient.id = response.data.id;
         _patients.push(patient);
+        toast.success("Yeni hasta başarıyla eklendi!");
       }
 
       // Set the patients and close the dialog
       setPatients(_patients);
       setPatientDialog(false);
-      toast.success("Yeni hasta başarıyla eklendi!");
     } catch (error) {
       // Set error status and show error toast message
       toast.error(toastErrorMessage(error));
