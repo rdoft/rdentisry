@@ -23,6 +23,7 @@ db.doctor = require("./doctor.model")(sequelize, Sequelize);
 db.appointment = require("./appointment.model")(sequelize, Sequelize);
 db.note = require("./note.model")(sequelize, Sequelize);
 db.payment = require("./payment.model")(sequelize, Sequelize);
+db.invoice = require("./invoice.model")(sequelize, Sequelize);
 db.procedure = require("./procedure.model")(sequelize, Sequelize);
 db.procedureCategory = require("./procedureCategory.model")(
   sequelize,
@@ -95,6 +96,16 @@ db.procedure.belongsToMany(db.patient, {
   through: "PatientProcedure",
   as: "Patients",
   foreignKey: "ProcedureId",
+});
+
+// patientProcedure - invoice (one to one)
+db.patientProcedure.hasOne(db.invoice, {
+  as: "Invoice",
+  foreignKey: "PatientProcedureId",
+});
+db.invoice.belongsTo(db.patientProcedure, {
+  as: "Procedure",
+  foreignKey: "PatientProcedureId",
 });
 
 // HOOKS
