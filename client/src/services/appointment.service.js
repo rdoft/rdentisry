@@ -11,4 +11,8 @@ appointment.saveAppointment = (appointment) => {
   return API.post(API_URL, appointment);
 };
 
+appointment.getAppointments = () => {
+  return API.get(API_URL);
+};
+
 export default appointment;
