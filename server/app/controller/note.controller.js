@@ -159,7 +159,7 @@ exports.deleteNote = async (req, res) => {
     if (note) {
       note.destroy();
 
-      res.status(200).send({ id: note.id });
+      res.status(200).send({ id: noteId });
     } else {
       res.status(404).send({ message: "Not bulunamadı" });
     }

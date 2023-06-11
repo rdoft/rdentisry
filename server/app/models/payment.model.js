@@ -20,7 +20,7 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false,
         validate: {
           min: (amount) => {
-            if (amount >= 0) {
+            if (amount < 0) {
               throw new Error("Amount must be positive");
             }
           },
