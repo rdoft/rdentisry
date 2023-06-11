@@ -6,6 +6,11 @@ import startOfWeek from "date-fns/startOfWeek";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import appointment from "services/appointment.service";
+import { toast } from "react-hot-toast";
+import { toastErrorMessage } from "components/errorMesage";
+import { AppointmentService } from "services/index";
+import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
+import { Button } from "primereact";
 
 const locales = {
   tr: require("date-fns/locale/tr"),
@@ -19,28 +24,10 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-const events = [
-  {
-    title: "Big Meeting",
-    allDay: true,
-    start: new Date(2023, 6, 19),
-    end: new Date(2023, 6, 19),
-  },
-  {
-    title: "Vacation",
-    start: new Date(2023, 6, 19),
-    end: new Date(2023, 6, 19),
-  },
-  {
-    title: "Conference",
-    start: new Date(2023, 6, 19),
-    end: new Date(2023, 6, 19),
-  },
-];
-
 function convertDataArray(dataArray) {
   const convertedEvents = dataArray.map((data) => {
     const { date, description, startTime, endTime } = data;
+    const { Name } = data.patient;
 
     const startDate = new Date(startTime);
     const endDate = new Date(endTime);
@@ -58,7 +45,7 @@ function convertDataArray(dataArray) {
     endDate.setDate(day);
 
     return {
-      title: description,
+      title: `${Name} - ${description}`,
       start: startDate,
       end: endDate,
     };
@@ -69,6 +56,27 @@ function convertDataArray(dataArray) {
 
 const Index = () => {
   const [allEvents, setAllEvents] = useState([]);
+  const [appointmentDialog, setAppointmentDialog] = useState(false);
+
+  // save appointment
+  const saveAppointment = async (appointment) => {
+    try {
+      await AppointmentService.saveAppointment(appointment);
+      setAppointmentDialog(false);
+      toast.success("Yeni randevu başarıyla oluşturuldu!");
+    } catch (error) {
+      toast.erorr(toastErrorMessage(error));
+    }
+  };
+
+  // Hide add appointment dialog
+  const hideAppointmentDialog = () => {
+    setAppointmentDialog(false);
+  };
+
+  const showAppointmentDialog = () => {
+    setAppointmentDialog(true);
+  };
 
   useEffect(() => {
     (async () => {
@@ -78,17 +86,38 @@ const Index = () => {
 
       setAllEvents(convertedResponse);
     })();
-  }, []);
+  }, [appointmentDialog]);
+
+  const today = new Date();
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <div style={{ alignSelf: "end", paddingRight: "50px" }}>
+        <Button
+          onClick={showAppointmentDialog}
+          label="Randevu oluştur"
+          className="p-button p-button-info"
+        />
+      </div>
       <Calendar
         localizer={localizer}
         events={allEvents}
         startAccessor={"start"}
         endAccessor={"end"}
         style={{ height: "calc(100vh - 200px)", margin: "50px" }}
+        min={
+          new Date(today.getFullYear(), today.getMonth(), today.getDate(), 8)
+        }
+        max={
+          new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23)
+        }
       />
+      {appointmentDialog && (
+        <AppointmentDialog
+          onHide={hideAppointmentDialog}
+          onSubmit={saveAppointment}
+        />
+      )}
     </div>
   );
 };
