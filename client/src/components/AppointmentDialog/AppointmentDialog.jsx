@@ -109,27 +109,23 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
   const handleChange = (event, attr) => {
-    let value = (event.target && event.target.value) || emptyAppointment[attr];
+    let value = event.target && event.target.value;
 
     let _appointment = { ...appointment };
     let _isError = { ...isError };
 
     if (attr === "duration") {
-      // Adjust the end time according to the duration
       let newEndTime = new Date(_appointment.startTime);
       newEndTime.setMinutes(newEndTime.getMinutes() + parseInt(value));
       _appointment.endTime = newEndTime;
       _appointment[attr] = value;
-    } else if (attr === "startTime" && value > _appointment.endTime) {
+    } else if (attr === "startTime" && value && value > _appointment.endTime) {
       _appointment.endTime = value;
-    } else if (attr === "endTime" && value < _appointment.startTime) {
+    } else if (attr === "endTime" && value && value < _appointment.startTime) {
       _appointment.startTime = value;
-    } else if (attr === "startTime" || attr === "endTime") {
-      _appointment.duration =
-        (_appointment.endTime - _appointment.startTime) / 60000;
-    } else {
-      _appointment[attr] = value;
     }
+
+    _appointment[attr] = value;
 
     // _isError[attr] = schema[attr].validate(value).error
     //   ? true
@@ -138,6 +134,21 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     setIsError(_isError);
     setAppointment(_appointment);
   };
+
+  //appointment duration controller
+  useEffect(() => {
+    let _appointment = { ...appointment };
+
+    if (_appointment.endTime && _appointment.startTime) {
+      const hoursDiff =
+        _appointment.endTime.getHours() - _appointment.startTime.getHours();
+      const minutesDiff =
+        _appointment.endTime.getMinutes() - _appointment.startTime.getMinutes();
+      _appointment.duration = hoursDiff * 60 + minutesDiff;
+    }
+
+    setAppointment(_appointment);
+  }, [isError]);
 
   // onHide handler
   const handleHide = () => {
