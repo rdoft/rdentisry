@@ -22,6 +22,7 @@ db.patient = require("./patient.model")(sequelize, Sequelize);
 db.doctor = require("./doctor.model")(sequelize, Sequelize);
 db.appointment = require("./appointment.model")(sequelize, Sequelize);
 db.note = require("./note.model")(sequelize, Sequelize);
+db.payment = require("./payment.model")(sequelize, Sequelize);
 
 // Relationships
 // patient - appointment (one to many)
@@ -48,6 +49,16 @@ db.note.belongsTo(db.patient, {
   foreignKey: "PatientId",
 });
 
+// patient - payment (one to many)
+db.patient.hasMany(db.payment, {
+  as: "Payments",
+  foreignKey: "PatientId",
+});
+db.payment.belongsTo(db.patient, {
+  as: "Patient",
+  foreignKey: "PatientId",
+});
+
 // doctor - appointment (one to many)
 db.doctor.hasMany(db.appointment, {
   as: "Appointments",
@@ -66,6 +77,14 @@ db.doctor.beforeDestroy(async (doctor) => {
     throw new Error(
       "Cannot destroy doctor before removing his/her appointments"
     );
+  }
+});
+
+// Control If patient has any payments before destroy
+db.patient.beforeDestroy(async (patient) => {
+  const paymentCount = await patient.countPayments();
+  if (paymentCount > 0) {
+    throw new Error("Cannot destroy patient who has payment records");
   }
 });
 
