@@ -3,7 +3,7 @@ import Routes from "routes";
 import ThemeCustomization from "themes";
 import ScrollTop from "components/ScrollTop";
 import { Toaster } from "react-hot-toast";
-import "react-big-calendar/lib/css/react-big-calendar.css"
+import "react-big-calendar/lib/css/react-big-calendar.css";
 
 // ==============================|| APP - THEME, ROUTER, LOCAL  ||============================== //
 
@@ -15,10 +15,9 @@ const App = () => (
         className: "",
         duration: 3000,
         style: {
-          background: "#fee9e7",
           color: "#000",
           minWidth: "300px",
-          minHeight: "80px"
+          minHeight: "80px",
         },
         position: "bottom-right",
         success: {
@@ -32,7 +31,6 @@ const App = () => (
           },
         },
       }}
-      
     />
     <ScrollTop>
       <Routes />
