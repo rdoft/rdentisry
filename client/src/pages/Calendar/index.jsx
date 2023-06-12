@@ -78,6 +78,8 @@ const Index = () => {
 
   // Hide add appointment dialog
   const hideAppointmentDialog = () => {
+    setCurrentAppId(null);
+    setCurrentAppointment(null);
     setAppointmentDialog(false);
   };
 
@@ -126,7 +128,7 @@ const Index = () => {
         startAccessor={"start"}
         endAccessor={"end"}
         onSelectEvent={handleEventSelection}
-        style={{ height: "calc(100vh - 200px)", margin: "50px" }}
+        style={{ height: "calc(100vh - 200px)", margin: "50px", marginTop: "20px" }}
         min={
           new Date(today.getFullYear(), today.getMonth(), today.getDate(), 8)
         }

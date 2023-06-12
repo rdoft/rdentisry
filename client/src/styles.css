@@ -12,12 +12,10 @@
   display: none;
 }
 
-.rbc-time-content:has(.rbc-now)
-  > .rbc-day-slot
-  > .rbc-events-container
-  > .rbc-event:hover {
-  min-height: 80px !important;
-  overflow-y: scroll;
+.rbc-time-content > .rbc-day-slot > .rbc-events-container > .rbc-event:hover {
+  min-width: max-content;
+  z-index: 10;
+  transform: scale(1.05);
 }
 
 .rbc-row-segment {

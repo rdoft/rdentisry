@@ -109,15 +109,19 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     let _appointment = { ...appointment };
     let _isError = { ...isError };
 
+    let { startTime, endTime } = _appointment;
+
+    console.log({ startTime, endTime, value });
+
     if (attr === "duration") {
-      let newEndTime = new Date(_appointment.startTime);
+      let newEndTime = new Date(startTime);
       newEndTime.setMinutes(newEndTime.getMinutes() + parseInt(value));
-      _appointment.endTime = newEndTime;
+      endTime = newEndTime;
       _appointment[attr] = value;
-    } else if (attr === "startTime" && value && value > _appointment.endTime) {
-      _appointment.endTime = value;
-    } else if (attr === "endTime" && value && value < _appointment.startTime) {
-      _appointment.startTime = value;
+    } else if (attr === "startTime" && value && value > endTime) {
+      endTime = value;
+    } else if (attr === "endTime" && value && value < startTime) {
+      startTime = value;
     } else {
       _appointment[attr] = value;
     }
@@ -132,8 +136,6 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
   //old appointment for update
   useEffect(() => {
     let _appointment = { ...appointment };
-
-    
     if (_appointment.endTime) {
       _appointment.endTime = new Date(_appointment.endTime);
     }
