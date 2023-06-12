@@ -14,6 +14,13 @@ exports.getPayments = async (req, res) => {
   try {
     // Find notes of the patient
     payments = await Payment.findAll({
+      attributes: [
+        ["PaymentId", "id"],
+        ["Type", "type"],
+        ["Amount", "amount"],
+        ["ActualDate", "actualDate"],
+        ["PlannedDate", "plannedDate"],
+      ],
       order: [
         ["ActualDate", "ASC"],
         ["PlannedDate", "ASC"],
@@ -21,24 +28,13 @@ exports.getPayments = async (req, res) => {
       include: [
         {
           model: Patient,
-          as: "Patient",
+          as: "patient",
           attributes: [],
           where: patientId && {
             PatientId: patientId,
           },
         },
       ],
-    });
-
-    payments = payments.map((payment) => {
-      return {
-        id: payment.PaymentId,
-        patient: payment.Patient,
-        type: payment.Type,
-        amount: payment.Amount,
-        actualDate: payment.ActualDate,
-        plannedDate: payment.PlannedDate,
-      };
     });
 
     res.status(200).send(payments);
