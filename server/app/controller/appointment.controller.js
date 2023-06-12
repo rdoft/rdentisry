@@ -8,27 +8,21 @@ const Doctor = db.doctor;
  * Get appointment list
  */
 exports.getAppointments = async (req, res) => {
-  const {
-    patientId: patientId,
-    doctorId: doctorId,
-    from: from,
-    to: to,
-    status: status,
-  } = req.query;
+  const { patientId, doctorId, from, to, status } = req.query;
   let appointments;
 
   try {
     // Find appointment list
     appointments = await Appointment.findAll({
       attributes: [
-        "AppointmentId",
-        "Date",
-        "StartTime",
-        "EndTime",
-        "Description",
-        "DidCome",
-        "Status",
-        [Sequelize.literal("DATEDIFF(MINUTE, StartTime, EndTime)"), "Duration"],
+        ["AppointmentId", "id"],
+        ["Date", "date"],
+        ["StartTime", "startTime"],
+        ["EndTime", "endTime"],
+        ["Description", "description"],
+        ["DidCome", "didCome"],
+        ["Status", "status"],
+        [Sequelize.literal("DATEDIFF(MINUTE, StartTime, EndTime)"), "duration"],
       ],
       where: {
         ...(status && { Status: status }),
@@ -42,14 +36,24 @@ exports.getAppointments = async (req, res) => {
       include: [
         {
           model: Patient,
-          as: "Patient",
+          as: "patient",
+          attributes: [
+            ["PatientId", "id"],
+            ["Name", "name"],
+            ["Surname", "surname"],
+          ],
           where: patientId && {
             PatientId: patientId,
           },
         },
         {
           model: Doctor,
-          as: "Doctor",
+          as: "doctor",
+          attributes: [
+            ["DoctorId", "id"],
+            ["Name", "name"],
+            ["Surname", "surname"],
+          ],
           where: doctorId && {
             DoctorId: doctorId,
           },
@@ -57,21 +61,6 @@ exports.getAppointments = async (req, res) => {
       ],
       raw: true,
       nest: true,
-    });
-
-    appointments = appointments.map((appointment) => {
-      return {
-        id: appointment.AppointmentId,
-        patient: appointment.Patient,
-        doctor: appointment.Doctor,
-        date: appointment.Date,
-        startTime: appointment.StartTime,
-        endTime: appointment.EndTime,
-        duration: appointment.Duration,
-        description: appointment.Description,
-        didCome: appointment.DidCome,
-        status: appointment.Status,
-      };
     });
 
     res.status(200).send(appointments);
@@ -91,23 +80,33 @@ exports.getAppointment = async (req, res) => {
     // Find appointment list
     appointment = await Appointment.findByPk(appointmentId, {
       attributes: [
-        "AppointmentId",
-        "Date",
-        "StartTime",
-        "EndTime",
-        "Description",
-        "DidCome",
-        "Status",
-        [Sequelize.literal("DATEDIFF(MINUTE, StartTime, EndTime)"), "Duration"],
+        ["AppointmentId", "id"],
+        ["Date", "date"],
+        ["StartTime", "startTime"],
+        ["EndTime", "endTime"],
+        ["Description", "description"],
+        ["DidCome", "didCome"],
+        ["Status", "status"],
+        [Sequelize.literal("DATEDIFF(MINUTE, StartTime, EndTime)"), "duration"],
       ],
       include: [
         {
           model: Patient,
-          as: "Patient",
+          as: "patient",
+          attributes: [
+            ["PatientId", "id"],
+            ["Name", "name"],
+            ["Surname", "surname"],
+          ],
         },
         {
           model: Doctor,
-          as: "Doctor",
+          as: "doctor",
+          attributes: [
+            ["DoctorId", "id"],
+            ["Name", "name"],
+            ["Surname", "surname"],
+          ],
         },
       ],
       raw: true,
@@ -115,19 +114,6 @@ exports.getAppointment = async (req, res) => {
     });
 
     if (appointment) {
-      appointment = {
-        id: appointment.AppointmentId,
-        patient: appointment.Patient,
-        doctor: appointment.Doctor,
-        date: appointment.Date,
-        startTime: appointment.StartTime,
-        endTime: appointment.EndTime,
-        duration: appointment.Duration,
-        description: appointment.Description,
-        didCome: appointment.DidCome,
-        status: appointment.Status,
-      };
-
       res.status(200).send(appointment);
     } else {
       res.status(404).send({ message: "Randevu bulunamadı" });
@@ -143,24 +129,24 @@ exports.getAppointment = async (req, res) => {
  */
 exports.saveAppointment = async (req, res) => {
   const {
-    patient: Patient,
-    doctor: Doctor,
-    date: Date,
-    startTime: StartTime,
-    endTime: EndTime,
-    description: Description,
-    didCome: DidCome,
-    status: Status,
+    patient,
+    doctor,
+    date,
+    startTime,
+    endTime,
+    description,
+    didCome,
+    status,
   } = req.body;
   let values = {
-    PatientId: Patient.id,
-    DoctorId: Doctor ? Doctor.id : null,
-    Date: Date,
-    StartTime: Sequelize.cast(StartTime, "TIME"),
-    EndTime: Sequelize.cast(EndTime, "TIME"),
-    Description: Description ?? null,
-    DidCome: DidCome ?? null,
-    Status: Status,
+    PatientId: patient.id,
+    DoctorId: doctor ? doctor.id : null,
+    Date: date,
+    StartTime: Sequelize.cast(startTime, "TIME"),
+    EndTime: Sequelize.cast(endTime, "TIME"),
+    Description: description ?? null,
+    DidCome: didCome ?? null,
+    Status: status,
   };
   let appointment;
 
@@ -200,24 +186,24 @@ exports.saveAppointment = async (req, res) => {
 exports.updateAppointment = async (req, res) => {
   const { appointmentId } = req.params;
   const {
-    patient: Patient,
-    doctor: Doctor,
-    date: Date,
-    startTime: StartTime,
-    endTime: EndTime,
-    description: Description,
-    didCome: DidCome,
-    status: Status,
+    patient,
+    doctor,
+    date,
+    startTime,
+    endTime,
+    description,
+    didCome,
+    status,
   } = req.body;
   let values = {
-    PatientId: Patient.id,
-    DoctorId: Doctor ? Doctor.id : null,
-    Date: Date,
-    StartTime: Sequelize.cast(StartTime, "TIME"),
-    EndTime: Sequelize.cast(EndTime, "TIME"),
-    Description: Description ?? null,
-    DidCome: DidCome ?? null,
-    Status: Status,
+    PatientId: patient.id,
+    DoctorId: doctor ? doctor.id : null,
+    Date: date,
+    StartTime: Sequelize.cast(startTime, "TIME"),
+    EndTime: Sequelize.cast(endTime, "TIME"),
+    Description: description ?? null,
+    DidCome: didCome ?? null,
+    Status: status,
   };
   let appointment;
 

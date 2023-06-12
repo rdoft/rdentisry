@@ -34,77 +34,77 @@ db.patientProcedure = require("./patientProcedure.model")(sequelize, Sequelize);
 // Relationships
 // patient - appointment (one to many)
 db.patient.hasMany(db.appointment, {
-  as: "Appointments",
+  as: "appointments",
   foreignKey: "PatientId",
   onDelete: "cascade",
   hooks: true,
 });
 db.appointment.belongsTo(db.patient, {
-  as: "Patient",
+  as: "patient",
   foreignKey: "PatientId",
 });
 
 // patient - note (one to many)
 db.patient.hasMany(db.note, {
-  as: "Notes",
+  as: "notes",
   foreignKey: "PatientId",
   onDelete: "cascade",
   hooks: true,
 });
 db.note.belongsTo(db.patient, {
-  as: "Patient",
+  as: "patient",
   foreignKey: "PatientId",
 });
 
 // patient - payment (one to many)
 db.patient.hasMany(db.payment, {
-  as: "Payments",
+  as: "payments",
   foreignKey: "PatientId",
 });
 db.payment.belongsTo(db.patient, {
-  as: "Patient",
+  as: "patient",
   foreignKey: "PatientId",
 });
 
 // doctor - appointment (one to many)
 db.doctor.hasMany(db.appointment, {
-  as: "Appointments",
+  as: "appointments",
   foreignKey: "DoctorId",
 });
 db.appointment.belongsTo(db.doctor, {
-  as: "Doctor",
+  as: "doctor",
   foreignKey: "DoctorId",
 });
 
 // procedureCategory - procedure (one to many)
 db.procedureCategory.hasMany(db.procedure, {
-  as: "Procedures",
+  as: "procedures",
   foreignKey: "ProcedureCategoryId",
 });
 db.procedure.belongsTo(db.procedureCategory, {
-  as: "ProcedureCategory",
+  as: "procedureCategory",
   foreignKey: "ProcedureCategoryId",
 });
 
 // patient - procedure (many to many)
 db.patient.belongsToMany(db.procedure, {
   through: "PatientProcedure",
-  as: "Procedures",
+  as: "procedures",
   foreignKey: "PatientId",
 });
 db.procedure.belongsToMany(db.patient, {
   through: "PatientProcedure",
-  as: "Patients",
+  as: "patients",
   foreignKey: "ProcedureId",
 });
 
 // patientProcedure - invoice (one to one)
 db.patientProcedure.hasOne(db.invoice, {
-  as: "Invoice",
+  as: "invoice",
   foreignKey: "PatientProcedureId",
 });
 db.invoice.belongsTo(db.patientProcedure, {
-  as: "Procedure",
+  as: "procedure",
   foreignKey: "PatientProcedureId",
 });
 
