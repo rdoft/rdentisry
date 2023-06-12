@@ -10,13 +10,12 @@ exports.getDoctors = async (req, res) => {
 
   try {
     // Find patient list
-    doctors = await Doctor.findAll();
-    doctors = doctors.map((doctor) => {
-      return {
-        id: doctor.DoctorId,
-        name: doctor.Name,
-        surname: doctor.Surname,
-      };
+    doctors = await Doctor.findAll({
+      attributes: [
+        ["DoctorId", "id"],
+        ["Name", "name"],
+        ["Surname", "surname"],
+      ],
     });
 
     res.status(200).send(doctors);
@@ -30,8 +29,8 @@ exports.getDoctors = async (req, res) => {
  * @body Doctor informations
  */
 exports.saveDoctor = async (req, res) => {
-  const { name: Name, surname: Surname } = req.body;
-  let values = { Name, Surname };
+  const { name, surname } = req.body;
+  let values = { Name: name, Surname: surname };
   let doctor;
 
   try {
@@ -55,8 +54,8 @@ exports.saveDoctor = async (req, res) => {
  */
 exports.updateDoctor = async (req, res) => {
   const { doctorId } = req.params;
-  const { name: Name, surname: Surname } = req.body;
-  let values = { Name, Surname };
+  const { name, surname } = req.body;
+  let values = { Name: name, Surname: surname };
   let doctor;
 
   try {
