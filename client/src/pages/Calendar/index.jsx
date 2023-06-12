@@ -107,6 +107,8 @@ const Index = () => {
       (async () => {
         const response = await appointment.getAppointment(currentAppId);
 
+        console.log(response)
+
         setCurrentAppointment(response.data);
       })();
   }, [currentAppId]);

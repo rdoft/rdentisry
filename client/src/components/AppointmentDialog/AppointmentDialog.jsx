@@ -37,9 +37,10 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
   // Dropdown selected Item
   const [doctors, setDoctors] = useState(null);
   const [patients, setPatients] = useState(null);
-  const [appointment, setAppointment] = useState(
-    _appointment || emptyAppointment
-  );
+  const [appointment, setAppointment] = useState({
+    ...emptyAppointment,
+    ..._appointment,
+  });
   // Validation of appointment object
   const [isValid, setIsValid] = useState(false);
   // Validation(error) of appointment properties
@@ -58,8 +59,6 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     getDoctors();
     getPatients();
   }, []);
-
-  console.log(appointment.doctor);
 
   useEffect(() => {
     const _isValid = !schema.appointment.validate(appointment).error;
@@ -111,12 +110,10 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
 
     let { startTime, endTime } = _appointment;
 
-    console.log({ startTime, endTime, value });
-
     if (attr === "duration") {
-      let newEndTime = new Date(startTime);
+      let newEndTime = new Date(_appointment.startTime);
       newEndTime.setMinutes(newEndTime.getMinutes() + parseInt(value));
-      endTime = newEndTime;
+      _appointment.endTime = newEndTime;
       _appointment[attr] = value;
     } else if (attr === "startTime" && value && value > endTime) {
       endTime = value;
@@ -128,7 +125,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     // _isError[attr] = schema[attr].validate(value).error
     //   ? true
     //   : false;
-
+    console.log(appointment)
     setIsError(_isError);
     setAppointment(_appointment);
   };
@@ -213,7 +210,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
       className="p-fluid"
       footer={
         <DialogFooter
-          disabled={!isValid}
+          // disabled={!isValid}
           onHide={handleHide}
           onSubmit={handleSubmit}
         />
