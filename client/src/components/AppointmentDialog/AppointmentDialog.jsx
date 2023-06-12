@@ -37,7 +37,9 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
   // Dropdown selected Item
   const [doctors, setDoctors] = useState(null);
   const [patients, setPatients] = useState(null);
-  const [appointment, setAppointment] = useState(emptyAppointment);
+  const [appointment, setAppointment] = useState(
+    _appointment || emptyAppointment
+  );
   // Validation of appointment object
   const [isValid, setIsValid] = useState(false);
   // Validation(error) of appointment properties
@@ -53,15 +55,11 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
 
   // Set the doctors from dropdown on loading
   useEffect(() => {
-    // Initialize the appointment, merge with emptyAppointment
-    _appointment = {
-      ...emptyAppointment,
-      ..._appointment,
-    };
-    setAppointment(_appointment);
     getDoctors();
     getPatients();
   }, []);
+
+  console.log(appointment.doctor);
 
   useEffect(() => {
     const _isValid = !schema.appointment.validate(appointment).error;
@@ -106,28 +104,27 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
   const handleChange = (event, attr) => {
-    let value = (event.target && event.target.value) || emptyAppointment[attr];
+    let value = event.target && event.target.value;
 
     let _appointment = { ...appointment };
     let _isError = { ...isError };
 
+    let { startTime, endTime } = _appointment;
+
+    console.log({ startTime, endTime, value });
+
     if (attr === "duration") {
-      // Adjust the end time according to the duration
-      let newEndTime = new Date(_appointment.startTime);
+      let newEndTime = new Date(startTime);
       newEndTime.setMinutes(newEndTime.getMinutes() + parseInt(value));
-      _appointment.endTime = newEndTime;
+      endTime = newEndTime;
       _appointment[attr] = value;
-    } else if (attr === "startTime" && value > _appointment.endTime) {
-      _appointment.endTime = value;
-    } else if (attr === "endTime" && value < _appointment.startTime) {
-      _appointment.startTime = value;
-    } else if (attr === "startTime" || attr === "endTime") {
-      _appointment.duration =
-        (_appointment.endTime - _appointment.startTime) / 60000;
+    } else if (attr === "startTime" && value && value > endTime) {
+      endTime = value;
+    } else if (attr === "endTime" && value && value < startTime) {
+      startTime = value;
     } else {
       _appointment[attr] = value;
     }
-
     // _isError[attr] = schema[attr].validate(value).error
     //   ? true
     //   : false;
@@ -135,6 +132,29 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     setIsError(_isError);
     setAppointment(_appointment);
   };
+
+  //old appointment for update
+  useEffect(() => {
+    let _appointment = { ...appointment };
+    if (_appointment.endTime) {
+      _appointment.endTime = new Date(_appointment.endTime);
+    }
+    if (_appointment.startTime) {
+      _appointment.startTime = new Date(_appointment.startTime);
+    }
+    if (_appointment.date) {
+      _appointment.date = new Date(_appointment.date);
+    }
+    if (_appointment.endTime && _appointment.startTime) {
+      const a = new Date(_appointment.endTime);
+      const b = new Date(_appointment.startTime);
+      const hoursDiff = a.getHours() - b.getHours();
+      const minutesDiff = a.getMinutes() - b.getMinutes();
+      _appointment.duration = hoursDiff * 60 + minutesDiff;
+    }
+
+    setAppointment(_appointment);
+  }, [isError]);
 
   // onHide handler
   const handleHide = () => {

@@ -1,13 +1,14 @@
 // assets
 import { DashboardOutlined } from "@ant-design/icons";
 import { HomeOutlined } from "@ant-design/icons";
-import { AppstoreOutlined } from "@ant-design/icons";
+import { AppstoreOutlined, ScheduleOutlined } from "@ant-design/icons";
 
 // icons
 const icons = {
   DashboardOutlined,
   HomeOutlined,
-  AppstoreOutlined
+  AppstoreOutlined,
+  ScheduleOutlined
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -31,6 +32,14 @@ const overview = {
       type: "item",
       url: "/overview",
       icon: icons.DashboardOutlined,
+      breadcrumbs: false,
+    },
+    {
+      id: "calendar",
+      title: "Takvim",
+      type: "item",
+      url: "/calendar",
+      icon: icons.ScheduleOutlined,
       breadcrumbs: false,
     },
   ],

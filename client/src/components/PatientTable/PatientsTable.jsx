@@ -130,7 +130,7 @@ function PatientsTable() {
         // Find the index of the patinet in the patients array
         index = patients.findIndex((item) => item.id === patient.id);
         _patients[index] = patient;
-        toast.success("Hasta başarıyla güncellendi");
+        toast.success("Hasta bilgileri başarıyla güncellendi");
       } else {
         // Create a new patient
         // POST /patients
@@ -157,7 +157,7 @@ function PatientsTable() {
       setAppointmentDialog(false);
       toast.success("Yeni randevu başarıyla eklendi");
     } catch (error) {
-      toast.erorr(toastErrorMessage(error));
+      toast.error(toastErrorMessage(error));
     }
   };
 
@@ -208,7 +208,7 @@ function PatientsTable() {
       setSelectedPatients(null);
     } catch (error) {
       // Set error status and show error toast message
-      toast.erorr(toastErrorMessage(error));
+      toast.error(toastErrorMessage(error));
     }
 
     // Close the dialog and set selec
