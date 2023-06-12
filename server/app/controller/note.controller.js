@@ -14,26 +14,22 @@ exports.getNotes = async (req, res) => {
   try {
     // Find notes of the patient
     notes = await Note.findAll({
+      attributes: [
+        ["NoteId", "id"],
+        ["Date", "date"],
+        ["Detail", "detail"],
+      ],
       order: [["Date", "ASC"]],
       include: [
         {
           model: Patient,
-          as: "Patient",
+          as: "patient",
           attributes: [],
           where: patientId && {
             PatientId: patientId,
           },
         },
       ],
-    });
-
-    notes = notes.map((note) => {
-      return {
-        id: note.NoteId,
-        patient: note.Patient,
-        date: note.Date,
-        detail: note.Detail,
-      };
     });
 
     res.status(200).send(notes);
@@ -53,10 +49,20 @@ exports.getNote = async (req, res) => {
   try {
     // Find Note record
     note = await Note.findByPk(noteId, {
+      attributes: [
+        ["NoteId", "id"],
+        ["Date", "date"],
+        ["Detail", "detail"],
+      ],
       include: [
         {
           model: Patient,
-          as: "Patient",
+          as: "patient",
+          attributes: [
+            ["PatientId", "id"],
+            ["Name", "name"],
+            ["Surname", "surname"],
+          ],
         },
       ],
       raw: true,
@@ -64,13 +70,6 @@ exports.getNote = async (req, res) => {
     });
 
     if (note) {
-      note = {
-        id: note.NoteId,
-        patient: note.Patient,
-        date: note.Date,
-        detail: note.Detail,
-      };
-
       res.status(200).send(note);
     } else {
       res.status(404).send({ message: "Not bulunamadı" });
@@ -85,10 +84,10 @@ exports.getNote = async (req, res) => {
  * @body Note information
  */
 exports.saveNote = async (req, res) => {
-  const { patient: Patient, detail: Detail } = req.body;
+  const { patient, detail } = req.body;
   let values = {
-    PatientId: Patient.id,
-    Detail: Detail,
+    PatientId: patient.id,
+    Detail: detail,
     Date: new Date(),
   };
   let note;
@@ -120,11 +119,11 @@ exports.saveNote = async (req, res) => {
  * @param noteId: Id of the Note
  */
 exports.updateNote = async (req, res) => {
-  const { noteId } = req.params
-  const { patient: Patient, detail: Detail } = req.body;
+  const { noteId } = req.params;
+  const { patient, detail } = req.body;
   let values = {
-    PatientId: Patient.id,
-    Detail: Detail,
+    PatientId: patient.id,
+    Detail: detail,
   };
   let note;
 
