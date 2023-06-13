@@ -34,6 +34,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     duration: "",
   };
 
+  
   // Dropdown selected Item
   const [doctors, setDoctors] = useState(null);
   const [patients, setPatients] = useState(null);
@@ -65,6 +66,8 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
 
     setIsValid(_isValid);
   }, [appointment]);
+
+  console.log(isValid, appointment)
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of doctors and set doctors value
@@ -99,7 +102,6 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
       // Set error status and show error toast message
     }
   };
-  console.log(patients)
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
@@ -124,7 +126,6 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     // _isError[attr] = schema[attr].validate(value).error
     //   ? true
     //   : false;
-    console.log(appointment)
     setIsError(_isError);
     setAppointment(_appointment);
   };
