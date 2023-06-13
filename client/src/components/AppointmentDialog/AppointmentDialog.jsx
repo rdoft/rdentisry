@@ -99,6 +99,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
       // Set error status and show error toast message
     }
   };
+  console.log(patients)
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
@@ -108,17 +109,15 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     let _appointment = { ...appointment };
     let _isError = { ...isError };
 
-    let { startTime, endTime } = _appointment;
-
     if (attr === "duration") {
       let newEndTime = new Date(_appointment.startTime);
       newEndTime.setMinutes(newEndTime.getMinutes() + parseInt(value));
       _appointment.endTime = newEndTime;
       _appointment[attr] = value;
-    } else if (attr === "startTime" && value && value > endTime) {
-      endTime = value;
-    } else if (attr === "endTime" && value && value < startTime) {
-      startTime = value;
+    } else if (attr === "startTime" && value && value > _appointment.endTime) {
+      _appointment.endTime = value;
+    } else if (attr === "endTime" && value && value < _appointment.startTime) {
+      _appointment.startTime = value;
     } else {
       _appointment[attr] = value;
     }
@@ -210,7 +209,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
       className="p-fluid"
       footer={
         <DialogFooter
-          // disabled={!isValid}
+          disabled={!isValid}
           onHide={handleHide}
           onSubmit={handleSubmit}
         />

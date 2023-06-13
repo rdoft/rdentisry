@@ -97,6 +97,9 @@ exports.getAppointment = async (req, res) => {
             ["PatientId", "id"],
             ["Name", "name"],
             ["Surname", "surname"],
+            ["IdNumber", "idNumber"],
+            ["BirthYear", "birthYear"],
+            ["Phone", "phone"],
           ],
         },
         {
