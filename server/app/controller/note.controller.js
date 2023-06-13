@@ -60,8 +60,11 @@ exports.getNote = async (req, res) => {
           as: "patient",
           attributes: [
             ["PatientId", "id"],
+            ["IdNumber", "idNumber"],
             ["Name", "name"],
             ["Surname", "surname"],
+            ["BirthYear", "birthYear"],
+            ["Phone", "phone"],
           ],
         },
       ],

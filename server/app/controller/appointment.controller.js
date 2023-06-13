@@ -39,8 +39,11 @@ exports.getAppointments = async (req, res) => {
           as: "patient",
           attributes: [
             ["PatientId", "id"],
+            ["Idnumber", "idNumber"],
             ["Name", "name"],
             ["Surname", "surname"],
+            ["BirthYear", "birthYear"],
+            ["Phone", "phone"],
           ],
           where: patientId && {
             PatientId: patientId,
@@ -95,9 +98,9 @@ exports.getAppointment = async (req, res) => {
           as: "patient",
           attributes: [
             ["PatientId", "id"],
+            ["IdNumber", "idNumber"],
             ["Name", "name"],
             ["Surname", "surname"],
-            ["IdNumber", "idNumber"],
             ["BirthYear", "birthYear"],
             ["Phone", "phone"],
           ],
