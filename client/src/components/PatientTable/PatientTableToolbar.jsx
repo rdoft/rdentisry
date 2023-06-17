@@ -30,7 +30,7 @@ function PatientTableToolbar({ visibleDelete, onClickAdd, onClickDelete, onInput
   };
 
   return (
-    <Toolbar className="mb-4" left={getActionButton} right={getSearchInput} />
+    <Toolbar className="mb-4 p-2" left={getActionButton} right={getSearchInput} />
   );
 }
 

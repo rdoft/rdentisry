@@ -10,7 +10,8 @@ import { toast } from "react-hot-toast";
 import { toastErrorMessage } from "components/errorMesage";
 import { AppointmentService } from "services/index";
 import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
-import { Button } from "primereact";
+import { Grid, Typography } from "@mui/material";
+import CalendarToolbar from "components/Calendar/CalendarToolbar";
 
 const locales = {
   tr: require("date-fns/locale/tr"),
@@ -107,7 +108,7 @@ const Index = () => {
       (async () => {
         const response = await appointment.getAppointment(currentAppId);
 
-        console.log(response)
+        console.log(response);
 
         setCurrentAppointment(response.data);
       })();
@@ -116,36 +117,51 @@ const Index = () => {
   const today = new Date();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <div style={{ alignSelf: "end", paddingRight: "50px" }}>
-        <Button
-          onClick={showAppointmentDialog}
-          label="Randevu oluştur"
-          className="p-button p-button-info"
-        />
-      </div>
-      <Calendar
-        localizer={localizer}
-        events={allEvents}
-        startAccessor={"start"}
-        endAccessor={"end"}
-        onSelectEvent={handleEventSelection}
-        style={{ height: "calc(100vh - 200px)", margin: "50px", marginTop: "20px" }}
-        min={
-          new Date(today.getFullYear(), today.getMonth(), today.getDate(), 8)
-        }
-        max={
-          new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23)
-        }
-      />
-      {appointmentDialog && (
-        <AppointmentDialog
-          _appointment={currentAppointment}
-          onHide={hideAppointmentDialog}
-          onSubmit={saveAppointment}
-        />
-      )}
-    </div>
+    <Grid container rowSpacing={4.5} columnSpacing={2.75}>
+      <Grid item xs={12} sx={{ mb: -2.25 }}>
+        <Typography variant="h5">Takvim</Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <CalendarToolbar onClickAdd={showAppointmentDialog} />
+          <Calendar
+            localizer={localizer}
+            events={allEvents}
+            defaultView={"week"}
+            startAccessor={"start"}
+            endAccessor={"end"}
+            onSelectEvent={handleEventSelection}
+            style={{
+              height: "calc(100vh - 200px)",
+              marginTop: "20px",
+            }}
+            min={
+              new Date(
+                today.getFullYear(),
+                today.getMonth(),
+                today.getDate(),
+                8
+              )
+            }
+            max={
+              new Date(
+                today.getFullYear(),
+                today.getMonth(),
+                today.getDate(),
+                23
+              )
+            }
+          />
+          {appointmentDialog && (
+            <AppointmentDialog
+              _appointment={currentAppointment}
+              onHide={hideAppointmentDialog}
+              onSubmit={saveAppointment}
+            />
+          )}
+        </div>
+      </Grid>
+    </Grid>
   );
 };
 
