@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-import format from "date-fns/format";
-import getDay from "date-fns/getDay";
-import parse from "date-fns/parse";
-import startOfWeek from "date-fns/startOfWeek";
-import { Calendar, dateFnsLocalizer } from "react-big-calendar";
+import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import appointment from "services/appointment.service";
 import { toast } from "react-hot-toast";
@@ -12,24 +8,40 @@ import { AppointmentService } from "services/index";
 import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
 import { Grid, Typography } from "@mui/material";
 import CalendarToolbar from "components/Calendar/CalendarToolbar";
+import moment from "moment";
+require("moment/locale/tr.js");
 
-const locales = {
-  tr: require("date-fns/locale/tr"),
+const localizer = momentLocalizer(moment);
+
+const messages = {
+  today: "Bugün",
+  previous: "Önceki",
+  next: "Sonraki",
+  month: "Ay",
+  week: "Hafta",
+  day: "Gün",
+  agenda: "Ajanda",
+  date: "Tarih",
+  time: "Saat",
+  event: "Açıklama",
+  noEventsInRange: "Bu tarih aralığında etkinlik bulunmuyor.",
+  showMore: "Daha fazla göster",
+  allDay: "Tüm gün",
+  dateHeaderFormat: "dddd, DD MMMM YYYY",
+  dayRangeHeaderFormat: "DD MMMM YYYY",
+  monthHeaderFormat: "MMMM YYYY",
+  dayHeaderFormat: "dddd",
+  timeGutterFormat: "H:mm",
+  dayFormat: "DD",
+  dateFormat: "DD MMMM YYYY",
+  monthFormat: "MMMM",
+  yearFormat: "YYYY",
 };
-
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
-});
 
 function convertDataArray(dataArray) {
   const convertedEvents = dataArray.map((data) => {
     const { date, description, startTime, endTime, id } = data;
     const { name } = data.patient;
-
 
     const startDate = new Date(startTime);
     const endDate = new Date(endTime);
@@ -124,6 +136,7 @@ const Index = () => {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <CalendarToolbar onClickAdd={showAppointmentDialog} />
           <Calendar
+            messages={messages}
             localizer={localizer}
             events={allEvents}
             defaultView={"week"}
@@ -131,7 +144,7 @@ const Index = () => {
             endAccessor={"end"}
             onSelectEvent={handleEventSelection}
             style={{
-              height: "calc(100vh - 200px)",
+              height: "calc(100vh - 240px)",
               marginTop: "20px",
             }}
             min={

@@ -204,6 +204,11 @@ function PatientsTable() {
       _patients = patients.filter((item) => !selectedPatients.includes(item));
       // Set patients with new value
       // And set selected patients to empty
+      if (selectedIds.length > 1) {
+        toast.success("Seçili hastalar başarıyla silindi!");
+      } else {
+        toast.success("Seçili hasta başarıyla silindi!");
+      }
       setPatients(_patients);
       setSelectedPatients(null);
     } catch (error) {
@@ -269,7 +274,9 @@ function PatientsTable() {
           onRowMouseEnter={handleRowMouseEnter}
           onRowMouseLeave={handleRowMouseLeave}
           onRowClick={(e) => {
-            if (![...e.originalEvent.target.classList].includes("p-checkbox-icon")) {
+            if (
+              ![...e.originalEvent.target.classList].includes("p-checkbox-icon")
+            ) {
               navigateToPage(`/patients/${e.data.id}`);
             }
           }}
