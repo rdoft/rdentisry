@@ -268,7 +268,11 @@ function PatientsTable() {
           onSelectionChange={handleChangeSelection}
           onRowMouseEnter={handleRowMouseEnter}
           onRowMouseLeave={handleRowMouseLeave}
-          onRowClick={(e) => navigateToPage(`/patients/${e.data.id}`)}
+          onRowClick={(e) => {
+            if (![...e.originalEvent.target.classList].includes("p-checkbox-icon")) {
+              navigateToPage(`/patients/${e.data.id}`);
+            }
+          }}
           selectionMode="checkbox"
           responsiveLayout="scroll"
           dataKey="id"

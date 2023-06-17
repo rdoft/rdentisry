@@ -3,6 +3,70 @@ import { useParams } from "react-router-dom";
 import { PatientService } from "services/index";
 import { toast } from "react-hot-toast";
 import Line from "components/Line";
+import CustomizedTabs from "components/CustomizedTabs";
+
+const tabNames = ["Tümü", "Randevular", "Ödemeler", "Notlar", "Dokümanlar"];
+const contentArray = ["Tümü", "Randevular", "Ödemeler", "Notlar", "Dokümanlar"];
+
+const InfoCard = ({ patient }) => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "5px",
+        width: "100%%",
+        border: "1px solid black",
+        borderRadius: "5px",
+        padding: "10px",
+      }}
+    >
+      <Line title={"İsim"} data={`${patient?.name} ${patient?.surname}`} />
+      <Line title={"TC No"} data={patient?.idNumber} />
+      <Line title={"Telefon"} data={patient?.phone} />
+      <Line title={"Doğum Yılı"} data={patient?.birthYear} />
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          gap: "10px",
+          marginTop: "20px",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            border: "1px solid black",
+            borderRadius: "5px",
+            padding: "10px",
+          }}
+        >
+          <Line title={"Toplam"} />
+        </div>
+        <div
+          style={{
+            width: "100%",
+            border: "1px solid black",
+            borderRadius: "5px",
+            padding: "10px",
+          }}
+        >
+          <Line title={"Ödenen"} />
+        </div>
+        <div
+          style={{
+            width: "100%",
+            border: "1px solid black",
+            borderRadius: "5px",
+            padding: "10px",
+          }}
+        >
+          <Line title={"Kalan"} />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const PatientPage = () => {
   const [patient, setPatient] = useState(null);
@@ -26,16 +90,41 @@ const PatientPage = () => {
     <div
       style={{
         display: "flex",
+        height: "100%",
+        gap: "10px",
       }}
       onClick={(e) => e.stopPropagation()}
     >
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "5px", width: '100%' }}>
-            <Line minWidth={'400px'} title={'İsim'} data={`${patient?.name} ${patient?.surname}`} />
-            <Line minWidth={'400px'} title={'TC No'} data={patient?.idNumber} />
-            <Line minWidth={'400px'} title={'Telefon'} data={patient?.phone} />
-            <Line minWidth={'400px'} title={'Doğum Yılı'} data={patient?.birthYear} />
-        </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: "30%",
+          height: "100%",
+          gap: "10px",
+        }}
+      >
+        <InfoCard patient={patient} />
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+            border: "1px solid black",
+            borderRadius: "5px",
+            padding: "10px",
+          }}
+        ></div>
+      </div>
+      <div
+        style={{
+          height: "100%",
+          width: "70%",
+          border: "1px solid black",
+          borderRadius: "5px",
+          padding: "10px",
+        }}
+      >
+        <CustomizedTabs tabNames={tabNames} contentArray={contentArray} />
       </div>
     </div>
   );

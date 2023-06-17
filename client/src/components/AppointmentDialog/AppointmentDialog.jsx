@@ -34,7 +34,6 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     duration: "",
   };
 
-  
   // Dropdown selected Item
   const [doctors, setDoctors] = useState(null);
   const [patients, setPatients] = useState(null);
@@ -109,14 +108,27 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     let _appointment = { ...appointment };
     let _isError = { ...isError };
 
+    if (attr === "startTime" || attr === "endTime") {
+      const newValue = new Date(0);
+      newValue.setHours(value.getHours());
+      newValue.setMinutes(value.getMinutes());
+
+      value = newValue;
+    }
+
     if (attr === "duration") {
+      if (!value) {
+        value = 0;
+      }
       let newEndTime = new Date(_appointment.startTime);
       newEndTime.setMinutes(newEndTime.getMinutes() + parseInt(value));
       _appointment.endTime = newEndTime;
       _appointment[attr] = value;
     } else if (attr === "startTime" && value && value > _appointment.endTime) {
+      _appointment[attr] = value;
       _appointment.endTime = value;
     } else if (attr === "endTime" && value && value < _appointment.startTime) {
+      _appointment[attr] = value;
       _appointment.startTime = value;
     } else {
       _appointment[attr] = value;
@@ -128,6 +140,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     setAppointment(_appointment);
   };
 
+  console.log(appointment);
   //old appointment for update
   useEffect(() => {
     let _appointment = { ...appointment };
