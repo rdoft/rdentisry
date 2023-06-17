@@ -27,7 +27,7 @@ const localizer = dateFnsLocalizer({
 function convertDataArray(dataArray) {
   const convertedEvents = dataArray.map((data) => {
     const { date, description, startTime, endTime, id } = data;
-    const { name } = data.patient;
+    const { name, surname } = data.patient;
 
     const startDate = new Date(startTime);
     const endDate = new Date(endTime);
@@ -45,7 +45,7 @@ function convertDataArray(dataArray) {
     endDate.setDate(day);
 
     return {
-      title: `${name} - ${description}`,
+      title: `${name} ${surname} - ${description}`,
       start: startDate,
       end: endDate,
       id,
