@@ -28,6 +28,37 @@ exports.getPatients = async (req, res) => {
 };
 
 /**
+ * Get the patient with given id
+ * @param patientId id of the patient
+ */
+exports.getPatient = async (req, res) => {
+  const { patientId } = req.params;
+  let patient;
+
+  try {
+    // Find the patient record
+    patient = await Patient.findByPk(patientId, {
+      attributes: [
+        ["PatientId", "id"],
+        ["IdNumber", "idNumber"],
+        ["Name", "name"],
+        ["Surname", "surname"],
+        ["BirthYear", "birthYear"],
+        ["Phone", "phone"],
+      ],
+    });
+
+    if (patient) {
+      res.status(200).send(patient);
+    } else {
+      res.status(404).send({ message: "Hasta bulunamadı" });
+    }
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+/**
  * Add a patient
  * @body Patient informations
  */
@@ -76,7 +107,13 @@ exports.savePatient = async (req, res) => {
 exports.updatePatient = async (req, res) => {
   const { patientId } = req.params;
   const { idNumber, name, surname, phone, birthYear } = req.body;
-  let values = { Name: name, Surname: surname, Phone: phone, IdNumber: idNumber, BirthYear: birthYear ?? null };
+  let values = {
+    Name: name,
+    Surname: surname,
+    Phone: phone,
+    IdNumber: idNumber,
+    BirthYear: birthYear ?? null,
+  };
   let patient;
 
   try {

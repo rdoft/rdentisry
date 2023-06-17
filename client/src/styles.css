@@ -1,3 +1,7 @@
+#root {
+  height: 100vh;
+}
+
 .rbc-event {
   background-color: #226df8 !important;
   transition: 0.3s;
@@ -30,3 +34,11 @@
 .rbc-timeslot-group {
   min-height: 150px;
 }
+
+.p-datatable .p-datatable-tbody > tr {
+  cursor: pointer;
+}
+
+/* .p-checkbox .p-checkbox-box .p-checkbox-icon {
+  display: none;
+} */

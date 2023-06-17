@@ -28,7 +28,8 @@ const localizer = dateFnsLocalizer({
 function convertDataArray(dataArray) {
   const convertedEvents = dataArray.map((data) => {
     const { date, description, startTime, endTime, id } = data;
-    const { name, surname } = data.patient;
+    const { name } = data.patient;
+
 
     const startDate = new Date(startTime);
     const endDate = new Date(endTime);
@@ -46,7 +47,7 @@ function convertDataArray(dataArray) {
     endDate.setDate(day);
 
     return {
-      title: `${name} ${surname} - ${description}`,
+      title: `${name} - ${description}`,
       start: startDate,
       end: endDate,
       id,
@@ -107,8 +108,6 @@ const Index = () => {
     currentAppId &&
       (async () => {
         const response = await appointment.getAppointment(currentAppId);
-
-        console.log(response);
 
         setCurrentAppointment(response.data);
       })();
