@@ -9,6 +9,12 @@ let patient = {};
 patient.getPatients = () => {
   return API.get(API_URL);
 };
+/**
+ * Get patient by id
+ */
+patient.getPatient = (id) => {
+  return API.get(`${API_URL}/${id}`);
+};
 
 /**
  * Add a patient

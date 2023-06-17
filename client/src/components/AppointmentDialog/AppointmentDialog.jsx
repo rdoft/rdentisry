@@ -67,8 +67,6 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     setIsValid(_isValid);
   }, [appointment]);
 
-  console.log(isValid, appointment)
-
   // SERVICES -----------------------------------------------------------------
   // Get the list of doctors and set doctors value
   const getDoctors = async () => {

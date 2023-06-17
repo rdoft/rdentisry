@@ -8,6 +8,7 @@ import { MainLayout } from "layout";
 const Home = Loadable(lazy(() => import("pages/Overview/HomePage")));
 const Overview = Loadable(lazy(() => import("pages/Overview/OverviewPage")));
 const Patients = Loadable(lazy(() => import("pages/Patients/PatientsPage")));
+const Patient = Loadable(lazy(() => import("pages/Patients/PatientPage")));
 const Calendar = Loadable(lazy(() => import("pages/Calendar")));
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -31,6 +32,10 @@ const MainRoutes = {
     {
       path: "patients",
       element: <Patients />,
+    },
+    {
+      path: "patients/:id",
+      element: <Patient />,
     },
     {
       path: "/calendar",
