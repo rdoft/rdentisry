@@ -30,3 +30,7 @@
 .rbc-timeslot-group {
   min-height: 150px;
 }
+
+.p-datatable .p-datatable-tbody > tr {
+  cursor: pointer;
+}

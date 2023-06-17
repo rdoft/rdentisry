@@ -241,6 +241,12 @@ function PatientsTable() {
     setRowIndex(null);
   };
 
+  // navigate
+
+  const navigateToPage = (path) => {
+    window.location.href = path;
+  };
+
   // Return the PatientTable
   return (
     <div className="datatable-crud">
@@ -262,6 +268,7 @@ function PatientsTable() {
           onSelectionChange={handleChangeSelection}
           onRowMouseEnter={handleRowMouseEnter}
           onRowMouseLeave={handleRowMouseLeave}
+          onRowClick={(e) => navigateToPage(`/patients/${e.data.id}`)}
           selectionMode="checkbox"
           responsiveLayout="scroll"
           dataKey="id"
