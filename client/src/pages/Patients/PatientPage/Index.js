@@ -2,71 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PatientService } from "services/index";
 import { toast } from "react-hot-toast";
-import Line from "components/Line";
 import CustomizedTabs from "components/CustomizedTabs";
+import InfoCard from "./components/InfoCard";
 
 const tabNames = ["Tümü", "Randevular", "Ödemeler", "Notlar", "Dokümanlar"];
 const contentArray = ["Tümü", "Randevular", "Ödemeler", "Notlar", "Dokümanlar"];
-
-const InfoCard = ({ patient }) => {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "5px",
-        width: "100%%",
-        border: "1px solid black",
-        borderRadius: "5px",
-        padding: "10px",
-      }}
-    >
-      <Line title={"İsim"} data={`${patient?.name} ${patient?.surname}`} />
-      <Line title={"TC No"} data={patient?.idNumber} />
-      <Line title={"Telefon"} data={patient?.phone} />
-      <Line title={"Doğum Yılı"} data={patient?.birthYear} />
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          gap: "10px",
-          marginTop: "20px",
-        }}
-      >
-        <div
-          style={{
-            width: "100%",
-            border: "1px solid black",
-            borderRadius: "5px",
-            padding: "10px",
-          }}
-        >
-          <Line title={"Toplam"} />
-        </div>
-        <div
-          style={{
-            width: "100%",
-            border: "1px solid black",
-            borderRadius: "5px",
-            padding: "10px",
-          }}
-        >
-          <Line title={"Ödenen"} />
-        </div>
-        <div
-          style={{
-            width: "100%",
-            border: "1px solid black",
-            borderRadius: "5px",
-            padding: "10px",
-          }}
-        >
-          <Line title={"Kalan"} />
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const PatientPage = () => {
   const [patient, setPatient] = useState(null);
