@@ -129,9 +129,6 @@ const Index = () => {
 
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
-      <Grid item xs={12} sx={{ mb: -2.25 }}>
-        <Typography variant="h5">Takvim</Typography>
-      </Grid>
       <Grid item xs={12}>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <CalendarToolbar onClickAdd={showAppointmentDialog} />
