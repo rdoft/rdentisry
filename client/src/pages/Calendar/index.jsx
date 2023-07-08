@@ -9,8 +9,11 @@ import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
 import { Grid, Typography } from "@mui/material";
 import CalendarToolbar from "components/Calendar/CalendarToolbar";
 import moment from "moment";
-require("moment/locale/tr.js");
 
+// assets
+import { ClockCircleOutlined, UserOutlined, FileTextOutlined} from "@ant-design/icons";
+
+require("moment/locale/tr.js");
 const localizer = momentLocalizer(moment);
 
 const messages = {
@@ -41,10 +44,18 @@ const messages = {
 function convertDataArray(dataArray) {
   const convertedEvents = dataArray.map((data) => {
     const { date, description, startTime, endTime, id } = data;
-    const { name } = data.patient;
+    const { name, surname } = data.patient;
 
     const startDate = new Date(startTime);
     const endDate = new Date(endTime);
+    const startHours = startDate.toLocaleTimeString("tr-TR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const endHours = endDate.toLocaleTimeString("tr-TR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
     const year = date.slice(0, 4);
     const month = date.slice(5, 7);
@@ -59,7 +70,42 @@ function convertDataArray(dataArray) {
     endDate.setDate(day);
 
     return {
-      title: `${name} - ${description}`,
+      // title: (
+      //   <p>
+      //     {`${name} ${surname}`}<br/>{`${description}`}
+      //   </p>
+      // ),
+      title: (
+        <div>
+          <Typography
+            variant="h6"
+            style={{
+              fontFamily:
+                '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+            }}
+          >
+            <ClockCircleOutlined /> {`${startHours}-${endHours}`}
+          </Typography>
+          <Typography
+            variant="h5"
+            style={{
+              fontFamily:
+                '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+            }}
+          >
+            <UserOutlined /> {`${name} ${surname}`}
+          </Typography>
+          <Typography
+            variant="h6"
+            style={{
+              fontFamily:
+                '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+            }}
+          >
+            <FileTextOutlined /> {`${description}`}
+          </Typography>
+        </div>
+      ),
       start: startDate,
       end: endDate,
       id,
@@ -128,7 +174,7 @@ const Index = () => {
   const today = new Date();
 
   return (
-    <Grid container rowSpacing={4.5} columnSpacing={2.75}>
+    <Grid container rowSpacing={4} columnSpacing={2.75}>
       <Grid item xs={12}>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <CalendarToolbar onClickAdd={showAppointmentDialog} />
@@ -139,6 +185,7 @@ const Index = () => {
             defaultView={"week"}
             startAccessor={"start"}
             endAccessor={"end"}
+            step={7.5}
             onSelectEvent={handleEventSelection}
             style={{
               height: "calc(100vh - 240px)",

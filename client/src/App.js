@@ -3,8 +3,10 @@ import Routes from "routes";
 import ThemeCustomization from "themes";
 import ScrollTop from "components/ScrollTop";
 import { Toaster } from "react-hot-toast";
+
+// assets
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "styles.css"
+import "assets/styles/App.css"
 
 // ==============================|| APP - THEME, ROUTER, LOCAL  ||============================== //
 
