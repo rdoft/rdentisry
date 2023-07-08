@@ -26,10 +26,7 @@ import SettingTab from "./SettingTab";
 
 // assets
 import avatar1 from "assets/images/avatars/dentist-avatar.png";
-import {
-  SettingOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { SettingOutlined, UserOutlined } from "@ant-design/icons";
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -106,10 +103,15 @@ const Profile = () => {
             src={avatar1}
             sx={{ width: 32, height: 32 }}
           />
-          <Typography variant="subtitle1">Gül Diş Kliniği</Typography>
+          <Stack>
+            <Typography variant="h6">Gül Diş Kliniği</Typography>
+            <Typography variant="body2" color="textSecondary">
+              Çayırova/Kocaeli
+            </Typography>
+          </Stack>
         </Stack>
       </ButtonBase>
-      <Popper
+      {/* <Popper
         placement="bottom-end"
         open={open}
         anchorEl={anchorRef.current}
@@ -235,7 +237,7 @@ const Profile = () => {
             )}
           </Transitions>
         )}
-      </Popper>
+      </Popper> */}
     </Box>
   );
 };
