@@ -18,22 +18,22 @@ const overview = {
   title: "Genel",
   type: "group",
   children: [
-    {
-      id: "home",
-      title: "Anasayfa",
-      type: "item",
-      url: "/home",
-      icon: icons.AppstoreOutlined,
-      breadcrumbs: false,
-    },
-    {
-      id: "overview",
-      title: "Genel",
-      type: "item",
-      url: "/overview",
-      icon: icons.DashboardOutlined,
-      breadcrumbs: false,
-    },
+    // {
+    //   id: "home",
+    //   title: "Anasayfa",
+    //   type: "item",
+    //   url: "/home",
+    //   icon: icons.AppstoreOutlined,
+    //   breadcrumbs: false,
+    // },
+    // {
+    //   id: "overview",
+    //   title: "Genel",
+    //   type: "item",
+    //   url: "/overview",
+    //   icon: icons.DashboardOutlined,
+    //   breadcrumbs: false,
+    // },
     {
       id: "calendar",
       title: "Takvim",
