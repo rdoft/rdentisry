@@ -11,7 +11,11 @@ import CalendarToolbar from "components/Calendar/CalendarToolbar";
 import moment from "moment";
 
 // assets
-import { ClockCircleOutlined, UserOutlined, FileTextOutlined} from "@ant-design/icons";
+import {
+  ClockCircleOutlined,
+  UserOutlined,
+  FileTextOutlined,
+} from "@ant-design/icons";
 
 require("moment/locale/tr.js");
 const localizer = momentLocalizer(moment);
@@ -28,7 +32,7 @@ const messages = {
   time: "Saat",
   event: "Açıklama",
   noEventsInRange: "Bu tarih aralığında etkinlik bulunmuyor.",
-  showMore: "Daha fazla göster",
+  more: "Daha fazla göster",
   allDay: "Tüm gün",
   dateHeaderFormat: "dddd, DD MMMM YYYY",
   dayRangeHeaderFormat: "DD MMMM YYYY",
@@ -95,15 +99,17 @@ function convertDataArray(dataArray) {
           >
             <UserOutlined /> {`${name} ${surname}`}
           </Typography>
-          <Typography
+          
+          {description && <Typography
             variant="h6"
             style={{
               fontFamily:
                 '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+              whiteSpace: "pre-wrap",
             }}
           >
             <FileTextOutlined /> {`${description}`}
-          </Typography>
+          </Typography>}
         </div>
       ),
       start: startDate,
