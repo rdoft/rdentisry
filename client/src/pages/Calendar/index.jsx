@@ -187,6 +187,7 @@ const Index = () => {
             endAccessor={"end"}
             step={7.5}
             onSelectEvent={handleEventSelection}
+            tooltipAccessor={() => null}
             style={{
               height: "calc(100vh - 240px)",
               marginTop: "20px",
