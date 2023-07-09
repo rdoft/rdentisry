@@ -15,6 +15,8 @@ import {
   ClockCircleOutlined,
   UserOutlined,
   FileTextOutlined,
+  LeftOutlined,
+  RightOutlined
 } from "@ant-design/icons";
 
 require("moment/locale/tr.js");
@@ -22,8 +24,8 @@ const localizer = momentLocalizer(moment);
 
 const messages = {
   today: "Bugün",
-  previous: "Önceki",
-  next: "Sonraki",
+  previous: <LeftOutlined />,
+  next: <RightOutlined />,
   month: "Ay",
   week: "Hafta",
   day: "Gün",
@@ -43,6 +45,16 @@ const messages = {
   dateFormat: "DD MMMM YYYY",
   monthFormat: "MMMM",
   yearFormat: "YYYY",
+};
+
+const formats = {
+  agendaDateFormat: (date, culture, localizer) =>
+    date.toLocaleDateString("tr-TR", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+    }),
+  
 };
 
 const convertDataArray = (dataArray) => {
@@ -190,7 +202,7 @@ const Index = () => {
             messages={messages}
             localizer={localizer}
             events={allEvents}
-            views={['month', 'week', "agenda"]}
+            views={["month", "week", "agenda"]}
             defaultView={"week"}
             startAccessor={"start"}
             endAccessor={"end"}
@@ -198,6 +210,7 @@ const Index = () => {
             tooltipAccessor={() => null}
             showAllEvents={true}
             length="7"
+            allDayAccessor={null}
             min={
               new Date(
                 today.getFullYear(),
@@ -214,14 +227,7 @@ const Index = () => {
                 23
               )
             }
-            formats={{
-              agendaDateFormat: (date, culture, localizer) =>
-                date.toLocaleDateString("tr-TR", {
-                  weekday: "long",
-                  month: "long",
-                  day: "numeric",
-                }),
-            }}
+            formats={formats}
             onSelectEvent={handleEventSelection}
           />
           {appointmentDialog && (
