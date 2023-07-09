@@ -30,9 +30,9 @@ const messages = {
   agenda: "Ajanda",
   date: "Tarih",
   time: "Saat",
-  event: "Açıklama",
+  event: "Randevu",
   noEventsInRange: "Bu tarih aralığında etkinlik bulunmuyor.",
-  more: "Daha fazla göster",
+  showMore: (total) => `+${total} daha`,
   allDay: "Tüm gün",
   dateHeaderFormat: "dddd, DD MMMM YYYY",
   dayRangeHeaderFormat: "DD MMMM YYYY",
@@ -45,16 +45,7 @@ const messages = {
   yearFormat: "YYYY",
 };
 
-function truncate(text) {
-  const MAX_CHAR = 24;
-
-  if (text.length > MAX_CHAR) {
-    return text.slice(0, MAX_CHAR) + " ...";
-  }
-  return text;
-}
-
-function convertDataArray(dataArray) {
+const convertDataArray = (dataArray) => {
   const convertedEvents = dataArray.map((data) => {
     const { date, description, startTime, endTime, id } = data;
     const { name, surname } = data.patient;
@@ -83,11 +74,6 @@ function convertDataArray(dataArray) {
     endDate.setDate(day);
 
     return {
-      // title: (
-      //   <p>
-      //     {`${name} ${surname}`}<br/>{`${description}`}
-      //   </p>
-      // ),
       title: (
         <div>
           <Typography
@@ -108,27 +94,30 @@ function convertDataArray(dataArray) {
           >
             <UserOutlined /> {`${name} ${surname}`}
           </Typography>
-          
-          {description && <Typography
-            variant="h6"
-            style={{
-              fontFamily:
-                '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
-              whiteSpace: "pre-wrap",
-            }}
-          >
-            <FileTextOutlined /> {truncate(description)}
-          </Typography>}
+
+          {description && (
+            <Typography
+              variant="h6"
+              style={{
+                fontFamily:
+                  '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+                whiteSpace: "pre-wrap",
+              }}
+            >
+              <FileTextOutlined /> {description.slice(0, 24) + " ..."}
+            </Typography>
+          )}
         </div>
       ),
       start: startDate,
       end: endDate,
       id,
+      tooltip: dataArray.length > 2 ? `${dataArray.length} events` : null,
     };
   });
 
   return convertedEvents;
-}
+};
 
 const Index = () => {
   const [allEvents, setAllEvents] = useState([]);
@@ -189,11 +178,15 @@ const Index = () => {
   const today = new Date();
 
   return (
-    <Grid container rowSpacing={4} columnSpacing={2.75}>
+    <Grid container rowSpacing={4.5} columnSpacing={2.75}>
       <Grid item xs={12}>
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div>
           <CalendarToolbar onClickAdd={showAppointmentDialog} />
           <Calendar
+            style={{
+              height: "calc(100vh - 240px)",
+              // marginTop: "20px",
+            }}
             messages={messages}
             localizer={localizer}
             events={allEvents}
@@ -201,12 +194,9 @@ const Index = () => {
             startAccessor={"start"}
             endAccessor={"end"}
             step={7.5}
-            onSelectEvent={handleEventSelection}
             tooltipAccessor={() => null}
-            style={{
-              height: "calc(100vh - 240px)",
-              marginTop: "20px",
-            }}
+            showAllEvents={true}
+            length="7"
             min={
               new Date(
                 today.getFullYear(),
@@ -223,6 +213,15 @@ const Index = () => {
                 23
               )
             }
+            formats={{
+              agendaDateFormat: (date, culture, localizer) =>
+                date.toLocaleDateString("tr-TR", {
+                  weekday: "long",
+                  month: "long",
+                  day: "numeric",
+                }),
+            }}
+            onSelectEvent={handleEventSelection}
           />
           {appointmentDialog && (
             <AppointmentDialog
