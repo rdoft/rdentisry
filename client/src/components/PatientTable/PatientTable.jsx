@@ -8,7 +8,7 @@ import PatientTableToolbar from "./PatientTableToolbar";
 import ActionGroup from "components/ActionGroup/ActionGroup";
 
 // assets
-// import classes from "assets/styles/PatientList.module.css";
+// import styles from "assets/styles/PatientTable/PatientsTable.module.css";
 
 // services
 import { PatientService, AppointmentService } from "services";
@@ -248,9 +248,9 @@ function PatientsTable() {
 
   // navigate
 
-  const navigateToPage = (path) => {
-    window.location.href = path;
-  };
+  // const navigateToPage = (path) => {
+  //   window.location.href = path;
+  // };
 
   // Return the PatientTable
   return (
@@ -273,13 +273,13 @@ function PatientsTable() {
           onSelectionChange={handleChangeSelection}
           onRowMouseEnter={handleRowMouseEnter}
           onRowMouseLeave={handleRowMouseLeave}
-          onRowClick={(e) => {
-            if (
-              ![...e.originalEvent.target.classList].includes("p-checkbox-icon")
-            ) {
-              navigateToPage(`/patients/${e.data.id}`);
-            }
-          }}
+          // onRowClick={(e) => {
+          //   if (
+          //     ![...e.originalEvent.target.classList].includes("p-checkbox-icon")
+          //   ) {
+          //     navigateToPage(`/patients/${e.data.id}`);
+          //   }
+          // }}
           selectionMode="checkbox"
           responsiveLayout="scroll"
           dataKey="id"

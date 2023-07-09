@@ -2,6 +2,7 @@
   height: 100vh;
 }
 
+/* Calendar */
 .rbc-calendar {
   /* background: white; */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -46,8 +47,9 @@
   min-height: 75px;
 }
 
+/* PatientTable */
 .p-datatable .p-datatable-tbody > tr {
-  cursor: pointer;
+  cursor:default;
 }
 
 /* .p-checkbox .p-checkbox-box .p-checkbox-icon {
