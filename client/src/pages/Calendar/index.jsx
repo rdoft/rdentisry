@@ -190,6 +190,7 @@ const Index = () => {
             messages={messages}
             localizer={localizer}
             events={allEvents}
+            views={['month', 'week', "agenda"]}
             defaultView={"week"}
             startAccessor={"start"}
             endAccessor={"end"}
