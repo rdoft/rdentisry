@@ -33,18 +33,22 @@ module.exports = (sequelize, Sequelize) => {
         validate: {
           min: (time) => {
             if (this.StartTime < time) {
-              throw new Error('EndTime must be after StartTime')
+              throw new Error("EndTime must be after StartTime");
             }
           },
           max: "23:59:59",
-        }
+        },
+      },
+      Description: {
+        type: Sequelize.TEXT,
       },
       DidCome: {
         type: Sequelize.BOOLEAN,
       },
-      DidAction:{
-        type: Sequelize.BOOLEAN
-      }
+      Status: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
     },
     {
       indexes: [
@@ -59,7 +63,7 @@ module.exports = (sequelize, Sequelize) => {
       ],
       timestamps: false,
       tableName: "Appointment",
-    },
+    }
   );
 
   return Appointment;

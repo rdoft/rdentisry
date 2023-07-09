@@ -10,19 +10,49 @@ exports.getPatients = async (req, res) => {
 
   try {
     // Find patient list
-    patients = await Patient.findAll();
-    patients = patients.map((patient) => {
-      return {
-        id: patient.PatientId,
-        idNumber: patient.IdNumber,
-        name: patient.Name,
-        surname: patient.Surname,
-        phone: patient.Phone,
-        birthYear: patient.BirthYear,
-      };
+    patients = await Patient.findAll({
+      attributes: [
+        ["PatientId", "id"],
+        ["IdNumber", "idNumber"],
+        ["Name", "name"],
+        ["Surname", "surname"],
+        ["Phone", "phone"],
+        ["BirthYear", "birthYear"],
+      ],
     });
 
     res.status(200).send(patients);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+/**
+ * Get the patient with given id
+ * @param patientId id of the patient
+ */
+exports.getPatient = async (req, res) => {
+  const { patientId } = req.params;
+  let patient;
+
+  try {
+    // Find the patient record
+    patient = await Patient.findByPk(patientId, {
+      attributes: [
+        ["PatientId", "id"],
+        ["IdNumber", "idNumber"],
+        ["Name", "name"],
+        ["Surname", "surname"],
+        ["BirthYear", "birthYear"],
+        ["Phone", "phone"],
+      ],
+    });
+
+    if (patient) {
+      res.status(200).send(patient);
+    } else {
+      res.status(404).send({ message: "Hasta bulunamadı" });
+    }
   } catch (error) {
     res.status(500).send(error);
   }
@@ -33,14 +63,14 @@ exports.getPatients = async (req, res) => {
  * @body Patient informations
  */
 exports.savePatient = async (req, res) => {
-  const {
-    idNumber: IdNumber,
-    name: Name,
-    surname: Surname,
-    phone: Phone,
-    birthYear: BirthYear,
-  } = req.body;
-  let values = { Name, Surname, Phone, IdNumber, BirthYear: BirthYear ?? null };
+  const { idNumber, name, surname, phone, birthYear } = req.body;
+  let values = {
+    Name: name,
+    Surname: surname,
+    Phone: phone,
+    IdNumber: idNumber,
+    BirthYear: birthYear ?? null,
+  };
   let patient;
 
   try {
@@ -60,7 +90,9 @@ exports.savePatient = async (req, res) => {
       error instanceof Sequelize.ValidationError &&
       error.name === "SequelizeUniqueConstraintError"
     ) {
-      res.status(400).send("Aynı TC kimlik numarasına sahip iki hasta olamaz");
+      res
+        .status(400)
+        .send({ message: "Aynı TC kimlik numarasına sahip iki hasta olamaz" });
     } else {
       res.status(500).send(error);
     }
@@ -74,14 +106,14 @@ exports.savePatient = async (req, res) => {
  */
 exports.updatePatient = async (req, res) => {
   const { patientId } = req.params;
-  const {
-    idNumber: IdNumber,
-    name: Name,
-    surname: Surname,
-    phone: Phone,
-    birthYear: BirthYear,
-  } = req.body;
-  let values = { Name, Surname, Phone, IdNumber, BirthYear: BirthYear ?? null };
+  const { idNumber, name, surname, phone, birthYear } = req.body;
+  let values = {
+    Name: name,
+    Surname: surname,
+    Phone: phone,
+    IdNumber: idNumber,
+    BirthYear: birthYear ?? null,
+  };
   let patient;
 
   try {
@@ -101,7 +133,9 @@ exports.updatePatient = async (req, res) => {
       error instanceof Sequelize.ValidationError &&
       error.name === "SequelizeUniqueConstraintError"
     ) {
-      res.status(400).send("Aynı TC kimlik numarasına sahip iki hasta olamaz");
+      res
+        .status(400)
+        .send({ message: "Aynı TC kimlik numarasına sahip iki hasta olamaz" });
     } else {
       res.status(500).send(error);
     }

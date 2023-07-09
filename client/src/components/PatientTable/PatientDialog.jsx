@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 
 import { Avatar } from "@mui/material";
-// import { classNames } from "primereact/utils";
 import { Dialog, InputText } from "primereact";
 import DialogFooter from "components/DialogFooter/DialogFooter";
 
-import schema from "schemas/patient.schema";
-
+// assets
 // import classes from "assets/styles/Patient.module.css";
 import avatarPatient from "assets/images/avatars/patient-avatar.png";
 
-function PatientDialog({ visible, patient, onChange, onHide, onSubmit }) {
+import schema from "schemas/patient.schema";
+
+function PatientDialog({ patient, onChange, onHide, onSubmit }) {
   // Validation of patient object
   const [isValid, setIsValid] = useState(false);
   // Validation(error) of patient properties
@@ -76,7 +76,7 @@ function PatientDialog({ visible, patient, onChange, onHide, onSubmit }) {
 
   return (
     <Dialog
-      visible={visible}
+      visible
       style={{ width: "450px" }}
       header={!patient.id ? "Yeni Hasta" : "Hasta Bilgileri"}
       modal
