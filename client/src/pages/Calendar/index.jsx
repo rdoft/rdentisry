@@ -45,6 +45,15 @@ const messages = {
   yearFormat: "YYYY",
 };
 
+function truncate(text) {
+  const MAX_CHAR = 24;
+
+  if (text.length > MAX_CHAR) {
+    return text.slice(0, MAX_CHAR) + " ...";
+  }
+  return text;
+}
+
 function convertDataArray(dataArray) {
   const convertedEvents = dataArray.map((data) => {
     const { date, description, startTime, endTime, id } = data;
@@ -108,7 +117,7 @@ function convertDataArray(dataArray) {
               whiteSpace: "pre-wrap",
             }}
           >
-            <FileTextOutlined /> {`${description}`}
+            <FileTextOutlined /> {truncate(description)}
           </Typography>}
         </div>
       ),
