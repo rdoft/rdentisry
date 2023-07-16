@@ -196,7 +196,7 @@ const Index = () => {
   // HANDLERS -----------------------------------------------------------------
   // onSelectEvent, get appointment and show dialog
   const handleSelectEvent = async (event) => {
-    const appointment_ = appointments.find(appointment => appointment.id == event.id);
+    const appointment_ = appointments.find(appointment => appointment.id === event.id);
     setAppointment(appointment_);
     
     setTimeout(showAppointmentDialog, 100);
