@@ -115,7 +115,7 @@ const convertToEvent = (appointments) => {
                 whiteSpace: "pre-wrap",
               }}
             >
-              <FileTextOutlined /> {description.slice(0, 24) + " ..."}
+              <FileTextOutlined /> {description.includes("\n") || description.split(/\n/)[0].length > 24 ? description.split(/\n/)[0].slice(0, 24) + " ..." : description.split(/\n/)[0]}
             </Typography>
           )}
         </div>
