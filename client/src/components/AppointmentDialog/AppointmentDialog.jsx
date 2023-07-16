@@ -8,6 +8,13 @@ import {
   Divider,
   Calendar,
 } from "primereact";
+import { TextField } from "@mui/material";
+
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
+
 import DialogFooter from "components/DialogFooter/DialogFooter";
 import DropdownItem from "components/DropdownItem/DropdownItem";
 import { toast } from "react-hot-toast";
@@ -66,6 +73,29 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     setIsValid(_isValid);
   }, [appointment]);
 
+  // Old appointment for update
+  useEffect(() => {
+    let _appointment = { ...appointment };
+    if (_appointment.endTime) {
+      _appointment.endTime = new Date(_appointment.endTime);
+    }
+    if (_appointment.startTime) {
+      _appointment.startTime = new Date(_appointment.startTime);
+    }
+    if (_appointment.date) {
+      _appointment.date = new Date(_appointment.date);
+    }
+    if (_appointment.endTime && _appointment.startTime) {
+      const a = new Date(_appointment.endTime);
+      const b = new Date(_appointment.startTime);
+      const hoursDiff = a.getHours() - b.getHours();
+      const minutesDiff = a.getMinutes() - b.getMinutes();
+      _appointment.duration = hoursDiff * 60 + minutesDiff;
+    }
+
+    setAppointment(_appointment);
+  }, [isError]);
+
   // SERVICES -----------------------------------------------------------------
   // Get the list of doctors and set doctors value
   const getDoctors = async () => {
@@ -105,14 +135,13 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
   const handleChange = (event, attr) => {
     let value = event.target && event.target.value;
 
-    let _appointment = { ...appointment };
     let _isError = { ...isError };
+    let _appointment = { ...appointment };
 
-    if (attr === "startTime" || attr === "endTime") {
+    if (attr === "startTime") {
       const newValue = new Date(0);
-      newValue.setHours(value.getHours());
-      newValue.setMinutes(value.getMinutes());
-
+      newValue.setHours(event.hour());
+      newValue.setMinutes(event.minute());
       value = newValue;
     }
 
@@ -127,42 +156,13 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     } else if (attr === "startTime" && value && value > _appointment.endTime) {
       _appointment[attr] = value;
       _appointment.endTime = value;
-    } else if (attr === "endTime" && value && value < _appointment.startTime) {
-      _appointment[attr] = value;
-      _appointment.startTime = value;
     } else {
       _appointment[attr] = value;
     }
-    // _isError[attr] = schema[attr].validate(value).error
-    //   ? true
-    //   : false;
+
     setIsError(_isError);
     setAppointment(_appointment);
   };
-
-  console.log(appointment);
-  //old appointment for update
-  useEffect(() => {
-    let _appointment = { ...appointment };
-    if (_appointment.endTime) {
-      _appointment.endTime = new Date(_appointment.endTime);
-    }
-    if (_appointment.startTime) {
-      _appointment.startTime = new Date(_appointment.startTime);
-    }
-    if (_appointment.date) {
-      _appointment.date = new Date(_appointment.date);
-    }
-    if (_appointment.endTime && _appointment.startTime) {
-      const a = new Date(_appointment.endTime);
-      const b = new Date(_appointment.startTime);
-      const hoursDiff = a.getHours() - b.getHours();
-      const minutesDiff = a.getMinutes() - b.getMinutes();
-      _appointment.duration = hoursDiff * 60 + minutesDiff;
-    }
-
-    setAppointment(_appointment);
-  }, [isError]);
 
   // onHide handler
   const handleHide = () => {
@@ -184,7 +184,11 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
 
   // onSubmit handler
   const handleKeyDown = (event) => {
-    if (isValid && event.key === "Enter" && event.target.tagName !== "TEXTAREA") {
+    if (
+      isValid &&
+      event.key === "Enter" &&
+      event.target.tagName !== "TEXTAREA"
+    ) {
       handleSubmit();
     }
   };
@@ -284,7 +288,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
           className="col-6 md:col-4"
           value={appointment.date}
           onChange={(event) => handleChange(event, "date")}
-          dateFormat="dd/M/yy"
+          dateFormat="dd/mm/yy"
           minDate={new Date()}
         />
       </div>
@@ -296,21 +300,25 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
         </label>
 
         {/* Start */}
-        <Calendar
-          className="col-6 md:col-4"
-          value={appointment.startTime}
-          onChange={(event) => handleChange(event, "startTime")}
-          timeOnly
-        />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <MobileTimePicker
+            className="col-6 md:col-4"
+            value={dayjs(appointment.startTime)}
+            onChange={(event) => handleChange(event, "startTime")}
+            ampm={false}
+          />
 
-        <label className="col-12 md:col-1 font-bold text-center">-</label>
-        {/* End */}
-        <Calendar
-          className="col-6 md:col-4"
-          value={appointment.endTime}
-          onChange={(event) => handleChange(event, "endTime")}
-          timeOnly
-        />
+          <label className="col-12 md:col-1 font-bold text-center">-</label>
+          {/* End */}
+
+          <MobileTimePicker
+            className="col-6 md:col-4"
+            disabled="true"
+            value={dayjs(appointment.endTime)}
+            onChange={(event) => handleChange(event, "endTime")}
+            ampm={false}
+          />
+        </LocalizationProvider>
       </div>
 
       {/* Duration */}
