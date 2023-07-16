@@ -265,7 +265,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
       {/* Description */}
       <div className="field mb-3">
         <InputTextarea
-          value={appointment.description}
+          value={appointment.description ? appointment.description : ""}
           placeholder="Açıklama"
           onChange={(event) => handleChange(event, "description")}
           rows={5}
