@@ -184,7 +184,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
 
   // onSubmit handler
   const handleKeyDown = (event) => {
-    if (isValid && event.key === "Enter") {
+    if (isValid && event.key === "Enter" && event.target.tagName !== "TEXTAREA") {
       handleSubmit();
     }
   };
