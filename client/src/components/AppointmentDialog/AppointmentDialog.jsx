@@ -289,7 +289,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
           value={appointment.date}
           onChange={(event) => handleChange(event, "date")}
           dateFormat="dd/mm/yy"
-          minDate={new Date()}
+          minDate={new Date(new Date().setHours(0, 0, 0, 0))}
         />
       </div>
 
@@ -313,7 +313,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
 
           <MobileTimePicker
             className="col-6 md:col-4"
-            disabled="true"
+            disabled={true}
             value={dayjs(appointment.endTime)}
             onChange={(event) => handleChange(event, "endTime")}
             ampm={false}
