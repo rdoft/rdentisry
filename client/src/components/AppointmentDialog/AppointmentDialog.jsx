@@ -8,7 +8,6 @@ import {
   Divider,
   Calendar,
 } from "primereact";
-import { TextField } from "@mui/material";
 
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -74,27 +73,15 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
   }, [appointment]);
 
   // Old appointment for update
-  useEffect(() => {
-    let _appointment = { ...appointment };
-    if (_appointment.endTime) {
-      _appointment.endTime = new Date(_appointment.endTime);
+  const calcDuration = (start, end) => {
+    if (start, end) {
+      const hoursDiff = end.getHours() - start.getHours();
+      const minutesDiff = end.getMinutes() - start.getMinutes();
+      return (hoursDiff * 60 + minutesDiff);
+    } else {
+      return 0;
     }
-    if (_appointment.startTime) {
-      _appointment.startTime = new Date(_appointment.startTime);
-    }
-    if (_appointment.date) {
-      _appointment.date = new Date(_appointment.date);
-    }
-    if (_appointment.endTime && _appointment.startTime) {
-      const a = new Date(_appointment.endTime);
-      const b = new Date(_appointment.startTime);
-      const hoursDiff = a.getHours() - b.getHours();
-      const minutesDiff = a.getMinutes() - b.getMinutes();
-      _appointment.duration = hoursDiff * 60 + minutesDiff;
-    }
-
-    setAppointment(_appointment);
-  }, [isError]);
+  };
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of doctors and set doctors value
@@ -139,27 +126,33 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     let _appointment = { ...appointment };
 
     if (attr === "startTime") {
-      const newValue = new Date(0);
-      newValue.setHours(event.hour());
-      newValue.setMinutes(event.minute());
-      value = newValue;
-    }
+      let start = new Date(0);
+      let end = new Date(0);
+      
+      start.setHours(event.hour());
+      start.setMinutes(event.minute());
+      value = start;
 
-    if (attr === "duration") {
-      if (!value) {
-        value = 0;
+      _appointment.endTime = new Date(_appointment.endTime);
+      end.setHours(_appointment.endTime.getHours());
+      end.setMinutes(_appointment.endTime.getMinutes());
+
+      if (start > end) {
+        end = start;
+        _appointment.endTime = start;
       }
-      let newEndTime = new Date(_appointment.startTime);
-      newEndTime.setMinutes(newEndTime.getMinutes() + parseInt(value));
-      _appointment.endTime = newEndTime;
-      _appointment[attr] = value;
-    } else if (attr === "startTime" && value && value > _appointment.endTime) {
-      _appointment[attr] = value;
-      _appointment.endTime = value;
-    } else {
-      _appointment[attr] = value;
+      _appointment.duration = calcDuration(start, end);
+    
+    } else if (attr === "duration") {
+      value = value ?? 0;
+      _appointment.endTime = new Date(_appointment.startTime);
+      _appointment.endTime.setMinutes(_appointment.endTime.getMinutes() + parseInt(value));
+    
+    } else if (attr === "date") {
+      _isError[attr] = schema[attr].validate(value).error ? true : false;
     }
 
+    _appointment[attr] = value;    
     setIsError(_isError);
     setAppointment(_appointment);
   };
@@ -286,11 +279,12 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
         <Calendar
           id="date"
           className="col-6 md:col-4"
-          value={appointment.date}
+          value={new Date(appointment.date)}
           onChange={(event) => handleChange(event, "date")}
           dateFormat="dd/mm/yy"
           minDate={new Date(new Date().setHours(0, 0, 0, 0))}
         />
+        {isError["date"] && <small className="p-error">Geçersiz</small>}
       </div>
 
       {/* Time */}
@@ -338,7 +332,6 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
             value={appointment.duration}
             onChange={(event) => handleChange(event, "duration")}
           />
-          {isError["duration"] && <small className="p-error">Geçersiz</small>}
         </div>
       </div>
     </Dialog>
