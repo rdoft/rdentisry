@@ -146,7 +146,7 @@ const header = ({ label }) => (
 );
 
 const dayPropGetter = (date) => ({
-  ...(today.toLocaleDateString() == date.toLocaleDateString() && {
+  ...(today.toLocaleDateString() === date.toLocaleDateString() && {
     style: {
       backgroundColor: "#EBEFF4",
       // color: "white",
@@ -197,10 +197,26 @@ const Index = () => {
         toast.success("Yeni randevu başarıyla kaydedildi!");
       }
 
+      // Get and set the updated list of appointments
       getAppointments();
       setAppointmentDialog(false);
       setAppointment(null);
     } catch (error) {
+      toast.error(toastErrorMessage(error));
+    }
+  };
+
+  //  Delete appointment
+  const deleteAppointment = async (appointment) => {
+    try {
+      await AppointmentService.deleteAppointment(appointment.id);
+
+      // Get and set the updated list of appointments
+      getAppointments();
+      setAppointmentDialog(false);
+      setAppointment(null);
+    } catch (error) {
+      // Set error status and show error toast message
       toast.error(toastErrorMessage(error));
     }
   };
@@ -279,6 +295,7 @@ const Index = () => {
               _appointment={appointment}
               onHide={hideAppointmentDialog}
               onSubmit={saveAppointment}
+              onDelete={appointment && deleteAppointment}
             />
           )}
         </div>
