@@ -15,11 +15,13 @@ import {
   UserOutlined,
   FileTextOutlined,
   LeftOutlined,
-  RightOutlined
+  RightOutlined,
 } from "@ant-design/icons";
 
 require("moment/locale/tr.js");
 const localizer = momentLocalizer(moment);
+
+const today = new Date();
 
 const messages = {
   today: "Bugün",
@@ -53,7 +55,6 @@ const formats = {
       month: "long",
       day: "numeric",
     }),
-  
 };
 
 const convertToEvent = (appointments) => {
@@ -115,7 +116,11 @@ const convertToEvent = (appointments) => {
                 whiteSpace: "pre-wrap",
               }}
             >
-              <FileTextOutlined /> {description.includes("\n") || description.split(/\n/)[0].length > 24 ? description.split(/\n/)[0].slice(0, 24) + " ..." : description.split(/\n/)[0]}
+              <FileTextOutlined />{" "}
+              {description.includes("\n") ||
+              description.split(/\n/)[0].length > 24
+                ? description.split(/\n/)[0].slice(0, 24) + " ..."
+                : description.split(/\n/)[0]}
             </Typography>
           )}
         </div>
@@ -129,6 +134,25 @@ const convertToEvent = (appointments) => {
 
   return convertedEvents;
 };
+
+const header = ({ label }) => (
+  <div style={{ textAlign: "center" }}>
+    <div style={{ position: "relative" }}>
+      <div>
+        <p>{label}</p>
+      </div>
+    </div>
+  </div>
+);
+
+const dayPropGetter = (date) => ({
+  ...(today.toLocaleDateString() == date.toLocaleDateString() && {
+    style: {
+      backgroundColor: "#EBEFF4",
+      // color: "white",
+    },
+  }),
+});
 
 const Index = () => {
   const [events, setEvents] = useState([]);
@@ -172,15 +196,15 @@ const Index = () => {
         await AppointmentService.saveAppointment(appointment);
         toast.success("Yeni randevu başarıyla kaydedildi!");
       }
-      
-      getAppointments()
+
+      getAppointments();
       setAppointmentDialog(false);
       setAppointment(null);
     } catch (error) {
       toast.error(toastErrorMessage(error));
     }
   };
-  
+
   // SHOW/HIDE OPTIONS --------------------------------------------------------
   // Show add appointment dialog
   const showAppointmentDialog = () => {
@@ -196,13 +220,13 @@ const Index = () => {
   // HANDLERS -----------------------------------------------------------------
   // onSelectEvent, get appointment and show dialog
   const handleSelectEvent = async (event) => {
-    const appointment_ = appointments.find(appointment => appointment.id === event.id);
+    const appointment_ = appointments.find(
+      (appointment) => appointment.id === event.id
+    );
     setAppointment(appointment_);
-    
+
     setTimeout(showAppointmentDialog, 100);
   };
-
-  const today = new Date();
 
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
@@ -217,11 +241,16 @@ const Index = () => {
             messages={messages}
             localizer={localizer}
             events={events}
+            dayPropGetter={dayPropGetter}
+            components={{
+              header: header,
+            }}
             views={["month", "week", "agenda"]}
             defaultView={"week"}
             startAccessor={"start"}
             endAccessor={"end"}
-            step={7.5}
+            timeslots={1}
+            step={15}
             tooltipAccessor={() => null}
             showAllEvents={true}
             length="7"
