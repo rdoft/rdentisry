@@ -170,7 +170,13 @@ exports.deletePatients = async (req, res) => {
 
     res.status(200).send({ count: count });
   } catch (error) {
-    res.status(500).send(error);
+    if (error instanceof Sequelize.ForeignKeyConstraintError) {
+      res
+        .status(400)
+        .send({ message: "Silmek istediğiniz hastalara ait ödeme kaydı olduğundan işlem tamamlanamadı" });
+    } else {
+      res.status(500).send(error);
+    }
   }
 };
 
@@ -199,6 +205,12 @@ exports.deletePatient = async (req, res) => {
       res.status(404).send({ message: "Hasta bulunamadı" });
     }
   } catch (error) {
-    res.status(500).send(error);
+    if (error instanceof Sequelize.ForeignKeyConstraintError) {
+      res
+        .status(400)
+        .send({ message: "Silmek istediğiniz hastaya ait ödeme kaydı olduğundan işlem tamamlanamadı" });
+    } else {
+      res.status(500).send(error);
+    }
   }
 };

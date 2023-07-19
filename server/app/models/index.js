@@ -113,9 +113,7 @@ db.invoice.belongsTo(db.patientProcedure, {
 db.doctor.beforeDestroy(async (doctor) => {
   const appointmentCount = await doctor.countAppointments();
   if (appointmentCount > 0) {
-    throw new Error(
-      "Cannot destroy doctor before removing his/her appointments"
-    );
+    throw new Sequelize.ForeignKeyConstraintError();
   }
 });
 
@@ -123,7 +121,7 @@ db.doctor.beforeDestroy(async (doctor) => {
 db.patient.beforeDestroy(async (patient) => {
   const paymentCount = await patient.countPayments();
   if (paymentCount > 0) {
-    throw new Error("Cannot destroy patient who has payment records");
+    throw new Sequelize.ForeignKeyConstraintError();
   }
 });
 
