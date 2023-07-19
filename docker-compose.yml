@@ -30,10 +30,7 @@ services:
     depends_on:
       - server
   db:
-    image: postgres:14.6
+    image: recepdemrci/rdentistry:${VERSION}
     ports: 
       - "${PORT_DB}:${PORT_DB}"
-    environment:
-      - POSTGRES_DB=${DB_DB}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+
