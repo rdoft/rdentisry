@@ -7,7 +7,15 @@ import {
   InputTextarea,
   Divider,
   Calendar,
+  ConfirmDialog,
+  confirmDialog,
 } from "primereact";
+
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
+
 import DialogFooter from "components/DialogFooter/DialogFooter";
 import DropdownItem from "components/DropdownItem/DropdownItem";
 import { toast } from "react-hot-toast";
@@ -22,7 +30,7 @@ import schema from "schemas/appointment.schema";
 import { PatientService, DoctorService } from "services";
 import { toastErrorMessage } from "components/errorMesage";
 
-function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
+function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
   // Set default empty Appointment
   let emptyAppointment = {
     patient: null,
@@ -66,6 +74,17 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
     setIsValid(_isValid);
   }, [appointment]);
 
+  // Old appointment for update
+  const calcDuration = (start, end) => {
+    if ((start, end)) {
+      const hoursDiff = end.getHours() - start.getHours();
+      const minutesDiff = end.getMinutes() - start.getMinutes();
+      return hoursDiff * 60 + minutesDiff;
+    } else {
+      return 0;
+    }
+  };
+
   // SERVICES -----------------------------------------------------------------
   // Get the list of doctors and set doctors value
   const getDoctors = async () => {
@@ -105,64 +124,40 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
   const handleChange = (event, attr) => {
     let value = event.target && event.target.value;
 
-    let _appointment = { ...appointment };
     let _isError = { ...isError };
+    let _appointment = { ...appointment };
 
-    if (attr === "startTime" || attr === "endTime") {
-      const newValue = new Date(0);
-      newValue.setHours(value.getHours());
-      newValue.setMinutes(value.getMinutes());
+    if (attr === "startTime") {
+      let start = new Date(0);
+      let end = new Date(0);
 
-      value = newValue;
-    }
+      start.setHours(event.hour());
+      start.setMinutes(event.minute());
+      value = start;
 
-    if (attr === "duration") {
-      if (!value) {
-        value = 0;
+      _appointment.endTime = new Date(_appointment.endTime);
+      end.setHours(_appointment.endTime.getHours());
+      end.setMinutes(_appointment.endTime.getMinutes());
+
+      if (start > end) {
+        end = start;
+        _appointment.endTime = start;
       }
-      let newEndTime = new Date(_appointment.startTime);
-      newEndTime.setMinutes(newEndTime.getMinutes() + parseInt(value));
-      _appointment.endTime = newEndTime;
-      _appointment[attr] = value;
-    } else if (attr === "startTime" && value && value > _appointment.endTime) {
-      _appointment[attr] = value;
-      _appointment.endTime = value;
-    } else if (attr === "endTime" && value && value < _appointment.startTime) {
-      _appointment[attr] = value;
-      _appointment.startTime = value;
-    } else {
-      _appointment[attr] = value;
+      _appointment.duration = calcDuration(start, end);
+    } else if (attr === "duration") {
+      value = value ?? 0;
+      _appointment.endTime = new Date(_appointment.startTime);
+      _appointment.endTime.setMinutes(
+        _appointment.endTime.getMinutes() + parseInt(value)
+      );
+    } else if (attr === "date") {
+      _isError[attr] = schema[attr].validate(value).error ? true : false;
     }
-    // _isError[attr] = schema[attr].validate(value).error
-    //   ? true
-    //   : false;
+
+    _appointment[attr] = value;
     setIsError(_isError);
     setAppointment(_appointment);
   };
-
-  console.log(appointment);
-  //old appointment for update
-  useEffect(() => {
-    let _appointment = { ...appointment };
-    if (_appointment.endTime) {
-      _appointment.endTime = new Date(_appointment.endTime);
-    }
-    if (_appointment.startTime) {
-      _appointment.startTime = new Date(_appointment.startTime);
-    }
-    if (_appointment.date) {
-      _appointment.date = new Date(_appointment.date);
-    }
-    if (_appointment.endTime && _appointment.startTime) {
-      const a = new Date(_appointment.endTime);
-      const b = new Date(_appointment.startTime);
-      const hoursDiff = a.getHours() - b.getHours();
-      const minutesDiff = a.getMinutes() - b.getMinutes();
-      _appointment.duration = hoursDiff * 60 + minutesDiff;
-    }
-
-    setAppointment(_appointment);
-  }, [isError]);
 
   // onHide handler
   const handleHide = () => {
@@ -179,15 +174,34 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
 
   // onSubmit handler
   const handleSubmit = async () => {
-    await onSubmit(appointment);
+    onSubmit(appointment);
+  };
+
+  // onSubmit handler
+  const handleDelete = async () => {
+    onDelete(appointment);
   };
 
   // onSubmit handler
   const handleKeyDown = (event) => {
-    if (isValid && event.key === "Enter") {
+    if (
+      isValid &&
+      event.key === "Enter" &&
+      event.target.tagName !== "TEXTAREA"
+    ) {
       handleSubmit();
     }
   };
+
+  const handleDeleteConfim =
+    onDelete &&
+    (() => {
+      confirmDialog({
+        message: "Randevuyu silmek istediğinizden emin misiniz?",
+        header: "Randevuyu Sil",
+        footer: <DialogFooter onHide={handleHide} onDelete={handleDelete} />,
+      });
+    });
 
   // TEMPLATES
   // Dropdwon item template
@@ -213,127 +227,138 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit }) {
   };
 
   return (
-    <Dialog
-      visible
-      style={{ width: "450px" }}
-      header="Randevu Planla"
-      modal
-      className="p-fluid"
-      footer={
-        <DialogFooter
-          disabled={!isValid}
-          onHide={handleHide}
-          onSubmit={handleSubmit}
-        />
-      }
-      onHide={handleHide}
-      onKeyDown={handleKeyDown}
-    >
-      {/* Divider */}
-      <Divider type="solid" className="mt-0" />
-
-      {/* Dropdown Patients */}
-      <div className="field mb-3">
-        <Dropdown
-          value={appointment.patient}
-          options={patients}
-          optionLabel="name"
-          filter
-          filterBy="name,surname,idNumber"
-          placeholder="Hasta seçiniz..."
-          valueTemplate={patientDropdownItemTemplate}
-          itemTemplate={patientDropdownItemTemplate}
-          onChange={(event) => handleChange(event, "patient")}
-        />
-      </div>
-
-      {/* Dropdown Doctors */}
-      <div className="field mb-3">
-        <Dropdown
-          value={appointment.doctor}
-          options={doctors}
-          optionLabel="name"
-          filter
-          filterBy="name,surname"
-          placeholder="Doktor seçiniz..."
-          valueTemplate={doctorDropdownItemTemplate}
-          itemTemplate={doctorDropdownItemTemplate}
-          onChange={(event) => handleChange(event, "doctor")}
-        />
-      </div>
-
-      {/* Description */}
-      <div className="field mb-3">
-        <InputTextarea
-          value={appointment.description}
-          placeholder="Açıklama"
-          onChange={(event) => handleChange(event, "description")}
-          rows={5}
-          cols={30}
-        />
-      </div>
-
-      {/* Date */}
-      <div className="flex grid align-items-center mb-3">
-        <label htmlFor="date" className="col-12 md:col-2 font-bold text-right">
-          Tarih <small className="p-error">*</small>
-        </label>
-
-        <Calendar
-          id="date"
-          className="col-6 md:col-4"
-          value={appointment.date}
-          onChange={(event) => handleChange(event, "date")}
-          dateFormat="dd/M/yy"
-          minDate={new Date()}
-        />
-      </div>
-
-      {/* Time */}
-      <div className="flex grid align-items-center mb-3">
-        <label className="col-12 md:col-2 font-bold text-right">
-          Saat <small className="p-error">*</small>
-        </label>
-
-        {/* Start */}
-        <Calendar
-          className="col-6 md:col-4"
-          value={appointment.startTime}
-          onChange={(event) => handleChange(event, "startTime")}
-          timeOnly
-        />
-
-        <label className="col-12 md:col-1 font-bold text-center">-</label>
-        {/* End */}
-        <Calendar
-          className="col-6 md:col-4"
-          value={appointment.endTime}
-          onChange={(event) => handleChange(event, "endTime")}
-          timeOnly
-        />
-      </div>
-
-      {/* Duration */}
-      <div className="flex grid align-items-center mb-3">
-        <label
-          htmlFor="duration"
-          className="col-12 md:col-2 font-bold text-right"
-        >
-          Süre <small className="p-error">*</small>
-        </label>
-
-        <div className="col-6 md:col-4">
-          <InputText
-            id="duration"
-            className="w-full"
-            placeholder={"dk"}
-            value={appointment.duration}
-            onChange={(event) => handleChange(event, "duration")}
+    <>
+      <ConfirmDialog />
+      <Dialog
+        visible
+        style={{ width: "450px" }}
+        header="Randevu Planla"
+        modal
+        className="p-fluid"
+        footer={
+          <DialogFooter
+            disabled={!isValid}
+            onHide={handleHide}
+            onSubmit={handleSubmit}
+            onDelete={handleDeleteConfim}
           />
-          {isError["duration"] && <small className="p-error">Geçersiz</small>}
+        }
+        onHide={handleHide}
+        onKeyDown={handleKeyDown}
+      >
+        {/* Divider */}
+        <Divider type="solid" className="mt-0" />
+
+        {/* Dropdown Patients */}
+        <div className="field mb-3">
+          <Dropdown
+            value={appointment.patient}
+            options={patients}
+            optionLabel="name"
+            filter
+            filterBy="name,surname,idNumber"
+            placeholder="Hasta seçiniz..."
+            valueTemplate={patientDropdownItemTemplate}
+            itemTemplate={patientDropdownItemTemplate}
+            onChange={(event) => handleChange(event, "patient")}
+          />
         </div>
-      </div>
-    </Dialog>
+
+        {/* Dropdown Doctors */}
+        <div className="field mb-3">
+          <Dropdown
+            value={appointment.doctor}
+            options={doctors}
+            optionLabel="name"
+            filter
+            filterBy="name,surname"
+            placeholder="Doktor seçiniz..."
+            valueTemplate={doctorDropdownItemTemplate}
+            itemTemplate={doctorDropdownItemTemplate}
+            onChange={(event) => handleChange(event, "doctor")}
+          />
+        </div>
+
+        {/* Description */}
+        <div className="field mb-3">
+          <InputTextarea
+            value={appointment.description ? appointment.description : ""}
+            placeholder="Açıklama"
+            onChange={(event) => handleChange(event, "description")}
+            rows={5}
+            cols={30}
+          />
+        </div>
+
+        {/* Date */}
+        <div className="flex grid align-items-center mb-3">
+          <label
+            htmlFor="date"
+            className="col-12 md:col-2 font-bold text-right"
+          >
+            Tarih <small className="p-error">*</small>
+          </label>
+
+          <Calendar
+            id="date"
+            className="col-6 md:col-4"
+            value={new Date(appointment.date)}
+            onChange={(event) => handleChange(event, "date")}
+            dateFormat="dd/mm/yy"
+            minDate={new Date(new Date().setHours(0, 0, 0, 0))}
+          />
+          {isError["date"] && <small className="p-error">Geçersiz</small>}
+        </div>
+
+        {/* Time */}
+        <div className="flex grid align-items-center mb-3">
+          <label className="col-12 md:col-2 font-bold text-right">
+            Saat <small className="p-error">*</small>
+          </label>
+
+          {/* Start */}
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <MobileTimePicker
+              className="col-6 md:col-4"
+              value={dayjs(appointment.startTime)}
+              onChange={(event) => handleChange(event, "startTime")}
+              ampm={false}
+            />
+
+            <label className="col-12 md:col-1 font-bold text-center">-</label>
+            {/* End */}
+
+            <MobileTimePicker
+              className="col-6 md:col-4"
+              disabled={true}
+              value={dayjs(appointment.endTime)}
+              onChange={(event) => handleChange(event, "endTime")}
+              ampm={false}
+            />
+          </LocalizationProvider>
+        </div>
+
+        {/* Duration */}
+        <div className="flex grid align-items-center mb-3">
+          <label
+            htmlFor="duration"
+            className="col-12 md:col-2 font-bold text-right"
+          >
+            Süre <small className="p-error">*</small>
+          </label>
+
+          <div className="col-6 md:col-4">
+            <InputText
+              id="duration"
+              className="w-full"
+              placeholder={"dk"}
+              value={appointment.duration}
+              onChange={(event) => handleChange(event, "duration")}
+            />
+          </div>
+        </div>
+      </Dialog>
+    </>
   );
 }
 

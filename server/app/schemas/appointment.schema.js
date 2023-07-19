@@ -4,7 +4,7 @@ const appointment = Joi.object({
   id: Joi.number().empty(null).id(),
   patient: Joi.object().required(),
   doctor: Joi.object().empty(null),
-  date: Joi.date().min("now").required(),
+  date: Joi.date().min(new Date().setHours(0, 0, 0, 0)).required(),
   startTime: Joi.date()
     // .format("HH:mm")
     // .pattern(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
@@ -26,7 +26,7 @@ const id = Joi.object({
 
 const patientId = Joi.number().required();
 const doctorId = Joi.number().empty(null);
-const date = Joi.date().min("now").required();
+const date = Joi.date().min(new Date().setHours(0, 0, 0, 0)).required();
 const startTime = Joi.date()
   // .format("HH:mm")
   // .pattern(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)

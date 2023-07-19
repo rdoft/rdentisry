@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import appointment from "services/appointment.service";
 import { toast } from "react-hot-toast";
 import { toastErrorMessage } from "components/errorMesage";
-import { AppointmentService } from "services/index";
-import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
 import { Grid, Typography } from "@mui/material";
+import { AppointmentService } from "services";
+import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
 import CalendarToolbar from "components/Calendar/CalendarToolbar";
 import moment from "moment";
 
@@ -16,11 +15,13 @@ import {
   UserOutlined,
   FileTextOutlined,
   LeftOutlined,
-  RightOutlined
+  RightOutlined,
 } from "@ant-design/icons";
 
 require("moment/locale/tr.js");
 const localizer = momentLocalizer(moment);
+
+const today = new Date();
 
 const messages = {
   today: "Bugün",
@@ -54,11 +55,10 @@ const formats = {
       month: "long",
       day: "numeric",
     }),
-  
 };
 
-const convertDataArray = (dataArray) => {
-  const convertedEvents = dataArray.map((data) => {
+const convertToEvent = (appointments) => {
+  const convertedEvents = appointments.map((data) => {
     const { date, description, startTime, endTime, id } = data;
     const { name, surname } = data.patient;
 
@@ -116,7 +116,11 @@ const convertDataArray = (dataArray) => {
                 whiteSpace: "pre-wrap",
               }}
             >
-              <FileTextOutlined /> {description.slice(0, 24) + " ..."}
+              <FileTextOutlined />{" "}
+              {description.includes("\n") ||
+              description.split(/\n/)[0].length > 24
+                ? description.split(/\n/)[0].slice(0, 24) + " ..."
+                : description.split(/\n/)[0]}
             </Typography>
           )}
         </div>
@@ -124,70 +128,121 @@ const convertDataArray = (dataArray) => {
       start: startDate,
       end: endDate,
       id,
-      tooltip: dataArray.length > 2 ? `${dataArray.length} events` : null,
+      tooltip: appointments.length > 2 ? `${appointments.length} events` : null,
     };
   });
 
   return convertedEvents;
 };
 
-const Index = () => {
-  const [allEvents, setAllEvents] = useState([]);
-  const [appointmentDialog, setAppointmentDialog] = useState(false);
-  const [currentAppId, setCurrentAppId] = useState(null);
-  const [currentAppointment, setCurrentAppointment] = useState(null);
+const header = ({ label }) => (
+  <div style={{ textAlign: "center" }}>
+    <div style={{ position: "relative" }}>
+      <div>
+        <p>{label}</p>
+      </div>
+    </div>
+  </div>
+);
 
-  const saveAppointment = async (appointment) => {
+const dayPropGetter = (date) => ({
+  ...(today.toLocaleDateString() === date.toLocaleDateString() && {
+    style: {
+      backgroundColor: "#EBEFF4",
+      // color: "white",
+    },
+  }),
+});
+
+const Index = () => {
+  const [events, setEvents] = useState([]);
+  const [appointment, setAppointment] = useState(null);
+  const [appointments, setAppointments] = useState([]);
+  const [appointmentDialog, setAppointmentDialog] = useState(false);
+
+  // Set the page on loading
+  useEffect(() => {
+    getAppointments();
+  }, []);
+
+  useEffect(() => {
+    const events = convertToEvent(appointments);
+    setEvents(events);
+  }, [appointments]);
+
+  // SERVICES -----------------------------------------------------------------
+  // Get the list of appointments and set appointmets value
+  const getAppointments = async () => {
+    let response;
+    let appointments;
+
     try {
-      if (appointment.id) {
-        await AppointmentService.updateAppointment(currentAppId, appointment);
-        toast.success("Randevu bilgileri başarıyla güncellendi!");
-      } else {
-        await AppointmentService.saveAppointment(appointment);
-        toast.success("Yeni randevu başarıyla kaydedildi!");
-      }
-      setAppointmentDialog(false);
+      response = await AppointmentService.getAppointments();
+      appointments = response.data;
+
+      setAppointments(appointments);
     } catch (error) {
       toast.error(toastErrorMessage(error));
     }
   };
 
-  // Hide add appointment dialog
-  const hideAppointmentDialog = () => {
-    setCurrentAppId(null);
-    setCurrentAppointment(null);
-    setAppointmentDialog(false);
+  // Save appointment (create/update)
+  const saveAppointment = async (appointment) => {
+    try {
+      if (appointment.id) {
+        await AppointmentService.updateAppointment(appointment.id, appointment);
+        toast.success("Randevu bilgileri başarıyla güncellendi!");
+      } else {
+        await AppointmentService.saveAppointment(appointment);
+        toast.success("Yeni randevu başarıyla kaydedildi!");
+      }
+
+      // Get and set the updated list of appointments
+      getAppointments();
+      setAppointmentDialog(false);
+      setAppointment(null);
+    } catch (error) {
+      toast.error(toastErrorMessage(error));
+    }
   };
 
+  //  Delete appointment
+  const deleteAppointment = async (appointment) => {
+    try {
+      await AppointmentService.deleteAppointment(appointment.id);
+
+      // Get and set the updated list of appointments
+      getAppointments();
+      setAppointmentDialog(false);
+      setAppointment(null);
+    } catch (error) {
+      // Set error status and show error toast message
+      toast.error(toastErrorMessage(error));
+    }
+  };
+
+  // SHOW/HIDE OPTIONS --------------------------------------------------------
+  // Show add appointment dialog
   const showAppointmentDialog = () => {
     setAppointmentDialog(true);
   };
 
-  const handleEventSelection = (e) => {
-    setCurrentAppId(e.id);
-    setTimeout(showAppointmentDialog, 100);
+  // Hide add appointment dialog
+  const hideAppointmentDialog = () => {
+    setAppointment(null);
+    setAppointmentDialog(false);
   };
 
-  useEffect(() => {
-    (async () => {
-      const response = await appointment.getAppointments();
+  // HANDLERS -----------------------------------------------------------------
+  // onSelectEvent, get appointment and show dialog
+  const handleSelectEvent = async (event) => {
+    const appointment_ = appointments.find(
+      (appointment) => appointment.id === event.id
+    );
+    setAppointment(appointment_);
 
-      const convertedResponse = convertDataArray(response.data);
-
-      setAllEvents(convertedResponse);
-    })();
-  }, [appointmentDialog]);
-
-  useEffect(() => {
-    currentAppId &&
-      (async () => {
-        const response = await appointment.getAppointment(currentAppId);
-
-        setCurrentAppointment(response.data);
-      })();
-  }, [currentAppId]);
-
-  const today = new Date();
+    setTimeout(showAppointmentDialog, 100);
+  };
 
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
@@ -201,12 +256,17 @@ const Index = () => {
             }}
             messages={messages}
             localizer={localizer}
-            events={allEvents}
+            events={events}
+            dayPropGetter={dayPropGetter}
+            components={{
+              header: header,
+            }}
             views={["month", "week", "agenda"]}
             defaultView={"week"}
             startAccessor={"start"}
             endAccessor={"end"}
-            step={7.5}
+            timeslots={1}
+            step={15}
             tooltipAccessor={() => null}
             showAllEvents={true}
             length="7"
@@ -228,13 +288,14 @@ const Index = () => {
               )
             }
             formats={formats}
-            onSelectEvent={handleEventSelection}
+            onSelectEvent={handleSelectEvent}
           />
           {appointmentDialog && (
             <AppointmentDialog
-              _appointment={currentAppointment}
+              _appointment={appointment}
               onHide={hideAppointmentDialog}
               onSubmit={saveAppointment}
+              onDelete={appointment && deleteAppointment}
             />
           )}
         </div>

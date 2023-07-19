@@ -11,17 +11,19 @@
 }
 
 .rbc-event {
-  background-color: #3C82F6 !important;
+  background-color: #E8F0FF !important;
   border-width: 1px !important;
   border-color: #FAFAFB !important;
+  color: #3B5DBF !important;
   transition: 0.3s;
 }
 
 .rbc-event:active,
 .rbc-event:focus {
-  background-color: #3C82F6 !important;
+  background-color: #E8F0FF !important;
   border-width: 1px !important;
   border-color: #FAFAFB !important;
+  color: #3B5DBF !important;
 }
 
 .rbc-event-label {
@@ -54,6 +56,12 @@
   border-bottom: none;
 }
 
+.rbc-current-time-indicator {
+  background-color: #3B5DBF; 
+  width: 100%;
+  height: 2px;
+}
+
 /* PatientTable */
 .p-datatable .p-datatable-tbody > tr {
   cursor:default;
@@ -62,3 +70,10 @@
 /* .p-checkbox .p-checkbox-box .p-checkbox-icon {
   display: none;
 } */
+
+/* AppointmentDialog */
+.MuiInputBase-input {
+ height: auto;
+ font-size: 1rem
+};
+
