@@ -1,9 +1,12 @@
+import * as tedious from 'tedious';
+
 module.exports = {
   HOST: process.env.DB_HOST,
   DB: process.env.DB_DB,
   USER: process.env.DB_USER,
   PASSWORD: process.env.DB_PASSWORD,
   dialect: "mssql",
+  dialectModule: tedious,
   pool: {
     max: 5,
     min: 0,
