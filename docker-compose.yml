@@ -30,7 +30,7 @@ services:
     depends_on:
       - server
   db:
-    image: recepdemrci/rdentistry:${VERSION}
+    image: recepdemrci/rdentistry-db:${VERSION}
     ports: 
       - "${PORT_DB}:${PORT_DB}"
 
