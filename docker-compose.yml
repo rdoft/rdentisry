@@ -15,7 +15,8 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   client:
     build:
       context: ./client
@@ -34,3 +35,9 @@ services:
     image: recepdemrci/rdentistry-db:${VERSION}
     ports:
       - "${DB_PORT}:${DB_PORT}"
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "${DB_PASSWORD}" -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
