@@ -15,8 +15,7 @@ services:
     env_file:
       - .env
     depends_on:
-      db:
-        condition: service_completed_successfully
+      - db
   client:
     build:
       context: ./client
