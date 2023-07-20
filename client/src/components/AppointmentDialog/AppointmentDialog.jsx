@@ -305,7 +305,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
             value={new Date(appointment.date)}
             onChange={(event) => handleChange(event, "date")}
             dateFormat="dd/mm/yy"
-            minDate={new Date(new Date().setHours(0, 0, 0, 0))}
+            minDate={new Date(new Date().setUTCHours(0, 0, 0, 0))}
           />
           {isError["date"] && <small className="p-error">Geçersiz</small>}
         </div>
