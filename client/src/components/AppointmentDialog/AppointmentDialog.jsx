@@ -151,6 +151,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
         _appointment.endTime.getMinutes() + parseInt(value)
       );
     } else if (attr === "date") {
+      value = new Date(Date.UTC(value.getFullYear(), value.getMonth(), value.getDate()));
       _isError[attr] = schema[attr].validate(value).error ? true : false;
     }
 
