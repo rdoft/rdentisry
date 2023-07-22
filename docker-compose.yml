@@ -32,7 +32,7 @@ services:
     depends_on:
       - server
   db:
-    image: recepdemrci/rdentistry-db:${VERSION}
+    image: recepdemrci/rdentistry-db
     ports:
       - "${DB_PORT}:${DB_PORT}"
     healthcheck:
