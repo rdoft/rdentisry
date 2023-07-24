@@ -6,38 +6,53 @@ services:
     build:
       context: ./server
       dockerfile: ./Dockerfile
-    image: "recepdemrci/rdentistry-server:${VERSION}"
+    container_name: server
+    image: recepdemrci/rdentistry-server:${VERSION}
     volumes:
       - ./server/:/usr/src/server
       - /usr/src/server/node_modules
     ports:
-      - "${PORT_SERVER}:${PORT_SERVER}"
+      - ${PORT_SERVER}:${PORT_SERVER}
     env_file:
       - .env
     depends_on:
       db:
         condition: service_healthy
+  
   client:
     build:
       context: ./client
       dockerfile: ./Dockerfile
-    image: "recepdemrci/rdentistry-client:${VERSION}"
+    container_name: client
+    image: recepdemrci/rdentistry-client:${VERSION}
     volumes:
       - ./client/:/usr/src/client
       - /usr/src/client/node_modules
     ports:
-      - "${PORT_CLIENT}:${PORT_CLIENT}"
+      - ${PORT_CLIENT}:${PORT_CLIENT}
     env_file:
       - .env
     depends_on:
       - server
+
   db:
-    image: recepdemrci/rdentistry-db
-    ports:
-      - "${DB_PORT}:${DB_PORT}"
+    container_name: db
+    image: postgres:15.3
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports: 
+      - ${DB_PORT}:${DB_PORT}
+    environment:
+      - POSTGRES_DB=${DB_DB}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "${DB_PASSWORD}" -Q "SELECT 1" || exit 1
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 10s
-      timeout: 3s
-      retries: 10
+      timeout: 5s
       start_period: 10s
+      retries: 5
+
+volumes:
+  pgdata:
