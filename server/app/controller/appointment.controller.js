@@ -22,7 +22,12 @@ exports.getAppointments = async (req, res) => {
         ["Description", "description"],
         ["DidCome", "didCome"],
         ["Status", "status"],
-        [Sequelize.literal("DATEDIFF(MINUTE, StartTime, EndTime)"), "duration"],
+        [
+          Sequelize.literal(
+            `EXTRACT(EPOCH FROM ("EndTime" - "StartTime")) / 60`
+          ),
+          "duration",
+        ],
       ],
       where: {
         ...(status && { Status: status }),
@@ -39,7 +44,7 @@ exports.getAppointments = async (req, res) => {
           as: "patient",
           attributes: [
             ["PatientId", "id"],
-            ["Idnumber", "idNumber"],
+            ["IdNumber", "idNumber"],
             ["Name", "name"],
             ["Surname", "surname"],
             ["BirthYear", "birthYear"],
@@ -90,7 +95,12 @@ exports.getAppointment = async (req, res) => {
         ["Description", "description"],
         ["DidCome", "didCome"],
         ["Status", "status"],
-        [Sequelize.literal("DATEDIFF(MINUTE, StartTime, EndTime)"), "duration"],
+        [
+          Sequelize.literal(
+            `EXTRACT(EPOCH FROM ("EndTime" - "StartTime")) / 60`
+          ),
+          "duration",
+        ],
       ],
       include: [
         {
