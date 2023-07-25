@@ -24,7 +24,7 @@ exports.getAppointments = async (req, res) => {
         ["Status", "status"],
         [
           Sequelize.literal(
-            `EXTRACT(EPOCH FROM ("EndTime" - "StartTime")) / 60`
+            `CAST(EXTRACT(EPOCH FROM ("EndTime" - "StartTime")) / 60 AS INTEGER)`
           ),
           "duration",
         ],
@@ -71,7 +71,14 @@ exports.getAppointments = async (req, res) => {
       nest: true,
     });
 
-    res.status(200).send(appointments);
+
+    let appointments_ = [];
+    appointments.map((appointment) => {
+      appointment.startTime = new Date(`1970-01-01T${appointment.startTime}`);
+      appointment.endTime = new Date(`1970-01-01T${appointment.endTime}`);
+      appointments_.push(appointment);
+    });
+    res.status(200).send(appointments_);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -97,7 +104,7 @@ exports.getAppointment = async (req, res) => {
         ["Status", "status"],
         [
           Sequelize.literal(
-            `EXTRACT(EPOCH FROM ("EndTime" - "StartTime")) / 60`
+            `CAST(EXTRACT(EPOCH FROM ("EndTime" - "StartTime")) / 60 AS INTEGER)`
           ),
           "duration",
         ],
@@ -130,6 +137,8 @@ exports.getAppointment = async (req, res) => {
     });
 
     if (appointment) {
+      appointment.startTime = new Date(`1970-01-01T${appointment.startTime}`);
+      appointment.endTime = new Date(`1970-01-01T${appointment.endTime}`);
       res.status(200).send(appointment);
     } else {
       res.status(404).send({ message: "Randevu bulunamadı" });
