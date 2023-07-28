@@ -8,7 +8,7 @@ const HOST = process.env.HOST_SERVER || "localhost";
 const PORT = process.env.PORT_SERVER || 8080;
 const PORT_CLIENT = process.env.PORT_CLIENT || 3000;
 const corsOptions = {
-  origin: [`http://${HOST}:${PORT}`, `http://${HOST}:${PORT_CLIENT}`]
+  origin: [`http://${HOST}:${PORT}`, `http://${HOST}:${PORT_CLIENT}`, `http://${HOST}`, `http://srv.rdoft.com`]
 };
 
 app.use(cors(corsOptions));
