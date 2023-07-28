@@ -40,7 +40,7 @@ services:
     image: postgres:15.3
     restart: always
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ./db/pgdata/:/var/lib/postgresql/data
     ports: 
       - ${DB_PORT}:${DB_PORT}
     environment:
@@ -53,6 +53,3 @@ services:
       timeout: 5s
       start_period: 10s
       retries: 5
-
-volumes:
-  pgdata:
