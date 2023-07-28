@@ -14,6 +14,7 @@ WORKDIR /usr/src/client
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY package*.json ./
 RUN npm install
+RUN mkdir -p node_modules/.cache && chmod -R 777 node_modules/.cache
 
 #To bundle your app’s source code inside the Docker image, use the COPY instruction:
 COPY . .
