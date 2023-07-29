@@ -11,7 +11,7 @@ on:
   pull_request:
     branches:
     - develop   
-    
+
   workflow_dispatch:
 
 jobs:
@@ -37,6 +37,6 @@ jobs:
             cd ~/git/dev/rdentisry
             git checkout develop
             git pull origin develop
-            docker compose -p "dev-rdentistry" down 
+            docker compose -f "docker-compose.dev.yml" down 
             docker volume rm $(docker volume ls -qf "dangling=true")
-            docker compose -p "dev-rdentistry" up -d --build
+            docker compose -f "docker-compose.dev.yml" up -d --build

@@ -1,0 +1,55 @@
+version: "3.8"
+name: dev-rdentistry
+
+services:
+  dev-server:
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile
+    container_name: dev-server
+    image: recepdemrci/rdentistry-server:${VERSION}
+    volumes:
+      - ./server/:/usr/src/server
+      - /usr/src/server/node_modules
+    ports:
+      - ${PORT_SERVER}:${PORT_SERVER}
+    env_file:
+      - .env
+    depends_on:
+      dev-db:
+        condition: service_healthy
+  
+  dev-client:
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile
+    container_name: dev-client
+    image: recepdemrci/rdentistry-client:${VERSION}
+    volumes:
+      - ./client/:/usr/src/client
+      - /usr/src/client/node_modules
+    ports:
+      - ${PORT}:${PORT}
+    env_file:
+      - .env
+    depends_on:
+      - dev-server
+
+  dev-db:
+    container_name: dev-db
+    image: postgres:15.3
+    restart: always
+    volumes:
+      - ./db/pgdata/:/var/lib/postgresql/data
+    ports: 
+      - ${DB_PORT_}:${DB_PORT}
+    environment:
+      - POSTGRES_DB=${DB_DB}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
