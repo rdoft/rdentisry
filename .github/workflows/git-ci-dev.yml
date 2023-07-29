@@ -3,15 +3,7 @@
 # Clone git repository in ~/git/
 name: Develop
 
-on:  
-  push:
-    branches:
-    - develop
-    
-  pull_request:
-    branches:
-    - develop
-  
+on:   
   workflow_dispatch:
 
 jobs:
@@ -21,7 +13,9 @@ jobs:
     steps:
       # Checkout the repository
       - name: Checkout Code
-        uses: actions/checkout@develop
+        uses: actions/checkout@master
+        with:
+          ref: develop
         
       # SSH into the server and update the application
       - name: Deploy to Server
