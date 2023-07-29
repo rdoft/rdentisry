@@ -1,0 +1,40 @@
+# Generate ssh-key
+# Connect git repository
+# Clone git repository in ~/git/
+name: Develop
+
+on:  
+  push:
+    branches:
+    - develop
+    
+  pull_request:
+    branches:
+    - develop
+  
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    
+    steps:
+      # Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@develop
+        
+      # SSH into the server and update the application
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/git/dev/rdentisry
+            git checkout develop
+            git pull origin develop
+            docker compose -p "dev-rdentistry" down 
+            docker volume rm $(docker volume ls -qf "dangling=true")
+            docker compose -p "dev-rdentistry" up -d --build
