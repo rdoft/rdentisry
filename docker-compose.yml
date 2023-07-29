@@ -29,7 +29,7 @@ services:
       - ./client/:/usr/src/client
       - /usr/src/client/node_modules
     ports:
-      - ${PORT_CLIENT}:${PORT_CLIENT}
+      - ${PORT}:${PORT}
     env_file:
       - .env
     depends_on:
@@ -42,7 +42,7 @@ services:
     volumes:
       - ./db/pgdata/:/var/lib/postgresql/data
     ports: 
-      - ${DB_PORT}:${DB_PORT}
+      - ${DB_PORT_}:${DB_PORT}
     environment:
       - POSTGRES_DB=${DB_DB}
       - POSTGRES_USER=${DB_USER}

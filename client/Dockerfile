@@ -1,7 +1,7 @@
 FROM node:18.12.1
 
 ARG VERSION
-ARG PORT_CLIENT
+ARG PORT
 
 LABEL version=${VERSION}
 LABEL description="This is the dental management software aplication API"
@@ -20,6 +20,6 @@ RUN mkdir -p node_modules/.cache && chmod -R 777 node_modules/.cache
 COPY . .
 
 #Your app binds to port 3000 so you’ll use the EXPOSE instruction to have it mapped by the docker daemon:
-EXPOSE ${PORT_CLIENT}
+EXPOSE ${PORT}
 
 CMD ["npm", "start"]
