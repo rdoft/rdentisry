@@ -21,11 +21,11 @@ module.exports = function (app) {
      * Get Procedure list
      */
     .get(controller.getProcedures)
-    // /**
-    //  * Add a Procedure
-    //  * @body Procedure information
-    //  */
-    // .post(controller.saveProcedure);
+    /**
+     * Add a Procedure
+     * @body Procedure information
+     */
+    .post(controller.saveProcedure);
 
   // router
   //   .route(`/procedures/:procedureId`)
