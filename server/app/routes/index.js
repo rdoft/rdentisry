@@ -4,4 +4,5 @@ module.exports = (app) => {
   appointment = require("./appointment.route")(app);
   note = require("./note.route")(app);
   payment = require("./payment.route")(app);
+  procedureCategory = require("./procedureCategory.route")(app);
 };
