@@ -42,7 +42,7 @@ function PatientsTable() {
   // Set the page on loading
   useEffect(() => {
     getPatients();
-  }, []);
+  }, [patientDialog]);
 
   // SHOW/HIDE OPTIONS --------------------------------------------------------
   // Show add patient dialog
