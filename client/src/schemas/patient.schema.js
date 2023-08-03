@@ -5,8 +5,7 @@ const patient = Joi.object({
   idNumber: Joi.string()
     .length(11)
     .pattern(/^\d{11}$/)
-    .empty("")
-    .required(),
+    .empty(""),
   name: Joi.string().trim().empty("").required(),
   surname: Joi.string().trim().empty("").required(),
   phone: Joi.string()
@@ -37,8 +36,7 @@ const ids = Joi.object({
 const idNumber = Joi.string()
   .length(11)
   .pattern(/^\d{11}$/)
-  .empty("")
-  .required();
+  .empty("");
 const name = Joi.string().trim().empty("").required();
 const surname = Joi.string().trim().empty("").required();
 const phone = Joi.string()

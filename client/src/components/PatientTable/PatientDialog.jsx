@@ -100,12 +100,11 @@ function PatientDialog({ patient, onChange, onHide, onSubmit }) {
 
       {/* TC */}
       <div className="field mb-3">
-        <label htmlFor="idNumber">TC Kimlik Numarası <small className="p-error">*</small></label>
+        <label htmlFor="idNumber">TC Kimlik Numarası</label>
         <InputText
           id="idNumber"
           value={patient.idNumber}
           onChange={(event) => handleChange(event, "idNumber")}
-          required
           autoFocus
           keyfilter="num"
         />

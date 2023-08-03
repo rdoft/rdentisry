@@ -17,7 +17,7 @@ module.exports = (sequelize, Sequelize) => {
       },
       IdNumber: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
         validate: {
           is: /^\d{11}$/,
         },
@@ -42,7 +42,7 @@ module.exports = (sequelize, Sequelize) => {
       indexes: [
         {
           unique: true,
-          fields: ["IdNumber"],
+          fields: ["Name", "Surname", "Phone"],
         },
       ],
       timestamps: false,
