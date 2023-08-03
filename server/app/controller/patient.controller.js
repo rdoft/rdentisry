@@ -92,7 +92,7 @@ exports.savePatient = async (req, res) => {
     ) {
       res
         .status(400)
-        .send({ message: "Aynı TC kimlik numarasına sahip iki hasta olamaz" });
+        .send({ message: "Hasta zaten kayıtlıdır, tekrar kaydedilemez" });
     } else {
       res.status(500).send(error);
     }
@@ -111,7 +111,7 @@ exports.updatePatient = async (req, res) => {
     Name: name,
     Surname: surname,
     Phone: phone,
-    IdNumber: idNumber,
+    IdNumber: idNumber ?? null,
     BirthYear: birthYear ?? null,
   };
   let patient;
@@ -135,7 +135,7 @@ exports.updatePatient = async (req, res) => {
     ) {
       res
         .status(400)
-        .send({ message: "Aynı TC kimlik numarasına sahip iki hasta olamaz" });
+        .send({ message: "Hasta zaten kayıtlıdır, tekrar kaydedilemez" });
     } else {
       res.status(500).send(error);
     }
