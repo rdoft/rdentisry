@@ -27,24 +27,24 @@ module.exports = function (app) {
      */
     .post(controller.saveProcedure);
 
-  // router
-  //   .route(`/procedures/:procedureId`)
-  //   /**
-  //    * Get the procedure with given id
-  //    * @param procedureId id of the procedure
-  //    */
-  //   .get(controller.getPatient)
-  //   /**
-  //    * Update the procedure
-  //    * @param procedureId: Id of the Procedure
-  //    * @body Procedure informations
-  //    */
-  //   .put(controller.updateProcedure)
-  //   /**
-  //    * Delete the procedure
-  //    * @param procedureId: Id of the procedure
-  //    */
-  //   .delete(controller.deleteProcedure);
+  router
+    .route(`/procedures/:procedureId`)
+    /**
+     * Get the procedure with given id
+     * @param procedureId id of the procedure
+     */
+    .get(controller.getProcedure)
+    /**
+     * Update the procedure
+     * @param procedureId: Id of the Procedure
+     * @body Procedure informations
+     */
+    .put(controller.updateProcedure)
+    /**
+     * Delete the procedure
+     * @param procedureId: Id of the procedure
+     */
+    .delete(controller.deleteProcedure);
 
   app.use(API_URL, router);
 };

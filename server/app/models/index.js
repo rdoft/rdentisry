@@ -125,4 +125,12 @@ db.patient.beforeDestroy(async (patient) => {
   }
 });
 
+// Control If procedure has any patients before destroy
+db.procedure.beforeDestroy(async (procedure) => {
+  const patientCount = await procedure.countPatients();
+  if (patientCount > 0) {
+    throw new Sequelize.ForeignKeyConstraintError();
+  } 
+})
+
 module.exports = db;
