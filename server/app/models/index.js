@@ -86,15 +86,25 @@ db.procedure.belongsTo(db.procedureCategory, {
   foreignKey: "ProcedureCategoryId",
 });
 
-// patient - procedure (many to many)
-db.patient.belongsToMany(db.procedure, {
-  through: "PatientProcedure",
-  as: "procedures",
+// patient - patientProcedure (one to many)
+db.patient.hasMany(db.patientProcedure, {
+  as: "patientProcedures",
+  foreignKey: "PatientId",
+  onDelete: "cascade",
+  hooks: true,
+});
+db.patientProcedure.belongsTo(db.patient, {
+  as: "patient",
   foreignKey: "PatientId",
 });
-db.procedure.belongsToMany(db.patient, {
-  through: "PatientProcedure",
-  as: "patients",
+
+// procedure - patientProcedure (one to many)
+db.procedure.hasMany(db.patientProcedure, {
+  as: "patientProcedures",
+  foreignKey: "ProcedureId",
+});
+db.patientProcedure.belongsTo(db.procedure, {
+  as: "procedure",
   foreignKey: "ProcedureId",
 });
 
@@ -127,10 +137,10 @@ db.patient.beforeDestroy(async (patient) => {
 
 // Control If procedure has any patients before destroy
 db.procedure.beforeDestroy(async (procedure) => {
-  const patientCount = await procedure.countPatients();
+  const patientCount = await procedure.countPatientProcedures();
   if (patientCount > 0) {
     throw new Sequelize.ForeignKeyConstraintError();
-  } 
-})
+  }
+});
 
 module.exports = db;
