@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-
+import { useNavigate } from "react-router-dom";
 import { DataTable, Column } from "primereact";
 import PatientDialog from "./PatientDialog";
 import DeletePatientDialog from "./DeletePatientDialog";
@@ -8,7 +8,7 @@ import PatientTableToolbar from "./PatientTableToolbar";
 import ActionGroup from "components/ActionGroup/ActionGroup";
 
 // assets
-// import styles from "assets/styles/PatientTable/PatientsTable.module.css";
+import "assets/styles/PatientTable/PatientTable.css";
 
 // services
 import { PatientService, AppointmentService } from "services";
@@ -26,6 +26,8 @@ function PatientsTable() {
     phone: "",
     birthYear: "",
   };
+
+  const navigate = useNavigate();
 
   // Set the default values
   const [patient, setPatient] = useState(emptyPatient);
@@ -236,6 +238,13 @@ function PatientsTable() {
     setSelectedPatients(event.value);
   };
 
+  // onRowClick handler for goto patient page
+  const handleRowClick = (event) => {
+    if (![...event.originalEvent.target.classList].includes("pi-check")) {
+      navigate(`/patients/${rowIndex}`);
+    }
+  };
+
   // onRowMouseEnter handler for display buttons
   const handleRowMouseEnter = (event) => {
     setRowIndex(event.data.id);
@@ -245,12 +254,6 @@ function PatientsTable() {
   const handleRowMouseLeave = () => {
     setRowIndex(null);
   };
-
-  // navigate
-
-  // const navigateToPage = (path) => {
-  //   window.location.href = path;
-  // };
 
   // Return the PatientTable
   return (
@@ -273,19 +276,14 @@ function PatientsTable() {
           onSelectionChange={handleChangeSelection}
           onRowMouseEnter={handleRowMouseEnter}
           onRowMouseLeave={handleRowMouseLeave}
-          // onRowClick={(e) => {
-          //   if (
-          //     ![...e.originalEvent.target.classList].includes("p-checkbox-icon")
-          //   ) {
-          //     navigateToPage(`/patients/${e.data.id}`);
-          //   }
-          // }}
+          onRowClick={handleRowClick}
           selectionMode="checkbox"
           responsiveLayout="scroll"
           dataKey="id"
           paginator
           rows={10}
           currentPageReportTemplate="({totalRecords} hasta)"
+          rowHover={true}
         >
           {/* Checkbox */}
           <Column

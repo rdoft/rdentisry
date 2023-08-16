@@ -62,15 +62,6 @@
   height: 2px;
 }
 
-/* PatientTable */
-.p-datatable .p-datatable-tbody > tr {
-  cursor:default;
-}
-
-/* .p-checkbox .p-checkbox-box .p-checkbox-icon {
-  display: none;
-} */
-
 /* AppointmentDialog */
 .MuiInputBase-input {
  height: auto;
