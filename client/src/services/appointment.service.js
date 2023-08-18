@@ -12,7 +12,10 @@ appointment.updateAppointment = (id, appointment) => {
   return API.put(`${API_URL}/${id}`, appointment);
 };
 
-appointment.getAppointments = () => {
+appointment.getAppointments = (patientId) => {
+  if (patientId) {
+    return API.get(`${API_URL}?patientId=${patientId}`);
+  }
   return API.get(API_URL);
 };
 

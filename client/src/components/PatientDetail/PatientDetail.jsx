@@ -6,11 +6,15 @@ import { TabView, TabPanel } from "primereact";
 
 import { toastErrorMessage } from "components/errorMesage";
 import PatientDetailToolbar from "./PatientDetailToolbar";
+import AppointmentsTab from "./AppointmentsTab";
+
+// assets
+import "assets/styles/PatientDetail/PatientDetail.css";
 
 // services
 import { PatientService } from "services/index";
 
-const PatientDetail = () => {
+function PatientDetail() {
   // Set the default values
   const [patient, setPatient] = useState(null);
   const query = useParams();
@@ -52,20 +56,12 @@ const PatientDetail = () => {
 
           <TabView>
             <TabPanel header="Randevular">
-              
+              <AppointmentsTab patientId={id} />
             </TabPanel>
-            <TabPanel header="Ödemeler">
-              
-            </TabPanel>
-            <TabPanel header="Tedaviler">
-              
-            </TabPanel>
-            <TabPanel header="Notlar">
-              
-            </TabPanel>
-            <TabPanel header="Dökümanlar">
-              
-            </TabPanel>
+            <TabPanel header="Ödemeler"></TabPanel>
+            <TabPanel header="Tedaviler"></TabPanel>
+            <TabPanel header="Notlar"></TabPanel>
+            <TabPanel header="Dökümanlar"></TabPanel>
           </TabView>
         </div>
       </Grid>

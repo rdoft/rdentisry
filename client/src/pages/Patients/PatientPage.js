@@ -5,7 +5,7 @@ import { Grid } from "@mui/material";
 // import OrdersTable from "./OrdersTable";
 import PatientDetail from "components/PatientDetail/PatientDetail";
 
-const Patient = () => {
+function Patient() {
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
       <Grid item xs={12}>
