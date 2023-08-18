@@ -16,13 +16,13 @@ function AppointmentCard({ appointment }) {
         return { value: "Bekleniyor", severity: "info" };
 
       case "completed":
-        return { value: "Tamamlandı", severity: "succes" };
+        return { value: "Tamamlandı", severity: "success" };
 
       case "canceled":
         return { value: "İptal Edildi", severity: "danger" };
 
       case "absent":
-        return { value: "Gelmedi", severity: "gray" };
+        return { value: "Gelmedi", severity: "warning" };
     }
   };
 

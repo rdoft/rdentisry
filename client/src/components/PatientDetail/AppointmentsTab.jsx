@@ -54,7 +54,7 @@ function AppointmentsTab({ patientId }) {
 
     try {
       response = await AppointmentService.getAppointments(patientId);
-      appointments = response.data;
+      appointments = response.data.reverse();
 
       setAppointments(appointments);
     } catch (error) {
