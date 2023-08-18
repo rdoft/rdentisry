@@ -257,7 +257,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
             options={patients}
             optionLabel="name"
             filter
-            filterBy="name,surname,idNumber"
+            filterBy="name,surname,phone"
             placeholder="Hasta seçiniz..."
             valueTemplate={patientDropdownItemTemplate}
             itemTemplate={patientDropdownItemTemplate}

@@ -17,6 +17,8 @@ import { toast } from "react-hot-toast";
 import { toastErrorMessage } from "components/errorMesage";
 
 function PatientsTable() {
+  const navigate = useNavigate();
+
   // Set default empty Patient
   let emptyPatient = {
     id: null,
@@ -26,8 +28,6 @@ function PatientsTable() {
     phone: "",
     birthYear: "",
   };
-
-  const navigate = useNavigate();
 
   // Set the default values
   const [patient, setPatient] = useState(emptyPatient);

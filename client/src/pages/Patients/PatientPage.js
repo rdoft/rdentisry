@@ -2,7 +2,6 @@
 import { Grid } from "@mui/material";
 
 // project import
-// import OrdersTable from "./OrdersTable";
 import PatientDetail from "components/PatientDetail/PatientDetail";
 
 function Patient() {

@@ -1,21 +1,28 @@
 import React from "react";
-import { Avatar } from "primereact";
+import { Typography, Avatar } from "@mui/material";
+
+// assets
+import { PhoneOutlined } from "@ant-design/icons";
 
 function DropdownItem({ option, placeholder, avatar }) {
   return option ? (
     <div className="w-full p-link flex align-items-center">
       {/* Avatar icon */}
       {avatar && (
-        <Avatar alt="avatar" className="mr-2" image={avatar} shape="circle" />
+        <Avatar alt="avatar" className="mr-2" src={avatar} shape="circle" />
       )}
       {/* Option info */}
       <div className="flex flex-column align">
-        <span className="font-bold">{option.name + " " + option.surname}</span>
-        <span className="text-sm">{option.idNumber}</span>
+        <Typography variant="h5">{`${option.name} ${option.surname}`}</Typography>
+        {option.phone && (
+          <Typography variant="h6">
+            <PhoneOutlined /> {`${option.phone}`}
+          </Typography>
+        )}
       </div>
     </div>
   ) : (
-    // Placeholder 
+    // Placeholder
     <div className="flex flex-column align">
       <span>{placeholder}</span>
     </div>
