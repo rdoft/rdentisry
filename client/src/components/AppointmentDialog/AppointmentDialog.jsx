@@ -178,12 +178,12 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
     onSubmit(appointment);
   };
 
-  // onSubmit handler
+  // onDelete handler
   const handleDelete = async () => {
     onDelete(appointment);
   };
 
-  // onSubmit handler
+  // onKeyDown handler
   const handleKeyDown = (event) => {
     if (
       isValid &&

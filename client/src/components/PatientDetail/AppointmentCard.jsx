@@ -1,6 +1,8 @@
-import React from "react";
-import { Tag, Divider } from "primereact";
+import React, { useState, useRef } from "react";
+import { Tag, Divider, Menu } from "primereact";
 import { Grid, Typography } from "@mui/material";
+
+import ActionGroup from "components/ActionGroup/ActionGroup";
 
 // assets
 import {
@@ -9,7 +11,11 @@ import {
   FileTextOutlined,
 } from "@ant-design/icons";
 
-function AppointmentCard({ appointment }) {
+function AppointmentCard({ appointment, onDelete }) {
+  const menu = useRef(null);
+  const [isHover, setIsHover] = useState(false);
+
+  // Set status of the appointment
   const getStatus = (status) => {
     switch (status) {
       case "active":
@@ -43,22 +49,48 @@ function AppointmentCard({ appointment }) {
     minute: "2-digit",
   });
 
+  // HANDLERS -----------------------------------------------------------------
+  // onMouseEnter handler for display buttons
+  const handleMouseEnter = () => {
+    setIsHover(true);
+  };
+
+  // onMouseLeave handler for hide buttons
+  const handleMouseLeave = () => {
+    setIsHover(false);
+  };
+
+  // TEMPLATES ----------------------------------------------------------
+  // Set menuItems
+  const menuItems = [
+    {
+      label: "Düzenle",
+      command: () => {},
+    },
+    {
+      label: "Sil",
+      command: () => {
+        onDelete(appointment);
+      },
+    },
+  ];
+
   return (
-    <div>
+    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <Grid
         container
         alignItems="center"
         style={{ marginTop: "1em", marginBottom: "1em" }}
       >
         <Grid item xs={8}>
-          <Typography variant="h5" sx={{fontWeight: 'regular'}}>
+          <Typography variant="h5" sx={{ fontWeight: "regular" }}>
             <ScheduleOutlined /> {`${date}`}
           </Typography>
-          <Typography variant="h5" sx={{fontWeight: 'regular'}}>
+          <Typography variant="h5" sx={{ fontWeight: "regular" }}>
             <ClockCircleOutlined /> {`${start} - ${end}`}
           </Typography>
           {description && (
-            <Typography variant="h6" sx={{fontWeight: 'light'}}>
+            <Typography variant="h6" sx={{ fontWeight: "light" }}>
               <FileTextOutlined />{" "}
               {description.includes("\n") ||
               description.split(/\n/)[0].length > 24
@@ -70,9 +102,15 @@ function AppointmentCard({ appointment }) {
         <Grid container item xs={2} justifyContent="flex-end">
           <Tag value={status.value} severity={status.severity} />
         </Grid>
+        {isHover && (
+          <Grid container item xs={1} justifyContent="flex-end">
+            <Menu model={menuItems} popup ref={menu} />
+            <ActionGroup onClickMore={(event) => menu.current.toggle(event)} />
+          </Grid>
+        )}
       </Grid>
       <Grid container>
-        <Grid item xs={10}>
+        <Grid item xs={11}>
           <Divider style={{ margin: 0 }} />
         </Grid>
       </Grid>
