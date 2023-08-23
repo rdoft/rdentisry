@@ -3,14 +3,14 @@ import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
 import { DataScroller, ConfirmDialog, confirmDialog } from "primereact";
 import { toastErrorMessage } from "components/errorMesage";
+import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
 import AppointmentCard from "./AppointmentCard";
-import DialogFooter from "components/DialogFooter/DialogFooter";
 
 // assets
 import "assets/styles/PatientDetail/AppointmentsTab.css";
 
 // services
-import { AppointmentService } from "services/index";
+import { AppointmentService } from "services";
 
 function AppointmentsTab({ patientId }) {
   // Set the default values
@@ -18,7 +18,7 @@ function AppointmentsTab({ patientId }) {
   const [activeAppointments, setActiveAppointments] = useState([]);
   const [otherAppointments, setOtherAppointments] = useState([]);
   const [appointment, setAppointment] = useState(null);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [appointmentDialog, setAppointmentDialog] = useState(false);
 
   // Set the page on loading
   useEffect(() => {
@@ -64,42 +64,62 @@ function AppointmentsTab({ patientId }) {
     }
   };
 
+  // Save appointment (create/update)
+  const saveAppointment = async (appointment) => {
+    try {
+      if (appointment.id) {
+        await AppointmentService.updateAppointment(appointment.id, appointment);
+        toast.success("Randevu bilgileri başarıyla güncellendi!");
+      } else {
+        await AppointmentService.saveAppointment(appointment);
+        toast.success("Yeni randevu başarıyla kaydedildi!");
+      }
+
+      // Get and set the updated list of appointments
+      getAppointments(patientId);
+      setAppointmentDialog(false);
+      setAppointment(null);
+    } catch (error) {
+      toast.error(toastErrorMessage(error));
+    }
+  };
+
   //  Delete appointment
   const deleteAppointment = async (appointment) => {
     try {
       await AppointmentService.deleteAppointment(appointment.id);
 
       // Get and set the updated list of appointments
-      getAppointments();
+      getAppointments(patientId);
+      setAppointmentDialog(false);
+      setAppointment(null);
     } catch (error) {
       // Set error status and show error toast message
       toast.error(toastErrorMessage(error));
     }
   };
 
+  // SHOW/HIDE OPTIONS --------------------------------------------------------
+  // Show add appointment dialog
+  const showAppointmentDialog = () => {
+    setAppointmentDialog(true);
+  };
+
+  // Hide add appointment dialog
+  const hideAppointmentDialog = () => {
+    setAppointment(null);
+    setAppointmentDialog(false);
+  };
+
   // HANDLERS -----------------------------------------------------------------
-  // onHide handler
-  const handleHide = () => {
-    setAppointment(null);
-    setShowConfirmDialog(false);
-  };
+  // onSelectEvent, get appointment and show dialog
+  const handleSelectEvent = async (event) => {
+    const appointment_ = appointments.find(
+      (appointment) => appointment.id === event.id
+    );
+    setAppointment(appointment_);
 
-  // onDelete handler
-  const handleDelete = () => {
-    deleteAppointment(appointment);
-    setAppointment(null);
-    setShowConfirmDialog(false);
-  };
-
-  // Confirmation dialog in order to delete
-  const handleDeleteConfim = (appointment) => {
-    setAppointment(appointment);
-    setShowConfirmDialog(true);
-    confirmDialog({
-      message: "Randevuyu silmek istediğinizden emin misiniz?",
-      header: "Randevuyu Sil",
-      footer: <DialogFooter onDelete={handleDelete} onHide={handleHide} />,
-    });
+    setTimeout(showAppointmentDialog, 100);
   };
 
   // TEMPLATES ----------------------------------------------------------------
@@ -110,14 +130,13 @@ function AppointmentsTab({ patientId }) {
     return (
       <AppointmentCard
         appointment={appointment}
-        onDelete={handleDeleteConfim}
+        onClickEdit={handleSelectEvent}
       />
     );
   };
 
   return (
     <>
-      <ConfirmDialog visible={showConfirmDialog} />
       <Grid container justifyContent="space-between">
         <Grid item md={6} xs={12}>
           <DataScroller
@@ -138,6 +157,14 @@ function AppointmentsTab({ patientId }) {
           ></DataScroller>
         </Grid>
       </Grid>
+      {appointmentDialog && (
+        <AppointmentDialog
+          _appointment={appointment}
+          onHide={hideAppointmentDialog}
+          onSubmit={saveAppointment}
+          onDelete={appointment && deleteAppointment}
+        />
+      )}
     </>
   );
 }

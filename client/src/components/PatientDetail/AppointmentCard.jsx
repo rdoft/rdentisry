@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Tag, Divider, Menu } from "primereact";
+import { Tag, Divider } from "primereact";
 import { Grid, Typography } from "@mui/material";
 
 import ActionGroup from "components/ActionGroup/ActionGroup";
@@ -11,8 +11,8 @@ import {
   FileTextOutlined,
 } from "@ant-design/icons";
 
-function AppointmentCard({ appointment, onDelete }) {
-  const menu = useRef(null);
+function AppointmentCard({ appointment, onClickEdit }) {
+  // const menu = useRef(null);
   const [isHover, setIsHover] = useState(false);
 
   // Set status of the appointment
@@ -60,27 +60,32 @@ function AppointmentCard({ appointment, onDelete }) {
     setIsHover(false);
   };
 
-  // TEMPLATES ----------------------------------------------------------
-  // Set menuItems
-  const menuItems = [
-    {
-      label: "Düzenle",
-      command: () => {},
-    },
-    {
-      label: "Sil",
-      command: () => {
-        onDelete(appointment);
-      },
-    },
-  ];
+  // onClickEdit handler
+  const handleClickEdit = () => {
+    onClickEdit(appointment);
+  }
+
+  // // TEMPLATES ----------------------------------------------------------
+  // // Set menuItems
+  // const menuItems = [
+  //   {
+  //     label: "Düzenle",
+  //     command: () => {},
+  //   },
+  //   {
+  //     label: "Sil",
+  //     command: () => {
+  //       onDelete(appointment);
+  //     },
+  //   },
+  // ];
 
   return (
-    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div onClick={handleClickEdit} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <Grid
         container
         alignItems="center"
-        style={{ marginTop: "1em", marginBottom: "1em" }}
+        style={{ marginTop: "1em", marginBottom: "1em", cursor:"pointer" }}
       >
         <Grid item xs={8}>
           <Typography variant="h5" sx={{ fontWeight: "regular" }}>
@@ -104,8 +109,8 @@ function AppointmentCard({ appointment, onDelete }) {
         </Grid>
         {isHover && (
           <Grid container item xs={1} justifyContent="flex-end">
-            <Menu model={menuItems} popup ref={menu} />
-            <ActionGroup onClickMore={(event) => menu.current.toggle(event)} />
+            {/* <Menu model={menuItems} popup ref={menu} /> */}
+            <ActionGroup onClickEdit={handleClickEdit} />
           </Grid>
         )}
       </Grid>

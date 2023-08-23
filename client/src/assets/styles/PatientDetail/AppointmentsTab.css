@@ -4,4 +4,5 @@
 
 .p-datascroller-content {
   align-items: start !important;
+  padding-bottom: 1rem !important;
 }
