@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
-import { DataScroller, ConfirmDialog, confirmDialog } from "primereact";
+import { DataScroller } from "primereact";
 import { toastErrorMessage } from "components/errorMesage";
 import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
 import AppointmentCard from "./AppointmentCard";

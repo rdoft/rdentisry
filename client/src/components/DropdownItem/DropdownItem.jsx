@@ -15,7 +15,7 @@ function DropdownItem({ option, placeholder, avatar }) {
       <div className="flex flex-column align">
         <Typography variant="h5">{`${option.name} ${option.surname}`}</Typography>
         {option.phone && (
-          <Typography variant="h6">
+          <Typography variant="body2">
             <PhoneOutlined /> {`${option.phone}`}
           </Typography>
         )}

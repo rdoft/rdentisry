@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { toastErrorMessage } from "components/errorMesage";
-import { TabView, TabPanel } from "primereact";
+import { TabView, TabPanel, Button } from "primereact";
 import { Grid } from "@mui/material";
 import PatientDetailToolbar from "./PatientDetailToolbar";
 import AppointmentsTab from "./AppointmentsTab";
@@ -19,6 +19,7 @@ function PatientDetail() {
 
   // Set the default values
   const [patient, setPatient] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   // Set the page on loading
   useEffect(() => {
@@ -44,14 +45,48 @@ function PatientDetail() {
     }
   };
 
+  // HANDLERS -----------------------------------------------------------------
+  const handleTabChange = (event) => {
+    setActiveIndex(event.index);
+  };
+
+  // TEMPLATES ----------------------------------------------------------------
+  // Toolbar action template
+  const getActionTemplate = () => {
+    switch (activeIndex) {
+      case 0:
+        return (
+          <Button
+            label="Randevu Ekle"
+            icon="pi pi-plus"
+            className="p-button-text p-button-info"
+            // onClick={onClickAdd}
+          />
+        );
+      case 1:
+        return null;
+      case 2:
+        return null;
+      case 3:
+        return null;
+      case 4:
+        return null;
+      default:
+        return null;
+    }
+  };
+
   return (
     id && (
       <Grid container rowSpacing={4.5} columnSpacing={2.75}>
         <Grid item xs={12}>
           <div>
-            <PatientDetailToolbar patient={patient} />
+            <PatientDetailToolbar
+              patient={patient}
+              actionTemplate={getActionTemplate}
+            />
 
-            <TabView>
+            <TabView activeIndex={activeIndex} onTabChange={handleTabChange}>
               <TabPanel header="Randevular">
                 <AppointmentsTab patientId={id} />
               </TabPanel>
