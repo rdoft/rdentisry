@@ -12,18 +12,22 @@ import "assets/styles/PatientDetail/AppointmentsTab.css";
 // services
 import { AppointmentService } from "services";
 
-function AppointmentsTab({ patientId }) {
+function AppointmentsTab({
+  patient,
+  appointmentDialog,
+  showDialog,
+  hideDialog,
+}) {
   // Set the default values
   const [appointments, setAppointments] = useState([]);
   const [activeAppointments, setActiveAppointments] = useState([]);
   const [otherAppointments, setOtherAppointments] = useState([]);
   const [appointment, setAppointment] = useState(null);
-  const [appointmentDialog, setAppointmentDialog] = useState(false);
 
   // Set the page on loading
   useEffect(() => {
-    getAppointments(patientId);
-  }, [patientId]);
+    getAppointments(patient.id);
+  }, [patient]);
 
   // Set the active-other appointments
   useEffect(() => {
@@ -76,8 +80,8 @@ function AppointmentsTab({ patientId }) {
       }
 
       // Get and set the updated list of appointments
-      getAppointments(patientId);
-      setAppointmentDialog(false);
+      getAppointments(patient.id);
+      hideDialog();
       setAppointment(null);
     } catch (error) {
       toast.error(toastErrorMessage(error));
@@ -90,25 +94,13 @@ function AppointmentsTab({ patientId }) {
       await AppointmentService.deleteAppointment(appointment.id);
 
       // Get and set the updated list of appointments
-      getAppointments(patientId);
-      setAppointmentDialog(false);
+      getAppointments(patient.id);
+      hideDialog();
       setAppointment(null);
     } catch (error) {
       // Set error status and show error toast message
       toast.error(toastErrorMessage(error));
     }
-  };
-
-  // SHOW/HIDE OPTIONS --------------------------------------------------------
-  // Show add appointment dialog
-  const showAppointmentDialog = () => {
-    setAppointmentDialog(true);
-  };
-
-  // Hide add appointment dialog
-  const hideAppointmentDialog = () => {
-    setAppointment(null);
-    setAppointmentDialog(false);
   };
 
   // HANDLERS -----------------------------------------------------------------
@@ -119,7 +111,13 @@ function AppointmentsTab({ patientId }) {
     );
     setAppointment(appointment_);
 
-    setTimeout(showAppointmentDialog, 100);
+    setTimeout(showDialog, 100);
+  };
+
+  // onHide handler
+  const handleHideDialog = () => {
+    setAppointment(null);
+    hideDialog();
   };
 
   // TEMPLATES ----------------------------------------------------------------
@@ -159,8 +157,8 @@ function AppointmentsTab({ patientId }) {
       </Grid>
       {appointmentDialog && (
         <AppointmentDialog
-          _appointment={appointment}
-          onHide={hideAppointmentDialog}
+          _appointment={appointment ? appointment : { patient }}
+          onHide={handleHideDialog}
           onSubmit={saveAppointment}
           onDelete={appointment && deleteAppointment}
         />

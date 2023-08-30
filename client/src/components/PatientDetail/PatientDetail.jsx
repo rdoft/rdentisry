@@ -20,6 +20,7 @@ function PatientDetail() {
   // Set the default values
   const [patient, setPatient] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [appointmentDialog, setAppointmentDialog] = useState(false);
 
   // Set the page on loading
   useEffect(() => {
@@ -45,6 +46,17 @@ function PatientDetail() {
     }
   };
 
+  // SHOW/HIDE OPTIONS --------------------------------------------------------
+  // Show add appointment dialog
+  const showAppointmentDialog = () => {
+    setAppointmentDialog(true);
+  };
+
+  // Hide add appointment dialog
+  const hideAppointmentDialog = () => {
+    setAppointmentDialog(false);
+  };
+
   // HANDLERS -----------------------------------------------------------------
   const handleTabChange = (event) => {
     setActiveIndex(event.index);
@@ -60,7 +72,7 @@ function PatientDetail() {
             label="Randevu Ekle"
             icon="pi pi-plus"
             className="p-button-text p-button-info"
-            // onClick={onClickAdd}
+            onClick={showAppointmentDialog}
           />
         );
       case 1:
@@ -77,7 +89,7 @@ function PatientDetail() {
   };
 
   return (
-    id && (
+    patient && (
       <Grid container rowSpacing={4.5} columnSpacing={2.75}>
         <Grid item xs={12}>
           <div>
@@ -88,7 +100,12 @@ function PatientDetail() {
 
             <TabView activeIndex={activeIndex} onTabChange={handleTabChange}>
               <TabPanel header="Randevular">
-                <AppointmentsTab patientId={id} />
+                <AppointmentsTab
+                  patient={patient}
+                  appointmentDialog={appointmentDialog}
+                  showDialog={showAppointmentDialog}
+                  hideDialog={hideAppointmentDialog}
+                />
               </TabPanel>
               <TabPanel header="Ödemeler"></TabPanel>
               <TabPanel header="Tedaviler"></TabPanel>
