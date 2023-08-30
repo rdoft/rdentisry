@@ -4,7 +4,7 @@ const appointment = Joi.object({
   id: Joi.number().empty(null).id(),
   patient: Joi.object().required(),
   doctor: Joi.object().empty(null),
-  date: Joi.date().min(new Date().setUTCHours(0, 0, 0, 0)).required(),
+  date: Joi.date().required(),
   startTime: Joi.date()
     // .format("HH:mm")
     // .pattern(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
@@ -17,7 +17,7 @@ const appointment = Joi.object({
   description: Joi.string().default(null).empty("").allow(null),
   didCome: Joi.boolean().empty(null).allow(null),
   status: Joi.string().default("active").empty(null),
-  duration: Joi.number().empty(null).allow(null)
+  duration: Joi.number().empty(null).allow(null),
 });
 
 const id = Joi.object({
@@ -26,7 +26,7 @@ const id = Joi.object({
 
 const patientId = Joi.number().required();
 const doctorId = Joi.number().empty(null);
-const date = Joi.date().min(new Date().setUTCHours(0, 0, 0, 0)).required();
+const date = Joi.date().required();
 const startTime = Joi.date()
   // .format("HH:mm")
   // .pattern(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
