@@ -9,7 +9,7 @@ function DropdownItem({ option, placeholder, avatar }) {
     <div className="w-full p-link flex align-items-center">
       {/* Avatar icon */}
       {avatar && (
-        <Avatar alt="avatar" className="mr-2" src={avatar} shape="circle" />
+        <Avatar alt="avatar" className="mr-2 p-1" src={avatar} shape="circle" />
       )}
       {/* Option info */}
       <div className="flex flex-column align">
