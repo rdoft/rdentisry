@@ -29,6 +29,22 @@ app.get("/", (req, res) => {
 // routes
 require("./app/routes/index")(app);
 
+// Schedule the statusUpdater to run every day at a specific time
+// For example, '0 9 * * *' means every day at 9:00 AM.
+// * * * * * *
+// | | | | | |
+// | | | | | day of week
+// | | | | month
+// | | | day of month
+// | | hour
+// | minute
+// second ( optional )
+const cron = require("node-cron");
+const statusUpdater = require("./app/services/statusUpdater.service");
+cron.schedule("00 22 * * *", () => {
+  statusUpdater.run();
+});
+
 // set port, listen for requests
 app.listen(PORT, () => {
   console.log(`Server is running on ${HOST}:${PORT}.`);

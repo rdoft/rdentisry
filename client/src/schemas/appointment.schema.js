@@ -15,7 +15,6 @@ const appointment = Joi.object({
     // .format("HH:mm")
     .required(),
   description: Joi.string().default(null).empty("").allow(null),
-  didCome: Joi.boolean().empty(null).allow(null),
   status: Joi.string().default("active").empty(null),
   duration: Joi.number().empty(null).allow(null),
 });

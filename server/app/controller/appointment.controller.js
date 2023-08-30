@@ -20,7 +20,6 @@ exports.getAppointments = async (req, res) => {
         ["StartTime", "startTime"],
         ["EndTime", "endTime"],
         ["Description", "description"],
-        ["DidCome", "didCome"],
         ["Status", "status"],
         [
           Sequelize.literal(
@@ -100,7 +99,6 @@ exports.getAppointment = async (req, res) => {
         ["StartTime", "startTime"],
         ["EndTime", "endTime"],
         ["Description", "description"],
-        ["DidCome", "didCome"],
         ["Status", "status"],
         [
           Sequelize.literal(
@@ -160,7 +158,6 @@ exports.saveAppointment = async (req, res) => {
     startTime,
     endTime,
     description,
-    didCome,
     status,
   } = req.body;
   let values = {
@@ -170,7 +167,6 @@ exports.saveAppointment = async (req, res) => {
     StartTime: Sequelize.cast(startTime, "TIME"),
     EndTime: Sequelize.cast(endTime, "TIME"),
     Description: description ?? null,
-    DidCome: didCome ?? null,
     Status: status,
   };
   let appointment;
@@ -186,7 +182,6 @@ exports.saveAppointment = async (req, res) => {
       startTime: appointment.StartTime,
       endTime: appointment.EndTime,
       description: appointment.Description,
-      didCome: appointment.DidCome,
       status: appointment.Status,
     };
     res.status(201).send(appointment);
@@ -217,7 +212,6 @@ exports.updateAppointment = async (req, res) => {
     startTime,
     endTime,
     description,
-    didCome,
     status,
   } = req.body;
   let values = {
@@ -227,7 +221,6 @@ exports.updateAppointment = async (req, res) => {
     StartTime: Sequelize.cast(startTime, "TIME"),
     EndTime: Sequelize.cast(endTime, "TIME"),
     Description: description ?? null,
-    DidCome: didCome ?? null,
     Status: status,
   };
   let appointment;
@@ -281,4 +274,12 @@ exports.deleteAppointment = async (req, res) => {
   } catch (error) {
     res.status(500).send(error);
   }
+};
+
+/**
+ * Get the statuses
+ */
+exports.getStatuses = async (req, res) => {
+  let statuses = ["active", "completed", "canceled", "absent"];
+  res.status(200).send(statuses);
 };

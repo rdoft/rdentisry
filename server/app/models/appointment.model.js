@@ -42,9 +42,6 @@ module.exports = (sequelize, Sequelize) => {
       Description: {
         type: Sequelize.TEXT,
       },
-      DidCome: {
-        type: Sequelize.BOOLEAN,
-      },
       Status: {
         type: Sequelize.STRING,
         allowNull: false,
