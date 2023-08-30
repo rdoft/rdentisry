@@ -13,6 +13,7 @@ import "assets/styles/PatientDetail/PatientDetail.css";
 
 // services
 import { PatientService } from "services/index";
+import { AppointmentService } from "services";
 
 function PatientDetail() {
   let { id } = useParams();
@@ -28,6 +29,15 @@ function PatientDetail() {
   useEffect(() => {
     id && getPatient(id);
   }, [id]);
+
+  useEffect(() => {
+    if (patient) {
+      getAppointmentsCount();
+      // getPaymentsCount();
+      // getProceduresCount();
+      // getNotes();
+    }
+  }, [patient, appointmentDialog]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the patient info and set patient value
@@ -48,6 +58,22 @@ function PatientDetail() {
     }
   };
 
+  // Get the list of appointments of the patient and set appointmets value
+  const getAppointmentsCount = async () => {
+    let response;
+    let counts_;
+
+    try {
+      response = await AppointmentService.getAppointments(patient.id);
+
+      counts_ = [...counts];
+      counts_[0] = response.data.length;
+      setCounts(counts_);
+    } catch (error) {
+      toast.error(toastErrorMessage(error));
+    }
+  };
+
   // HANDLERS -----------------------------------------------------------------
   // Show add appointment dialog
   const showAppointmentDialog = () => {
@@ -61,12 +87,6 @@ function PatientDetail() {
 
   const handleTabChange = (event) => {
     setActiveIndex(event.index);
-  };
-
-  const handleCountChange = (index, count) => {
-    let counts_ = [...counts];
-    counts_[index] = count;
-    setCounts(counts_);
   };
 
   // TEMPLATES ----------------------------------------------------------------
@@ -120,7 +140,6 @@ function PatientDetail() {
                   appointmentDialog={appointmentDialog}
                   showDialog={showAppointmentDialog}
                   hideDialog={hideAppointmentDialog}
-                  onChangeCount={(count) => handleCountChange(0, count)}
                 />
               </TabPanel>
               <TabPanel

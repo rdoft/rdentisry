@@ -9,7 +9,7 @@ function TabHeader({ label, badge, onClick }) {
       onClick={onClick}
     >
       <h4>{label}</h4>
-      {badge && <Badge value={badge} className="mx-2"></Badge>}
+      <Badge severity="secondary" value={badge ? badge : 0} className="ml-2"></Badge>
     </div>
   );
 }

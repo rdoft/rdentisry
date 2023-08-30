@@ -17,7 +17,6 @@ function AppointmentsTab({
   appointmentDialog,
   showDialog,
   hideDialog,
-  onChangeCount,
 }) {
   // Set the default values
   const [appointments, setAppointments] = useState([]);
@@ -32,7 +31,6 @@ function AppointmentsTab({
 
   // Set the active-other appointments
   useEffect(() => {
-    onChangeCount(appointments.length);
     divideAppointments(appointments);
   }, [appointments]);
 
@@ -41,13 +39,13 @@ function AppointmentsTab({
     let activeList = [];
     let otherList = [];
 
-    appointments.map((appointment) => {
+    for (let appointment of appointments) {
       if (appointment.status === "active") {
         activeList.push(appointment);
       } else {
         otherList.push(appointment);
       }
-    });
+    }
 
     // Set values
     setActiveAppointments(activeList);
