@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tag, Divider, Dropdown } from "primereact";
 import { Grid, Typography } from "@mui/material";
 
@@ -12,24 +12,30 @@ import {
 } from "@ant-design/icons";
 import "assets/styles/PatientDetail/AppointmentCard.css";
 
-function AppointmentCard({ appointment, onClickEdit }) {
+function AppointmentCard({ appointment, onClickEdit, onChangeStatus }) {
   const [isHover, setIsHover] = useState(false);
+  const [status, setStatus] = useState(null);
+
+  // Set the doctors from dropdown on loading
+  useEffect(() => {
+    getStatus(appointment.status);
+  }, [appointment]);
 
   // Status items
-  const items = [
-    { status: "active", value: "Bekleniyor", severity: "info" },
-    { status: "completed", value: "Tamamlandı", severity: "success" },
-    { status: "canceled", value: "İptal Edildi", severity: "danger" },
-    { status: "absent", value: "Gelmedi", severity: "warning" },
+  const statusItems = [
+    { status: "active", label: "Bekleniyor", severity: "info" },
+    { status: "completed", label: "Tamamlandı", severity: "success" },
+    { status: "canceled", label: "İptal Edildi", severity: "danger" },
+    { status: "absent", label: "Gelmedi", severity: "warning" },
   ];
 
   // Set status of the appointment
   const getStatus = (status) => {
-    return items.find((item) => item.status === status);
+    const status_ = statusItems.find((item) => item.status === status);
+    setStatus(status_);
   };
 
   // Set values as desired format
-  const status = getStatus(appointment.status);
   const description = appointment.description;
   const date = new Date(appointment.date).toLocaleDateString("tr-TR", {
     year: "numeric",
@@ -61,10 +67,16 @@ function AppointmentCard({ appointment, onClickEdit }) {
     onClickEdit(appointment);
   };
 
+  // onChange handler
+  const handleChangeStatus = (status) => {
+    appointment.status = status.status;
+    onChangeStatus(appointment);
+  };
+
   // TEMPLATES ----------------------------------------------------------
   // Dropdwon item template
-  const statusTemplate = (option, props) => {
-    return <Tag value={option.value} severity={option.severity} />;
+  const statusTemplate = (option) => {
+    return <Tag value={option.label} severity={option.severity} />;
   };
 
   return (
@@ -95,17 +107,19 @@ function AppointmentCard({ appointment, onClickEdit }) {
           )}
         </Grid>
         <Grid container item xs={2} justifyContent="flex-end">
-          <Dropdown
-            className="statusDropdown"
-            value={status.value}
-            options={items}
-            optionLabel="value"
-            valueTemplate={statusTemplate}
-            itemTemplate={statusTemplate}
-            scrollHeight={null}
-            // onChange={(event) => handleChange(event)}
-            onClick={(event) => event.stopPropagation()}
-          />
+          {status && (
+            <Dropdown
+              value={status}
+              options={statusItems}
+              optionLabel="desc"
+              valueTemplate={statusTemplate}
+              itemTemplate={statusTemplate}
+              onChange={(event) => handleChangeStatus(event.value)}
+              onClick={(event) => event.stopPropagation()}
+              scrollHeight={null}
+              className="statusDropdown"
+            />
+          )}
         </Grid>
         {isHover && (
           <Grid container item xs={1} justifyContent="flex-end">

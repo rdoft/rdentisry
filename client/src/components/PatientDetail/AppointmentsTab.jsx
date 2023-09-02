@@ -105,7 +105,7 @@ function AppointmentsTab({
 
   // HANDLERS -----------------------------------------------------------------
   // onSelectEvent, get appointment and show dialog
-  const handleSelectEvent = async (event) => {
+  const handleSelectAppointment = async (event) => {
     const appointment_ = appointments.find(
       (appointment) => appointment.id === event.id
     );
@@ -128,7 +128,8 @@ function AppointmentsTab({
     return (
       <AppointmentCard
         appointment={appointment}
-        onClickEdit={handleSelectEvent}
+        onClickEdit={handleSelectAppointment}
+        onChangeStatus={saveAppointment}
       />
     );
   };
