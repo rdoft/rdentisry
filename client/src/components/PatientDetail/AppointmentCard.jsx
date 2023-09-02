@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { Tag, Divider } from "primereact";
+import React, { useState } from "react";
+import { Tag, Divider, Dropdown } from "primereact";
 import { Grid, Typography } from "@mui/material";
 
 import ActionGroup from "components/ActionGroup/ActionGroup";
@@ -10,26 +10,22 @@ import {
   ScheduleOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
+import "assets/styles/PatientDetail/AppointmentCard.css";
 
 function AppointmentCard({ appointment, onClickEdit }) {
-  // const menu = useRef(null);
   const [isHover, setIsHover] = useState(false);
+
+  // Status items
+  const items = [
+    { status: "active", value: "Bekleniyor", severity: "info" },
+    { status: "completed", value: "Tamamlandı", severity: "success" },
+    { status: "canceled", value: "İptal Edildi", severity: "danger" },
+    { status: "absent", value: "Gelmedi", severity: "warning" },
+  ];
 
   // Set status of the appointment
   const getStatus = (status) => {
-    switch (status) {
-      case "active":
-        return { value: "Bekleniyor", severity: "info" };
-
-      case "completed":
-        return { value: "Tamamlandı", severity: "success" };
-
-      case "canceled":
-        return { value: "İptal Edildi", severity: "danger" };
-
-      case "absent":
-        return { value: "Gelmedi", severity: "warning" };
-    }
+    return items.find((item) => item.status === status);
   };
 
   // Set values as desired format
@@ -63,29 +59,23 @@ function AppointmentCard({ appointment, onClickEdit }) {
   // onClickEdit handler
   const handleClickEdit = () => {
     onClickEdit(appointment);
-  }
+  };
 
-  // // TEMPLATES ----------------------------------------------------------
-  // // Set menuItems
-  // const menuItems = [
-  //   {
-  //     label: "Düzenle",
-  //     command: () => {},
-  //   },
-  //   {
-  //     label: "Sil",
-  //     command: () => {
-  //       onDelete(appointment);
-  //     },
-  //   },
-  // ];
+  // TEMPLATES ----------------------------------------------------------
+  // Dropdwon item template
+  const statusTemplate = (option, props) => {
+    return <Tag value={option.value} severity={option.severity} />;
+  };
 
   return (
-    <div onClick={handleClickEdit} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <>
       <Grid
         container
         alignItems="center"
-        style={{ marginTop: "1em", marginBottom: "1em", cursor:"pointer" }}
+        style={{ marginTop: "1em", marginBottom: "1em", cursor: "pointer" }}
+        onClick={handleClickEdit}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         <Grid item xs={8}>
           <Typography variant="h5" sx={{ fontWeight: "regular" }}>
@@ -105,7 +95,17 @@ function AppointmentCard({ appointment, onClickEdit }) {
           )}
         </Grid>
         <Grid container item xs={2} justifyContent="flex-end">
-          <Tag value={status.value} severity={status.severity} />
+          <Dropdown
+            className="statusDropdown"
+            value={status.value}
+            options={items}
+            optionLabel="value"
+            valueTemplate={statusTemplate}
+            itemTemplate={statusTemplate}
+            scrollHeight={null}
+            // onChange={(event) => handleChange(event)}
+            onClick={(event) => event.stopPropagation()}
+          />
         </Grid>
         {isHover && (
           <Grid container item xs={1} justifyContent="flex-end">
@@ -119,7 +119,7 @@ function AppointmentCard({ appointment, onClickEdit }) {
           <Divider style={{ margin: 0 }} />
         </Grid>
       </Grid>
-    </div>
+    </>
   );
 }
 
