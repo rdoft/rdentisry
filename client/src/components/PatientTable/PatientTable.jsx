@@ -239,10 +239,8 @@ function PatientsTable() {
   };
 
   // onRowClick handler for goto patient page
-  const handleRowClick = (event) => {
-    if (![...event.originalEvent.target.classList].includes("pi-check")) {
-      navigate(`/patients/${rowIndex}`);
-    }
+  const handleRowClick = () => {
+    navigate(`/patients/${rowIndex}`);
   };
 
   // onRowMouseEnter handler for display buttons
@@ -253,6 +251,11 @@ function PatientsTable() {
   // onRowMouseLeave handler for hide buttons
   const handleRowMouseLeave = () => {
     setRowIndex(null);
+  };
+  // onClick handler for add new appointment
+  const handleClickAddAppointment = (event, patient) => {
+    event.stopPropagation();
+    showAppointmentDialog(patient);
   };
 
   // Return the PatientTable
@@ -324,7 +327,9 @@ function PatientsTable() {
               patient.id === rowIndex ? (
                 <ActionGroup
                   label="Randevu"
-                  onClickAdd={() => showAppointmentDialog(patient)}
+                  onClickAdd={(event) =>
+                    handleClickAddAppointment(event, patient)
+                  }
                 />
               ) : null
             }

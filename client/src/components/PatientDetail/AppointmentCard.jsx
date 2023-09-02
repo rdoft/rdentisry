@@ -84,8 +84,8 @@ function AppointmentCard({ appointment, onClickEdit, onChangeStatus }) {
       <Grid
         container
         alignItems="center"
-        style={{ marginTop: "1em", marginBottom: "1em", cursor: "pointer" }}
-        onClick={handleClickEdit}
+        style={{ marginTop: "1em", marginBottom: "1em" }}
+        // onClick={handleClickEdit}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
@@ -123,7 +123,6 @@ function AppointmentCard({ appointment, onClickEdit, onChangeStatus }) {
         </Grid>
         {isHover && (
           <Grid container item xs={1} justifyContent="flex-end">
-            {/* <Menu model={menuItems} popup ref={menu} /> */}
             <ActionGroup onClickEdit={handleClickEdit} />
           </Grid>
         )}
