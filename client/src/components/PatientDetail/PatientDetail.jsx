@@ -24,6 +24,7 @@ function PatientDetail() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [counts, setCounts] = useState([]);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
+  const [paymentDialog, setPaymentDialog] = useState(false);
 
   // Set the page on loading
   useEffect(() => {
@@ -85,6 +86,16 @@ function PatientDetail() {
     setAppointmentDialog(false);
   };
 
+  // Show add appointment dialog
+  const showPaymentDialog = () => {
+    setPaymentDialog(true);
+  };
+
+  // Hide add appointment dialog
+  const hidePaymentDialog = () => {
+    setPaymentDialog(false);
+  };
+
   const handleTabChange = (event) => {
     setActiveIndex(event.index);
   };
@@ -103,7 +114,14 @@ function PatientDetail() {
           />
         );
       case 1:
-        return null;
+        return (
+          <Button
+            label="Ödeme Ekle"
+            icon="pi pi-plus"
+            className="p-button-text p-button-info"
+            onClick={showPaymentDialog}
+          />
+        );
       case 2:
         return null;
       case 3:

@@ -82,6 +82,7 @@ function PatientDetailToolbar({ patient, actionTemplate }) {
       {actionTemplate()}
     </React.Fragment>
   );
+  
   return (
     <Toolbar className="mb-4 p-2" left={leftContent} right={rightContent} />
   );
