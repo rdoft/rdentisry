@@ -5,7 +5,7 @@ import { toastErrorMessage } from "components/errorMesage";
 import { TabView, TabPanel, Button } from "primereact";
 import { Grid } from "@mui/material";
 import TabHeader from "./TabHeader";
-import AppointmentsTab from "./AppointmentsTab";
+import AppointmentsTab from "./Appointments/AppointmentsTab";
 import PaymentsTab from "./Payments/PaymentsTab";
 import PatientDetailToolbar from "./PatientDetailToolbar";
 
