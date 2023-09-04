@@ -4,9 +4,10 @@ import { toast } from "react-hot-toast";
 import { toastErrorMessage } from "components/errorMesage";
 import { TabView, TabPanel, Button } from "primereact";
 import { Grid } from "@mui/material";
-import PatientDetailToolbar from "./PatientDetailToolbar";
-import AppointmentsTab from "./AppointmentsTab";
 import TabHeader from "./TabHeader";
+import AppointmentsTab from "./AppointmentsTab";
+import PaymentsTab from "./Payments/PaymentsTab";
+import PatientDetailToolbar from "./PatientDetailToolbar";
 
 // assets
 import "assets/styles/PatientDetail/PatientDetail.css";
@@ -168,7 +169,14 @@ function PatientDetail() {
                     onClick={options.onClick}
                   />
                 )}
-              ></TabPanel>
+              >
+                <PaymentsTab
+                  patient={patient}
+                  paymentDialog={paymentDialog}
+                  showDialog={showPaymentDialog}
+                  hideDialog={hidePaymentDialog}
+                />
+              </TabPanel>
               <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
