@@ -4,16 +4,17 @@ import { toast } from "react-hot-toast";
 import { toastErrorMessage } from "components/errorMesage";
 import { TabView, TabPanel, Button } from "primereact";
 import { Grid } from "@mui/material";
-import PatientDetailToolbar from "./PatientDetailToolbar";
-import AppointmentsTab from "./AppointmentsTab";
 import TabHeader from "./TabHeader";
+import AppointmentsTab from "./Appointments/AppointmentsTab";
+import PaymentsTab from "./Payments/PaymentsTab";
+import PatientDetailToolbar from "./PatientDetailToolbar";
 
 // assets
 import "assets/styles/PatientDetail/PatientDetail.css";
 
 // services
 import { PatientService } from "services/index";
-import { AppointmentService } from "services";
+import { AppointmentService, PaymentService } from "services";
 
 function PatientDetail() {
   let { id } = useParams();
@@ -24,6 +25,7 @@ function PatientDetail() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [counts, setCounts] = useState([]);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
+  const [paymentDialog, setPaymentDialog] = useState(false);
 
   // Set the page on loading
   useEffect(() => {
@@ -32,12 +34,9 @@ function PatientDetail() {
 
   useEffect(() => {
     if (patient) {
-      getAppointmentsCount();
-      // getPaymentsCount();
-      // getProceduresCount();
-      // getNotes();
+      getCounts();
     }
-  }, [patient, appointmentDialog]);
+  }, [patient, appointmentDialog, paymentDialog]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the patient info and set patient value
@@ -58,16 +57,19 @@ function PatientDetail() {
     }
   };
 
-  // Get the list of appointments of the patient and set appointmets value
-  const getAppointmentsCount = async () => {
+  // Get and set the item counts of the tab
+  const getCounts = async () => {
     let response;
-    let counts_;
+    let counts_ = [];
 
-    try {
+    try {      
+      // Get the list of appointments of the patient and set appointments count 
       response = await AppointmentService.getAppointments(patient.id);
+      counts_.push(response.data.length || 0);
+      // Get the list of payments of the patient and set payments count 
+      response = await PaymentService.getPayments(patient.id);
+      counts_.push(response.data.length || 0);
 
-      counts_ = [...counts];
-      counts_[0] = response.data.length;
       setCounts(counts_);
     } catch (error) {
       toast.error(toastErrorMessage(error));
@@ -83,6 +85,16 @@ function PatientDetail() {
   // Hide add appointment dialog
   const hideAppointmentDialog = () => {
     setAppointmentDialog(false);
+  };
+
+  // Show add appointment dialog
+  const showPaymentDialog = () => {
+    setPaymentDialog(true);
+  };
+
+  // Hide add appointment dialog
+  const hidePaymentDialog = () => {
+    setPaymentDialog(false);
   };
 
   const handleTabChange = (event) => {
@@ -103,7 +115,14 @@ function PatientDetail() {
           />
         );
       case 1:
-        return null;
+        return (
+          <Button
+            label="Ödeme Ekle"
+            icon="pi pi-plus"
+            className="p-button-text p-button-info"
+            onClick={showPaymentDialog}
+          />
+        );
       case 2:
         return null;
       case 3:
@@ -150,7 +169,14 @@ function PatientDetail() {
                     onClick={options.onClick}
                   />
                 )}
-              ></TabPanel>
+              >
+                <PaymentsTab
+                  patient={patient}
+                  paymentDialog={paymentDialog}
+                  showDialog={showPaymentDialog}
+                  hideDialog={hidePaymentDialog}
+                />
+              </TabPanel>
               <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader

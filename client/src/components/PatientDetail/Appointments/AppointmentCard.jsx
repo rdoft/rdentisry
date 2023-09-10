@@ -23,10 +23,10 @@ function AppointmentCard({ appointment, onClickEdit, onChangeStatus }) {
 
   // Status items
   const statusItems = [
-    { status: "active", label: "Bekleniyor", severity: "info" },
-    { status: "completed", label: "Tamamlandı", severity: "success" },
-    { status: "canceled", label: "İptal Edildi", severity: "danger" },
-    { status: "absent", label: "Gelmedi", severity: "warning" },
+    { status: "active", label: "Bekleniyor", color: "#1E7AFC" },
+    { status: "completed", label: "Tamamlandı", color: "#22A06A" },
+    { status: "canceled", label: "İptal Edildi", color: "#EF4444" },
+    { status: "absent", label: "Gelmedi", color: "#FFAB00" },
   ];
 
   // Set status of the appointment
@@ -76,7 +76,7 @@ function AppointmentCard({ appointment, onClickEdit, onChangeStatus }) {
   // TEMPLATES ----------------------------------------------------------
   // Dropdwon item template
   const statusTemplate = (option) => {
-    return <Tag value={option.label} severity={option.severity} />;
+    return <Tag value={option.label} style={{ backgroundColor: option.color }} />;
   };
 
   return (

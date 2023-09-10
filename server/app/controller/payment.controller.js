@@ -29,12 +29,21 @@ exports.getPayments = async (req, res) => {
         {
           model: Patient,
           as: "patient",
-          attributes: [],
+          attributes: [
+            ["PatientId", "id"],
+            ["IdNumber", "idNumber"],
+            ["Name", "name"],
+            ["Surname", "surname"],
+            ["BirthYear", "birthYear"],
+            ["Phone", "phone"],
+          ],
           where: patientId && {
             PatientId: patientId,
           },
         },
       ],
+      raw: true,
+      nest: true,
     });
 
     res.status(200).send(payments);
