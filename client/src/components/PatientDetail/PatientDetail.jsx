@@ -14,7 +14,7 @@ import "assets/styles/PatientDetail/PatientDetail.css";
 
 // services
 import { PatientService } from "services/index";
-import { AppointmentService } from "services";
+import { AppointmentService, PaymentService } from "services";
 
 function PatientDetail() {
   let { id } = useParams();
@@ -34,12 +34,9 @@ function PatientDetail() {
 
   useEffect(() => {
     if (patient) {
-      getAppointmentsCount();
-      // getPaymentsCount();
-      // getProceduresCount();
-      // getNotes();
+      getCounts();
     }
-  }, [patient, appointmentDialog]);
+  }, [patient, appointmentDialog, paymentDialog]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the patient info and set patient value
@@ -60,16 +57,19 @@ function PatientDetail() {
     }
   };
 
-  // Get the list of appointments of the patient and set appointmets value
-  const getAppointmentsCount = async () => {
+  // Get and set the item counts of the tab
+  const getCounts = async () => {
     let response;
-    let counts_;
+    let counts_ = [];
 
-    try {
+    try {      
+      // Get the list of appointments of the patient and set appointments count 
       response = await AppointmentService.getAppointments(patient.id);
+      counts_.push(response.data.length || 0);
+      // Get the list of payments of the patient and set payments count 
+      response = await PaymentService.getPayments(patient.id);
+      counts_.push(response.data.length || 0);
 
-      counts_ = [...counts];
-      counts_[0] = response.data.length;
       setCounts(counts_);
     } catch (error) {
       toast.error(toastErrorMessage(error));
