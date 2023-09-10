@@ -1,0 +1,110 @@
+import React from "react";
+import { Tag } from "primereact";
+
+// assets
+import { LiraIcon } from "assets/images/icons";
+
+function PaymentCard({ payment }) {
+  // Payment types
+  const paymentTypes = [
+    { value: "cash", label: "Nakit", icon: "pi pi-wallet" },
+    { value: "card", label: "Kredi Kartı", icon: "pi pi-credit-card" },
+    {
+      value: "transfer",
+      label: "Transfer(Banka)",
+      icon: "pi pi-arrow-right-arrow-left",
+    },
+    { value: "other", label: "Diğer", icon: "pi pi-file" },
+  ];
+
+  // TEMPLATES ----------------------------------------------------------
+  // Set label of the paymentType
+  const type = () => {
+    const type_ = paymentTypes.find((item) => item.value === payment.type);
+
+    return (
+      type_ && (
+        <>
+          <i className={type_.icon} style={{ fontSize: "0.7rem" }}></i>
+          <span>{type_.label}</span>
+        </>
+      )
+    );
+  };
+
+  // Set amount of payment
+  const amount = () => {
+    return (
+      <>
+        <span>₺</span>
+        <span>
+          {payment.amount.toLocaleString("tr-TR", {
+            style: "decimal",
+            maximumFractionDigits: 2,
+          })}
+        </span>
+      </>
+    );
+  };
+
+  // plannedDate Tag item
+  const plannedDateTag = () => {
+    let visibility = payment.plannedDate ? "visible" : "hidden";
+    let label =
+      payment.plannedDate &&
+      new Date(payment.plannedDate).toLocaleDateString("tr-TR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+
+    return (
+      <Tag
+        value={label}
+        style={{ backgroundColor: "#1E7AFC", visibility: visibility }}
+      />
+    );
+  };
+
+  // actualDate Tag item
+  const actualDateTag = () => {
+    let color;
+    let label;
+
+    if (payment.actualDate) {
+      color = "#22A06A";
+      label = new Date(payment.actualDate).toLocaleDateString("tr-TR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } else if (new Date(payment.plannedDate).getTime() < new Date().getTime()) {
+      color = "#EF4444";
+      label = "Gecikti";
+    } else {
+      color = "#1E7AFC";
+      label = "Bekleniyor";
+    }
+
+    return <Tag value={label} style={{ backgroundColor: color }} />;
+  };
+
+  return (
+    <div className="col-12">
+      <div className="border-1 surface-border surface-card border-round py-3 px-3">
+        <div className="flex flex-wrap justify-content-between pb-2">
+          {plannedDateTag()}
+          {actualDateTag()}
+        </div>
+        <div className="flex flex-wrap align-item-center justify-content-center text-xl font-bold gap-1">
+          {amount()}
+        </div>
+        <div className="flex flex-wrap align-items-center justify-content-center text-xs font-light gap-1">
+          {type()}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default PaymentCard;
