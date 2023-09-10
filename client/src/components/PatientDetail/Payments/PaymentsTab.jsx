@@ -81,10 +81,36 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
   };
 
   // HANDLERS -----------------------------------------------------------------
+  // onSelectEvent, get payment and show dialog
+  const handleSelectPayment = async (event) => {
+    const payment_ = payments.find((payment) => payment.id === event.id);
+    setPayment(payment_);
+
+    setTimeout(showDialog, 100);
+  };
+
   // onHide handler
   const handleHideDialog = () => {
     setPayment(null);
     hideDialog();
+  };
+
+  // TEMPLATES ----------------------------------------------------------------
+  const paymentTemplate = (payment) => {
+    if (!payment) {
+      return;
+    }
+
+    const idx = payments.findIndex(item => item.id === payment.id);
+    const direction = idx % 2 === 0 ? "row" : "row-reverse";
+
+    return (
+      <PaymentCard
+        payment={payment}
+        onClickEdit={handleSelectPayment}
+        direction={direction}
+      />
+    );
   };
 
   return (
@@ -92,16 +118,20 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
       {payments.length === 0 ? (
         <p className="text-center">Ödeme kaydı bulunamadı</p>
       ) : (
-        <Grid container alignItems="center" justifyContent="center">
+        <Grid container alignItems="center" justifyContent="center" pb={4}>
           <Grid item xs={8} p={4}>
-            <ProgressBar value={progress} color="#22A06A" className="border-round-2xl"></ProgressBar>
+            <ProgressBar
+              value={progress}
+              color="#22A06A"
+              className="border-round-2xl"
+            ></ProgressBar>
           </Grid>
-          <Grid item md={6} xs={12}>
+          <Grid item md={8} xs={12}>
             <Timeline
               value={payments}
               align="alternate"
               marker={(payment) => <PaymentMarker payment={payment} />}
-              content={(payment) => <PaymentCard payment={payment} />}
+              content={paymentTemplate}
             />
           </Grid>
         </Grid>

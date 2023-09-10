@@ -4,7 +4,6 @@ import ToDoIcon from "assets/images/icons/diagnosis.png";
 import DentistIcon from "assets/images/icons/dentist.png";
 import BarChartIcon from "assets/images/icons/barchart.png";
 import PaymentIcon from "assets/images/icons/wallet.png";
-import LiraIcon from "assets/images/icons/turkish-lira.png";
 
 export {
   PatientsIcon,
@@ -13,5 +12,4 @@ export {
   DentistIcon,
   BarChartIcon,
   PaymentIcon,
-  LiraIcon,
 };

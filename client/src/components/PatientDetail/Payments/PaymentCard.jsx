@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Tag } from "primereact";
+import { Grid } from "@mui/material";
 
-// assets
-import { LiraIcon } from "assets/images/icons";
+import ActionGroup from "components/ActionGroup/ActionGroup";
 
-function PaymentCard({ payment }) {
+function PaymentCard({ payment, onClickEdit, direction }) {
+  const [isHover, setIsHover] = useState(false);
+
   // Payment types
   const paymentTypes = [
     { value: "cash", label: "Nakit", icon: "pi pi-wallet" },
@@ -16,6 +18,22 @@ function PaymentCard({ payment }) {
     },
     { value: "other", label: "Diğer", icon: "pi pi-file" },
   ];
+
+  // HANDLERS -----------------------------------------------------------------
+  // onMouseEnter handler for display buttons
+  const handleMouseEnter = () => {
+    setIsHover(true);
+  };
+
+  // onMouseLeave handler for hide buttons
+  const handleMouseLeave = () => {
+    setIsHover(false);
+  };
+
+  // onClickEdit handler
+  const handleClickEdit = () => {
+    onClickEdit(payment);
+  };
 
   // TEMPLATES ----------------------------------------------------------
   // Set label of the paymentType
@@ -90,8 +108,18 @@ function PaymentCard({ payment }) {
   };
 
   return (
-    <div className="col-12">
-      <div className="border-1 surface-border surface-card border-round py-3 px-3">
+    <Grid
+      container
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      direction={direction}
+    >
+      <Grid
+        item
+        xs={9}
+        p={3}
+        className="border-1 surface-border surface-card border-round"
+      >
         <div className="flex flex-wrap justify-content-between pb-2">
           {plannedDateTag()}
           {actualDateTag()}
@@ -102,8 +130,13 @@ function PaymentCard({ payment }) {
         <div className="flex flex-wrap align-items-center justify-content-center text-xs font-light gap-1">
           {type()}
         </div>
-      </div>
-    </div>
+      </Grid>
+      {isHover && (
+          <Grid item xs={2} px={1}>
+            <ActionGroup onClickEdit={handleClickEdit} />
+          </Grid>
+        )}
+    </Grid>
   );
 }
 
