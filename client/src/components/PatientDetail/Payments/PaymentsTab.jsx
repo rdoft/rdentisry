@@ -80,6 +80,21 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
     }
   };
 
+  //  Delete appointment
+  const deletePayment = async (payment) => {
+    try {
+      await PaymentService.deletePayment(payment.id);
+
+      // Get and set the updated list of payments
+      getPayments(patient.id);
+      hideDialog();
+      setPayment(null);
+    } catch (error) {
+      // Set error status and show error toast message
+      toast.error(toastErrorMessage(error));
+    }
+  };
+
   // HANDLERS -----------------------------------------------------------------
   // onSelectEvent, get payment and show dialog
   const handleSelectPayment = async (event) => {
@@ -101,7 +116,7 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
       return;
     }
 
-    const idx = payments.findIndex(item => item.id === payment.id);
+    const idx = payments.findIndex((item) => item.id === payment.id);
     const direction = idx % 2 === 0 ? "row" : "row-reverse";
 
     return (
@@ -141,7 +156,7 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
           _payment={payment ? payment : { patient }}
           onHide={handleHideDialog}
           onSubmit={savePayment}
-          // onDelete={payment && deletePayment}
+          onDelete={payment && deletePayment}
         />
       )}
     </div>
