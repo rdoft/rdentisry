@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Tag } from "primereact";
+import React, { useState } from "react";
+import { Tag, Button } from "primereact";
 import { Grid } from "@mui/material";
 
 import ActionGroup from "components/ActionGroup/ActionGroup";
 
-function PaymentCard({ payment, onClickEdit, direction }) {
+function PaymentCard({ payment, onClickEdit, onClickPay, direction }) {
   const [isHover, setIsHover] = useState(false);
 
   // Payment types
@@ -33,6 +33,14 @@ function PaymentCard({ payment, onClickEdit, direction }) {
   // onClickEdit handler
   const handleClickEdit = () => {
     onClickEdit(payment);
+  };
+
+  // onClickPay handler
+  const handleClickPay = () => {
+    if (!payment.actualDate) {
+      payment.actualDate = new Date();
+      onClickPay(payment);
+    }
   };
 
   // TEMPLATES ----------------------------------------------------------
@@ -107,12 +115,29 @@ function PaymentCard({ payment, onClickEdit, direction }) {
     return <Tag value={label} style={{ backgroundColor: color }} />;
   };
 
+  // Action button for pay
+  const payButton = () => {
+    if (!payment.actualDate) {
+      return (
+        <Button
+          text
+          outlined
+          size="sm"
+          icon="pi pi-check-circle"
+          severity="secondary"
+          onClick={handleClickPay}
+        />
+      );
+    }
+  };
+
   return (
     <Grid
       container
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       direction={direction}
+      alignItems="center"
     >
       <Grid
         item
@@ -132,10 +157,10 @@ function PaymentCard({ payment, onClickEdit, direction }) {
         </div>
       </Grid>
       {isHover && (
-          <Grid item xs={2} px={1}>
-            <ActionGroup onClickEdit={handleClickEdit} />
-          </Grid>
-        )}
+        <Grid item xs={2} px={1}>
+          <ActionGroup onClickEdit={handleClickEdit} custom={payButton()} />
+        </Grid>
+      )}
     </Grid>
   );
 }

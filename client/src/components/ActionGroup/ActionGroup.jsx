@@ -2,11 +2,12 @@ import React from "react";
 import { Button } from "primereact";
 
 function ActionGroup({
+  label,
   onClickEdit,
   onClickDelete,
   onClickAdd,
   onClickMore,
-  label,
+  custom,
 }) {
   return (
     <React.Fragment>
@@ -50,6 +51,7 @@ function ActionGroup({
           onClick={onClickMore}
         />
       )}
+      {custom && custom}
     </React.Fragment>
   );
 }

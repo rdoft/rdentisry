@@ -123,6 +123,7 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
       <PaymentCard
         payment={payment}
         onClickEdit={handleSelectPayment}
+        onClickPay={savePayment}
         direction={direction}
       />
     );
