@@ -123,12 +123,12 @@ function PatientDetail() {
             onClick={showPaymentDialog}
           />
         );
-      case 2:
-        return null;
-      case 3:
-        return null;
-      case 4:
-        return null;
+      // case 2:
+      //   return null;
+      // case 3:
+      //   return null;
+      // case 4:
+      //   return null;
       default:
         return null;
     }
@@ -177,7 +177,7 @@ function PatientDetail() {
                   hideDialog={hidePaymentDialog}
                 />
               </TabPanel>
-              <TabPanel
+              {/* <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
                     label="Tedaviler"
@@ -203,7 +203,7 @@ function PatientDetail() {
                     onClick={options.onClick}
                   />
                 )}
-              ></TabPanel>
+              ></TabPanel> */}
             </TabView>
           </div>
         </Grid>
