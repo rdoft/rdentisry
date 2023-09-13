@@ -155,6 +155,7 @@ const dayPropGetter = (date) => ({
 });
 
 const Index = () => {
+  const [step, setState] = useState(30);
   const [events, setEvents] = useState([]);
   const [appointment, setAppointment] = useState(null);
   const [appointments, setAppointments] = useState([]);
@@ -266,7 +267,7 @@ const Index = () => {
             startAccessor={"start"}
             endAccessor={"end"}
             timeslots={1}
-            step={15}
+            step={30}
             tooltipAccessor={() => null}
             showAllEvents={true}
             length="7"
@@ -276,7 +277,7 @@ const Index = () => {
                 today.getFullYear(),
                 today.getMonth(),
                 today.getDate(),
-                8
+                9
               )
             }
             max={
@@ -284,7 +285,7 @@ const Index = () => {
                 today.getFullYear(),
                 today.getMonth(),
                 today.getDate(),
-                23
+                22
               )
             }
             formats={formats}
