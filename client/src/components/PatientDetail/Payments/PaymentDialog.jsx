@@ -211,7 +211,7 @@ function PaymentDialog({ _payment = {}, onHide, onSubmit, onDelete }) {
         {/* Type */}
         <div className="flex grid align-items-center mb-3">
           <label htmlFor="type" className="col-12 md:col-6 font-bold">
-            Ödeme Türü <small className="p-error">*</small>
+            Ödeme Türü
           </label>
           <div className="col-6 md:col-6 card flex flex-row align-items-center gap-2">
             <MultiStateCheckbox
