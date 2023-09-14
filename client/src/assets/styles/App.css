@@ -16,6 +16,7 @@
   border-color: #FAFAFB !important;
   color: #3B5DBF !important;
   transition: 0.3s;
+  /* height: min-content !important; */
 }
 
 .rbc-event:active,
@@ -46,7 +47,7 @@
 }
 
 .rbc-timeslot-group {
-  min-height: 75px;
+  min-height: 4em;
 }
 
 .rbc-allday-cell {

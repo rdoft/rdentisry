@@ -57,7 +57,7 @@ const formats = {
     }),
 };
 
-const convertToEvent = (appointments) => {
+const convertToEvent = (appointments, step) => {
   const convertedEvents = appointments.map((data) => {
     const { date, description, startTime, endTime, id } = data;
     const { name, surname } = data.patient;
@@ -85,6 +85,9 @@ const convertToEvent = (appointments) => {
     endDate.setMonth(month - 1);
     endDate.setDate(day);
 
+    const showName = data.duration >= step;
+    const showDescription = description && data.duration >= (step / 3) * 4;
+
     return {
       title: (
         <div>
@@ -97,17 +100,19 @@ const convertToEvent = (appointments) => {
           >
             <ClockCircleOutlined /> {`${startHours}-${endHours}`}
           </Typography>
-          <Typography
-            variant="h5"
-            style={{
-              fontFamily:
-                '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
-            }}
-          >
-            <UserOutlined /> {`${name} ${surname}`}
-          </Typography>
+          {showName && (
+            <Typography
+              variant="h5"
+              style={{
+                fontFamily:
+                  '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+              }}
+            >
+              <UserOutlined /> {`${name} ${surname}`}
+            </Typography>
+          )}
 
-          {description && (
+          {showDescription && (
             <Typography
               variant="h6"
               style={{
@@ -128,7 +133,7 @@ const convertToEvent = (appointments) => {
       start: startDate,
       end: endDate,
       id,
-      tooltip: appointments.length > 2 ? `${appointments.length} events` : null,
+      tooltip: `${name} ${surname}`,
     };
   });
 
@@ -167,9 +172,9 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
-    const events = convertToEvent(appointments);
+    const events = convertToEvent(appointments, step);
     setEvents(events);
-  }, [appointments]);
+  }, [appointments, step]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of appointments and set appointmets value
@@ -252,7 +257,7 @@ const Index = () => {
           <CalendarToolbar onClickAdd={showAppointmentDialog} />
           <Calendar
             style={{
-              height: "calc(100vh - 240px)",
+              height: "calc(100vh - 190px)",
               // marginTop: "20px",
             }}
             messages={messages}
@@ -261,14 +266,15 @@ const Index = () => {
             dayPropGetter={dayPropGetter}
             components={{
               header: header,
+              // toolbar: header
             }}
             views={["month", "week", "agenda"]}
             defaultView={"week"}
             startAccessor={"start"}
             endAccessor={"end"}
             timeslots={1}
-            step={30}
-            tooltipAccessor={() => null}
+            step={step}
+            tooltipAccessor={(event) => event.tooltip}
             showAllEvents={true}
             length="7"
             allDayAccessor={null}
