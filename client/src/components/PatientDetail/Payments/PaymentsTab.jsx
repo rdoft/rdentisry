@@ -6,6 +6,7 @@ import { toastErrorMessage } from "components/errorMesage";
 import PaymentDialog from "./PaymentDialog";
 import PaymentCard from "./PaymentCard";
 import PaymentMarker from "./PaymentMarker";
+import StatisticCard from "./StatisticCard";
 
 // services
 import { PaymentService } from "services";
@@ -15,6 +16,9 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
   const [payments, setPayments] = useState([]);
   const [payment, setPayment] = useState(null);
   const [progress, setProgress] = useState(0);
+  const [completedAmount, setCompletedAmount] = useState(0);
+  const [waitingAmount, setWaitingAmount] = useState(0);
+  const [overdueAmount, setOverdueAmount] = useState(0);
 
   // Set the page on loading
   useEffect(() => {
@@ -29,19 +33,30 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
 
   // Calculate the payments percentage
   const calcProgress = () => {
-    let completed = 0;
     let total = 0;
+    let overdue = 0;
+    let completed = 0;
     let progress = 0;
 
     for (let payment of payments) {
+      // Calc completed payment
       if (payment.actualDate) {
         completed += payment.amount;
+      } else {
+        // Calc overdue payment
+        if (payment.plannedDate && new Date(payment.plannedDate) < new Date()) {
+          overdue += payment.amount;
+        }
       }
+      // Calc total payment
       total += payment.amount;
     }
 
     progress = total > 0 ? Math.floor((completed / total) * 100) : 0;
     setProgress(progress);
+    setCompletedAmount(completed);
+    setWaitingAmount(total - completed);
+    setOverdueAmount(overdue);
   };
 
   // SERVICES -----------------------------------------------------------------
@@ -135,11 +150,47 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
         <p className="text-center">Ödeme kaydı bulunamadı</p>
       ) : (
         <Grid container alignItems="center" justifyContent="center" pb={4}>
-          <Grid item xs={8} p={4}>
+          <Grid
+            container
+            item
+            xs={12}
+            p={2}
+            spacing={3}
+            justifyContent="center"
+          >
+            <Grid item xs={2}>
+              <StatisticCard
+                label={"Ödenen"}
+                amount={completedAmount}
+                backgroundColor="#DFFCF0"
+                color="#22A069"
+              ></StatisticCard>
+            </Grid>
+            <Grid item xs={2}>
+              <StatisticCard
+                label={"Kalan"}
+                amount={waitingAmount}
+                backgroundColor="#E8F0FF"
+                color="#3B5DBF"
+              ></StatisticCard>
+            </Grid>
+            {overdueAmount != 0 && (
+              <Grid item xs={2}>
+                <StatisticCard
+                  label={"Vadesi Geçen"}
+                  amount={overdueAmount}
+                  backgroundColor="#FFD2CB"
+                  color="#AE2A19"
+                ></StatisticCard>
+              </Grid>
+            )}
+          </Grid>
+          <Grid item xs={8} pb={6}>
             <ProgressBar
               value={progress}
               color="#22A06A"
               className="border-round-2xl"
+              showValue={false}
             ></ProgressBar>
           </Grid>
           <Grid item md={8} xs={12}>

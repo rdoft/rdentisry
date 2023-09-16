@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Tag, Button } from "primereact";
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 
 import ActionGroup from "components/ActionGroup/ActionGroup";
 
@@ -61,15 +61,19 @@ function PaymentCard({ payment, onClickEdit, onClickPay, direction }) {
   // Set amount of payment
   const amount = () => {
     return (
-      <>
-        <span>₺</span>
-        <span>
-          {payment.amount.toLocaleString("tr-TR", {
-            style: "decimal",
-            maximumFractionDigits: 2,
-          })}
-        </span>
-      </>
+      <Grid container alignItems="center" justifyContent="center">
+        <Grid item pr={0.5}>
+          <Typography variant="h6">₺</Typography>
+        </Grid>
+        <Grid item>
+          <Typography variant="h3" fontWeight="light">
+            {payment.amount.toLocaleString("tr-TR", {
+              style: "decimal",
+              maximumFractionDigits: 2,
+            })}
+          </Typography>
+        </Grid>
+      </Grid>
     );
   };
 
