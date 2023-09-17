@@ -42,36 +42,17 @@ function convert(event, step) {
   return {
     title: (
       <div>
-        <Typography
-          variant="h6"
-          style={{
-            fontFamily:
-              '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
-          }}
-        >
+        <Typography variant="h6">
           <ClockCircleOutlined /> {`${startHours}-${endHours}`}
         </Typography>
         {showName && (
-          <Typography
-            variant="h5"
-            style={{
-              fontFamily:
-                '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
-            }}
-          >
+          <Typography variant="h5">
             <UserOutlined /> {`${name} ${surname}`}
           </Typography>
         )}
 
         {showDescription && (
-          <Typography
-            variant="h6"
-            style={{
-              fontFamily:
-                '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
-              whiteSpace: "pre-wrap",
-            }}
-          >
+          <Typography variant="h6">
             <FileTextOutlined />{" "}
             {description.includes("\n") ||
             description.split(/\n/)[0].length > 24

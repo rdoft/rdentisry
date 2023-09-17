@@ -76,7 +76,9 @@ function AppointmentCard({ appointment, onClickEdit, onChangeStatus }) {
   // TEMPLATES ----------------------------------------------------------
   // Dropdwon item template
   const statusTemplate = (option) => {
-    return <Tag value={option.label} style={{ backgroundColor: option.color }} />;
+    return (
+      <Tag value={option.label} style={{ backgroundColor: option.color }} />
+    );
   };
 
   return (
