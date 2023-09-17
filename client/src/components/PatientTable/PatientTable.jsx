@@ -267,7 +267,7 @@ function PatientsTable() {
       (payment) =>
         !payment.actualDate && new Date(payment.plannedDate) < new Date()
     ) ? (
-      <Image src={LiraIcon} width="60%" />
+      <Image src={LiraIcon} width="75%" />
     ) : null;
 
   // Return the PatientTable
@@ -334,7 +334,7 @@ function PatientsTable() {
             style={{ width: "10rem" }}
           ></Column>
           {/* Status tags */}
-          <Column sortable body={status} style={{ width: "5rem"}}></Column>
+          <Column sortable body={status} style={{ width: "4rem", textAlign: "center"}}></Column>
           {/* Action buttons */}
           <Column
             body={(patient) =>
