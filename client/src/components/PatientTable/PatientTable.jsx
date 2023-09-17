@@ -263,7 +263,7 @@ function PatientsTable() {
   // Payment status of the patient
   const status = ({ payments }) =>
     // Control overdue status
-    payments.find(
+    payments?.find(
       (payment) =>
         !payment.actualDate && new Date(payment.plannedDate) < new Date()
     ) ? (
