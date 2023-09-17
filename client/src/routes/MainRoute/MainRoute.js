@@ -9,7 +9,7 @@ import { MainLayout } from "layout";
 // const Overview = Loadable(lazy(() => import("pages/Overview/OverviewPage")));
 const Patients = Loadable(lazy(() => import("pages/Patients/PatientsPage")));
 const Patient = Loadable(lazy(() => import("pages/Patients/PatientPage")));
-const Calendar = Loadable(lazy(() => import("pages/Calendar")));
+const Calendar = Loadable(lazy(() => import("pages/AppointmentCalendar/AppointmentCalendarPage")));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
