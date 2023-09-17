@@ -101,26 +101,25 @@ const AppointmentCalendar = () => {
   };
 
   // HANDLERS -----------------------------------------------------------------
-  // onSelectEvent, get appointment and show dialog
-  // const handleSelectEvent = async (event) => {
-  //   const appointment_ = appointments.find(
-  //     (appointment) => appointment.id === event.id
-  //   );
-  //   setAppointment(appointment_);
+  // onEditClick, get appointment and show dialog
+  const handleClickEdit = async (id) => {
+    const appointment_ = appointments.find(
+      (appointment) => appointment.id === id
+    );
+    setAppointment(appointment_);
+    setTimeout(showAppointmentDialog, 100);
+  };
 
-  //   setTimeout(showAppointmentDialog, 100);
-  // };
-  
   // onSelectEvent handler for goto patient page
   const handleSelectEvent = async (event) => {
     navigate(`/patients/${event.patient.id}`);
   };
-  
+
   // TEMPLATES -----------------------------------------------------------------
   // Convert appointment format to events
   const getEvents = () => {
     const events = appointments.map((appointment) =>
-      convert(appointment, step)
+      convert(appointment, step, handleClickEdit)
     );
     setEvents(events);
   };
@@ -194,7 +193,6 @@ const AppointmentCalendar = () => {
         dayPropGetter={dayPropGetter}
         components={{
           header: header,
-          // toolbar: header
         }}
         views={["month", "week", "agenda"]}
         defaultView={"week"}

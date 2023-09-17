@@ -22,7 +22,7 @@
   border-color: #fafafb !important;
   color: #3b5dbf !important;
   transition: 0.3s;
-  /* height: min-content !important; */
+  height: min-content !important;
 }
 
 .rbc-event:active,
