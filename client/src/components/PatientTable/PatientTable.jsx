@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { DataTable, Column } from "primereact";
+import { DataTable, Column, Image } from "primereact";
 import PatientDialog from "./PatientDialog";
 import DeletePatientDialog from "./DeletePatientDialog";
 import DeletePatientsDialog from "./DeletePatientsDialog";
@@ -9,6 +9,7 @@ import ActionGroup from "components/ActionGroup/ActionGroup";
 
 // assets
 import "assets/styles/PatientTable/PatientTable.css";
+import { LiraIcon } from "assets/images/icons";
 
 // services
 import { PatientService, AppointmentService } from "services";
@@ -105,7 +106,7 @@ function PatientsTable() {
 
     try {
       // GET /patients
-      response = await PatientService.getPatients();
+      response = await PatientService.getPatients(true);
       patients = response.data;
       // Set new patients
       setPatients(patients);
@@ -258,6 +259,17 @@ function PatientsTable() {
     showAppointmentDialog(patient);
   };
 
+  // TEMPLATES -----------------------------------------------------------------
+  // Payment status of the patient
+  const status = ({ payments }) =>
+    // Control overdue status
+    payments.find(
+      (payment) =>
+        !payment.actualDate && new Date(payment.plannedDate) < new Date()
+    ) ? (
+      <Image src={LiraIcon} width="60%" />
+    ) : null;
+
   // Return the PatientTable
   return (
     <div className="datatable-crud">
@@ -321,6 +333,8 @@ function PatientsTable() {
             header="Telefon"
             style={{ width: "10rem" }}
           ></Column>
+          {/* Status tags */}
+          <Column sortable body={status} style={{ width: "5rem"}}></Column>
           {/* Action buttons */}
           <Column
             body={(patient) =>

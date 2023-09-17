@@ -1,6 +1,7 @@
 const { Sequelize } = require("../models");
 const db = require("../models");
 const Patient = db.patient;
+const Payment = db.payment;
 const Procedure = db.procedure;
 const PatientProcedure = db.patientProcedure;
 
@@ -8,20 +9,46 @@ const PatientProcedure = db.patientProcedure;
  * Get patient list
  */
 exports.getPatients = async (req, res) => {
+  const { payments } = req.query;
   let patients;
 
   try {
     // Find patient list
-    patients = await Patient.findAll({
-      attributes: [
-        ["PatientId", "id"],
-        ["IdNumber", "idNumber"],
-        ["Name", "name"],
-        ["Surname", "surname"],
-        ["Phone", "phone"],
-        ["BirthYear", "birthYear"],
-      ],
-    });
+    if (payments === "true") {
+      patients = await Patient.findAll({
+        attributes: [
+          ["PatientId", "id"],
+          ["IdNumber", "idNumber"],
+          ["Name", "name"],
+          ["Surname", "surname"],
+          ["Phone", "phone"],
+          ["BirthYear", "birthYear"],
+        ],
+        include: [
+          {
+            model: Payment,
+            as: "payments",
+            attributes: [
+              ["PaymentId", "id"],
+              ["Amount", "amount"],
+              ["ActualDate", "actualDate"],
+              ["PlannedDate", "plannedDate"],
+            ],
+          },
+        ],
+      });
+    } else {
+      patients = await Patient.findAll({
+        attributes: [
+          ["PatientId", "id"],
+          ["IdNumber", "idNumber"],
+          ["Name", "name"],
+          ["Surname", "surname"],
+          ["Phone", "phone"],
+          ["BirthYear", "birthYear"],
+        ],
+      });
+    }
 
     res.status(200).send(patients);
   } catch (error) {

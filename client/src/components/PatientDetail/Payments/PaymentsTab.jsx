@@ -171,7 +171,7 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
                 label={"Kalan"}
                 amount={waitingAmount}
                 backgroundColor="#E8F0FF"
-                color="#3B5DBF"
+                color="#1E7AFC"
               ></StatisticCard>
             </Grid>
             {overdueAmount != 0 && (
@@ -180,7 +180,7 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
                   label={"Vadesi Geçen"}
                   amount={overdueAmount}
                   backgroundColor="#FFD2CB"
-                  color="#AE2A19"
+                  color="#EF4444"
                 ></StatisticCard>
               </Grid>
             )}

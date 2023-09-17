@@ -91,32 +91,36 @@ function PaymentCard({ payment, onClickEdit, onClickPay, direction }) {
     return (
       <Tag
         value={label}
-        style={{ backgroundColor: "#1E7AFC", visibility: visibility }}
+        style={{ backgroundColor: "#E8F0FF", color: "#1E7AFC", visibility: visibility }}
       />
     );
   };
 
   // actualDate Tag item
   const actualDateTag = () => {
-    let color;
     let label;
+    let color;
+    let bgColor;
 
     if (payment.actualDate) {
-      color = "#22A06A";
+      color = "#22A069";
+      bgColor = "#DFFCF0";
       label = new Date(payment.actualDate).toLocaleDateString("tr-TR", {
         year: "numeric",
         month: "long",
         day: "numeric",
       });
     } else if (new Date(payment.plannedDate).getTime() < new Date().getTime()) {
-      color = "#EF4444";
+      color = "#EF4444"
+      bgColor = "#FFD2CB";
       label = "Gecikti";
     } else {
-      color = "#1E7AFC";
+      color = "#1E7AFC"
+      bgColor = "#E8F0FF";
       label = "Bekleniyor";
     }
 
-    return <Tag value={label} style={{ backgroundColor: color }} />;
+    return <Tag value={label} style={{ backgroundColor: bgColor, color: color }} />;
   };
 
   // Action button for pay
