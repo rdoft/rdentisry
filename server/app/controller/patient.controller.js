@@ -36,6 +36,10 @@ exports.getPatients = async (req, res) => {
             ],
           },
         ],
+        order: [
+          ["Name", "ASC"],
+          ["Surname", "ASC"],
+        ],
       });
     } else {
       patients = await Patient.findAll({
@@ -46,6 +50,10 @@ exports.getPatients = async (req, res) => {
           ["Surname", "surname"],
           ["Phone", "phone"],
           ["BirthYear", "birthYear"],
+        ],
+        order: [
+          ["Name", "ASC"],
+          ["Surname", "ASC"],
         ],
       });
     }
