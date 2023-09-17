@@ -22,7 +22,7 @@
   border-color: #fafafb !important;
   color: #3b5dbf !important;
   transition: 0.3s;
-  height: min-content !important;
+  min-height: 2em !important;
 }
 
 .rbc-event:active,
@@ -41,6 +41,7 @@
   min-width: max-content;
   z-index: 10;
   transform: scale(1.05);
+  min-height: 3em !important;
 }
 
 .rbc-row-segment {

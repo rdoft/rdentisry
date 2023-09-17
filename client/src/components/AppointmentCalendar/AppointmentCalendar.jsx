@@ -194,7 +194,7 @@ const AppointmentCalendar = () => {
         components={{
           header: header,
         }}
-        views={["month", "week", "agenda"]}
+        views={["month", "week"]}
         defaultView={"week"}
         startAccessor={"start"}
         endAccessor={"end"}
