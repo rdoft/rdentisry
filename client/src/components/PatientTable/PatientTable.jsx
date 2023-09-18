@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { DataTable, Column, Image } from "primereact";
+import { DataTable, Column, Image, TriStateCheckbox } from "primereact";
 import PatientDialog from "./PatientDialog";
 import DeletePatientDialog from "./DeletePatientDialog";
 import DeletePatientsDialog from "./DeletePatientsDialog";
@@ -261,14 +261,9 @@ function PatientsTable() {
 
   // TEMPLATES -----------------------------------------------------------------
   // Payment status of the patient
-  const status = ({ payments }) =>
+  const status = (patient) =>
     // Control overdue status
-    payments?.find(
-      (payment) =>
-        !payment.actualDate && new Date(payment.plannedDate) < new Date()
-    ) ? (
-      <Image src={LiraIcon} width="75%" />
-    ) : null;
+    patient.overdue ? <Image src={LiraIcon} width="75%" /> : null;
 
   // Return the PatientTable
   return (
@@ -299,6 +294,8 @@ function PatientsTable() {
           rows={10}
           currentPageReportTemplate="({totalRecords} hasta)"
           rowHover={true}
+          sortField="overdue" 
+          sortOrder={-1}
         >
           {/* Checkbox */}
           <Column
@@ -334,7 +331,12 @@ function PatientsTable() {
             style={{ width: "10rem" }}
           ></Column>
           {/* Status tags */}
-          <Column sortable body={status} style={{ width: "4rem", textAlign: "center"}}></Column>
+          <Column
+            field="overdue"
+            body={status}
+            sortable
+            style={{ width: "4rem", textAlign: "center" }}
+          ></Column>
           {/* Action buttons */}
           <Column
             body={(patient) =>

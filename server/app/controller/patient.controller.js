@@ -11,6 +11,7 @@ const PatientProcedure = db.patientProcedure;
 exports.getPatients = async (req, res) => {
   const { payments } = req.query;
   let patients;
+  let _patients = [];
 
   try {
     // Find patient list
@@ -41,6 +42,17 @@ exports.getPatients = async (req, res) => {
           ["Surname", "ASC"],
         ],
       });
+      patients = JSON.parse(JSON.stringify(patients));
+      
+      // Control overdue status
+      for (let patient of patients) {
+        patient.payments.find(
+          (payment) =>
+            !payment.actualDate && new Date(payment.plannedDate) < new Date()
+        )
+          ? (patient.overdue = true)
+          : (patient.overdue = false);
+      }
     } else {
       patients = await Patient.findAll({
         attributes: [
