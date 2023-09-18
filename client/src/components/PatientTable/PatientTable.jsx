@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { DataTable, Column, Image, TriStateCheckbox } from "primereact";
+import { DataTable, Column, Image } from "primereact";
 import PatientDialog from "./PatientDialog";
 import DeletePatientDialog from "./DeletePatientDialog";
 import DeletePatientsDialog from "./DeletePatientsDialog";
