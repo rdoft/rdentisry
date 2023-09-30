@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
 // routes
 require("./app/routes/index")(app);
 
-// Schedule the statusUpdater to run every day at a specific time
+// cron jobs
 // For example, '0 9 * * *' means every day at 9:00 AM.
 // * * * * * *
 // | | | | | |
@@ -40,9 +40,17 @@ require("./app/routes/index")(app);
 // | minute
 // second ( optional )
 const cron = require("node-cron");
+
+// Schedule the statusUpdater to run every day at a specific time
 const statusUpdater = require("./app/services/statusUpdater.service");
 cron.schedule("00 22 * * *", () => {
   statusUpdater.run();
+});
+
+// Schedule the notifications updater to run every day at a specific time
+const notification = require("./app/services/notification.service");
+cron.schedule("00 22 * * *", () => {
+  notification.run();
 });
 
 // set port, listen for requests

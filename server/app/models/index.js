@@ -30,6 +30,11 @@ db.procedureCategory = require("./procedureCategory.model")(
   Sequelize
 );
 db.patientProcedure = require("./patientProcedure.model")(sequelize, Sequelize);
+db.notificationEvent = require("./notificationEvent.model")(
+  sequelize,
+  Sequelize
+);
+db.notification = require("./notification.model")(sequelize, Sequelize);
 
 // Relationships
 // patient - appointment (one to many)
@@ -116,6 +121,26 @@ db.patientProcedure.hasOne(db.invoice, {
 db.invoice.belongsTo(db.patientProcedure, {
   as: "procedure",
   foreignKey: "PatientProcedureId",
+});
+
+// notificationEvent - notification (one to many)
+db.notificationEvent.hasMany(db.notification, {
+  as: "notifications",
+  foreignKey: "NotificationEventId",
+});
+db.notification.belongsTo(db.notificationEvent, {
+  as: "notificationEvent",
+  foreignKey: "NotificationEventId",
+});
+
+// patient - notification (one to many)
+db.patient.hasMany(db.notification, {
+  as: "notifications",
+  foreignKey: "PatientId",
+});
+db.notification.belongsTo(db.patient, {
+  as: "patient",
+  foreignKey: "PatientId",
 });
 
 // HOOKS

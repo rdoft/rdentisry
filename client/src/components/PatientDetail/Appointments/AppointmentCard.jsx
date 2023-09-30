@@ -26,7 +26,7 @@ function AppointmentCard({ appointment, onClickEdit, onChangeStatus }) {
     { status: "active", label: "Bekleniyor", bgColor: "#E8F0FF", color: "#1E7AFC" },
     { status: "completed", label: "Tamamlandı", bgColor: "#DFFCF0", color: "#22A069" },
     { status: "canceled", label: "İptal Edildi", bgColor: "#FFD2CB", color: "#EF4444" },
-    { status: "absent", label: "Gelmedi", bgColor: "#FEEFC6", color: "#FDA70B" },
+    { status: "absent", label: "Gelmedi", bgColor: "#FFFADD", color: "#FFD200" },
   ];
 
   // Set status of the appointment

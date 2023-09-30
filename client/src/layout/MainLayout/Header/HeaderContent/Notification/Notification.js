@@ -1,9 +1,8 @@
-import { useRef, useState } from "react";
-
-// material-ui
+import React, { useRef, useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+import { toastErrorMessage } from "components/errorMesage";
 import { useTheme } from "@mui/material/styles";
 import {
-  Avatar,
   Badge,
   Box,
   ClickAwayListener,
@@ -11,25 +10,24 @@ import {
   IconButton,
   List,
   ListItemButton,
-  ListItemAvatar,
   ListItemText,
-  ListItemSecondaryAction,
   Paper,
   Popper,
   Typography,
   useMediaQuery,
 } from "@mui/material";
+import { InputSwitch } from "primereact";
 
 // project import
 import MainCard from "components/MainCard";
 import Transitions from "components/@extended/Transitions";
+import NotificationItem from "./NotificationItem";
+
+// services
+import { NotificationService } from "services";
 
 // assets
-import {
-  BellOutlined,
-  CloseOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
+import { BellOutlined } from "@ant-design/icons";
 
 // sx styles
 const avatarSX = {
@@ -44,7 +42,6 @@ const actionSX = {
   top: "auto",
   right: "auto",
   alignSelf: "flex-start",
-
   transform: "none",
 };
 
@@ -56,6 +53,30 @@ const Notification = () => {
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
+  const [checked, setChecked] = useState(true);
+  const [notifications, setNotifications] = useState([]);
+
+  // Set the page on loading
+  useEffect(() => {
+    getNotifications();
+  }, []);
+
+  // SERVICES -----------------------------------------------------------------
+  // Get the list of notifications and set notifications value
+  const getNotifications = async () => {
+    let response;
+    let notifications;
+
+    try {
+      response = await NotificationService.getNotifications();
+      notifications = response.data;
+
+      setNotifications(notifications);
+    } catch (error) {
+      toast.error(toastErrorMessage(error));
+    }
+  };
+
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -67,8 +88,43 @@ const Notification = () => {
     setOpen(false);
   };
 
-  const iconBackColorOpen = "grey.300";
-  const iconBackColor = "grey.100";
+  // TEMPLATES ----------------------------------------------------------------
+  const notificationList = (
+    <List
+      component="nav"
+      sx={{
+        p: 0,
+        "& .MuiListItemButton-root": {
+          py: 0.5,
+          "& .MuiAvatar-root": avatarSX,
+          "& .MuiListItemSecondaryAction-root": {
+            ...actionSX,
+            position: "relative",
+          },
+        },
+      }}
+    >
+      {notifications.length ? (
+        notifications.map((notification) => {
+          return (
+            <React.Fragment key={notification.id}>
+              <NotificationItem
+                status={notification.status}
+                message={notification.message}
+                event={notification.notificationEvent.event}
+                timestamp={notification.timestamp}
+              />
+              <Divider />
+            </React.Fragment>
+          );
+        })
+      ) : (
+            <Typography variant="h6" textAlign="center" m={2}>
+              Hiçbir bildiriminiz yoktur.
+            </Typography>
+      )}
+    </List>
+  );
 
   return (
     <Box sx={{ flexShrink: 0, ml: 0.75 }}>
@@ -77,7 +133,7 @@ const Notification = () => {
         color="secondary"
         sx={{
           color: "text.primary",
-          bgcolor: open ? iconBackColorOpen : iconBackColor,
+          bgcolor: open ? "grey.300" : null,
         }}
         aria-label="open profile"
         ref={anchorRef}
@@ -85,10 +141,11 @@ const Notification = () => {
         aria-haspopup="true"
         onClick={handleToggle}
       >
-        <Badge badgeContent={1} color="primary">
+        <Badge badgeContent={notifications.length || null} color="primary">
           <BellOutlined />
         </Badge>
       </IconButton>
+
       <Popper
         placement={matchesXs ? "bottom" : "bottom-end"}
         open={open}
@@ -127,67 +184,13 @@ const Notification = () => {
                   border={false}
                   content={false}
                   secondary={
-                    <IconButton size="small" onClick={handleToggle}>
-                      <CloseOutlined />
-                    </IconButton>
+                    <InputSwitch
+                      checked={checked}
+                      onChange={(e) => setChecked(e.value)}
+                    />
                   }
                 >
-                  <List
-                    component="nav"
-                    sx={{
-                      p: 0,
-                      "& .MuiListItemButton-root": {
-                        py: 0.5,
-                        "& .MuiAvatar-root": avatarSX,
-                        "& .MuiListItemSecondaryAction-root": {
-                          ...actionSX,
-                          position: "relative",
-                        },
-                      },
-                    }}
-                  >
-                    <ListItemButton>
-                      <ListItemAvatar>
-                        <Avatar
-                          sx={{
-                            color: "error.main",
-                            bgcolor: "error.lighter",
-                          }}
-                        >
-                          <SettingOutlined />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={
-                          <Typography variant="h6">
-                            Ödeme tarihi geçmiş &nbsp;
-                            <Typography component="span" variant="subtitle1">
-                              14
-                            </Typography>{" "}
-                            hasta var
-                          </Typography>
-                        }
-                        secondary="7 hours ago"
-                      />
-                      <ListItemSecondaryAction>
-                        <Typography variant="caption" noWrap>
-                          22:35
-                        </Typography>
-                      </ListItemSecondaryAction>
-                    </ListItemButton>
-                    <Divider />
-                    <ListItemButton
-                      sx={{ textAlign: "center", py: `${12}px !important` }}
-                    >
-                      <ListItemText
-                        primary={
-                          <Typography variant="h6" color="primary">
-                            Tüm Bildirimler
-                          </Typography>
-                        }
-                      />
-                    </ListItemButton>
-                  </List>
+                  {notificationList}
                 </MainCard>
               </ClickAwayListener>
             </Paper>
