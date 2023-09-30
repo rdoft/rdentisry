@@ -9,7 +9,7 @@ import ActionGroup from "components/ActionGroup/ActionGroup";
 
 // assets
 import "assets/styles/PatientTable/PatientTable.css";
-import { LiraIcon } from "assets/images/icons";
+import { LiraDangerIcon } from "assets/images/icons";
 
 // services
 import { PatientService, AppointmentService } from "services";
@@ -263,7 +263,7 @@ function PatientsTable() {
   // Payment status of the patient
   const status = (patient) =>
     // Control overdue status
-    patient.overdue ? <Image src={LiraIcon} width="75%" /> : null;
+    patient.overdue ? <Image src={LiraDangerIcon} width="75%" /> : null;
 
   // Return the PatientTable
   return (
@@ -294,7 +294,7 @@ function PatientsTable() {
           rows={10}
           currentPageReportTemplate="({totalRecords} hasta)"
           rowHover={true}
-          sortField="overdue" 
+          sortField="overdue"
           sortOrder={-1}
         >
           {/* Checkbox */}
