@@ -75,14 +75,14 @@ const MainCard = forwardRef(
             sx={headerSX}
             titleTypographyProps={{ variant: "subtitle1" }}
             title={title}
-            action={secondary}
+            subheader={secondary}
           />
         )}
         {darkTitle && title && (
           <CardHeader
             sx={headerSX}
             title={<Typography variant="h3">{title}</Typography>}
-            action={secondary}
+            subheader={secondary}
           />
         )}
 

@@ -9,12 +9,11 @@ import {
   Divider,
   IconButton,
   List,
-  ListItemButton,
-  ListItemText,
   Paper,
   Popper,
   Typography,
   useMediaQuery,
+  Grid,
 } from "@mui/material";
 import { InputSwitch } from "primereact";
 
@@ -53,13 +52,13 @@ const Notification = () => {
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
   // Set the page on loading
   useEffect(() => {
     getNotifications();
-  }, []);
+  }, [checked]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of notifications and set notifications value
@@ -68,7 +67,11 @@ const Notification = () => {
     let notifications;
 
     try {
-      response = await NotificationService.getNotifications();
+      if (checked) {
+        response = await NotificationService.getNotifications();
+      } else {
+        response = await NotificationService.getNotifications("sent");
+      }
       notifications = response.data;
 
       setNotifications(notifications);
@@ -119,12 +122,20 @@ const Notification = () => {
           );
         })
       ) : (
-            <Typography variant="h6" textAlign="center" m={2}>
-              Hiçbir bildiriminiz yoktur.
-            </Typography>
+        <Typography variant="h6" textAlign="center" m={2}>
+          Hiçbir bildiriminiz yoktur.
+        </Typography>
       )}
     </List>
   );
+
+  // Count of the sent notifications (unread)
+  const getSentCount = () => {
+    const sentNotifications = notifications.filter(
+      (notification) => notification.status === "sent"
+    );
+    return sentNotifications.length;
+  };
 
   return (
     <Box sx={{ flexShrink: 0, ml: 0.75 }}>
@@ -141,7 +152,7 @@ const Notification = () => {
         aria-haspopup="true"
         onClick={handleToggle}
       >
-        <Badge badgeContent={notifications.length || null} color="primary">
+        <Badge badgeContent={getSentCount() || null} color="primary">
           <BellOutlined />
         </Badge>
       </IconButton>
@@ -170,10 +181,10 @@ const Notification = () => {
               sx={{
                 boxShadow: theme.customShadows.z1,
                 width: "100%",
-                minWidth: 285,
-                maxWidth: 420,
+                minWidth: 300,
+                maxWidth: 450,
                 [theme.breakpoints.down("md")]: {
-                  maxWidth: 285,
+                  maxWidth: 300,
                 },
               }}
             >
@@ -184,10 +195,20 @@ const Notification = () => {
                   border={false}
                   content={false}
                   secondary={
-                    <InputSwitch
-                      checked={checked}
-                      onChange={(e) => setChecked(e.value)}
-                    />
+                    <Grid container alignItems="center" justifyContent="end">
+                      <Grid container item xs={4} justifyContent="end">
+                        <Typography variant="caption">
+                          Okunanları göster
+                        </Typography>
+                      </Grid>
+                      <Grid container item xs={2} justifyContent="end">
+                        <InputSwitch
+                          checked={checked}
+                          onChange={(e) => setChecked(e.value)}
+                          style={{ transform: "scale(0.7)" }}
+                        />
+                      </Grid>
+                    </Grid>
                   }
                 >
                   {notificationList}

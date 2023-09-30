@@ -6,8 +6,12 @@ let notification = {};
 /**
  * Get notifications list
  */
-notification.getNotifications = () => {
-  return API.get(API_URL);
+notification.getNotifications = (status) => {
+  if (status) {
+    return API.get(`${API_URL}?status=${status}`);
+  } else {
+    return API.get(`${API_URL}`);
+  }
 };
 
 /**

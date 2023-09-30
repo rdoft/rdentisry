@@ -19,6 +19,9 @@ exports.getNotifications = async (req, res) => {
         ["Message", "message"],
         ["Status", "status"],
       ],
+      where: status && {
+        Status: status,
+      },
       order: [["createdAt", "ASC"]],
       include: [
         {
