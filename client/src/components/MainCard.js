@@ -13,7 +13,8 @@ import {
 
 // header style
 const headerSX = {
-  p: 2.5,
+  p: 2,
+  pb: .5,
   "& .MuiCardHeader-action": { m: "0px auto", alignSelf: "center" },
 };
 

@@ -6,7 +6,6 @@ import {
   Badge,
   Box,
   ClickAwayListener,
-  Divider,
   IconButton,
   List,
   Paper,
@@ -15,7 +14,8 @@ import {
   useMediaQuery,
   Grid,
 } from "@mui/material";
-import { InputSwitch } from "primereact";
+import { Button, InputSwitch } from "primereact";
+import ActionGroup from "components/ActionGroup/ActionGroup";
 
 // project import
 import MainCard from "components/MainCard";
@@ -72,14 +72,31 @@ const Notification = () => {
       } else {
         response = await NotificationService.getNotifications("sent");
       }
+      
       notifications = response.data;
-
       setNotifications(notifications);
     } catch (error) {
       toast.error(toastErrorMessage(error));
     }
   };
 
+  // Update all notifications statuses
+  const updateNotifications = async (status) => {
+    const statuses = ["read", "sent", "dismissed"];
+
+    try {
+      if (statuses.includes(status)) {
+        await NotificationService.updateNotifications(status);
+      }
+      
+      // Set the notifications list
+      getNotifications();
+    } catch (error) {
+      toast.error(toastErrorMessage(error));
+    }
+  };
+
+  // HANDLERS -----------------------------------------------------------------
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -89,6 +106,11 @@ const Notification = () => {
     //   return;
     // }
     setOpen(false);
+  };
+
+  // onClick handler for mark all notifications as read
+  const handleClickRead = () => {
+    updateNotifications("read");
   };
 
   // TEMPLATES ----------------------------------------------------------------
@@ -126,6 +148,19 @@ const Notification = () => {
         </Typography>
       )}
     </List>
+  );
+
+  // Action button for mark all as read
+  const readButton = (
+    <Button
+      text
+      outlined
+      size="sm"
+      icon="pi pi-check-circle"
+      severity="secondary"
+      style={{ width: "2rem", padding: "0.4rem" }}
+      onClick={handleClickRead}
+    />
   );
 
   // Count of the sent notifications (unread)
@@ -194,17 +229,32 @@ const Notification = () => {
                   border={false}
                   content={false}
                   secondary={
-                    <Grid container alignItems="center" justifyContent="end">
+                    <Grid
+                      container
+                      mt={2}
+                      alignItems="center"
+                      justifyContent="space-between"
+                    >
+                      {/* Mark all as read */}
+                      <Grid item xs="auto">
+                        <ActionGroup custom={readButton} />
+                      </Grid>
+                      <Grid item xs={5}>
+                        <Typography variant="caption">
+                          Hepsini okundu olarak işaretle
+                        </Typography>
+                      </Grid>
+                      {/* Show unread */}
                       <Grid container item xs={4} justifyContent="end">
                         <Typography variant="caption">
                           Okunanları göster
                         </Typography>
                       </Grid>
-                      <Grid container item xs={2} justifyContent="end">
+                      <Grid container item xs="auto" justifyContent="end">
                         <InputSwitch
                           checked={checked}
                           onChange={(e) => setChecked(e.value)}
-                          style={{ transform: "scale(0.7)" }}
+                          style={{ transform: "scale(0.6)" }}
                         />
                       </Grid>
                     </Grid>

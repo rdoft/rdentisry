@@ -23,4 +23,12 @@ notification.updateNotification = (notification) => {
   return API.put(`${API_URL}/${notification.id}`, notification);
 };
 
+/**
+ * Update the all notificaitons
+ * @body status of the notification
+ */
+notification.updateNotifications = (status) => {
+  return API.put(`${API_URL}`, { status });
+};
+
 export default notification;

@@ -20,15 +20,19 @@ module.exports = function (app) {
     /**
      * Get notification list
      */
-    .get(controller.getNotifications);
-
+    .get(controller.getNotifications)
+    /**
+     * Update the all Notifications
+     */
+    .put(controller.updateNotifications);
+  
   router
     .route(`/notifications/:notificationId`)
     /**
      * Update the Notification
      * @param notificationId: Id of the Notification
      */
-    .put(controller.updateNotification)
+    .put(controller.updateNotification);
 
   app.use(API_URL, router);
 };

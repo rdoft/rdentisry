@@ -81,3 +81,24 @@ exports.updateNotification = async (req, res) => {
     res.status(500).send(error);
   }
 };
+
+/**
+ * Update the all Notifications
+ */
+exports.updateNotifications = async (req, res) => {
+  const { status } = req.body;
+
+  try {
+    // Update status of all notifications
+    await Notification.update(
+      { Status: status },
+      {
+        where: {},
+      }
+    );
+
+    res.status(200).send({});
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};

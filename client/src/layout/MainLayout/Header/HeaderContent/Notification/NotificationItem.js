@@ -58,7 +58,6 @@ function NotificationItem({ notification, getNotifications, onClose }) {
       // Set the notifications list
       getNotifications();
     } catch (error) {
-      // Set error status and show error toast message
       toast.error(toastErrorMessage(error));
     }
   };
@@ -76,7 +75,7 @@ function NotificationItem({ notification, getNotifications, onClose }) {
     updateNotification("read");
   };
 
-  // Action button for pay
+  // Action button for mark as read
   const readButton = (
     <Button
       text
