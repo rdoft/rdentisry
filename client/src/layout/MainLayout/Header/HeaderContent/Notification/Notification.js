@@ -13,6 +13,7 @@ import {
   Typography,
   useMediaQuery,
   Grid,
+  Divider,
 } from "@mui/material";
 import { Button, InputSwitch } from "primereact";
 import ActionGroup from "components/ActionGroup/ActionGroup";
@@ -72,7 +73,7 @@ const Notification = () => {
       } else {
         response = await NotificationService.getNotifications("sent");
       }
-      
+
       notifications = response.data;
       setNotifications(notifications);
     } catch (error) {
@@ -88,7 +89,7 @@ const Notification = () => {
       if (statuses.includes(status)) {
         await NotificationService.updateNotifications(status);
       }
-      
+
       // Set the notifications list
       getNotifications();
     } catch (error) {
@@ -228,6 +229,7 @@ const Notification = () => {
                   elevation={0}
                   border={false}
                   content={false}
+                  sx={{ maxHeight: 750, overflowY: "auto" }}
                   secondary={
                     <Grid
                       container
@@ -256,6 +258,9 @@ const Notification = () => {
                           onChange={(e) => setChecked(e.value)}
                           style={{ transform: "scale(0.6)" }}
                         />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Divider />
                       </Grid>
                     </Grid>
                   }

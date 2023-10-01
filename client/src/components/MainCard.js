@@ -14,8 +14,12 @@ import {
 // header style
 const headerSX = {
   p: 2,
-  pb: .5,
+  pb: 0.5,
   "& .MuiCardHeader-action": { m: "0px auto", alignSelf: "center" },
+  position: "sticky",
+  top: 0,
+  background: "white",
+  zIndex: 5,
 };
 
 // ==============================|| CUSTOM - MAIN CARD ||============================== //
@@ -86,9 +90,6 @@ const MainCard = forwardRef(
             subheader={secondary}
           />
         )}
-
-        {/* content & header divider */}
-        {title && divider && <Divider />}
 
         {/* card content */}
         {content && <CardContent sx={contentSX}>{children}</CardContent>}
