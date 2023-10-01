@@ -67,6 +67,7 @@ function NotificationItem({ notification, getNotifications, onClose }) {
   const handleClickNotification = () => {
     onClose();
     navigate(`/patients/${notification.patient.id}`);
+    updateNotification("read");
   };
 
   // onClick handler for mark notification as read
