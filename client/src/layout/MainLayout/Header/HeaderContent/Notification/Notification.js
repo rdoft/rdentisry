@@ -117,7 +117,7 @@ const Notification = () => {
                 event={notification.notificationEvent.event}
                 timestamp={notification.timestamp}
               />
-              <Divider />
+              {/* <Divider /> */}
             </React.Fragment>
           );
         })
@@ -181,8 +181,8 @@ const Notification = () => {
               sx={{
                 boxShadow: theme.customShadows.z1,
                 width: "100%",
-                minWidth: 300,
-                maxWidth: 450,
+                minWidth: 500,
+                maxWidth: 500,
                 [theme.breakpoints.down("md")]: {
                   maxWidth: 300,
                 },

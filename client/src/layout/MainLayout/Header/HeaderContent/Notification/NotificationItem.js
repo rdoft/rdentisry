@@ -6,17 +6,14 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Typography,
-  Stack,
+  Grid,
 } from "@mui/material";
+import { Button } from "primereact";
+import ActionGroup from "components/ActionGroup/ActionGroup";
 
 // assets
 import { LiraDangerIcon } from "assets/images/icons";
 import { LiraWarningIcon } from "assets/images/icons";
-
-// TODO:
-// USER has OVERDUE PAYMENT
-// USER has UPCOMING PAYMENT
-// event -> user-status(overdue, upcomming)-type(payment)
 
 function NotificationItem({ status, message, event, timestamp }) {
   timestamp = new Date(timestamp);
@@ -37,8 +34,26 @@ function NotificationItem({ status, message, event, timestamp }) {
       break;
   }
 
+  // Action button for pay
+  const readButton = (
+    <Button
+      text
+      outlined
+      size="sm"
+      icon="pi pi-check-circle"
+      severity="secondary"
+    />
+  );
+
   return (
-    <ListItemButton>
+    <ListItemButton
+      sx={{
+        margin: "0.2rem",
+        borderRadius: "10px",
+        bgcolor: status === "sent" ? "#EEF6FF" : "transparent",
+        // color: status === "sent" ? "#3B81F6" : "",
+      }}
+    >
       <ListItemAvatar>
         <Avatar
           src={icon}
@@ -47,18 +62,24 @@ function NotificationItem({ status, message, event, timestamp }) {
       </ListItemAvatar>
       <ListItemText
         primary={<Typography variant="subtitle">{message}</Typography>}
-        // secondary="7 hours ago"
       />
-      <ListItemSecondaryAction>
-        <Stack>
-          {/* <Typography variant="caption" textAlign="end" noWrap>
-            {time}
-          </Typography> */}
-          <Typography variant="caption" textAlign="end" noWrap>
-            {date}
-          </Typography>
-        </Stack>
+      <ListItemSecondaryAction
+        sx={{ alignSelf: "center !important", paddingLeft: "1rem" }}
+      >
+        <ListItemText
+          primary={
+            <Typography variant="caption" textAlign="end" noWrap>
+              {date}
+            </Typography>
+          }
+          secondary={status === "read" ? "Okundu" : ""}
+        />
       </ListItemSecondaryAction>
+      {status === "read" || (
+        <ListItemSecondaryAction sx={{ alignSelf: "center !important" }}>
+          <ActionGroup custom={readButton} />
+        </ListItemSecondaryAction>
+      )}
     </ListItemButton>
   );
 }
