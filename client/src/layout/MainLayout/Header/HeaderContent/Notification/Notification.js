@@ -84,10 +84,10 @@ const Notification = () => {
     setOpen((prevOpen) => !prevOpen);
   };
 
-  const handleClose = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
-    }
+  const handleClose = () => {
+    // if (anchorRef.current && anchorRef.current.contains(event.target)) {
+    //   return;
+    // }
     setOpen(false);
   };
 
@@ -112,10 +112,9 @@ const Notification = () => {
           return (
             <React.Fragment key={notification.id}>
               <NotificationItem
-                status={notification.status}
-                message={notification.message}
-                event={notification.notificationEvent.event}
-                timestamp={notification.timestamp}
+                notification={notification}
+                getNotifications={getNotifications}
+                onClose={handleClose}
               />
               {/* <Divider /> */}
             </React.Fragment>

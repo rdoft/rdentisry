@@ -1,4 +1,7 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { toastErrorMessage } from "components/errorMesage";
 import {
   Avatar,
   ListItemButton,
@@ -6,7 +9,6 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Typography,
-  Grid,
 } from "@mui/material";
 import { Button } from "primereact";
 import ActionGroup from "components/ActionGroup/ActionGroup";
@@ -15,16 +17,22 @@ import ActionGroup from "components/ActionGroup/ActionGroup";
 import { LiraDangerIcon } from "assets/images/icons";
 import { LiraWarningIcon } from "assets/images/icons";
 
-function NotificationItem({ status, message, event, timestamp }) {
-  timestamp = new Date(timestamp);
-  const date = timestamp.toLocaleDateString("tr-TR", {
+// services
+import { NotificationService } from "services";
+
+function NotificationItem({ notification, getNotifications, onClose }) {
+  const navigate = useNavigate();
+
+  // Date of the notificaiton
+  const date = new Date(notification.timestamp).toLocaleDateString("tr-TR", {
     year: "numeric",
     month: "numeric",
     day: "numeric",
   });
 
+  // Notification icons
   let icon;
-  switch (event) {
+  switch (notification.notificationEvent.event) {
     case "overdue":
       icon = LiraDangerIcon;
       break;
@@ -34,6 +42,40 @@ function NotificationItem({ status, message, event, timestamp }) {
       break;
   }
 
+  // SERVICES -----------------------------------------------------------------
+  // Update the notification
+  const updateNotification = async (status) => {
+    const statuses = ["read", "sent", "dismissed"];
+
+    try {
+      if (statuses.includes(status)) {
+        await NotificationService.updateNotification({
+          ...notification,
+          status,
+        });
+      }
+
+      // Set the notifications list
+      getNotifications();
+    } catch (error) {
+      // Set error status and show error toast message
+      toast.error(toastErrorMessage(error));
+    }
+  };
+
+  // HANDLERS -----------------------------------------------------------------
+  // onClick handler to go to the patient page
+  const handleClickNotification = () => {
+    onClose();
+    navigate(`/patients/${notification.patient.id}`);
+  };
+
+  // onClick handler for mark notification as read
+  const handleClickRead = (event) => {
+    event.stopPropagation();
+    updateNotification("read");
+  };
+
   // Action button for pay
   const readButton = (
     <Button
@@ -42,6 +84,7 @@ function NotificationItem({ status, message, event, timestamp }) {
       size="sm"
       icon="pi pi-check-circle"
       severity="secondary"
+      onClick={handleClickRead}
     />
   );
 
@@ -50,9 +93,9 @@ function NotificationItem({ status, message, event, timestamp }) {
       sx={{
         margin: "0.2rem",
         borderRadius: "10px",
-        bgcolor: status === "sent" ? "#EEF6FF" : "transparent",
-        // color: status === "sent" ? "#3B81F6" : "",
+        bgcolor: notification.status === "sent" ? "#EEF6FF" : "transparent",
       }}
+      onClick={handleClickNotification}
     >
       <ListItemAvatar>
         <Avatar
@@ -61,7 +104,9 @@ function NotificationItem({ status, message, event, timestamp }) {
         ></Avatar>
       </ListItemAvatar>
       <ListItemText
-        primary={<Typography variant="subtitle">{message}</Typography>}
+        primary={
+          <Typography variant="subtitle">{notification.message}</Typography>
+        }
       />
       <ListItemSecondaryAction
         sx={{ alignSelf: "center !important", paddingLeft: "1rem" }}
@@ -72,10 +117,10 @@ function NotificationItem({ status, message, event, timestamp }) {
               {date}
             </Typography>
           }
-          secondary={status === "read" ? "Okundu" : ""}
+          secondary={notification.status === "read" ? "Okundu" : ""}
         />
       </ListItemSecondaryAction>
-      {status === "read" || (
+      {notification.status === "read" || (
         <ListItemSecondaryAction sx={{ alignSelf: "center !important" }}>
           <ActionGroup custom={readButton} />
         </ListItemSecondaryAction>

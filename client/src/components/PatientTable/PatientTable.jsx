@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { toastErrorMessage } from "components/errorMesage";
 import { DataTable, Column, Image } from "primereact";
 import PatientDialog from "./PatientDialog";
 import DeletePatientDialog from "./DeletePatientDialog";
 import DeletePatientsDialog from "./DeletePatientsDialog";
 import PatientTableToolbar from "./PatientTableToolbar";
 import ActionGroup from "components/ActionGroup/ActionGroup";
+import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
 
 // assets
 import "assets/styles/PatientTable/PatientTable.css";
@@ -13,9 +16,6 @@ import { LiraDangerIcon } from "assets/images/icons";
 
 // services
 import { PatientService, AppointmentService } from "services";
-import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
-import { toast } from "react-hot-toast";
-import { toastErrorMessage } from "components/errorMesage";
 
 function PatientsTable() {
   const navigate = useNavigate();
