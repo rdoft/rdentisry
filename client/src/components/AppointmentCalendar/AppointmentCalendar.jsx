@@ -27,6 +27,7 @@ const AppointmentCalendar = () => {
   const [appointment, setAppointment] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   // Set the page on loading
   useEffect(() => {
@@ -35,7 +36,7 @@ const AppointmentCalendar = () => {
 
   useEffect(() => {
     getEvents();
-  }, [appointments, step]);
+  }, [appointments, step, showAll]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of appointments and set appointmets value
@@ -117,8 +118,15 @@ const AppointmentCalendar = () => {
 
   // TEMPLATES -----------------------------------------------------------------
   // Convert appointment format to events
+  // And filter only active appointments if "show all" not selected
   const getEvents = () => {
-    const events = appointments.map((appointment) =>
+    let events;
+    let appointments_;
+
+    appointments_ = showAll
+      ? appointments
+      : appointments.filter((appointment) => appointment.status === "active");
+    events = appointments_.map((appointment) =>
       convert(appointment, step, handleClickEdit)
     );
     setEvents(events);
@@ -181,7 +189,7 @@ const AppointmentCalendar = () => {
 
   return (
     <div>
-      <CalendarToolbar onClickAdd={showAppointmentDialog} />
+      <CalendarToolbar onClickAdd={showAppointmentDialog} checked={showAll} setChecked={setShowAll} />
       <Calendar
         style={{
           height: "calc(100vh - 190px)",
