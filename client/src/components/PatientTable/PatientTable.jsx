@@ -241,7 +241,7 @@ function PatientsTable() {
 
   // onRowClick handler for goto patient page
   const handleRowClick = () => {
-    navigate(`/patients/${rowIndex}`);
+    navigate(`/patients/${rowIndex}?tab=payments`);
   };
 
   // onRowMouseEnter handler for display buttons

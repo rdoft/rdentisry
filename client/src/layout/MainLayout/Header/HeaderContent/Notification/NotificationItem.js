@@ -66,7 +66,7 @@ function NotificationItem({ notification, getNotifications, onClose }) {
   // onClick handler to go to the patient page
   const handleClickNotification = () => {
     onClose();
-    navigate(`/patients/${notification.patient.id}`);
+    navigate(`/patients/${notification.patient.id}?tab=payments`);
     updateNotification("read");
   };
 

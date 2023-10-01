@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { toastErrorMessage } from "components/errorMesage";
 import { TabView, TabPanel, Button } from "primereact";
@@ -16,13 +16,37 @@ import "assets/styles/PatientDetail/PatientDetail.css";
 import { PatientService } from "services/index";
 import { AppointmentService, PaymentService } from "services";
 
+// Get the active index based on the path
+const getActiveIndex = (tab) => {
+  switch (tab) {
+    case `appointments`:
+      return 0;
+    case `payments`:
+      return 1;
+    // case `treatments`:
+    //   return 2;
+    // case `notes`:
+    //   return 3;
+    // case `documents`:
+    //   return 4;
+    default:
+      return 0;
+  }
+};
+
 function PatientDetail() {
+  // Get patient id
   let { id } = useParams();
   id = Number.isInteger(parseInt(id)) ? parseInt(id) : null;
 
+  // Get active tab index
+  let { search } = useLocation();
+  let tab = new URLSearchParams(search).get("tab");
+  let idx = getActiveIndex(tab);
+
   // Set the default values
   const [patient, setPatient] = useState(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(idx);
   const [counts, setCounts] = useState([]);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
   const [paymentDialog, setPaymentDialog] = useState(false);
@@ -62,11 +86,11 @@ function PatientDetail() {
     let response;
     let counts_ = [];
 
-    try {      
-      // Get the list of appointments of the patient and set appointments count 
+    try {
+      // Get the list of appointments of the patient and set appointments count
       response = await AppointmentService.getAppointments(patient.id);
       counts_.push(response.data.length || 0);
-      // Get the list of payments of the patient and set payments count 
+      // Get the list of payments of the patient and set payments count
       response = await PaymentService.getPayments(patient.id);
       counts_.push(response.data.length || 0);
 
