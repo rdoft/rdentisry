@@ -145,7 +145,7 @@ const Notification = () => {
         })
       ) : (
         <Typography variant="h6" textAlign="center" m={2}>
-          Hiçbir bildiriminiz yoktur.
+          Hiçbir bildirim yoktur
         </Typography>
       )}
     </List>
