@@ -6,6 +6,7 @@ import {
   Dropdown,
   Divider,
   Calendar,
+  Checkbox,
   InputNumber,
   ConfirmDialog,
   confirmDialog,
@@ -32,6 +33,7 @@ function PaymentDialog({ _payment = {}, onHide, onSubmit, onDelete }) {
     actualDate: null,
   };
 
+  const [reduce, setReduce] = useState(false);
   const [patients, setPatients] = useState(null);
   const [payment, setPayment] = useState({
     ...emptyPayment,
@@ -132,7 +134,7 @@ function PaymentDialog({ _payment = {}, onHide, onSubmit, onDelete }) {
 
   // onSubmit handler
   const handleSubmit = () => {
-    onSubmit(payment);
+    onSubmit(payment, reduce);
   };
 
   // onDelete handler
@@ -282,6 +284,17 @@ function PaymentDialog({ _payment = {}, onHide, onSubmit, onDelete }) {
             showButtonBar
           />
         </div>
+
+        {/* Reduce from next payment */}
+        {!payment.id && !payment.plannedDate && payment.actualDate && (
+          <div className="flex align-items-center justify-content-end mb-3">
+            <small className=" mr-2">Planlanan ödemeden düşülsün</small>
+            <Checkbox
+              onChange={(event) => setReduce(event.checked)}
+              checked={reduce}
+            />
+          </div>
+        )}
       </Dialog>
     </>
   );
