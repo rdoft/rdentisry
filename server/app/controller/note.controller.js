@@ -17,6 +17,7 @@ exports.getNotes = async (req, res) => {
       attributes: [
         ["NoteId", "id"],
         ["Date", "date"],
+        ["Title", "title"],
         ["Detail", "detail"],
       ],
       order: [["Date", "ASC"]],
@@ -52,6 +53,7 @@ exports.getNote = async (req, res) => {
       attributes: [
         ["NoteId", "id"],
         ["Date", "date"],
+        ["Title", "title"],
         ["Detail", "detail"],
       ],
       include: [
@@ -87,11 +89,11 @@ exports.getNote = async (req, res) => {
  * @body Note information
  */
 exports.saveNote = async (req, res) => {
-  const { patient, detail } = req.body;
+  const { patient, detail, title } = req.body;
   let values = {
     PatientId: patient.id,
     Detail: detail,
-    Date: new Date(),
+    Title: title,
   };
   let note;
 
@@ -101,8 +103,9 @@ exports.saveNote = async (req, res) => {
     note = {
       id: note.NoteId,
       patientId: note.PatientId,
-      date: note.Date,
       detail: note.Detail,
+      title: note.Title,
+      date: note.Date,
     };
 
     res.status(200).send(note);
@@ -123,10 +126,11 @@ exports.saveNote = async (req, res) => {
  */
 exports.updateNote = async (req, res) => {
   const { noteId } = req.params;
-  const { patient, detail } = req.body;
+  const { patient, detail, title } = req.body;
   let values = {
     PatientId: patient.id,
     Detail: detail,
+    Title: title,
   };
   let note;
 

@@ -11,8 +11,8 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      Date: {
-        type: Sequelize.DATEONLY,
+      Title: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
       Detail: {
@@ -20,7 +20,9 @@ module.exports = (sequelize, Sequelize) => {
       },
     },
     {
-      timestamps: false,
+      timestamps: true,
+      createdAt: false,
+      updatedAt: "Date",
       tableName: "Note",
     }
   );
