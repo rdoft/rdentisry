@@ -22,11 +22,6 @@ function NotesTab({ patient }) {
     getNotes(patient.id);
   }, [patient]);
 
-  // Set the note as first elements of notes on loading
-  useEffect(() => {
-    notes.length > 0 && setNote(notes[0]);
-  }, [notes]);
-
   // SERVICES -----------------------------------------------------------------
   // Get the list of the notes of the patient and set notes value
   const getNotes = async (patientId) => {
@@ -57,7 +52,7 @@ function NotesTab({ patient }) {
     } catch (error) {
       toast.error(toastErrorMessage);
     }
-  }
+  };
 
   // HANDLERS -----------------------------------------------------------------
   // onSelectNote handler to set the note value
@@ -91,16 +86,18 @@ function NotesTab({ patient }) {
               </div>
             ></DataScroller>
           </Grid>
-          {note && (
-            <Grid
-              item
-              xs={8}
-              px={3}
-              sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
-            >
+          <Grid
+            item
+            xs={8}
+            px={3}
+            sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
+          >
+            {note ? (
               <Note note={note} onClickSave={saveNote} />
-            </Grid>
-          )}
+            ) : (
+              <NotFoundText text="Görüntülemek istediğiniz notu seçiniz" />
+            )}
+          </Grid>
         </Grid>
       )}
     </>

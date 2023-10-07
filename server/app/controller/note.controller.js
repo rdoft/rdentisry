@@ -25,7 +25,14 @@ exports.getNotes = async (req, res) => {
         {
           model: Patient,
           as: "patient",
-          attributes: [],
+          attributes: [
+            ["PatientId", "id"],
+            ["IdNumber", "idNumber"],
+            ["Name", "name"],
+            ["Surname", "surname"],
+            ["BirthYear", "birthYear"],
+            ["Phone", "phone"],
+          ],
           where: patientId && {
             PatientId: patientId,
           },

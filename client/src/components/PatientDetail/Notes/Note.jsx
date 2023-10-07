@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, ClickAwayListener } from "@mui/material";
 import { InputText, InputTextarea } from "primereact";
 
 function Note({ note, onClickSave }) {
@@ -55,6 +55,7 @@ function Note({ note, onClickSave }) {
     setDetail(note.detail);
   };
 
+  // onChange handler, update the title and detail
   const handleChange = (event) => {
     const value = event.target.value;
 
@@ -65,12 +66,27 @@ function Note({ note, onClickSave }) {
     }
   };
 
+  // onKeyDown handler, save the note on Ctrl+Enter and discard changes on Escape
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" && event.ctrlKey === true) {
+      handleSaveClick();
+    } else if (event.key === "Escape") {
+      handleCancelClick();
+    }
+  };
+
+  // handleClickAway handler, save the note on click away
+  const handleClickAway = () => {
+    handleSaveClick();
+  };
+
   return (
     <Grid
       container
       alignItems="center"
       justifyContent="space-between"
       sx={{ marginTop: "1em", marginBottom: "1em" }}
+      onKeyDown={handleKeyDown}
     >
       <Grid container item xs={12} justifyContent="center">
         <Typography variant="h6" fontWeight="light">{`${date}`}</Typography>
@@ -79,14 +95,17 @@ function Note({ note, onClickSave }) {
       {/* Title */}
       {editTitle ? (
         <Grid item xs={12} m={1}>
-          <InputText
-            id="title"
-            variant="outlined"
-            className="w-full font-bold text-2xl"
-            value={title}
-            onChange={handleChange}
-            style={{ padding: "8px", color: "#182A4D" }}
-          />
+          <ClickAwayListener onClickAway={handleClickAway}>
+            <InputText
+              id="title"
+              variant="outlined"
+              autoFocus={true}
+              className="w-full font-bold text-2xl"
+              style={{ padding: "8px", color: "#182A4D" }}
+              value={title}
+              onChange={handleChange}
+            />
+          </ClickAwayListener>
         </Grid>
       ) : (
         <Grid
@@ -117,15 +136,18 @@ function Note({ note, onClickSave }) {
       {/* Detail */}
       {editDetail ? (
         <Grid item xs={12} m={1}>
-          <InputTextarea
-            id="detail"
-            variant="outlined"
-            className="w-full font-light text-sm line-height-3"
-            autoResize="true"
-            value={detail}
-            onChange={handleChange}
-            style={{ padding: "8px", color: "#182A4D" }}
-          />
+          <ClickAwayListener onClickAway={handleClickAway}>
+            <InputTextarea
+              id="detail"
+              variant="outlined"
+              autoResize="true"
+              autoFocus={true}
+              className="w-full font-light text-sm line-height-3"
+              style={{ padding: "8px", color: "#182A4D" }}
+              value={detail}
+              onChange={handleChange}
+            />
+          </ClickAwayListener>
         </Grid>
       ) : (
         detail && (
