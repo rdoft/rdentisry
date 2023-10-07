@@ -43,6 +43,22 @@ function NotesTab({ patient }) {
     }
   };
 
+  // Save the note (create/update)
+  const saveNote = async (note) => {
+    try {
+      if (note.id) {
+        await NoteService.updateNote(note.id, note);
+      } else {
+        await NoteService.saveNote(note);
+        toast.success("Not eklendi");
+      }
+
+      getNotes(patient.id);
+    } catch (error) {
+      toast.error(toastErrorMessage);
+    }
+  }
+
   // HANDLERS -----------------------------------------------------------------
   // onSelectNote handler to set the note value
   const handleSelectNote = (note) => {
@@ -82,7 +98,7 @@ function NotesTab({ patient }) {
               px={3}
               sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
             >
-              <Note note={note} />
+              <Note note={note} onClickSave={saveNote} />
             </Grid>
           )}
         </Grid>
