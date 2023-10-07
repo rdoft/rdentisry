@@ -144,17 +144,18 @@ function AppointmentsTab({
           <Grid item xs={1}>
             <CardTitle
               title="Aktif"
-              style={{ textAlign: "center", marginTop: 2 }}
+              style={{ textAlign: "center", marginY: 2 }}
             />
           </Grid>
+
           <Grid item xs={1}>
             <CardTitle
               title="Diğer"
-              style={{ textAlign: "center", marginTop: 2 }}
+              style={{ textAlign: "center", marginY: 2 }}
             />
           </Grid>
         </Grid>
-        <Grid item md={6} xs={12}>
+        <Grid item md={6} xs={12} pr={2}>
           <DataScroller
             value={activeAppointments}
             itemTemplate={appointmentTemplate}
@@ -162,7 +163,7 @@ function AppointmentsTab({
             emptyMessage={<NotFoundText text="Randevu bulunamadı" p={0} />}
           ></DataScroller>
         </Grid>
-        <Grid item md={6} xs={12}>
+        <Grid item md={6} xs={12} pl={2}>
           <DataScroller
             value={otherAppointments}
             itemTemplate={appointmentTemplate}

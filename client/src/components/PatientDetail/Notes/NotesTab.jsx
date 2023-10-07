@@ -7,6 +7,9 @@ import NotFoundText from "components/NotFoundText";
 import NoteCard from "./NoteCard";
 import Note from "./Note";
 
+// assets
+import "assets/styles/PatientDetail/NotesTab.css";
+
 // services
 import { NoteService } from "services";
 
@@ -57,7 +60,9 @@ function NotesTab({ patient }) {
   return (
     <>
       {notes.length === 0 ? (
-        <NotFoundText text="Not bulunamadı" />
+        <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
+          <NotFoundText text="Not bulunamadı" />
+        </div>
       ) : (
         <Grid container justifyContent="space-between" mt={2}>
           <Grid item xs={4} pr={3}>

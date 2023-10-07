@@ -189,7 +189,7 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
   };
 
   return (
-    <>
+    <div style={{ backgroundColor: "white", borderRadius: "8px"}}>
       {payments.length === 0 ? (
         <NotFoundText text="Ödeme kaydı bulunamadı" />
       ) : (
@@ -261,7 +261,7 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
           onDelete={payment && deletePayment}
         />
       )}
-    </>
+    </div>
   );
 }
 

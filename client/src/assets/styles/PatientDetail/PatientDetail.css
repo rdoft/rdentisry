@@ -1,5 +1,6 @@
 .p-tabview-panels {
   padding: 0 4px 0 4px !important;
+  background-color: transparent !important;
 }
 
 .rounded-tabview .p-tabview-nav {
