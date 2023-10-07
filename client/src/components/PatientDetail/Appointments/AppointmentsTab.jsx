@@ -4,6 +4,8 @@ import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import { toastErrorMessage } from "components/errorMesage";
 import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
+import NotFoundText from "components/NotFoundText";
+import CardTitle from "components/cards/CardTitle";
 import AppointmentCard from "./AppointmentCard";
 
 // assets
@@ -137,14 +139,27 @@ function AppointmentsTab({
 
   return (
     <>
-      <Grid container justifyContent="space-between">
+      <Grid container justifyContent="space-between" mt={2}>
+        <Grid container justifyContent="space-around">
+          <Grid item xs={1}>
+            <CardTitle
+              title="Aktif"
+              style={{ textAlign: "center", marginTop: 2 }}
+            />
+          </Grid>
+          <Grid item xs={1}>
+            <CardTitle
+              title="Diğer"
+              style={{ textAlign: "center", marginTop: 2 }}
+            />
+          </Grid>
+        </Grid>
         <Grid item md={6} xs={12}>
           <DataScroller
             value={activeAppointments}
             itemTemplate={appointmentTemplate}
             rows={10}
-            header="Aktif"
-            emptyMessage="Randevu bulunamadı"
+            emptyMessage={<NotFoundText text="Randevu bulunamadı" p={0} />}
           ></DataScroller>
         </Grid>
         <Grid item md={6} xs={12}>
@@ -152,8 +167,8 @@ function AppointmentsTab({
             value={otherAppointments}
             itemTemplate={appointmentTemplate}
             rows={10}
-            header="Diğer"
-            emptyMessage="Randevu bulunamadı"
+            emptyMessage={<NotFoundText text="Randevu bulunamadı" p={0} />}
+            style={{ textAlign: "center" }}
           ></DataScroller>
         </Grid>
       </Grid>

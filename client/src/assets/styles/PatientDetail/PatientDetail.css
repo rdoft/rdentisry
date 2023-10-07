@@ -1,3 +1,19 @@
 .p-tabview-panels {
-  padding: 0 !important;
+  padding: 0 4px 0 4px !important;
+}
+
+.rounded-tabview .p-tabview-nav {
+  border-radius: 8px;
+}
+
+.rounded-tabview .p-tabview-nav .p-tabview-nav-link {
+  border-radius: 8px;
+}
+
+.rounded-tabview .p-tabview-nav .p-tabview-nav-link-active {
+  border-radius: 8px;
+}
+
+.rounded-tabview .p-tabview-panels {
+  border-radius: 8px;
 }

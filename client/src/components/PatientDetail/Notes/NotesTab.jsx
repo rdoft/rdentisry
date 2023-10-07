@@ -1,0 +1,89 @@
+import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+import { toastErrorMessage } from "components/errorMesage";
+import { Grid } from "@mui/material";
+import { DataScroller } from "primereact";
+import NotFoundText from "components/NotFoundText";
+import NoteCard from "./NoteCard";
+import Note from "./Note";
+
+// services
+import { NoteService } from "services";
+
+function NotesTab({ patient }) {
+  const [note, setNote] = useState(null);
+  const [notes, setNotes] = useState([]);
+
+  // Set the page on loading
+  useEffect(() => {
+    getNotes(patient.id);
+  }, [patient]);
+
+  // Set the note as first elements of notes on loading
+  useEffect(() => {
+    notes.length > 0 && setNote(notes[0]);
+  }, [notes]);
+
+  // SERVICES -----------------------------------------------------------------
+  // Get the list of the notes of the patient and set notes value
+  const getNotes = async (patientId) => {
+    let response;
+    let notes;
+
+    try {
+      response = await NoteService.getNotes(patientId);
+      notes = response.data;
+
+      setNotes(notes);
+    } catch (error) {
+      toast.error(toastErrorMessage);
+    }
+  };
+
+  // HANDLERS -----------------------------------------------------------------
+  // onSelectNote handler to set the note value
+  const handleSelectNote = (note) => {
+    setNote(note);
+  };
+
+  // TEMPLATES ----------------------------------------------------------------
+  const noteTemplate = (note) => {
+    if (!note) {
+      return;
+    }
+    return <NoteCard note={note} onClick={handleSelectNote} />;
+  };
+
+  return (
+    <>
+      {notes.length === 0 ? (
+        <NotFoundText text="Not bulunamadı" />
+      ) : (
+        <Grid container justifyContent="space-between" mt={2}>
+          <Grid item xs={4} pr={3}>
+            <DataScroller
+              value={notes}
+              itemTemplate={noteTemplate}
+              rows={10}
+              emptyMessage=<div style={{ textAlign: "center" }}>
+                Not bulunamadı
+              </div>
+            ></DataScroller>
+          </Grid>
+          {note && (
+            <Grid
+              item
+              xs={8}
+              px={3}
+              sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
+            >
+              <Note note={note} />
+            </Grid>
+          )}
+        </Grid>
+      )}
+    </>
+  );
+}
+
+export default NotesTab;

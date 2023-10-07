@@ -151,7 +151,7 @@ function PaymentCard({ payment, onClickEdit, onClickPay, direction }) {
         item
         xs={9}
         p={3}
-        className="border-1 surface-border surface-card border-round"
+        className="border-1 surface-border border-round"
       >
         <div className="flex flex-wrap justify-content-between pb-2">
           {plannedDateTag()}

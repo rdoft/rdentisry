@@ -3,12 +3,14 @@ import doctor from "services/doctor.service";
 import appointment from "services/appointment.service";
 import payment from "services/payment.service";
 import notification from "services/notification.service";
+import note from "services/note.service";
 
 const PatientService = patient;
 const DoctorService = doctor;
 const AppointmentService = appointment;
 const PaymentService = payment;
 const NotificationService = notification;
+const NoteService = note;
 
 export {
   PatientService,
@@ -16,4 +18,5 @@ export {
   AppointmentService,
   PaymentService,
   NotificationService,
+  NoteService,
 };

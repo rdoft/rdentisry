@@ -14,7 +14,8 @@ import "assets/styles/PatientDetail/PatientDetail.css";
 
 // services
 import { PatientService } from "services/index";
-import { AppointmentService, PaymentService } from "services";
+import { AppointmentService, PaymentService, NoteService } from "services";
+import NotesTab from "./Notes/NotesTab";
 
 // Get the active index based on the path
 const getActiveIndex = (tab) => {
@@ -23,9 +24,9 @@ const getActiveIndex = (tab) => {
       return 0;
     case `payments`:
       return 1;
+    case `notes`:
+      return 2;
     // case `treatments`:
-    //   return 2;
-    // case `notes`:
     //   return 3;
     // case `documents`:
     //   return 4;
@@ -92,6 +93,9 @@ function PatientDetail() {
       counts_.push(response.data.length || 0);
       // Get the list of payments of the patient and set payments count
       response = await PaymentService.getPayments(patient.id);
+      counts_.push(response.data.length || 0);
+      // Get the list of notes of the patient and set notes count
+      response = await NoteService.getNotes(patient.id);
       counts_.push(response.data.length || 0);
 
       setCounts(counts_);
@@ -168,8 +172,13 @@ function PatientDetail() {
               actionTemplate={actionTemplate}
             />
 
-            <TabView activeIndex={activeIndex} onTabChange={handleTabChange}>
+            <TabView
+              className="rounded-tabview"
+              activeIndex={activeIndex}
+              onTabChange={handleTabChange}
+            >
               <TabPanel
+                
                 headerTemplate={(options) => (
                   <TabHeader
                     label="Randevular"
@@ -201,19 +210,21 @@ function PatientDetail() {
                   hideDialog={hidePaymentDialog}
                 />
               </TabPanel>
-              {/* <TabPanel
-                headerTemplate={(options) => (
-                  <TabHeader
-                    label="Tedaviler"
-                    badge={counts[2]}
-                    onClick={options.onClick}
-                  />
-                )}
-              ></TabPanel>
               <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
                     label="Notlar"
+                    badge={counts[2]}
+                    onClick={options.onClick}
+                  />
+                )}
+              >
+                <NotesTab patient={patient} />
+              </TabPanel>
+              {/* <TabPanel
+                headerTemplate={(options) => (
+                  <TabHeader
+                    label="Tedaviler"
                     badge={counts[3]}
                     onClick={options.onClick}
                   />

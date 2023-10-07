@@ -10,6 +10,7 @@ import StatisticCard from "./StatisticCard";
 
 // services
 import { PaymentService } from "services";
+import NotFoundText from "components/NotFoundText";
 
 function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
   // Set the default values
@@ -83,16 +84,15 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
         await PaymentService.updatePayment(payment.id, payment);
         toast.success("Ödeme bilgileri başarıyla güncellendi!");
       } else {
-        // If create payment, then create payment 
+        // If create payment, then create payment
         // and reduce from total incase of it is specified
         if (reduce) {
           await reducePayment(payment);
-        } 
+        }
         await PaymentService.savePayment(payment);
         toast.success("Yeni ödeme başarıyla kaydedildi!");
-      }      
+      }
 
-        
       // Get and set the updated list of payments
       getPayments(patient.id);
       hideDialog();
@@ -101,7 +101,6 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
       toast.error(toastErrorMessage(error));
     }
   };
-
 
   // Reduce payment
   const reducePayment = async (payment) => {
@@ -114,15 +113,15 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
       if (payment.id || payment.plannedDate || !payment.actualDate) {
         return;
       }
-      
+
       amount = payment.amount;
-      payments_ = payments.filter(payment_ => !payment_.actualDate);
-      
+      payments_ = payments.filter((payment_) => !payment_.actualDate);
+
       i = 0;
       while (amount > 0 && i < payments_.length) {
         let currentPayment = payments_[i];
         let currentAmount = currentPayment.amount;
-  
+
         // Delete planned payments and reduce paid amount until amount is zero
         if (currentAmount <= amount) {
           amount -= currentAmount;
@@ -132,14 +131,13 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
           amount = 0;
           await PaymentService.updatePayment(currentPayment.id, currentPayment);
         }
-        
+
         i++;
       }
     } catch (error) {
       throw error;
     }
   };
-
 
   //  Delete appointment
   const deletePayment = async (payment) => {
@@ -191,11 +189,17 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
   };
 
   return (
-    <div style={{ backgroundColor: "#FAFAFB" }}>
+    <>
       {payments.length === 0 ? (
-        <p className="text-center">Ödeme kaydı bulunamadı</p>
+        <NotFoundText text="Ödeme kaydı bulunamadı" />
       ) : (
-        <Grid container alignItems="center" justifyContent="center" pb={4}>
+        <Grid
+          container
+          alignItems="center"
+          justifyContent="center"
+          mt={2}
+          pb={4}
+        >
           <Grid
             container
             item
@@ -257,7 +261,7 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
           onDelete={payment && deletePayment}
         />
       )}
-    </div>
+    </>
   );
 }
 
