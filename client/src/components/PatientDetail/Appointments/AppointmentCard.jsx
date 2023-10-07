@@ -91,7 +91,7 @@ function AppointmentCard({ appointment, onClickEdit, onChangeStatus }) {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <Grid item xs={8}>
+        <Grid item xs={9}>
           <Typography variant="h5" sx={{ fontWeight: "regular" }}>
             <ScheduleOutlined /> {`${date}`}
           </Typography>
@@ -130,7 +130,7 @@ function AppointmentCard({ appointment, onClickEdit, onChangeStatus }) {
         )}
       </Grid>
       <Grid container>
-        <Grid item xs={11}>
+        <Grid item xs={12}>
           <Divider style={{ margin: 0 }} />
         </Grid>
       </Grid>
