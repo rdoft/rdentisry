@@ -34,9 +34,14 @@ function Note({ note }) {
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        {detail && (
-          <Typography variant="body1" sx={{ fontWeight: "light" }}>
-            {detail}
+      {detail && (
+          <Typography component="div" variant="body1" sx={{ fontWeight: "light" }}>
+            {detail.split("\n").map((line, index) => (
+              <React.Fragment key={index}>
+                {line}
+                <br />
+              </React.Fragment>
+            ))}
           </Typography>
         )}
       </Grid>
