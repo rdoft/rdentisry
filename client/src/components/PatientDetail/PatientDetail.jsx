@@ -51,6 +51,7 @@ function PatientDetail() {
   const [counts, setCounts] = useState([]);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
   const [paymentDialog, setPaymentDialog] = useState(false);
+  const [noteDialog, setNoteDialog] = useState(false);
 
   // Set the page on loading
   useEffect(() => {
@@ -61,7 +62,7 @@ function PatientDetail() {
     if (patient) {
       getCounts();
     }
-  }, [patient, appointmentDialog, paymentDialog]);
+  }, [patient]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the patient info and set patient value
@@ -125,6 +126,16 @@ function PatientDetail() {
     setPaymentDialog(false);
   };
 
+  // Show add note dialog
+  const showNoteDialog = () => {
+    setNoteDialog(true);
+  };
+
+  // Hide note dialog
+  const hideNoteDialog = () => {
+    setNoteDialog(false);
+  };
+
   const handleTabChange = (event) => {
     setActiveIndex(event.index);
   };
@@ -151,8 +162,15 @@ function PatientDetail() {
             onClick={showPaymentDialog}
           />
         );
-      // case 2:
-      //   return null;
+      case 2:
+        return (
+          <Button
+            label="Not Ekle"
+            icon="pi pi-plus"
+            className="p-button-text p-button-info"
+            onClick={showNoteDialog}
+          />
+        );
       // case 3:
       //   return null;
       // case 4:
@@ -178,7 +196,6 @@ function PatientDetail() {
               onTabChange={handleTabChange}
             >
               <TabPanel
-                
                 headerTemplate={(options) => (
                   <TabHeader
                     label="Randevular"
@@ -192,6 +209,7 @@ function PatientDetail() {
                   appointmentDialog={appointmentDialog}
                   showDialog={showAppointmentDialog}
                   hideDialog={hideAppointmentDialog}
+                  getCounts={getCounts}
                 />
               </TabPanel>
               <TabPanel
@@ -208,6 +226,7 @@ function PatientDetail() {
                   paymentDialog={paymentDialog}
                   showDialog={showPaymentDialog}
                   hideDialog={hidePaymentDialog}
+                  getCounts={getCounts}
                 />
               </TabPanel>
               <TabPanel
@@ -219,7 +238,12 @@ function PatientDetail() {
                   />
                 )}
               >
-                <NotesTab patient={patient} />
+                <NotesTab
+                  patient={patient}
+                  noteDialog={noteDialog}
+                  hideDialog={hideNoteDialog}
+                  getCounts={getCounts}
+                />
               </TabPanel>
               {/* <TabPanel
                 headerTemplate={(options) => (

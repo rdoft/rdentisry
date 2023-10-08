@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Grid, Typography, ClickAwayListener } from "@mui/material";
 import { InputText, InputTextarea } from "primereact";
-import { set } from "date-fns";
 
 function Note({ note, onClickSave, setEdit }) {
   const [title, setTitle] = useState(null);
@@ -38,12 +37,18 @@ function Note({ note, onClickSave, setEdit }) {
   };
 
   const handleSaveClick = () => {
+    let value;
+
     if (editTitle) {
-      note.title = title;
+      value = title.trim();
+      note.title = value;
       setEditTitle(false);
+      setTitle(value);
     } else if (editDetail) {
-      note.detail = detail;
+      value = detail?.trim();
+      note.detail = value;
       setEditDetail(false);
+      setDetail(value);
     } else {
       return;
     }
@@ -82,7 +87,7 @@ function Note({ note, onClickSave, setEdit }) {
 
   // handleClickAway handler, save the note on click away
   const handleClickAway = () => {
-    handleSaveClick();
+    title?.trim() ? handleSaveClick() : handleCancelClick();
   };
 
   return (
@@ -133,7 +138,7 @@ function Note({ note, onClickSave, setEdit }) {
             }}
             onClick={handleEditTitle}
           >
-            {title}
+            {title || "Başlık ekleyin..."}
           </Typography>
         </Grid>
       )}
@@ -155,34 +160,34 @@ function Note({ note, onClickSave, setEdit }) {
           </ClickAwayListener>
         </Grid>
       ) : (
-        detail && (
-          <Grid
-            item
-            xs={12}
-            m={1}
-            p={1}
-            sx={{
-              borderRadius: "8px",
-              "&:hover": {
-                backgroundColor: "white",
-              },
-            }}
+        <Grid
+          item
+          xs={12}
+          m={1}
+          p={1}
+          sx={{
+            borderRadius: "8px",
+            "&:hover": {
+              backgroundColor: "white",
+            },
+          }}
+        >
+          <Typography
+            component="div"
+            variant="body1"
+            sx={{ fontWeight: "light" }}
+            onClick={handleEditDetail}
           >
-            <Typography
-              component="div"
-              variant="body1"
-              sx={{ fontWeight: "light" }}
-              onClick={handleEditDetail}
-            >
-              {detail.split("\n").map((line, index) => (
-                <React.Fragment key={index}>
-                  {line}
-                  <br />
-                </React.Fragment>
-              ))}
-            </Typography>
-          </Grid>
-        )
+            {detail
+              ? detail.split("\n").map((line, index) => (
+                  <React.Fragment key={index}>
+                    {line}
+                    <br />
+                  </React.Fragment>
+                ))
+              : "Detay ekleyin..."}
+          </Typography>
+        </Grid>
       )}
     </Grid>
   );

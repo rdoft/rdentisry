@@ -12,7 +12,7 @@ import StatisticCard from "./StatisticCard";
 import { PaymentService } from "services";
 import NotFoundText from "components/NotFoundText";
 
-function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
+function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog, getCounts }) {
   // Set the default values
   const [payments, setPayments] = useState([]);
   const [payment, setPayment] = useState(null);
@@ -30,6 +30,7 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog }) {
   // Set the progress of payments
   useEffect(() => {
     calcProgress();
+    getCounts();
   }, [payments]);
 
   // Calculate the payments percentage

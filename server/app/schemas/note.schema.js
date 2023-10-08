@@ -4,7 +4,7 @@ const note = Joi.object({
   id: Joi.number().empty(null).id(),
   patient: Joi.object().required(),
   date: Joi.date().allow(null),
-  title: Joi.string().required(),
+  title: Joi.string().trim().empty("").required(),
   detail: Joi.string().default(null).empty("").allow(null),
 });
 
@@ -13,7 +13,7 @@ const id = Joi.object({
 });
 
 const patientId = Joi.number().required();
-const title = Joi.string().required();
+const title = Joi.string().trim().empty("").required();
 
 module.exports = {
   note,

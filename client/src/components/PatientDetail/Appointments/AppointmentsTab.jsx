@@ -19,6 +19,7 @@ function AppointmentsTab({
   appointmentDialog,
   showDialog,
   hideDialog,
+  getCounts,
 }) {
   // Set the default values
   const [appointments, setAppointments] = useState([]);
@@ -33,6 +34,7 @@ function AppointmentsTab({
 
   // Set the active-other appointments
   useEffect(() => {
+    getCounts();
     divideAppointments(appointments);
   }, [appointments]);
 
