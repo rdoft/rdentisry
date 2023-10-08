@@ -11,9 +11,17 @@ import "assets/styles/PatientDetail/NotesTab.css";
 
 // services
 import { NoteService } from "services";
+import NotFoundText from "components/NotFoundText";
 
 function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
-  const [note, setNote] = useState({ patient, date: new Date() });
+  let emptyNote = {
+    patient: patient,
+    title: "",
+    detail: "",
+    date: new Date(),
+  };
+
+  const [note, setNote] = useState({ ...emptyNote });
   const [notes, setNotes] = useState([]);
   const [isEdit, setEdit] = useState(false);
 
@@ -24,18 +32,15 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
 
   // Set the empty not for add new note
   useEffect(() => {
-    setNote({
-      patient,
-      date: new Date(),
-    });
+    setNote({ ...emptyNote });
     hideDialog();
   }, [patient, noteDialog]);
 
   // Set the counts for tab header
-  useEffect (() => {
+  useEffect(() => {
     getCounts();
   }, [notes]);
-  
+
   // SERVICES -----------------------------------------------------------------
   // Get the list of the notes of the patient and set notes value
   const getNotes = async (patientId) => {
@@ -63,11 +68,24 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
         response = await NoteService.saveNote(note);
         const { id, title, detail, date } = response.data;
         note = { id, patient, title, detail, date };
-        toast.success("Not başarıyla kaydedildi");
       }
 
       getNotes(patient.id);
       setNote(note);
+    } catch (error) {
+      toast.error(toastErrorMessage);
+    }
+  };
+
+  // Delete the note
+  const deleteNote = async (note) => {
+    try {
+      if (!isEdit) {
+        await NoteService.deleteNote(note.id);
+
+        getNotes(patient.id);
+        setNote({ ...emptyNote });
+      }
     } catch (error) {
       toast.error(toastErrorMessage);
     }
@@ -95,9 +113,7 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
             value={notes}
             itemTemplate={noteTemplate}
             rows={10}
-            emptyMessage=<div style={{ textAlign: "center" }}>
-              Not bulunamadı
-            </div>
+            emptyMessage={<NotFoundText text={"Not bulunamadı"} p={0} />}
           ></DataScroller>
         </Grid>
         <Grid
@@ -106,7 +122,12 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
           px={3}
           sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
         >
-          <Note note={note} onClickSave={saveNote} setEdit={setEdit} />
+          <Note
+            _note={note}
+            onSave={saveNote}
+            setEdit={setEdit}
+            onDelete={deleteNote}
+          />
         </Grid>
       </Grid>
     </>

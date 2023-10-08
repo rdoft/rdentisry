@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, Typography, ClickAwayListener } from "@mui/material";
 import { InputText, InputTextarea } from "primereact";
+import ActionGroup from "components/ActionGroup/ActionGroup";
 
-function Note({ note, onClickSave, setEdit }) {
-  const [title, setTitle] = useState(null);
-  const [detail, setDetail] = useState(null);
+function Note({ _note, onSave, setEdit, onDelete }) {
+  const [note, setNote] = useState({ ..._note });
+  const [prevNote, setPrevNote] = useState({ ..._note });
   const [editTitle, setEditTitle] = useState(false);
   const [editDetail, setEditDetail] = useState(false);
 
@@ -15,65 +16,76 @@ function Note({ note, onClickSave, setEdit }) {
     year: "numeric",
   });
 
-  // Set the variables on loading
+  // Set the note on loading
   useEffect(() => {
-    setEditTitle(false);
-    setEditDetail(false);
-    setTitle(note.title);
-    setDetail(note.detail);
-  }, [note]);
+    setNote({ ..._note });
+    setPrevNote({ ..._note });
+  }, [_note]);
+
+  // Set the variables on loading
+  // useEffect(() => {
+  //   setEditTitle(false);
+  //   setEditDetail(false);
+  // }, [note]);
 
   // HANDLERS -----------------------------------------------------------------
   // onEditTitle handler
   const handleEditTitle = () => {
+    setPrevNote(note);
     setEditTitle(true);
     setEdit(true);
   };
 
   // onEditDetail handler
   const handleEditDetail = () => {
+    setPrevNote(note);
     setEditDetail(true);
     setEdit(true);
   };
 
+  // onSave handler, to save changes
   const handleSaveClick = () => {
-    let value;
+    let _note = { ...note };
 
     if (editTitle) {
-      value = title.trim();
-      note.title = value;
+      _note.title = note.title.trim();
       setEditTitle(false);
-      setTitle(value);
     } else if (editDetail) {
-      value = detail?.trim();
-      note.detail = value;
+      _note.detail = note.detail?.trim();
       setEditDetail(false);
-      setDetail(value);
     } else {
       return;
     }
-    onClickSave(note);
+
     setEdit(false);
+    setNote(_note);
+    onSave(note);
   };
 
   // onCancel handler, discard changes to note
   const handleCancelClick = () => {
+    setNote(prevNote);
     setEditTitle(false);
     setEditDetail(false);
-    setTitle(note.title);
-    setDetail(note.detail);
     setEdit(false);
+  };
+
+  // onDelete handler
+  const handleDelete = () => {
+    onDelete(note);
   };
 
   // onChange handler, update the title and detail
   const handleChange = (event) => {
     const value = event.target.value;
+    let _note = { ...note };
 
     if (editTitle) {
-      setTitle(value);
+      _note.title = value;
     } else if (editDetail) {
-      setDetail(value);
+      _note.detail = value;
     }
+    setNote(_note);
   };
 
   // onKeyDown handler, save the note on Ctrl+Enter and discard changes on Escape
@@ -87,7 +99,7 @@ function Note({ note, onClickSave, setEdit }) {
 
   // handleClickAway handler, save the note on click away
   const handleClickAway = () => {
-    title?.trim() ? handleSaveClick() : handleCancelClick();
+    note.title?.trim() ? handleSaveClick() : handleCancelClick();
   };
 
   return (
@@ -98,8 +110,13 @@ function Note({ note, onClickSave, setEdit }) {
       sx={{ marginTop: "1em", marginBottom: "1em" }}
       onKeyDown={handleKeyDown}
     >
-      <Grid container item xs={12} justifyContent="center">
-        <Typography variant="h6" fontWeight="light">{`${date}`}</Typography>
+      <Grid container item xs={12} alignItems="center">
+        <Grid container item xs={11} p={1.2} justifyContent="center">
+          <Typography variant="h6" fontWeight="light">{`${date}`}</Typography>
+        </Grid>
+        <Grid container item xs={1} justifyContent="end">
+          {note.id && <ActionGroup onClickDelete={handleDelete} />}
+        </Grid>
       </Grid>
 
       {/* Title */}
@@ -112,7 +129,7 @@ function Note({ note, onClickSave, setEdit }) {
               autoFocus={true}
               className="w-full font-bold text-2xl"
               style={{ padding: "8px", color: "#182A4D" }}
-              value={title}
+              value={note.title}
               onChange={handleChange}
             />
           </ClickAwayListener>
@@ -138,7 +155,7 @@ function Note({ note, onClickSave, setEdit }) {
             }}
             onClick={handleEditTitle}
           >
-            {title || "Başlık ekleyin..."}
+            {note.title || "Başlık ekleyin..."}
           </Typography>
         </Grid>
       )}
@@ -154,7 +171,7 @@ function Note({ note, onClickSave, setEdit }) {
               autoFocus={true}
               className="w-full font-light text-sm line-height-3"
               style={{ padding: "8px", color: "#182A4D" }}
-              value={detail}
+              value={note.detail}
               onChange={handleChange}
             />
           </ClickAwayListener>
@@ -178,8 +195,8 @@ function Note({ note, onClickSave, setEdit }) {
             sx={{ fontWeight: "light" }}
             onClick={handleEditDetail}
           >
-            {detail
-              ? detail.split("\n").map((line, index) => (
+            {note.detail
+              ? note.detail.split("\n").map((line, index) => (
                   <React.Fragment key={index}>
                     {line}
                     <br />
