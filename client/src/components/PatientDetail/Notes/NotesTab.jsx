@@ -12,10 +12,12 @@ import "assets/styles/PatientDetail/NotesTab.css";
 
 // services
 import { NoteService } from "services";
+import { is } from "date-fns/locale";
 
 function NotesTab({ patient }) {
   const [note, setNote] = useState(null);
   const [notes, setNotes] = useState([]);
+  const [isEdit, setEdit] = useState(false);
 
   // Set the page on loading
   useEffect(() => {
@@ -57,7 +59,7 @@ function NotesTab({ patient }) {
   // HANDLERS -----------------------------------------------------------------
   // onSelectNote handler to set the note value
   const handleSelectNote = (note) => {
-    setNote(note);
+    !isEdit && setNote(note);
   };
 
   // TEMPLATES ----------------------------------------------------------------
@@ -93,7 +95,7 @@ function NotesTab({ patient }) {
             sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
           >
             {note ? (
-              <Note note={note} onClickSave={saveNote} />
+              <Note note={note} onClickSave={saveNote} setEdit={setEdit} />
             ) : (
               <NotFoundText text="Görüntülemek istediğiniz notu seçiniz" />
             )}

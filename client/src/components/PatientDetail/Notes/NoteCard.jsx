@@ -30,7 +30,7 @@ function NoteCard({ note, onClick }) {
         <Grid item>
           <CardTitle title={title} />
         </Grid>
-        <Grid container item xs={6} justifyContent="end">
+        <Grid container item xs justifyContent="end">
           <Typography variant="caption" sx={{ fontWeight: "bold" }}>
             {date}
           </Typography>

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Grid, Typography, ClickAwayListener } from "@mui/material";
 import { InputText, InputTextarea } from "primereact";
+import { set } from "date-fns";
 
-function Note({ note, onClickSave }) {
+function Note({ note, onClickSave, setEdit }) {
   const [title, setTitle] = useState(null);
   const [detail, setDetail] = useState(null);
   const [editTitle, setEditTitle] = useState(false);
@@ -27,11 +28,13 @@ function Note({ note, onClickSave }) {
   // onEditTitle handler
   const handleEditTitle = () => {
     setEditTitle(true);
+    setEdit(true);
   };
 
   // onEditDetail handler
   const handleEditDetail = () => {
     setEditDetail(true);
+    setEdit(true);
   };
 
   const handleSaveClick = () => {
@@ -45,6 +48,7 @@ function Note({ note, onClickSave }) {
       return;
     }
     onClickSave(note);
+    setEdit(false);
   };
 
   // onCancel handler, discard changes to note
@@ -53,6 +57,7 @@ function Note({ note, onClickSave }) {
     setEditDetail(false);
     setTitle(note.title);
     setDetail(note.detail);
+    setEdit(false);
   };
 
   // onChange handler, update the title and detail
