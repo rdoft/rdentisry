@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Typography, ClickAwayListener } from "@mui/material";
-import { InputText, InputTextarea } from "primereact";
+import { InputText, InputTextarea, Button } from "primereact";
 import ActionGroup from "components/ActionGroup/ActionGroup";
 
 function Note({ _note, onSave, setEdit, onDelete }) {
@@ -121,23 +121,34 @@ function Note({ _note, onSave, setEdit, onDelete }) {
 
       {/* Title */}
       {editTitle ? (
-        <Grid item xs={12} m={1}>
-          <ClickAwayListener onClickAway={handleClickAway}>
-            <InputText
-              id="title"
-              variant="outlined"
-              autoFocus={true}
-              className="w-full font-bold text-2xl"
-              style={{ padding: "8px", color: "#182A4D" }}
-              value={note.title}
-              onChange={handleChange}
+        <>
+          <Grid item xs={11} m={1}>
+            <ClickAwayListener onClickAway={handleClickAway}>
+              <InputText
+                id="title"
+                variant="outlined"
+                autoFocus={true}
+                className="w-full font-bold text-2xl"
+                style={{ padding: "8px", color: "#182A4D" }}
+                value={note.title}
+                onChange={handleChange}
+              />
+            </ClickAwayListener>
+          </Grid>
+          <Grid item xs>
+            <Button
+              icon="pi pi-times"
+              size="small"
+              severity="secondary"
+              text
+              onClick={handleCancelClick}
             />
-          </ClickAwayListener>
-        </Grid>
+          </Grid>
+        </>
       ) : (
         <Grid
           item
-          xs={12}
+          xs={11}
           m={1}
           p={1}
           sx={{
@@ -162,24 +173,35 @@ function Note({ _note, onSave, setEdit, onDelete }) {
 
       {/* Detail */}
       {editDetail ? (
-        <Grid item xs={12} m={1}>
-          <ClickAwayListener onClickAway={handleClickAway}>
-            <InputTextarea
-              id="detail"
-              variant="outlined"
-              autoResize="true"
-              autoFocus={true}
-              className="w-full font-light text-sm line-height-3"
-              style={{ padding: "8px", color: "#182A4D" }}
-              value={note.detail}
-              onChange={handleChange}
+        <>
+          <Grid item xs={11} m={1}>
+            <ClickAwayListener onClickAway={handleClickAway}>
+              <InputTextarea
+                id="detail"
+                variant="outlined"
+                autoResize="true"
+                autoFocus={true}
+                className="w-full font-light text-sm line-height-3"
+                style={{ padding: "8px", color: "#182A4D" }}
+                value={note.detail}
+                onChange={handleChange}
+              />
+            </ClickAwayListener>
+          </Grid>
+          <Grid item xs>
+            <Button
+              icon="pi pi-times"
+              size="small"
+              severity="secondary"
+              text
+              onClick={handleCancelClick}
             />
-          </ClickAwayListener>
-        </Grid>
+          </Grid>
+        </>
       ) : (
         <Grid
           item
-          xs={12}
+          xs={11}
           m={1}
           p={1}
           sx={{
