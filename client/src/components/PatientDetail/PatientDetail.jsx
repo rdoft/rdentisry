@@ -48,7 +48,9 @@ function PatientDetail() {
   // Set the default values
   const [patient, setPatient] = useState(null);
   const [activeIndex, setActiveIndex] = useState(idx);
-  const [counts, setCounts] = useState([]);
+  const [countAppointment, setCountAppointment] = useState(0);
+  const [countPayment, setCountPayment] = useState(0);
+  const [countNote, setCountNote] = useState(0);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
   const [paymentDialog, setPaymentDialog] = useState(false);
   const [noteDialog, setNoteDialog] = useState(false);
@@ -60,7 +62,7 @@ function PatientDetail() {
 
   useEffect(() => {
     if (patient) {
-      getCounts();
+      getCounts(-1);
     }
   }, [patient]);
 
@@ -84,22 +86,41 @@ function PatientDetail() {
   };
 
   // Get and set the item counts of the tab
-  const getCounts = async () => {
+  const getCounts = async (_activeIndex) => {
     let response;
-    let counts_ = [];
+    _activeIndex = _activeIndex || activeIndex;
 
     try {
-      // Get the list of appointments of the patient and set appointments count
-      response = await AppointmentService.getAppointments(patient.id);
-      counts_.push(response.data.length || 0);
-      // Get the list of payments of the patient and set payments count
-      response = await PaymentService.getPayments(patient.id);
-      counts_.push(response.data.length || 0);
-      // Get the list of notes of the patient and set notes count
-      response = await NoteService.getNotes(patient.id);
-      counts_.push(response.data.length || 0);
-
-      setCounts(counts_);
+      switch (_activeIndex) {
+        case 0:
+          // Get the list of appointments of the patient and set appointments count
+          response = await AppointmentService.getAppointments(patient.id);
+          setCountAppointment(response.data.length || 0);
+          break;
+        case 1:
+          // Get the list of payments of the patient and set payments count
+          response = await PaymentService.getPayments(patient.id);
+          setCountPayment(response.data.length || 0);
+          break;
+        case 2:
+          // Get the list of notes of the patient and set notes count
+          response = await NoteService.getNotes(patient.id);
+          setCountNote(response.data.length || 0);
+          break;
+        // case 3:
+        //   return null;
+        // case 4:
+        //   return null;
+        default:
+          // Get all counts and set it
+          response = await AppointmentService.getAppointments(patient.id);
+          setCountAppointment(response.data.length || 0);
+          response = await PaymentService.getPayments(patient.id);
+          setCountPayment(response.data.length || 0);
+          response = await NoteService.getNotes(patient.id);
+          setCountNote(response.data.length || 0);
+          break;
+      }
     } catch (error) {
       toast.error(toastErrorMessage(error));
     }
@@ -199,7 +220,7 @@ function PatientDetail() {
                 headerTemplate={(options) => (
                   <TabHeader
                     label="Randevular"
-                    badge={counts[0]}
+                    badge={countAppointment}
                     onClick={options.onClick}
                   />
                 )}
@@ -216,7 +237,7 @@ function PatientDetail() {
                 headerTemplate={(options) => (
                   <TabHeader
                     label="Ödemeler"
-                    badge={counts[1]}
+                    badge={countPayment}
                     onClick={options.onClick}
                   />
                 )}
@@ -233,7 +254,7 @@ function PatientDetail() {
                 headerTemplate={(options) => (
                   <TabHeader
                     label="Notlar"
-                    badge={counts[2]}
+                    badge={countNote}
                     onClick={options.onClick}
                   />
                 )}
@@ -249,7 +270,7 @@ function PatientDetail() {
                 headerTemplate={(options) => (
                   <TabHeader
                     label="Tedaviler"
-                    badge={counts[3]}
+                    badge={countPrescription}
                     onClick={options.onClick}
                   />
                 )}
@@ -258,7 +279,7 @@ function PatientDetail() {
                 headerTemplate={(options) => (
                   <TabHeader
                     label="Dökümanlar"
-                    badge={counts[4]}
+                    badge={countDocument}
                     onClick={options.onClick}
                   />
                 )}
