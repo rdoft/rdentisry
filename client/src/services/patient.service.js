@@ -51,4 +51,18 @@ patient.deletePatients = (ids) => {
   return API.delete(`${API_URL}?patientId=${ids.join(",")}`);
 };
 
+/**
+ * Get the procedures of the selected patient
+ * @param patientId id of the patient
+ * @query tooth: number of the tooth
+ * @query completed: flag for completed/noncompleted
+ */
+patient.getPatientProcedures = (patientId, tooth) => {
+  if (tooth) {
+    return API.get(`${API_URL}/${patientId}/procedures?tooth=${tooth}`);
+  } else {
+    return API.get(`${API_URL}/${patientId}/procedures`);
+  }
+};
+
 export default patient;

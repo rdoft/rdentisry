@@ -4,6 +4,7 @@ const Patient = db.patient;
 const Payment = db.payment;
 const Procedure = db.procedure;
 const PatientProcedure = db.patientProcedure;
+const ProcedureCategory = db.procedureCategory;
 
 /**
  * Get patient list
@@ -43,7 +44,7 @@ exports.getPatients = async (req, res) => {
         ],
       });
       patients = JSON.parse(JSON.stringify(patients));
-      
+
       // Control overdue status
       for (let patient of patients) {
         patient.payments.find(
@@ -312,6 +313,16 @@ exports.getPatientProcedures = async (req, res) => {
                 ["Name", "name"],
                 ["Price", "price"],
               ],
+              include: [
+                {
+                  model: ProcedureCategory,
+                  as: "procedureCategory",
+                  attributes: [
+                    ["ProcedureCategoryId", "id"],
+                    ["Title", "title"],
+                  ],
+                },
+              ],
             },
           ],
         },
@@ -319,9 +330,9 @@ exports.getPatientProcedures = async (req, res) => {
     });
 
     if (patient) {
-      res.status(200).send(patient.toJSON());
+      res.status(200).send(patient.patientProcedures);
     } else {
-      res.status(404).send([]);
+      res.status(200).send([]);
     }
   } catch (error) {
     res.status(500).send(error);

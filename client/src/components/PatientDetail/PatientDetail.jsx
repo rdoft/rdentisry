@@ -8,6 +8,7 @@ import TabHeader from "./TabHeader";
 import AppointmentsTab from "./Appointments/AppointmentsTab";
 import PaymentsTab from "./Payments/PaymentsTab";
 import PatientDetailToolbar from "./PatientDetailToolbar";
+import ProceduresTab from "./Procedures/ProceduresTab";
 
 // assets
 import "assets/styles/PatientDetail/PatientDetail.css";
@@ -26,8 +27,8 @@ const getActiveIndex = (tab) => {
       return 1;
     case `notes`:
       return 2;
-    // case `treatments`:
-    //   return 3;
+    case `procedures`:
+      return 3;
     // case `documents`:
     //   return 4;
     default:
@@ -51,6 +52,7 @@ function PatientDetail() {
   const [countAppointment, setCountAppointment] = useState(0);
   const [countPayment, setCountPayment] = useState(0);
   const [countNote, setCountNote] = useState(0);
+  const [countProcedure, setCountProcedure] = useState(0);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
   const [paymentDialog, setPaymentDialog] = useState(false);
   const [noteDialog, setNoteDialog] = useState(false);
@@ -266,16 +268,18 @@ function PatientDetail() {
                   getCounts={getCounts}
                 />
               </TabPanel>
-              {/* <TabPanel
+              <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
                     label="Tedaviler"
-                    badge={countPrescription}
+                    badge={countProcedure}
                     onClick={options.onClick}
                   />
                 )}
-              ></TabPanel>
-              <TabPanel
+              >
+                <ProceduresTab patient={patient} />
+              </TabPanel>
+              {/* <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
                     label="Dökümanlar"
