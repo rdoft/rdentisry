@@ -72,25 +72,29 @@ function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
   };
 
   return (
-    <Grid container item alignItems="center">
-      <Grid item xs={1}>
-        <Button
-          icon="pi pi-angle-left"
-          rounded
-          text
-          severity="secondary"
-          onClick={handlePrevTooth}
-        />
-      </Grid>
-      <Grid item xs={1}>
-        <Button
-          icon="pi pi-angle-right"
-          rounded
-          text
-          severity="secondary"
-          onClick={handleNextTooth}
-        />
-      </Grid>
+    <Grid container item alignItems="center" justifyContent="end">
+      {selectedTooth && (
+        <Grid item xs={1}>
+          <Button
+            icon="pi pi-angle-left"
+            rounded
+            text
+            severity="secondary"
+            onClick={handlePrevTooth}
+          />
+        </Grid>
+      )}
+      {selectedTooth && (
+        <Grid item xs={1}>
+          <Button
+            icon="pi pi-angle-right"
+            rounded
+            text
+            severity="secondary"
+            onClick={handleNextTooth}
+          />
+        </Grid>
+      )}
       <Grid item xs={9}>
         <Typography
           variant="h3"
@@ -99,7 +103,7 @@ function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
             color: "#182A4D",
           }}
         >
-          {selectedTooth && `Diş ${selectedTooth}`}
+          {selectedTooth ? `Diş ${selectedTooth}` : `Tüm İşlemler`}
         </Typography>
       </Grid>
       <Grid container item xs={1} justifyContent="end">

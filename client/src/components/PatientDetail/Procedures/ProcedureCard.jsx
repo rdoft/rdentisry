@@ -66,7 +66,7 @@ function ProcedureCard({ procedure }) {
 
   // TEMPLATES -----------------------------------------------------------------
   // Set category of the procedure
-  const category = (
+  const category = icon && (
     <Tooltip title={label} placement="left">
       <Avatar
         src={icon}
