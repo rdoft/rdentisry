@@ -72,7 +72,7 @@ function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
   };
 
   return (
-    <Grid container item alignItems="center" justifyContent="center">
+    <Grid container item alignItems="center">
       {!selectedTooth ? (
         <>
           {/* Tooth number */}
@@ -84,7 +84,7 @@ function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
                 color: "#182A4D",
               }}
             >
-              {`Tüm İşlemler`}
+              {`Tüm Tedaviler`}
             </Typography>
           </Grid>
         </>

@@ -115,7 +115,7 @@ function ProceduresTab({ patient }) {
           />
         </Grid>
         {procedures.length === 0 ? (
-          <NotFoundText text={"İşlem yok"} p={3} />
+          <NotFoundText text={"Tedavi yok"} p={3} />
         ) : (
           <Grid item>{proceduresTemplate}</Grid>
         )}
