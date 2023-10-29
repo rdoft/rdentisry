@@ -1,10 +1,11 @@
 import React from "react";
 
-function NotFoundText({ text, p = 2}) { 
+function NotFoundText({ text, p = 2 }) {
   return (
-    <p className={`text-center p-${p}`}>{text}</p>
+    <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
+      <p className={`text-center p-${p}`}>{text}</p>
+    </div>
   );
 }
 
 export default NotFoundText;
-  

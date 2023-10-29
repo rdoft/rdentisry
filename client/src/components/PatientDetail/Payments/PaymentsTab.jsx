@@ -192,7 +192,7 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog, getCounts
   return (
     <div style={{ backgroundColor: "white", borderRadius: "8px"}}>
       {payments.length === 0 ? (
-        <NotFoundText text="Ödeme kaydı bulunamadı" />
+        <NotFoundText text="Ödeme yok" p={3} />
       ) : (
         <Grid
           container

@@ -158,21 +158,28 @@ function AppointmentsTab({
           </Grid>
         </Grid>
         <Grid item md={6} xs={12} pr={2}>
-          <DataScroller
-            value={activeAppointments}
-            itemTemplate={appointmentTemplate}
-            rows={10}
-            emptyMessage={<NotFoundText text="Randevu bulunamadı" p={0} />}
-          ></DataScroller>
+          {activeAppointments.length === 0 ? (
+            <NotFoundText text="Randevu yok" p={3} />
+          ) : (
+            <DataScroller
+              value={activeAppointments}
+              itemTemplate={appointmentTemplate}
+              rows={10}
+            ></DataScroller>
+          )}
         </Grid>
         <Grid item md={6} xs={12} pl={2}>
-          <DataScroller
-            value={otherAppointments}
-            itemTemplate={appointmentTemplate}
-            rows={10}
-            emptyMessage={<NotFoundText text="Randevu bulunamadı" p={0} />}
-            style={{ textAlign: "center" }}
-          ></DataScroller>
+          {otherAppointments.length === 0 ? (
+            <NotFoundText text="Randevu yok" p={3} />
+          ) : (
+            <DataScroller
+              value={otherAppointments}
+              itemTemplate={appointmentTemplate}
+              rows={10}
+              emptyMessage={<NotFoundText text="Randevu yok" p={0} />}
+              style={{ textAlign: "center" }}
+            ></DataScroller>
+          )}
         </Grid>
       </Grid>
       {appointmentDialog && (

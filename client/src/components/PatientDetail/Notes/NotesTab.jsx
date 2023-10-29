@@ -109,12 +109,15 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
     <>
       <Grid container justifyContent="space-between" mt={2}>
         <Grid item xs={4} pr={3}>
-          <DataScroller
-            value={notes}
-            itemTemplate={noteTemplate}
-            rows={10}
-            emptyMessage={<NotFoundText text={"Not bulunamadı"} p={0} />}
-          ></DataScroller>
+          {notes.length === 0 ? (
+            <NotFoundText text="Not yok" p={3} />
+          ) : (
+            <DataScroller
+              value={notes}
+              itemTemplate={noteTemplate}
+              rows={10}
+            ></DataScroller>
+          )}
         </Grid>
         <Grid
           item
