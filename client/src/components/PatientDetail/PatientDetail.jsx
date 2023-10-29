@@ -228,6 +228,7 @@ function PatientDetail() {
                 )}
               >
                 <AppointmentsTab
+                  key={patient.id}
                   patient={patient}
                   appointmentDialog={appointmentDialog}
                   showDialog={showAppointmentDialog}
@@ -245,6 +246,7 @@ function PatientDetail() {
                 )}
               >
                 <PaymentsTab
+                  key={patient.id}
                   patient={patient}
                   paymentDialog={paymentDialog}
                   showDialog={showPaymentDialog}
@@ -262,6 +264,7 @@ function PatientDetail() {
                 )}
               >
                 <NotesTab
+                  key={patient.id}
                   patient={patient}
                   noteDialog={noteDialog}
                   hideDialog={hideNoteDialog}
@@ -277,7 +280,7 @@ function PatientDetail() {
                   />
                 )}
               >
-                <ProceduresTab patient={patient} />
+                <ProceduresTab key={patient.id} patient={patient} />
               </TabPanel>
               {/* <TabPanel
                 headerTemplate={(options) => (

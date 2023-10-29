@@ -16,17 +16,11 @@ import ProcedureToolbar from "./ProcedureToolbar";
 function ProceduresTab({ patient }) {
   const [procedures, setProcedures] = useState([]);
   const [groupedProcedures, setGroupedProcedures] = useState({});
-  const [selectedTooth, setSelectedTooth] = useState(null);
+  const [selectedTooth, setSelectedTooth] = useState("11");
 
   useEffect(() => {
-    getProcedures(patient.id);
-  }, [patient]);
-
-  useEffect(() => {
-    selectedTooth
-      ? getToothProcedures(patient.id, selectedTooth)
-      : getProcedures(patient.id);
-  }, [selectedTooth]);
+    getProcedures(patient.id, selectedTooth);
+  }, [patient, selectedTooth]);
 
   // FUNCTIONS ----------------------------------------------------------------
   // Group procedures by tooth number
@@ -51,29 +45,19 @@ function ProceduresTab({ patient }) {
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of the procedures of the patient and set procedures value
-  const getProcedures = async (patientId) => {
+  const getProcedures = async (patientId, tooth) => {
     let response;
     let procedures;
 
     try {
-      response = await PatientService.getPatientProcedures(patientId);
-      procedures = response.data;
-
-      groupProcedures(procedures);
-      setProcedures(procedures);
-    } catch (error) {
-      toast.error(toastErrorMessage(error));
-    }
-  };
-
-  // Get the list of the proceures of the selected tooth of patient
-  const getToothProcedures = async (patientId, tooth) => {
-    let response;
-    let procedures;
-
-    try {
-      response = await PatientService.getPatientProcedures(patientId, tooth);
-      procedures = response.data;
+      if (tooth) {
+        response = await PatientService.getPatientProcedures(patientId, tooth);
+        procedures = response.data;
+      } else {
+        response = await PatientService.getPatientProcedures(patientId);
+        procedures = response.data;
+        groupProcedures(procedures);
+      }
 
       setProcedures(procedures);
     } catch (error) {
@@ -88,18 +72,20 @@ function ProceduresTab({ patient }) {
     }
   };
 
-  // Template the list of the procedures of the selected tooth of patient
-  const fieldset = Object.entries(groupedProcedures).map(
-    ([tooth, items]) => (
+  // Template the procedures list of the selected tooth or all teeth
+  const proceduresTemplate = selectedTooth ? (
+    <DataScroller
+      value={procedures}
+      itemTemplate={procedureTemplate}
+      rows={10}
+    ></DataScroller>
+  ) : (
+    Object.entries(groupedProcedures).map(([tooth, items]) => (
       <Fieldset
         key={tooth}
         className="mb-2"
         legend={`Diş ${tooth}`}
         toggleable
-        toggleIcon={{
-          expanded: <i className="pi pi-eye"></i>,
-          collapsed: <i className="pi pi-eye-slash"></i>,
-        }}
         style={{ fontSize: "smaller" }}
       >
         <DataScroller
@@ -108,39 +94,32 @@ function ProceduresTab({ patient }) {
           rows={10}
         ></DataScroller>
       </Fieldset>
-    )
+    ))
   );
-
-  // HANDLERS -----------------------------------------------------------------
-  // const handleSelectTooth = (tooth) => {
-  //   setSelectedTooth(tooth);
-  // };
 
   return (
     <Grid container justifyContent="space-between" mt={2}>
       {/* Dental chart */}
       <Grid item xs={5} pr={3}></Grid>
       {/* Procedure list */}
-      {procedures.length === 0 ? (
-        <Grid item xs={7}>
+      <Grid
+        item
+        xs={7}
+        p={2}
+        sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
+      >
+        <Grid item pb={2}>
+          <ProcedureToolbar
+            selectedTooth={selectedTooth}
+            onChangeTooth={setSelectedTooth}
+          />
+        </Grid>
+        {procedures.length === 0 ? (
           <NotFoundText text={"İşlem yok"} p={3} />
-        </Grid>
-      ) : (
-        <Grid
-          item
-          xs={7}
-          p={2}
-          sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
-        >
-          <Grid item pb={2}>
-            <ProcedureToolbar
-              selectedTooth={selectedTooth}
-              onChangeTooth={setSelectedTooth}
-            />
-          </Grid>
-          <Grid item>{fieldset}</Grid>
-        </Grid>
-      )}
+        ) : (
+          <Grid item>{proceduresTemplate}</Grid>
+        )}
+      </Grid>
     </Grid>
   );
 }
