@@ -135,7 +135,7 @@ function ProcedureCard({ procedure }) {
           {code}
         </Grid>
         {/* Name */}
-        <Grid item xs={7}>
+        <Grid item xs={7} pr={3}>
           {name}
         </Grid>
         {/* Category */}
