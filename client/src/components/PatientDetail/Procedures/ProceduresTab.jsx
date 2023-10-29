@@ -16,7 +16,7 @@ import ProcedureToolbar from "./ProcedureToolbar";
 function ProceduresTab({ patient }) {
   const [procedures, setProcedures] = useState([]);
   const [groupedProcedures, setGroupedProcedures] = useState({});
-  const [selectedTooth, setSelectedTooth] = useState("11");
+  const [selectedTooth, setSelectedTooth] = useState(null);
 
   useEffect(() => {
     getProcedures(patient.id, selectedTooth);
