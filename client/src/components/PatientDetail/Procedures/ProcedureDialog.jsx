@@ -186,7 +186,7 @@ function ProcedureDialog({
         <Divider type="solid" className="mt-0" />
 
         {/* Dropdown Patients */}
-        <div className="field mb-4">
+        <div className="field mb-3">
           <Dropdown
             value={patientProcedure.patient}
             options={patients}
@@ -216,7 +216,8 @@ function ProcedureDialog({
         </div>
 
         {/* Tooth */}
-        <div className="field mb-4">
+        <div className="flex grid align-items-center mb-3">
+          <label className="col-12 md:col-3 font-bold">Diş Numarası</label>
           <Chip
             label={patientProcedure.toothNumber || "Genel"}
             // image={TeethIcon}
