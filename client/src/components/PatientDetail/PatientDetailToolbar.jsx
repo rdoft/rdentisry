@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Dropdown, Toolbar } from "primereact";
-import DropdownItem from "components/DropdownItem/DropdownItem";
+import DropdownItem from "components/DropdownItem/DropdownPersonItem";
 
 // assets
 import avatarPatient from "assets/images/avatars/patient-avatar.png";

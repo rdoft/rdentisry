@@ -65,4 +65,13 @@ patient.getPatientProcedures = (patientId, tooth) => {
   }
 };
 
+/**
+ * Add a procedure to the patient
+ * @param patientId id of the patient
+ * @body tooth and procedure informations
+ */
+patient.savePatientProcedure = (patientId, procedure) => {
+  return API.post(`${API_URL}/${patientId}/procedures`, procedure);
+}
+
 export default patient;

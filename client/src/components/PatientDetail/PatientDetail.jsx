@@ -56,6 +56,7 @@ function PatientDetail() {
   const [appointmentDialog, setAppointmentDialog] = useState(false);
   const [paymentDialog, setPaymentDialog] = useState(false);
   const [noteDialog, setNoteDialog] = useState(false);
+  const [procedureDialog, setProcedureDialog] = useState(false);
 
   // Set the page on loading
   useEffect(() => {
@@ -109,8 +110,11 @@ function PatientDetail() {
           response = await NoteService.getNotes(patient.id);
           setCountNote(response.data.length || 0);
           break;
-        // case 3:
-        //   return null;
+        case 3:
+          // Get the list of procedures of the patient and set procedures count
+          response = await PatientService.getPatientProcedures(patient.id);
+          setCountProcedure(response.data.length || 0);
+          break;
         // case 4:
         //   return null;
         default:
@@ -121,6 +125,8 @@ function PatientDetail() {
           setCountPayment(response.data.length || 0);
           response = await NoteService.getNotes(patient.id);
           setCountNote(response.data.length || 0);
+          response = await PatientService.getPatientProcedures(patient.id);
+          setCountProcedure(response.data.length || 0);
           break;
       }
     } catch (error) {
@@ -159,6 +165,17 @@ function PatientDetail() {
     setNoteDialog(false);
   };
 
+  // Show add procedure dialog
+  const showProcedureDialog = () => {
+    setProcedureDialog(true);
+  };
+
+  // Hide procedure dialog
+  const hideProcedureDialog = () => {
+    setProcedureDialog(false);
+  };
+
+  // Handler for tab changes
   const handleTabChange = (event) => {
     setActiveIndex(event.index);
   };
@@ -194,8 +211,15 @@ function PatientDetail() {
             onClick={showNoteDialog}
           />
         );
-      // case 3:
-      //   return null;
+      case 3:
+        return (
+          <Button
+            label="Tedavi Ekle"
+            icon="pi pi-plus"
+            className="p-button-text p-button-info"
+            onClick={showProcedureDialog}
+          />
+        );
       // case 4:
       //   return null;
       default:
@@ -280,7 +304,14 @@ function PatientDetail() {
                   />
                 )}
               >
-                <ProceduresTab key={patient.id} patient={patient} />
+                <ProceduresTab
+                  key={patient.id}
+                  patient={patient}
+                  procedureDialog={procedureDialog}
+                  showDialog={showProcedureDialog}
+                  hideDialog={hideProcedureDialog}
+                  getCounts={getCounts}
+                />
               </TabPanel>
               {/* <TabPanel
                 headerTemplate={(options) => (

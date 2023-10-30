@@ -17,7 +17,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 
 import DialogFooter from "components/DialogFooter/DialogFooter";
-import DropdownItem from "components/DropdownItem/DropdownItem";
+import DropdownItem from "components/DropdownItem/DropdownPersonItem";
 import { toast } from "react-hot-toast";
 
 // assets

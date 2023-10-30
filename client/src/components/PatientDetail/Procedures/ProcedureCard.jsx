@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { Tag, Divider } from "primereact";
 import { Grid, Typography, Avatar, Tooltip } from "@mui/material";
 
@@ -16,8 +16,6 @@ import {
 } from "assets/images/icons";
 
 function ProcedureCard({ procedure }) {
-  const dt = useRef(null);
-
   // Icons for procedure categories
   let icon;
   let label;

@@ -18,6 +18,7 @@ import VeneerIcon from "assets/images/icons/procedure/veneer.png";
 import ExtractionIcon from "assets/images/icons/procedure/extraction.png";
 import ImplantIcon from "assets/images/icons/procedure/implant.png";
 import SurgeryIcon from "assets/images/icons/procedure/surgery.png";
+import EmptyToothIcon from "assets/images/icons/procedure/empty-tooth.png";
 
 export {
   PatientsIcon,
@@ -40,4 +41,5 @@ export {
   ExtractionIcon,
   ImplantIcon,
   SurgeryIcon,
+  EmptyToothIcon,
 };

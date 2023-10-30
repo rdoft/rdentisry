@@ -5,22 +5,36 @@ import { toast } from "react-hot-toast";
 import { DataScroller, Fieldset } from "primereact";
 import NotFoundText from "components/NotFoundText";
 import ProcedureCard from "./ProcedureCard";
+import ProcedureToolbar from "./ProcedureToolbar";
+import ProcedureDialog from "./ProcedureDialog";
 
 // assets
 import "assets/styles/PatientDetail/ProceduresTab.css";
 
 // services
 import { PatientService } from "services/index";
-import ProcedureToolbar from "./ProcedureToolbar";
 
-function ProceduresTab({ patient }) {
+function ProceduresTab({
+  patient,
+  procedureDialog,
+  showDialog,
+  hideDialog,
+  getCounts,
+}) {
   const [procedures, setProcedures] = useState([]);
   const [groupedProcedures, setGroupedProcedures] = useState({});
   const [selectedTooth, setSelectedTooth] = useState(null);
+  const [procedure, setProcedure] = useState(null);
 
+  // Set the page on loading
   useEffect(() => {
     getProcedures(patient.id, selectedTooth);
   }, [patient, selectedTooth]);
+
+  // Set the counts when procedures change
+  useEffect(() => {
+    getCounts();
+  }, [procedures]);
 
   // FUNCTIONS ----------------------------------------------------------------
   // Group procedures by tooth number
@@ -65,6 +79,32 @@ function ProceduresTab({ patient }) {
     }
   };
 
+  // Save the procedure
+  const saveProcedure = async (procedure) => {
+    try {
+      await PatientService.savePatientProcedure(patient.id, procedure);
+      toast.success("Yeni tedavi başarıyla kaydedildi");
+
+      // Get and set the updated list of procedures
+      getProcedures(patient.id, selectedTooth);
+      hideDialog();
+      setProcedure(null);
+    } catch (error) {
+      toast.error(toastErrorMessage(error));
+    }
+  };
+
+  // TODO: Implement this function
+  // Delete the procedure
+  const deleteProcedure = async (procedure) => {};
+
+  // HANDLERS -----------------------------------------------------------------
+  // onHide handler
+  const handleHideDialog = () => {
+    setProcedure(null);
+    hideDialog();
+  };
+
   // TEMPLATES ----------------------------------------------------------------
   const procedureTemplate = (procedure) => {
     if (procedure) {
@@ -98,29 +138,41 @@ function ProceduresTab({ patient }) {
   );
 
   return (
-    <Grid container justifyContent="space-between" mt={2}>
-      {/* Dental chart */}
-      <Grid item xs={5} pr={3}></Grid>
-      {/* Procedure list */}
-      <Grid
-        item
-        xs={7}
-        p={2}
-        sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
-      >
-        <Grid item pb={2}>
-          <ProcedureToolbar
-            selectedTooth={selectedTooth}
-            onChangeTooth={setSelectedTooth}
-          />
+    <>
+      <Grid container justifyContent="space-between" mt={2}>
+        {/* Dental chart */}
+        <Grid item xs={5} pr={3}></Grid>
+        {/* Procedure list */}
+        <Grid
+          item
+          xs={7}
+          p={2}
+          sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
+        >
+          <Grid item pb={2}>
+            <ProcedureToolbar
+              selectedTooth={selectedTooth}
+              onChangeTooth={setSelectedTooth}
+            />
+          </Grid>
+          {procedures.length === 0 ? (
+            <NotFoundText text={"Tedavi yok"} p={3} />
+          ) : (
+            <Grid item>{proceduresTemplate}</Grid>
+          )}
         </Grid>
-        {procedures.length === 0 ? (
-          <NotFoundText text={"Tedavi yok"} p={3} />
-        ) : (
-          <Grid item>{proceduresTemplate}</Grid>
-        )}
       </Grid>
-    </Grid>
+      {procedureDialog && (
+        <ProcedureDialog
+          _patientProcedure={
+            procedure ? procedure : { patient, toothNumber: 0 }
+          }
+          onHide={handleHideDialog}
+          onSubmit={saveProcedure}
+          onDelete={procedure && deleteProcedure}
+        />
+      )}
+    </>
   );
 }
 
