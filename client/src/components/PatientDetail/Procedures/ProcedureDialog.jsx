@@ -15,7 +15,7 @@ import DropdownProcedureItem from "components/DropdownItem/DropdownProcedureItem
 
 // assets
 import avatarPatient from "assets/images/avatars/patient-avatar.png";
-import { TeethIcon } from "assets/images/icons";
+// import { TeethIcon } from "assets/images/icons";
 
 // services
 import { PatientService, ProcedureService } from "services";
@@ -219,13 +219,17 @@ function ProcedureDialog({
         <div className="field mb-4">
           <Chip
             label={patientProcedure.toothNumber || "Genel"}
-            image={TeethIcon}
+            // image={TeethIcon}
+            // style={{
+            //   backgroundColor: "transparent",
+            //   border: "1px solid #CED4D9",
+            //   fontWeight: "bold",
+            //   fontSize: "x-large",
+            //   transform: "scale(0.7)",
+            // }}
             style={{
               backgroundColor: "transparent",
               border: "1px solid #CED4D9",
-              fontWeight: "bold",
-              fontSize: "x-large",
-              transform: "scale(0.7)",
             }}
           />
         </div>
