@@ -345,28 +345,26 @@ exports.getPatientProcedures = async (req, res) => {
  */
 exports.savePatientProcedure = async (req, res) => {
   const { patientId } = req.params;
-  const { procedureId, toothNumber } = req.body;
+  const { procedure, toothNumber } = req.body;
   let values = {
     PatientId: patientId,
-    ProcedureId: procedureId,
+    ProcedureId: procedure.id,
     ToothNumber: toothNumber,
     IsComplete: false,
   };
-  let patient;
-  let procedure;
   let patientProcedure;
 
   try {
-    patient = await Patient.findByPk(patientId);
-    if (!patient) {
-      res.status(404).send({ message: "Böyle bir hasta mevcut değil" });
-    }
+    // patient = await Patient.findByPk(patientId);
+    // if (!patient) {
+    //   res.status(404).send({ message: "Böyle bir hasta mevcut değil" });
+    // }
 
-    procedure = await Procedure.findByPk(procedureId);
-    if (!procedure) {
-      res.status(404).send({ message: "Böyle bir işlem mevcut değil" });
-    }
-
+    // procedure = await Procedure.findByPk(procedureId);
+    // if (!procedure) {
+    //   res.status(404).send({ message: "Böyle bir işlem mevcut değil" });
+    // }
+    
     // Create Appointment record
     patientProcedure = await PatientProcedure.create(values);
     patientProcedure = {
@@ -378,6 +376,7 @@ exports.savePatientProcedure = async (req, res) => {
     };
     res.status(201).send(patientProcedure);
   } catch (error) {
+    // TODO: remove this below constaints
     if (
       error instanceof Sequelize.ValidationError &&
       error.name === "SequelizeUniqueConstraintError"

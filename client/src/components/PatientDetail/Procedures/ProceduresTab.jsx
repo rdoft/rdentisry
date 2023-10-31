@@ -45,7 +45,7 @@ function ProceduresTab({
     for (let procedure of procedures) {
       tooth = procedure.toothNumber;
 
-      if (tooth) {
+      if (tooth || tooth == 0) {
         if (groupedProcedures[tooth]) {
           groupedProcedures[tooth].push(procedure);
         } else {
@@ -82,7 +82,7 @@ function ProceduresTab({
   // Save the procedure
   const saveProcedure = async (procedure) => {
     try {
-      await PatientService.savePatientProcedure(patient.id, procedure);
+      await PatientService.savePatientProcedure(procedure.patient.id, procedure);
       toast.success("Yeni tedavi başarıyla kaydedildi");
 
       // Get and set the updated list of procedures
@@ -124,7 +124,7 @@ function ProceduresTab({
       <Fieldset
         key={tooth}
         className="mb-2"
-        legend={`Diş ${tooth}`}
+        legend={tooth == 0 ? `Genel` : `Diş ${tooth}`}
         toggleable
         style={{ fontSize: "smaller" }}
       >
