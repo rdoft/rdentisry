@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Tag, Divider } from "primereact";
 import { Grid, Typography, Avatar, Tooltip } from "@mui/material";
+import ActionGroup from "components/ActionGroup/ActionGroup";
 
 // assets
 import {
@@ -15,7 +16,9 @@ import {
   SurgeryIcon,
 } from "assets/images/icons";
 
-function ProcedureCard({ procedure }) {
+function ProcedureCard({ procedure, onDelete }) {
+  const [isHover, setIsHover] = useState(false);
+
   // Icons for procedure categories
   let icon;
   let label;
@@ -62,6 +65,22 @@ function ProcedureCard({ procedure }) {
       break;
   }
 
+  // HANDLERS -----------------------------------------------------------------
+  // onMouseEnter handler for display buttons
+  const handleMouseEnter = () => {
+    setIsHover(true);
+  };
+
+  // onMouseLeave handler for hide buttons
+  const handleMouseLeave = () => {
+    setIsHover(false);
+  };
+
+  // onDelete handler
+  const handleDelete = () => {
+    onDelete(procedure);
+  };
+
   // TEMPLATES -----------------------------------------------------------------
   // Set category of the procedure
   const category = icon && (
@@ -91,17 +110,22 @@ function ProcedureCard({ procedure }) {
   );
 
   // Set code of procedure
-  const code = (
-    <Typography variant="caption" fontWeight="bold">
-      {procedure.procedure.code}
-    </Typography>
-  );
+  // const code = (
+  //   <Typography variant="caption" fontWeight="bold">
+  //     {procedure.procedure.code}
+  //   </Typography>
+  // );
 
   // Set name of procedure
   const name = (
     <Typography variant="h5" fontWeight="light">
       {procedure.procedure.name}
     </Typography>
+  );
+
+  // Set delete button
+  const deleteButton = procedure.id && (
+    <ActionGroup onClickDelete={handleDelete} />
   );
 
   // Icon for completed procedure
@@ -121,17 +145,11 @@ function ProcedureCard({ procedure }) {
     <>
       <Grid
         container
-        sx={{ marginTop: "1em", marginBottom: "1em" }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        sx={{ minHeight:"4rem", paddingY: "0.7em" }}
         alignItems="center"
       >
-        {/* IsCompleted */}
-        <Grid item xs={2}>
-          {completed}
-        </Grid>
-        {/* Code */}
-        <Grid item xs={1}>
-          {code}
-        </Grid>
         {/* Name */}
         <Grid item xs={7} pr={3}>
           {name}
@@ -144,10 +162,19 @@ function ProcedureCard({ procedure }) {
         <Grid item xs={1}>
           {price}
         </Grid>
-        <Grid container mt={1}>
-          <Grid item xs={12}>
-            <Divider style={{ margin: 0 }} />
+        {/* IsCompleted */}
+        <Grid container item xs={2} justifyContent="end">
+          {completed}
+        </Grid>
+        {isHover && (
+          <Grid container item xs={1} justifyContent="end">
+            {deleteButton}
           </Grid>
+        )}
+      </Grid>
+      <Grid container>
+        <Grid item xs={12}>
+          <Divider style={{ margin: 0 }} />
         </Grid>
       </Grid>
     </>

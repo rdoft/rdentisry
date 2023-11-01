@@ -72,6 +72,14 @@ patient.getPatientProcedures = (patientId, tooth) => {
  */
 patient.savePatientProcedure = (patientId, procedure) => {
   return API.post(`${API_URL}/${patientId}/procedures`, procedure);
-}
+};
+
+/**
+ * Delete the procedure of the patient
+ * @param id id of the procedure
+ */
+patient.deletePatientProcedure = (patientId, id) => {
+  return API.delete(`${API_URL}/${patientId}/procedures/${id}`);
+};
 
 export default patient;

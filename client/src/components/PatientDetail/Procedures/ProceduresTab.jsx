@@ -82,9 +82,11 @@ function ProceduresTab({
   // Save the procedure
   const saveProcedure = async (procedure) => {
     try {
-      await PatientService.savePatientProcedure(procedure.patient.id, procedure);
-      toast.success("Yeni tedavi başarıyla kaydedildi");
-
+      await PatientService.savePatientProcedure(
+        procedure.patient.id,
+        procedure
+      );
+      
       // Get and set the updated list of procedures
       getProcedures(patient.id, selectedTooth);
       hideDialog();
@@ -94,9 +96,22 @@ function ProceduresTab({
     }
   };
 
-  // TODO: Implement this function
   // Delete the procedure
-  const deleteProcedure = async (procedure) => {};
+  const deleteProcedure = async (procedure) => {
+    try {
+      await PatientService.deletePatientProcedure(
+        patient.id,
+        procedure.id
+      );
+
+      // Get and set the updated list of procedures
+      getProcedures(patient.id, selectedTooth);
+      hideDialog();
+      setProcedure(null);
+    } catch (error) {
+      toast.error(toastErrorMessage(error));
+    }
+  };
 
   // HANDLERS -----------------------------------------------------------------
   // onHide handler
@@ -108,7 +123,7 @@ function ProceduresTab({
   // TEMPLATES ----------------------------------------------------------------
   const procedureTemplate = (procedure) => {
     if (procedure) {
-      return <ProcedureCard procedure={procedure} />;
+      return <ProcedureCard procedure={procedure} onDelete={deleteProcedure} />;
     }
   };
 
@@ -169,7 +184,7 @@ function ProceduresTab({
           }
           onHide={handleHideDialog}
           onSubmit={saveProcedure}
-          onDelete={procedure && deleteProcedure}
+          onDelete={procedure && deleteProcedure(procedure)}
         />
       )}
     </>
