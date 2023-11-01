@@ -353,18 +353,21 @@ exports.savePatientProcedure = async (req, res) => {
     IsComplete: false,
   };
   let patientProcedure;
+  let patient;
+  let procedure_;
 
   try {
-    // patient = await Patient.findByPk(patientId);
-    // if (!patient) {
-    //   res.status(404).send({ message: "Böyle bir hasta mevcut değil" });
-    // }
+    // Check validations
+    patient = await Patient.findByPk(patientId);
+    if (!patient) {
+      res.status(404).send({ message: "Böyle bir hasta mevcut değil" });
+    }
 
-    // procedure = await Procedure.findByPk(procedureId);
-    // if (!procedure) {
-    //   res.status(404).send({ message: "Böyle bir işlem mevcut değil" });
-    // }
-    
+    procedure_ = await Procedure.findByPk(procedure.id);
+    if (!procedure_) {
+      res.status(404).send({ message: "Böyle bir işlem mevcut değil" });
+    }
+
     // Create Appointment record
     patientProcedure = await PatientProcedure.create(values);
     patientProcedure = {
@@ -376,18 +379,7 @@ exports.savePatientProcedure = async (req, res) => {
     };
     res.status(201).send(patientProcedure);
   } catch (error) {
-    // TODO: remove this below constaints
-    if (
-      error instanceof Sequelize.ValidationError &&
-      error.name === "SequelizeUniqueConstraintError"
-    ) {
-      res.status(400).send({
-        message:
-          "Aynı işlem, bir hastanın aynı dişine birden fazla kez girilemez",
-      });
-    } else {
-      res.status(500).send(error);
-    }
+    res.status(500).send(error);
   }
 };
 

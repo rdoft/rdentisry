@@ -24,12 +24,6 @@ module.exports = (sequelize, Sequelize) => {
       },
     },
     {
-      indexes: [
-        {
-          unique: true,
-          fields: ["PatientId", "ProcedureId", "ToothNumber"],
-        },
-      ],
       timestamps: false,
       tableName: "PatientProcedure",
     }
