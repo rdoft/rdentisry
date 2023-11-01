@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Chip,
-  Dialog,
-  Dropdown,
-  Divider,
-  InputNumber,
-  ConfirmDialog,
-  confirmDialog,
-} from "primereact";
+import { Chip, Dialog, Dropdown, Divider, InputNumber } from "primereact";
 import { toast } from "react-hot-toast";
 import { toastErrorMessage } from "components/errorMesage";
 import DialogFooter from "components/DialogFooter/DialogFooter";
@@ -20,12 +12,7 @@ import avatarPatient from "assets/images/avatars/patient-avatar.png";
 // services
 import { PatientService, ProcedureService } from "services";
 
-function ProcedureDialog({
-  _patientProcedure = {},
-  onHide,
-  onSubmit,
-  onDelete,
-}) {
+function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
   // Set default empty procedure
   let emptyPatientProcedure = {
     patient: null,
@@ -113,28 +100,12 @@ function ProcedureDialog({
     }
   };
 
-  // onDelete handler
-  const handleDelete = () => {
-    onDelete(patientProcedure);
-  };
-
   // onKeyDown handler
   const handleKeyDown = (event) => {
     if (isValid && event.key === "Enter") {
       handleSubmit();
     }
   };
-
-  // onDeleteConfirm handler
-  const handleDeleteConfirm =
-    onDelete &&
-    (() => {
-      confirmDialog({
-        message: "Tedaviyi silmek istediğinize emin misiniz?",
-        header: "Tedaviyi Sil",
-        footer: <DialogFooter onDelete={handleDelete} onHide={handleHide} />,
-      });
-    });
 
   // TEMPLATES ----------------------------------------------------------------
   // Patient dropdown item template
@@ -171,7 +142,6 @@ function ProcedureDialog({
 
   return (
     <>
-      <ConfirmDialog />
       <Dialog
         visible
         style={{ width: "600px" }}
@@ -183,7 +153,6 @@ function ProcedureDialog({
             disabled={!isValid}
             onHide={handleHide}
             onSubmit={handleSubmit}
-            onDelete={handleDeleteConfirm}
           />
         }
         onHide={handleHide}

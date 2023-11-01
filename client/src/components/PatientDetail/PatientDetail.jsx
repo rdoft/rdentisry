@@ -308,7 +308,6 @@ function PatientDetail() {
                   key={patient.id}
                   patient={patient}
                   procedureDialog={procedureDialog}
-                  showDialog={showProcedureDialog}
                   hideDialog={hideProcedureDialog}
                   getCounts={getCounts}
                 />

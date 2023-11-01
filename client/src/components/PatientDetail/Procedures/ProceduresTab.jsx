@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { toastErrorMessage } from "components/errorMesage";
-import { Grid } from "@mui/material";
 import { toast } from "react-hot-toast";
+import { Grid } from "@mui/material";
 import { DataScroller, Fieldset } from "primereact";
 import NotFoundText from "components/NotFoundText";
 import ProcedureCard from "./ProcedureCard";
@@ -14,13 +14,7 @@ import "assets/styles/PatientDetail/ProceduresTab.css";
 // services
 import { PatientService } from "services/index";
 
-function ProceduresTab({
-  patient,
-  procedureDialog,
-  showDialog,
-  hideDialog,
-  getCounts,
-}) {
+function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
   const [procedures, setProcedures] = useState([]);
   const [groupedProcedures, setGroupedProcedures] = useState({});
   const [selectedTooth, setSelectedTooth] = useState(null);
@@ -86,7 +80,7 @@ function ProceduresTab({
         procedure.patient.id,
         procedure
       );
-      
+
       // Get and set the updated list of procedures
       getProcedures(patient.id, selectedTooth);
       hideDialog();
@@ -99,15 +93,10 @@ function ProceduresTab({
   // Delete the procedure
   const deleteProcedure = async (procedure) => {
     try {
-      await PatientService.deletePatientProcedure(
-        patient.id,
-        procedure.id
-      );
+      await PatientService.deletePatientProcedure(patient.id, procedure.id);
 
       // Get and set the updated list of procedures
       getProcedures(patient.id, selectedTooth);
-      hideDialog();
-      setProcedure(null);
     } catch (error) {
       toast.error(toastErrorMessage(error));
     }
@@ -115,7 +104,7 @@ function ProceduresTab({
 
   // HANDLERS -----------------------------------------------------------------
   // onHide handler
-  const handleHideDialog = () => {
+  const handleHide = () => {
     setProcedure(null);
     hideDialog();
   };
@@ -182,9 +171,8 @@ function ProceduresTab({
           _patientProcedure={
             procedure ? procedure : { patient, toothNumber: 0 }
           }
-          onHide={handleHideDialog}
+          onHide={handleHide}
           onSubmit={saveProcedure}
-          onDelete={procedure && deleteProcedure(procedure)}
         />
       )}
     </>
