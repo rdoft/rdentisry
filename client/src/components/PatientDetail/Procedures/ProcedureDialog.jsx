@@ -4,6 +4,7 @@ import {
   Dialog,
   Dropdown,
   Divider,
+  InputNumber,
   ConfirmDialog,
   confirmDialog,
 } from "primereact";
@@ -38,6 +39,7 @@ function ProcedureDialog({
     ...emptyPatientProcedure,
     ..._patientProcedure,
   });
+  const [quantity, setQuantity] = useState(1);
   // Validation of payment object & properties
   const [isValid, setIsValid] = useState(false);
 
@@ -91,8 +93,12 @@ function ProcedureDialog({
     let value = event.target && event.target.value;
     let _patientProcedure = { ...patientProcedure };
 
-    _patientProcedure[attr] = value;
-    setPatientProcedure(_patientProcedure);
+    if (attr === "quantity") {
+      setQuantity(value);
+    } else {
+      _patientProcedure[attr] = value;
+      setPatientProcedure(_patientProcedure);
+    }
   };
 
   // onHide handler
@@ -102,7 +108,9 @@ function ProcedureDialog({
 
   // onSubmit handler
   const handleSubmit = () => {
-    onSubmit(patientProcedure);
+    for (let i = 0; i < quantity; i++) {
+      onSubmit(patientProcedure);
+    }
   };
 
   // onDelete handler
@@ -214,8 +222,45 @@ function ProcedureDialog({
           />
         </div>
 
+        {/* Price & Quantity */}
+        <div className="flex grid align-items-center mb-4">
+          <label htmlFor="amount" className="col-12 md:col-3 font-bold">
+            Tutar <small className="p-error">*</small>
+          </label>
+          <div className="col-5 md:col-3 p-0">
+            <InputNumber
+              id="amount"
+              value={
+                patientProcedure.procedure
+                  ? patientProcedure.procedure.price
+                  : 0
+              }
+              // onValueChange={(event) => handleChange(event, "amount")}
+              mode="currency"
+              min={0}
+              currency="TRY"
+              locale="tr-TR"
+            />
+          </div>
+
+          <label className="col-1 font-bold text-center">x</label>
+
+          <div className="col-5 md:col-2 p-0">
+            <InputNumber
+              id="quantity"
+              value={quantity}
+              onValueChange={(event) => handleChange(event, "quantity")}
+              useGrouping={false}
+              mode="decimal"
+              min={1}
+              max={10}
+              suffix=" adet"
+            />
+          </div>
+        </div>
+
         {/* Tooth */}
-        <div className="flex grid align-items-center mb-3">
+        <div className="flex grid align-items-center mb-4">
           <label className="col-12 md:col-3 font-bold">Diş Numarası</label>
           <Chip
             label={patientProcedure.toothNumber || "Genel"}
