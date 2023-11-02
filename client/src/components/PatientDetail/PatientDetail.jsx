@@ -9,14 +9,13 @@ import AppointmentsTab from "./Appointments/AppointmentsTab";
 import PaymentsTab from "./Payments/PaymentsTab";
 import PatientDetailToolbar from "./PatientDetailToolbar";
 import ProceduresTab from "./Procedures/ProceduresTab";
+import NotesTab from "./Notes/NotesTab";
 
 // assets
 import "assets/styles/PatientDetail/PatientDetail.css";
 
 // services
-import { PatientService } from "services/index";
-import { AppointmentService, PaymentService, NoteService } from "services";
-import NotesTab from "./Notes/NotesTab";
+import { AppointmentService, PaymentService, NoteService, PatientService } from "services";
 
 // Get the active index based on the path
 const getActiveIndex = (tab) => {
