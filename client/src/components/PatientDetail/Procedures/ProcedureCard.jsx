@@ -100,7 +100,7 @@ function ProcedureCard({ procedure, onDelete }) {
       </Grid>
       <Grid item>
         <Typography variant="h5" fontWeight="light">
-          {procedure.procedure.price.toLocaleString("tr-TR", {
+          {procedure.invoice.amount.toLocaleString("tr-TR", {
             style: "decimal",
             maximumFractionDigits: 2,
           })}

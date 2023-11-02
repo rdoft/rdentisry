@@ -63,6 +63,16 @@ exports.getPatientProcedures = async (req, res) => {
                 },
               ],
             },
+            {
+              model: Invoice,
+              as: "invoice",
+              attributes: [
+                ["InvoiceId", "id"],
+                ["Amount", "amount"],
+                ["Description", "description"],
+                ["Discount", "discount"],
+              ],
+            },
           ],
         },
       ],
