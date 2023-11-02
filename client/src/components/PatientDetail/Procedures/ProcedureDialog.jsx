@@ -17,16 +17,17 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
   let emptyPatientProcedure = {
     patient: null,
     procedure: null,
+    invoice: null,
     toothNumber: 0,
   };
 
   const [patients, setPatients] = useState([]);
   const [procedures, setProcedures] = useState([]);
+  const [quantity, setQuantity] = useState(1);
   const [patientProcedure, setPatientProcedure] = useState({
     ...emptyPatientProcedure,
     ..._patientProcedure,
   });
-  const [quantity, setQuantity] = useState(1);
   // Validation of payment object & properties
   const [isValid, setIsValid] = useState(false);
 
@@ -38,7 +39,10 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
 
   // Set validation flags
   useEffect(() => {
-    const _isValid = patientProcedure.patient && patientProcedure.procedure;
+    const _isValid =
+      patientProcedure.patient &&
+      patientProcedure.procedure &&
+      patientProcedure.invoice?.amount >= 0;
 
     setIsValid(_isValid);
   }, [patientProcedure]);
@@ -80,12 +84,20 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
     let value = event.target && event.target.value;
     let _patientProcedure = { ...patientProcedure };
 
-    if (attr === "quantity") {
+    if (attr === "patient") {
+      _patientProcedure.patient = value;
+    } else if (attr === "procedure") {
+      _patientProcedure.procedure = value;
+      _patientProcedure.invoice = {
+        amount: value.price,
+      };
+    } else if (attr === "amount") {
+      _patientProcedure.invoice.amount = value;
+    } else if (attr === "quantity") {
       setQuantity(value);
-    } else {
-      _patientProcedure[attr] = value;
-      setPatientProcedure(_patientProcedure);
     }
+
+    setPatientProcedure(_patientProcedure);
   };
 
   // onHide handler
@@ -200,11 +212,9 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
             <InputNumber
               id="amount"
               value={
-                patientProcedure.procedure
-                  ? patientProcedure.procedure.price
-                  : 0
+                patientProcedure.invoice ? patientProcedure.invoice.amount : 0
               }
-              // onValueChange={(event) => handleChange(event, "amount")}
+              onValueChange={(event) => handleChange(event, "amount")}
               mode="currency"
               min={0}
               currency="TRY"
