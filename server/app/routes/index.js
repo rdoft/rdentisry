@@ -7,4 +7,5 @@ module.exports = (app) => {
   procedureCategory = require("./procedureCategory.route")(app);
   procedure = require("./procedure.route")(app);
   notification = require("./notification.route")(app);
+  patientProcedure = require("./patientProcedure.route")(app);
 };
