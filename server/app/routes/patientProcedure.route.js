@@ -37,7 +37,14 @@ module.exports = function (app) {
      * @param patientId id of the patient
      * @param patientProcedureId: id of the patientProcedure
      */
-    .delete(controller.deletePatientProcedure);
+    .delete(controller.deletePatientProcedure)
+    /**
+     * Update a procedure of the patient
+     * @param patientId id of the patient
+     * @param patientProcedureId id of the patientprocedure
+     * @body tooth and procedure informations
+     */
+    .put(controller.updatePatientProcedure);
 
   app.use(API_URL, router);
 };

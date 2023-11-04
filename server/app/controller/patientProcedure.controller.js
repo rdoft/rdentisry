@@ -76,6 +76,13 @@ exports.getPatientProcedures = async (req, res) => {
           ],
         },
       ],
+      order: [
+        [
+          { model: PatientProcedure, as: "patientProcedures" },
+          "PatientProcedureId",
+          "ASC",
+        ],
+      ],
     });
 
     if (patient) {
@@ -104,12 +111,12 @@ exports.savePatientProcedure = async (req, res) => {
     // Check validations
     patient = await Patient.findByPk(patientId);
     if (!patient) {
-      res.status(404).send({ message: "Böyle bir hasta mevcut değil" });
+      return res.status(404).send({ message: "Böyle bir hasta mevcut değil" });
     }
 
     procedure_ = await Procedure.findByPk(procedure.id);
     if (!procedure_) {
-      res.status(404).send({ message: "Böyle bir işlem mevcut değil" });
+      return res.status(404).send({ message: "Böyle bir tedavi mevcut değil" });
     }
 
     // Create patient procedure record
@@ -149,6 +156,51 @@ exports.savePatientProcedure = async (req, res) => {
 };
 
 /**
+ * Update a procedure of the patient
+ * @param patientId id of the patient
+ * @param patientProcedureId id of the patientprocedure
+ * @body tooth and procedure informations
+ */
+exports.updatePatientProcedure = async (req, res) => {
+  const { patientProcedureId } = req.params;
+  const { toothNumber, isComplete, invoice } = req.body;
+  let patientProcedure;
+
+  try {
+    // Validations
+    patientProcedure = await PatientProcedure.findByPk(patientProcedureId);
+
+    if (patientProcedure) {
+      // Update patient procedure record
+      await patientProcedure.update({
+        ToothNumber: toothNumber,
+        IsComplete: isComplete || false,
+      });
+
+      // Update invoice record
+      await Invoice.update(
+        {
+          Amount: invoice.amount,
+          Description: invoice.description,
+          Discount: invoice.discount,
+        },
+        {
+          where: {
+            PatientProcedureId: patientProcedureId,
+          },
+        }
+      );
+
+      res.status(200).send({ id: patientProcedureId });
+    } else {
+      res.status(404).send({ message: "Tedavi kaydı bulunamadı" });
+    }
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+/**
  * Delete the procedure
  * @param patientProcedureId: id of the patientProcedure
  */
@@ -166,7 +218,7 @@ exports.deletePatientProcedure = async (req, res) => {
 
       res.status(200).send({ id: patientProcedureId });
     } else {
-      res.status(404).send({ message: "İşlem kaydı bulunamadı" });
+      res.status(404).send({ message: "Tedavi kaydı bulunamadı" });
     }
   } catch (error) {
     res.status(500).send(error);

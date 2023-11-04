@@ -12,7 +12,7 @@ import ProcedureDialog from "./ProcedureDialog";
 import "assets/styles/PatientDetail/ProceduresTab.css";
 
 // services
-import { PatientService } from "services/index";
+import { PatientProcedureService } from "services/index";
 
 function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
   const [procedures, setProcedures] = useState([]);
@@ -59,10 +59,15 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
 
     try {
       if (tooth) {
-        response = await PatientService.getPatientProcedures(patientId, tooth);
+        response = await PatientProcedureService.getPatientProcedures(
+          patientId,
+          tooth
+        );
         procedures = response.data;
       } else {
-        response = await PatientService.getPatientProcedures(patientId);
+        response = await PatientProcedureService.getPatientProcedures(
+          patientId
+        );
         procedures = response.data;
         groupProcedures(procedures);
       }
@@ -78,10 +83,10 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
     try {
       // Update
       if (procedure.id) {
-        await PatientService.updatePatientProcedure(procedure);
+        await PatientProcedureService.updatePatientProcedure(procedure);
       } else {
         // Create
-        await PatientService.savePatientProcedure(procedure);
+        await PatientProcedureService.savePatientProcedure(procedure);
       }
 
       // Get and set the updated list of procedures
@@ -96,7 +101,10 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
   // Delete the procedure
   const deleteProcedure = async (procedure) => {
     try {
-      await PatientService.deletePatientProcedure(patient.id, procedure.id);
+      await PatientProcedureService.deletePatientProcedure(
+        patient.id,
+        procedure.id
+      );
 
       // Get and set the updated list of procedures
       getProcedures(patient.id, selectedTooth);
@@ -117,7 +125,7 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
     if (procedure) {
       return (
         <ProcedureCard
-          procedure={procedure}
+          procedure={{ ...procedure, patient }}
           onDelete={deleteProcedure}
           onSubmit={saveProcedure}
         />

@@ -5,6 +5,7 @@ import payment from "services/payment.service";
 import notification from "services/notification.service";
 import note from "services/note.service";
 import procedure from "./procedure.service";
+import patientProcedure from "./patientProcedure.service";
 
 const PatientService = patient;
 const DoctorService = doctor;
@@ -13,6 +14,7 @@ const PaymentService = payment;
 const NotificationService = notification;
 const NoteService = note;
 const ProcedureService = procedure;
+const PatientProcedureService = patientProcedure;
 
 export {
   PatientService,
@@ -22,4 +24,5 @@ export {
   NotificationService,
   NoteService,
   ProcedureService,
+  PatientProcedureService,
 };

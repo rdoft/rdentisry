@@ -15,7 +15,13 @@ import NotesTab from "./Notes/NotesTab";
 import "assets/styles/PatientDetail/PatientDetail.css";
 
 // services
-import { AppointmentService, PaymentService, NoteService, PatientService } from "services";
+import {
+  AppointmentService,
+  PaymentService,
+  NoteService,
+  PatientService,
+  PatientProcedureService,
+} from "services";
 
 // Get the active index based on the path
 const getActiveIndex = (tab) => {
@@ -111,7 +117,9 @@ function PatientDetail() {
           break;
         case 3:
           // Get the list of procedures of the patient and set procedures count
-          response = await PatientService.getPatientProcedures(patient.id);
+          response = await PatientProcedureService.getPatientProcedures(
+            patient.id
+          );
           setCountProcedure(response.data.length || 0);
           break;
         // case 4:
@@ -124,7 +132,9 @@ function PatientDetail() {
           setCountPayment(response.data.length || 0);
           response = await NoteService.getNotes(patient.id);
           setCountNote(response.data.length || 0);
-          response = await PatientService.getPatientProcedures(patient.id);
+          response = await PatientProcedureService.getPatientProcedures(
+            patient.id
+          );
           setCountProcedure(response.data.length || 0);
           break;
       }

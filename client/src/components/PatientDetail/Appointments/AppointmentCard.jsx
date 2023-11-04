@@ -16,7 +16,7 @@ function AppointmentCard({ appointment, onClickEdit, onChangeStatus }) {
   const [isHover, setIsHover] = useState(false);
   const [status, setStatus] = useState(null);
 
-  // Set the doctors from dropdown on loading
+  // Set statuses on loading
   useEffect(() => {
     getStatus(appointment.status);
   }, [appointment]);

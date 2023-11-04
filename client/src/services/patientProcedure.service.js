@@ -33,7 +33,7 @@ patientProcedure.savePatientProcedure = (procedure) => {
  * @body tooth and procedure informations
  */
 patientProcedure.updatePatientProcedure = (procedure) => {
-  return API.post(
+  return API.put(
     `${API_URL}/${procedure.patient.id}/procedures/${procedure.id}`,
     procedure
   );

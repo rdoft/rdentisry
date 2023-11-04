@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tag, Divider } from "primereact";
 import { Grid, Typography, Avatar, Tooltip } from "@mui/material";
 import ActionGroup from "components/ActionGroup/ActionGroup";
@@ -15,11 +15,15 @@ import {
   ImplantIcon,
   SurgeryIcon,
 } from "assets/images/icons";
-import { set } from "date-fns";
 
 function ProcedureCard({ procedure, onDelete, onSubmit }) {
   const [isHover, setIsHover] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(procedure.isComplete);
+  const [isComplete, setIsComplete] = useState(null);
+
+  // Set isComplete on loading
+  useEffect(() => {
+    setIsComplete(procedure.isComplete);
+  }, [procedure]);
 
   // Icons for procedure categories
   let icon;
@@ -84,8 +88,7 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
   };
 
   const handleChange = () => {
-    procedure.isComplete = !procedure.isComplete;
-    setIsCompleted(procedure.isComplete);
+    procedure.isComplete = !isComplete;
     onSubmit(procedure);
   };
 
@@ -137,16 +140,14 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
   );
 
   // Icon for completed procedure
-  const completed = procedure.isComplete ? (
+  const completed = (
     <Tag
-      value="Tamamlandı"
-      style={{ backgroundColor: "#DFFCF0", color: "#22A069" }}
-      onClick={handleChange}
-    />
-  ) : (
-    <Tag
-      value="Bekleniyor"
-      style={{ backgroundColor: "#E8F0FF", color: "#1E7AFC" }}
+      value={isComplete ? "Tamamlandı" : "Bekleniyor"}
+      style={
+        isComplete
+          ? { backgroundColor: "#DFFCF0", color: "#22A069", cursor: "pointer" }
+          : { backgroundColor: "#E8F0FF", color: "#1E7AFC", cursor: "pointer" }
+      }
       onClick={handleChange}
     />
   );
