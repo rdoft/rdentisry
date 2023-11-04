@@ -51,35 +51,4 @@ patient.deletePatients = (ids) => {
   return API.delete(`${API_URL}?patientId=${ids.join(",")}`);
 };
 
-/**
- * Get the procedures of the selected patient
- * @param patientId id of the patient
- * @query tooth: number of the tooth
- * @query completed: flag for completed/noncompleted
- */
-patient.getPatientProcedures = (patientId, tooth) => {
-  if (tooth) {
-    return API.get(`${API_URL}/${patientId}/procedures?tooth=${tooth}`);
-  } else {
-    return API.get(`${API_URL}/${patientId}/procedures`);
-  }
-};
-
-/**
- * Add a procedure to the patient
- * @param patientId id of the patient
- * @body tooth and procedure informations
- */
-patient.savePatientProcedure = (patientId, procedure) => {
-  return API.post(`${API_URL}/${patientId}/procedures`, procedure);
-};
-
-/**
- * Delete the procedure of the patient
- * @param id id of the procedure
- */
-patient.deletePatientProcedure = (patientId, id) => {
-  return API.delete(`${API_URL}/${patientId}/procedures/${id}`);
-};
-
 export default patient;

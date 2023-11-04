@@ -15,9 +15,11 @@ import {
   ImplantIcon,
   SurgeryIcon,
 } from "assets/images/icons";
+import { set } from "date-fns";
 
-function ProcedureCard({ procedure, onDelete }) {
+function ProcedureCard({ procedure, onDelete, onSubmit }) {
   const [isHover, setIsHover] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(procedure.isComplete);
 
   // Icons for procedure categories
   let icon;
@@ -81,6 +83,12 @@ function ProcedureCard({ procedure, onDelete }) {
     onDelete(procedure);
   };
 
+  const handleChange = () => {
+    procedure.isComplete = !procedure.isComplete;
+    setIsCompleted(procedure.isComplete);
+    onSubmit(procedure);
+  };
+
   // TEMPLATES -----------------------------------------------------------------
   // Set category of the procedure
   const category = icon && (
@@ -133,11 +141,13 @@ function ProcedureCard({ procedure, onDelete }) {
     <Tag
       value="Tamamlandı"
       style={{ backgroundColor: "#DFFCF0", color: "#22A069" }}
+      onClick={handleChange}
     />
   ) : (
     <Tag
       value="Bekleniyor"
       style={{ backgroundColor: "#E8F0FF", color: "#1E7AFC" }}
+      onClick={handleChange}
     />
   );
 
@@ -147,7 +157,7 @@ function ProcedureCard({ procedure, onDelete }) {
         container
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        sx={{ minHeight:"4rem", paddingY: "0.7em" }}
+        sx={{ minHeight: "4rem", paddingY: "0.7em" }}
         alignItems="center"
       >
         {/* Name */}

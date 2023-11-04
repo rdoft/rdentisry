@@ -76,10 +76,13 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
   // Save the procedure
   const saveProcedure = async (procedure) => {
     try {
-      await PatientService.savePatientProcedure(
-        procedure.patient.id,
-        procedure
-      );
+      // Update
+      if (procedure.id) {
+        await PatientService.updatePatientProcedure(procedure);
+      } else {
+        // Create
+        await PatientService.savePatientProcedure(procedure);
+      }
 
       // Get and set the updated list of procedures
       getProcedures(patient.id, selectedTooth);
@@ -112,7 +115,13 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
   // TEMPLATES ----------------------------------------------------------------
   const procedureTemplate = (procedure) => {
     if (procedure) {
-      return <ProcedureCard procedure={procedure} onDelete={deleteProcedure} />;
+      return (
+        <ProcedureCard
+          procedure={procedure}
+          onDelete={deleteProcedure}
+          onSubmit={saveProcedure}
+        />
+      );
     }
   };
 
