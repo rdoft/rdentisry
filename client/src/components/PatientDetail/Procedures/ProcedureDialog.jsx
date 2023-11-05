@@ -197,6 +197,7 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
             filter
             filterBy="name,code,procedureCategory.title"
             placeholder="Tedavi seçiniz..."
+            scrollHeight="300px"
             valueTemplate={procedureDropdownValue}
             itemTemplate={procedureDropdownItem}
             onChange={(event) => handleChange(event, "procedure")}
