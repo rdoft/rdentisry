@@ -19,14 +19,6 @@ const overview = {
   type: "group",
   children: [
     // {
-    //   id: "home",
-    //   title: "Anasayfa",
-    //   type: "item",
-    //   url: "/home",
-    //   icon: icons.AppstoreOutlined,
-    //   breadcrumbs: false,
-    // },
-    // {
     //   id: "overview",
     //   title: "Genel",
     //   type: "item",

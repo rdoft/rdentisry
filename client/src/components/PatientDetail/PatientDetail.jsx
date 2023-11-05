@@ -3,7 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { toastErrorMessage } from "components/errorMesage";
 import { TabView, TabPanel, Button } from "primereact";
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import TabHeader from "./TabHeader";
 import AppointmentsTab from "./Appointments/AppointmentsTab";
 import PaymentsTab from "./Payments/PaymentsTab";
@@ -254,7 +254,9 @@ function PatientDetail() {
               <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
-                    label="Randevular"
+                    label=<Typography variant="h5" sx={{ fontWeight: "light" }}>
+                      Randevular
+                    </Typography>
                     badge={countAppointment}
                     onClick={options.onClick}
                   />
@@ -272,7 +274,9 @@ function PatientDetail() {
               <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
-                    label="Ödemeler"
+                    label=<Typography variant="h5" sx={{ fontWeight: "light" }}>
+                      Ödemeler
+                    </Typography>
                     badge={countPayment}
                     onClick={options.onClick}
                   />
@@ -290,7 +294,9 @@ function PatientDetail() {
               <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
-                    label="Notlar"
+                    label=<Typography variant="h5" sx={{ fontWeight: "light" }}>
+                      Notlar
+                    </Typography>
                     badge={countNote}
                     onClick={options.onClick}
                   />
@@ -307,7 +313,9 @@ function PatientDetail() {
               <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
-                    label="Tedaviler"
+                    label=<Typography variant="h5" sx={{ fontWeight: "light" }}>
+                      Tedaviler
+                    </Typography>
                     badge={countProcedure}
                     onClick={options.onClick}
                   />

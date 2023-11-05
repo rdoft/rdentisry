@@ -1,10 +1,7 @@
-import PatientsIcon from "assets/images/icons/patients.png";
-import CalenderIcon from "assets/images/icons/calendar.png";
-import ToDoIcon from "assets/images/icons/diagnosis.png";
-import DentistIcon from "assets/images/icons/dentist.png";
-import BarChartIcon from "assets/images/icons/barchart.png";
+import CalendarIcon from "assets/images/icons/calendar.png";
 import PaymentIcon from "assets/images/icons/wallet.png";
-import LiraIcon from "assets/images/icons/lira/turkish-lira.png";
+import ProcedureIcon from "assets/images/icons/procedure.png";
+import NoteIcon from "assets/images/icons/notes.png";
 import LiraSuccessIcon from "assets/images/icons/lira/lira-success.png";
 import LiraWarningIcon from "assets/images/icons/lira/lira-warning.png";
 import LiraDangerIcon from "assets/images/icons/lira/lira-danger.png";
@@ -22,13 +19,10 @@ import EmptyToothIcon from "assets/images/icons/procedure/empty-tooth.png";
 import TeethIcon from "assets/images/icons/dentures.png";
 
 export {
-  PatientsIcon,
-  CalenderIcon,
-  ToDoIcon,
-  DentistIcon,
-  BarChartIcon,
+  CalendarIcon,
   PaymentIcon,
-  LiraIcon,
+  ProcedureIcon,
+  NoteIcon,
   LiraSuccessIcon,
   LiraWarningIcon,
   LiraDangerIcon,
