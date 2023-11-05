@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Tag, Divider, InputNumber } from "primereact";
+import { Tag, Divider, InputNumber, ConfirmDialog } from "primereact";
 import {
   Grid,
-  Hidden,
   Avatar,
   Tooltip,
   Typography,
   ClickAwayListener,
 } from "@mui/material";
 import ActionGroup from "components/ActionGroup/ActionGroup";
+import DialogFooter from "components/DialogFooter/DialogFooter";
 
 // assets
 import {
@@ -25,6 +25,7 @@ import {
 
 function ProcedureCard({ procedure, onDelete, onSubmit }) {
   const [isHover, setIsHover] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
   const [editAmount, setEditAmount] = useState(false);
   const [isComplete, setIsComplete] = useState(procedure.isComplete);
   const [prevAmount, setPrevAmount] = useState(procedure.invoice.amount);
@@ -94,7 +95,18 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
 
   // onDelete handler
   const handleDelete = () => {
+    setIsDelete(true);
+  };
+
+  // onConfirmDelete handler
+  const handleDeleteConfirm = () => {
     onDelete(procedure);
+    setIsDelete(false);
+  };
+
+  // onHideDelete handler
+  const handleDeleteHide = () => {
+    setIsDelete(false);
   };
 
   // onChangeStatus handler
@@ -209,8 +221,30 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
     />
   );
 
+  // Delete confirm dialog
+  const deleteDialog = (
+    <ConfirmDialog
+      visible={isDelete}
+      onHide={handleDeleteHide}
+      message=<Typography variant="body1">
+        <strong>
+          {procedure.procedure.name.length > 40
+            ? `${procedure.procedure.name.substring(0, 40)}...`
+            : procedure.procedure.name}
+        </strong>{" "}
+        tedavisini silmek istediğinize emin misiniz?
+      </Typography>
+      header="Tedavi Sil"
+      footer=<DialogFooter
+        onHide={handleDeleteHide}
+        onDelete={handleDeleteConfirm}
+      />
+    />
+  );
+
   return (
     <>
+      {/* Card */}
       <Grid
         container
         onMouseEnter={handleMouseEnter}
@@ -241,11 +275,14 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
           </Grid>
         )}
       </Grid>
+      {/* Divider */}
       <Grid container>
         <Grid item xs={12}>
           <Divider style={{ margin: 0 }} />
         </Grid>
       </Grid>
+      {/* Confirm delete dialog */}
+      {deleteDialog}
     </>
   );
 }
