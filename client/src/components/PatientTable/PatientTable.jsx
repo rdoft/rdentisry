@@ -240,8 +240,8 @@ function PatientsTable() {
   };
 
   // onRowClick handler for goto patient page
-  const handleRowClick = () => {
-    navigate(`/patients/${rowIndex}?tab=payments`);
+  const handleRowClick = (event) => {
+    navigate(`/patients/${event.data.id}?tab=payments`);
   };
 
   // onRowMouseEnter handler for display buttons
@@ -253,6 +253,7 @@ function PatientsTable() {
   const handleRowMouseLeave = () => {
     setRowIndex(null);
   };
+
   // onClick handler for add new appointment
   const handleClickAddAppointment = (event, patient) => {
     event.stopPropagation();
@@ -338,18 +339,20 @@ function PatientsTable() {
             style={{ width: "4rem", textAlign: "center" }}
           ></Column>
           {/* Action buttons */}
-          <Column
-            body={(patient) =>
-              patient.id === rowIndex ? (
-                <ActionGroup
-                  label="Randevu"
-                  onClickAdd={(event) =>
-                    handleClickAddAppointment(event, patient)
-                  }
-                />
-              ) : null
-            }
-          ></Column>
+          {!window.matchMedia("(hover: none)").matches && (
+            <Column
+              body={(patient) =>
+                patient.id === rowIndex ? (
+                  <ActionGroup
+                    label="Randevu"
+                    onClickAdd={(event) =>
+                      handleClickAddAppointment(event, patient)
+                    }
+                  />
+                ) : null
+              }
+            ></Column>
+          )}
           {/* Patient action buttons */}
           <Column
             body={(patient) => (
@@ -392,7 +395,16 @@ function PatientsTable() {
       {/* Appointment dialog */}
       {appointmentDialog && (
         <AppointmentDialog
-          _appointment={{ patient }}
+          _appointment={{
+            patient: {
+              id: patient.id,
+              idNumber: patient.idNumber,
+              name: patient.name,
+              surname: patient.surname,
+              phone: patient.phone,
+              birthYear: patient.birthYear,
+            },
+          }}
           onHide={hideAppointmentDialog}
           onSubmit={saveAppointment}
         />

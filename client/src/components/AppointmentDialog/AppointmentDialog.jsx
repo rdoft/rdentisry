@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-
+import { toast } from "react-hot-toast";
+import { toastErrorMessage } from "components/errorMesage";
 import {
   Dialog,
   Dropdown,
@@ -10,25 +11,24 @@ import {
   ConfirmDialog,
   confirmDialog,
 } from "primereact";
+import DialogFooter from "components/DialogFooter/DialogFooter";
+import DropdownPersonItem from "components/DropdownItem/DropdownPersonItem";
 
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 
-import DialogFooter from "components/DialogFooter/DialogFooter";
-import DropdownItem from "components/DropdownItem/DropdownPersonItem";
-import { toast } from "react-hot-toast";
 
 // assets
 import avatarPatient from "assets/images/avatars/patient-avatar.png";
 import avatarDoctor from "assets/images/avatars/doctor-avatar.png";
 
+// schemas
 import schema from "schemas/appointment.schema";
 
 // services
 import { PatientService, DoctorService } from "services";
-import { toastErrorMessage } from "components/errorMesage";
 
 function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
   // Set default empty Appointment
@@ -208,7 +208,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
   // Dropdwon item template
   const patientDropdownItemTemplate = (option, props) => {
     return (
-      <DropdownItem
+      <DropdownPersonItem
         option={option}
         placeholder={props?.placeholder}
         avatar={avatarPatient}
@@ -219,7 +219,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
   // Dropdwon item template
   const doctorDropdownItemTemplate = (option, props) => {
     return (
-      <DropdownItem
+      <DropdownPersonItem
         option={option}
         placeholder={props?.placeholder}
         avatar={avatarDoctor}

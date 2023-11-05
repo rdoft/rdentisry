@@ -162,11 +162,12 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
     <>
       <Grid container justifyContent="space-between" mt={2}>
         {/* Dental chart */}
-        <Grid item xs={5} pr={3}></Grid>
+        <Grid item md={5} xs={12} pr={3}></Grid>
         {/* Procedure list */}
         <Grid
           item
-          xs={7}
+          md={7}
+          xs={12}
           p={2}
           sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
         >

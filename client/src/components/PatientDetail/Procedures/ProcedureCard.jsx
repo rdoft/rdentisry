@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Tag, Divider, InputNumber } from "primereact";
 import {
   Grid,
-  Typography,
+  Hidden,
   Avatar,
   Tooltip,
+  Typography,
   ClickAwayListener,
 } from "@mui/material";
 import ActionGroup from "components/ActionGroup/ActionGroup";
@@ -165,23 +166,14 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
       />
     </ClickAwayListener>
   ) : (
-    <Grid
-      container
-      alignItems="center"
-      justifyContent="end"
-      onClick={handleEditAmount}
-    >
-      <Grid item pr={0.5}>
-        <Typography variant="h6">₺</Typography>
-      </Grid>
-      <Grid item>
-        <Typography variant="h5" fontWeight="light">
-          {procedure.invoice.amount.toLocaleString("tr-TR", {
-            style: "decimal",
-            maximumFractionDigits: 2,
-          })}
-        </Typography>
-      </Grid>
+    <Grid container onClick={handleEditAmount}>
+      <Typography variant="h6">₺</Typography>
+      <Typography variant="h5" fontWeight="light">
+        {procedure.invoice.amount.toLocaleString("tr-TR", {
+          style: "decimal",
+          maximumFractionDigits: 2,
+        })}
+      </Typography>
     </Grid>
   );
 
@@ -228,22 +220,22 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
         alignItems="center"
       >
         {/* Name */}
-        <Grid item xs={7} pr={3}>
+        <Grid item xs={7} lg={7} pr={3}>
           {name}
         </Grid>
         {/* Category */}
-        <Grid item xs={1}>
+        <Grid item lg={1} display={{ xs: "none", lg: "block" }}>
           {category}
         </Grid>
         {/* Price */}
-        <Grid item xs={1}>
+        <Grid item xs={2} lg={1}>
           {price}
         </Grid>
         {/* IsCompleted */}
         <Grid container item xs={2} justifyContent="end">
           {completed}
         </Grid>
-        {isHover && (
+        {(isHover || window.matchMedia("(hover: none)").matches) && (
           <Grid container item xs={1} justifyContent="end">
             {deleteButton}
           </Grid>
