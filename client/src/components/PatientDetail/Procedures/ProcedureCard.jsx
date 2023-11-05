@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Tag, Divider } from "primereact";
-import { Grid, Typography, Avatar, Tooltip } from "@mui/material";
+import { Tag, Divider, InputNumber } from "primereact";
+import {
+  Grid,
+  Typography,
+  Avatar,
+  Tooltip,
+  ClickAwayListener,
+} from "@mui/material";
 import ActionGroup from "components/ActionGroup/ActionGroup";
 
 // assets
@@ -18,11 +24,14 @@ import {
 
 function ProcedureCard({ procedure, onDelete, onSubmit }) {
   const [isHover, setIsHover] = useState(false);
-  const [isComplete, setIsComplete] = useState(null);
+  const [editAmount, setEditAmount] = useState(false);
+  const [isComplete, setIsComplete] = useState(procedure.isComplete);
+  const [prevAmount, setPrevAmount] = useState(procedure.invoice.amount);
 
   // Set isComplete on loading
   useEffect(() => {
     setIsComplete(procedure.isComplete);
+    setPrevAmount(procedure.invoice.amount);
   }, [procedure]);
 
   // Icons for procedure categories
@@ -87,9 +96,47 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
     onDelete(procedure);
   };
 
-  const handleChange = () => {
+  // onChangeStatus handler
+  const handleChangeStatus = () => {
     procedure.isComplete = !isComplete;
     onSubmit(procedure);
+  };
+
+  // onEditAmount handler
+  const handleEditAmount = () => {
+    setEditAmount(true);
+  };
+
+  // onChangeAmount handler
+  const handleChangeAmount = (event) => {
+    const value = event.value || 0;
+    procedure.invoice.amount = value;
+  };
+
+  // onSave handler, to save changes
+  const handleSaveAmount = () => {
+    setEditAmount(false);
+    onSubmit(procedure);
+  };
+
+  // onCancel handler, discard changes to amount
+  const handleCancelAmount = () => {
+    procedure.invoice.amount = prevAmount;
+    setEditAmount(false);
+  };
+
+  // onKeyDown handler, save the amount on Ctrl+Enter and discard changes on Escape
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleSaveAmount();
+    } else if (event.key === "Escape") {
+      handleCancelAmount();
+    }
+  };
+
+  // handleClickAway handler, save the amount
+  const handleClickAway = () => {
+    handleSaveAmount();
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -104,8 +151,26 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
   );
 
   // Set price of procedure
-  const price = (
-    <Grid container alignItems="center" justifyContent="end">
+  const price = editAmount ? (
+    <ClickAwayListener onClickAway={handleClickAway}>
+      <InputNumber
+        id="amount"
+        value={procedure.invoice.amount}
+        mode="currency"
+        min={0}
+        currency="TRY"
+        locale="tr-TR"
+        style={{ height: "2.5rem" }}
+        onValueChange={handleChangeAmount}
+      />
+    </ClickAwayListener>
+  ) : (
+    <Grid
+      container
+      alignItems="center"
+      justifyContent="end"
+      onClick={handleEditAmount}
+    >
       <Grid item pr={0.5}>
         <Typography variant="h6">₺</Typography>
       </Grid>
@@ -140,7 +205,7 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
   );
 
   // Icon for completed procedure
-  const completed = (
+  const completed = !editAmount && (
     <Tag
       value={isComplete ? "Tamamlandı" : "Bekleniyor"}
       style={
@@ -148,7 +213,7 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
           ? { backgroundColor: "#DFFCF0", color: "#22A069", cursor: "pointer" }
           : { backgroundColor: "#E8F0FF", color: "#1E7AFC", cursor: "pointer" }
       }
-      onClick={handleChange}
+      onClick={handleChangeStatus}
     />
   );
 
@@ -158,6 +223,7 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
         container
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onKeyDown={handleKeyDown}
         sx={{ minHeight: "4rem", paddingY: "0.7em" }}
         alignItems="center"
       >
