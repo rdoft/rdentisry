@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { toastErrorMessage } from "components/errorMesage";
 import { toast } from "react-hot-toast";
-import { Grid } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  ButtonBase,
+  ImageList,
+  ImageListItem,
+} from "@mui/material";
 import { DataScroller, Fieldset } from "primereact";
 import NotFoundText from "components/NotFoundText";
 import ProcedureCard from "./ProcedureCard";
@@ -10,6 +16,7 @@ import ProcedureDialog from "./ProcedureDialog";
 
 // assets
 import "assets/styles/PatientDetail/ProceduresTab.css";
+import { upTeeth, downTeeth } from "assets/images/charts";
 
 // services
 import { PatientProcedureService } from "services/index";
@@ -158,11 +165,48 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
     ))
   );
 
+  const upChart = (
+    <ImageList cols={16}>
+      {upTeeth.map((item) => (
+        <ImageListItem key={item.img}>
+          <img srcSet={item.img} src={item.img} alt={item.title} />
+          <Typography
+            variant="body1"
+            style={{ textAlign: "center", margin: 20 }}
+          >
+            {item.title}
+          </Typography>
+        </ImageListItem>
+      ))}
+    </ImageList>
+  );
+
+  const downChart = (
+    <ImageList cols={16}>
+      {downTeeth.map((item) => (
+        <ButtonBase onClick={console.log("click")}>
+        <ImageListItem key={item.img}>
+          <Typography
+            variant="body1"
+            style={{ textAlign: "center", margin: 20 }}
+          >
+            {item.title}
+          </Typography>
+          <img srcSet={item.img} src={item.img} alt={item.title} />
+        </ImageListItem>
+        </ButtonBase>
+      ))}
+    </ImageList>
+  );
+
   return (
     <>
       <Grid container justifyContent="space-between" mt={2}>
         {/* Dental chart */}
-        <Grid item md={5} xs={12} pr={3}></Grid>
+        <Grid item md={5} xs={12} pr={3}>
+          {upChart}
+          {downChart}
+        </Grid>
         {/* Procedure list */}
         <Grid
           item

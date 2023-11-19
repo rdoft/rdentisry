@@ -38,6 +38,7 @@ function NotificationItem({ notification, getNotifications, onClose }) {
       break;
     case "upcoming":
       icon = LiraWarningIcon;
+      break;
     default:
       break;
   }
