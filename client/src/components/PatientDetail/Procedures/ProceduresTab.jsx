@@ -1,22 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { toastErrorMessage } from "components/errorMesage";
 import { toast } from "react-hot-toast";
-import {
-  Grid,
-  Typography,
-  ButtonBase,
-  ImageList,
-  ImageListItem,
-} from "@mui/material";
+import { Grid } from "@mui/material";
 import { DataScroller, Fieldset } from "primereact";
 import NotFoundText from "components/NotFoundText";
 import ProcedureCard from "./ProcedureCard";
 import ProcedureToolbar from "./ProcedureToolbar";
 import ProcedureDialog from "./ProcedureDialog";
+import DentalChart from "./DentalChart";
 
 // assets
 import "assets/styles/PatientDetail/ProceduresTab.css";
-import { upTeeth, downTeeth } from "assets/images/charts";
 
 // services
 import { PatientProcedureService } from "services/index";
@@ -127,10 +121,6 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
     hideDialog();
   };
 
-  const handleSelectTooth = (tooth) => {
-    tooth === selectedTooth ? setSelectedTooth(null) : setSelectedTooth(tooth);
-  };
-
   // TEMPLATES ----------------------------------------------------------------
   const procedureTemplate = (procedure) => {
     if (procedure) {
@@ -169,58 +159,6 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
     ))
   );
 
-  const upChart = (
-    <ImageList cols={16}>
-      {upTeeth.map((item) => (
-        <ButtonBase
-          disableRipple={true}
-          onClick={() => handleSelectTooth(item.title)}
-        >
-          <ImageListItem
-            key={item.img}
-            style={
-              selectedTooth && item.title !== selectedTooth && { opacity: 0.3 }
-            }
-          >
-            <img srcSet={item.img} src={item.img} alt={item.title} />
-            <Typography
-              variant="body1"
-              style={{ textAlign: "center", margin: 20 }}
-            >
-              {item.title}
-            </Typography>
-          </ImageListItem>
-        </ButtonBase>
-      ))}
-    </ImageList>
-  );
-
-  const downChart = (
-    <ImageList cols={16}>
-      {downTeeth.map((item) => (
-        <ButtonBase
-          disableRipple={true}
-          onClick={() => handleSelectTooth(item.title)}
-        >
-          <ImageListItem
-            key={item.img}
-            style={
-              selectedTooth && item.title !== selectedTooth && { opacity: 0.3 }
-            }
-          >
-            <Typography
-              variant="body1"
-              style={{ textAlign: "center", margin: 20 }}
-            >
-              {item.title}
-            </Typography>
-            <img srcSet={item.img} src={item.img} alt={item.title} />
-          </ImageListItem>
-        </ButtonBase>
-      ))}
-    </ImageList>
-  );
-
   return (
     <>
       <Grid container justifyContent="space-between" mt={2}>
@@ -233,10 +171,10 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
           pr={{ lg: 3 }}
           pb={{ xs: 3, lg: 0 }}
         >
-          <Grid p={2} item sx={{ borderRadius: 2, backgroundColor: "#FFFFFF" }}>
-            {upChart}
-            {downChart}
-          </Grid>
+          <DentalChart
+            selectedTooth={selectedTooth}
+            onChangeTooth={setSelectedTooth}
+          />
         </Grid>
 
         {/* Procedure list */}
@@ -260,6 +198,8 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
           )}
         </Grid>
       </Grid>
+
+      {/* Dialog */}
       {procedureDialog && (
         <ProcedureDialog
           _patientProcedure={

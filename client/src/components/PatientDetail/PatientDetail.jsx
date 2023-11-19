@@ -254,7 +254,7 @@ function PatientDetail() {
               <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
-                    label=<Typography variant="h5" sx={{ fontWeight: "light" }}>
+                    label=<Typography variant="span" sx={{ fontWeight: "light" }}>
                       Randevular
                     </Typography>
                     badge={countAppointment}
@@ -274,7 +274,7 @@ function PatientDetail() {
               <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
-                    label=<Typography variant="h5" sx={{ fontWeight: "light" }}>
+                    label=<Typography variant="span" sx={{ fontWeight: "light" }}>
                       Ödemeler
                     </Typography>
                     badge={countPayment}
@@ -294,7 +294,7 @@ function PatientDetail() {
               <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
-                    label=<Typography variant="h5" sx={{ fontWeight: "light" }}>
+                    label=<Typography variant="span" sx={{ fontWeight: "light" }}>
                       Notlar
                     </Typography>
                     badge={countNote}
@@ -313,7 +313,7 @@ function PatientDetail() {
               <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
-                    label=<Typography variant="h5" sx={{ fontWeight: "light" }}>
+                    label=<Typography variant="span" sx={{ fontWeight: "light" }}>
                       Tedaviler
                     </Typography>
                     badge={countProcedure}
