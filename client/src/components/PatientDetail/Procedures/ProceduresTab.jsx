@@ -127,6 +127,10 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
     hideDialog();
   };
 
+  const handleSelectTooth = (tooth) => {
+    tooth === selectedTooth ? setSelectedTooth(null) : setSelectedTooth(tooth);
+  };
+
   // TEMPLATES ----------------------------------------------------------------
   const procedureTemplate = (procedure) => {
     if (procedure) {
@@ -168,15 +172,25 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
   const upChart = (
     <ImageList cols={16}>
       {upTeeth.map((item) => (
-        <ImageListItem key={item.img}>
-          <img srcSet={item.img} src={item.img} alt={item.title} />
-          <Typography
-            variant="body1"
-            style={{ textAlign: "center", margin: 20 }}
+        <ButtonBase
+          disableRipple={true}
+          onClick={() => handleSelectTooth(item.title)}
+        >
+          <ImageListItem
+            key={item.img}
+            style={
+              selectedTooth && item.title !== selectedTooth && { opacity: 0.3 }
+            }
           >
-            {item.title}
-          </Typography>
-        </ImageListItem>
+            <img srcSet={item.img} src={item.img} alt={item.title} />
+            <Typography
+              variant="body1"
+              style={{ textAlign: "center", margin: 20 }}
+            >
+              {item.title}
+            </Typography>
+          </ImageListItem>
+        </ButtonBase>
       ))}
     </ImageList>
   );
@@ -184,16 +198,24 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
   const downChart = (
     <ImageList cols={16}>
       {downTeeth.map((item) => (
-        <ButtonBase onClick={console.log("click")}>
-        <ImageListItem key={item.img}>
-          <Typography
-            variant="body1"
-            style={{ textAlign: "center", margin: 20 }}
+        <ButtonBase
+          disableRipple={true}
+          onClick={() => handleSelectTooth(item.title)}
+        >
+          <ImageListItem
+            key={item.img}
+            style={
+              selectedTooth && item.title !== selectedTooth && { opacity: 0.3 }
+            }
           >
-            {item.title}
-          </Typography>
-          <img srcSet={item.img} src={item.img} alt={item.title} />
-        </ImageListItem>
+            <Typography
+              variant="body1"
+              style={{ textAlign: "center", margin: 20 }}
+            >
+              {item.title}
+            </Typography>
+            <img srcSet={item.img} src={item.img} alt={item.title} />
+          </ImageListItem>
         </ButtonBase>
       ))}
     </ImageList>
@@ -203,19 +225,29 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
     <>
       <Grid container justifyContent="space-between" mt={2}>
         {/* Dental chart */}
-        <Grid item md={5} xs={12} pr={3}>
-          {upChart}
-          {downChart}
+        <Grid
+          container
+          item
+          lg={6}
+          xs={12}
+          pr={{ lg: 3 }}
+          pb={{ xs: 3, lg: 0 }}
+        >
+          <Grid p={2} item sx={{ borderRadius: 2, backgroundColor: "#FFFFFF" }}>
+            {upChart}
+            {downChart}
+          </Grid>
         </Grid>
+
         {/* Procedure list */}
         <Grid
           item
-          md={7}
+          lg={6}
           xs={12}
-          p={2}
+          px={3}
           sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
         >
-          <Grid item pb={2}>
+          <Grid item p={2}>
             <ProcedureToolbar
               selectedTooth={selectedTooth}
               onChangeTooth={setSelectedTooth}
@@ -231,7 +263,7 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
       {procedureDialog && (
         <ProcedureDialog
           _patientProcedure={
-            procedure ? procedure : { patient, toothNumber: 0 }
+            procedure ? procedure : { patient, toothNumber: selectedTooth }
           }
           onHide={handleHide}
           onSubmit={saveProcedure}
