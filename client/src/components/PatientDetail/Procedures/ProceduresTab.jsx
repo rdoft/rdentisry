@@ -203,7 +203,7 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
       {procedureDialog && (
         <ProcedureDialog
           _patientProcedure={
-            procedure ? procedure : { patient, toothNumber: selectedTooth }
+            procedure ? procedure : { patient, toothNumber: selectedTooth || 0 }
           }
           onHide={handleHide}
           onSubmit={saveProcedure}
