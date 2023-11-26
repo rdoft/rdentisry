@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { Badge, Divider, Image } from "primereact";
 import { Grid, ButtonBase, ImageList, ImageListItem } from "@mui/material";
-import { Badge, Divider } from "primereact";
 
 // assets
 import { upTeeth, downTeeth } from "assets/images/charts";
+import { CompletedIcon, InProgressIcon } from "assets/images/icons";
 
-function DentalChart({ selectedTooth, onChangeTooth }) {
+function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
+  // useEffect(() => {
+
+  // }, [procedures]);
+
   // HANDLERS -----------------------------------------------------------------
   // onClick tooth handler
   const handleChangeTooth = (tooth) => {
@@ -15,24 +20,15 @@ function DentalChart({ selectedTooth, onChangeTooth }) {
   // TEMPLATES ----------------------------------------------------------------
   // Tooth item template
   const toothItem = (tooth) => (
-    <ButtonBase disableRipple={true}>
-      <ImageListItem
-        sx={{
-          alignItems: "center",
-          ...(selectedTooth && tooth.number !== selectedTooth
-            ? { opacity: 0.3 }
-            : {}),
-        }}
-      >
-        {/* Image */}
-        <img
-          srcSet={tooth.img}
-          src={tooth.img}
-          alt={tooth.number}
-          style={{ width: "85%" }}
-        />
-      </ImageListItem>
-    </ButtonBase>
+    <ImageListItem sx={{ alignItems: "center" }}>
+      {/* Image */}
+      <img
+        srcSet={tooth.img}
+        src={tooth.img}
+        alt={tooth.number}
+        style={{ width: "85%" }}
+      />
+    </ImageListItem>
   );
 
   // Number item template
@@ -40,16 +36,52 @@ function DentalChart({ selectedTooth, onChangeTooth }) {
     <Badge
       value={number}
       style={{
-        width: "fit-content",
+        cursor: "pointer",
         fontSize: "1rem",
         fontWeight: "400",
         borderRadius: 20,
-        backgroundColor: number === selectedTooth ? "#EF4444" : "transparent",
-        color: number === selectedTooth ? "white" : "unset",
-        cursor: "pointer",
+        backgroundColor: "unset",
+        color: "unset",
       }}
     ></Badge>
   );
+
+  // Status item template
+  const statusItem = (number) => {
+    let inProgress;
+    let completed;
+
+    if (procedures[number]) {
+      inProgress = procedures[number].find(
+        (procedure) => !procedure.isComplete
+      );
+      completed = procedures[number].find((procedure) => procedure.isComplete);
+    } else {
+      inProgress = false;
+      completed = false;
+    }
+
+    return (
+      <>
+        <Grid container item>
+          <Image
+            src={CompletedIcon}
+            width="20%"
+            style={{ visibility: completed ? "visible" : "hidden" }}
+          />
+        </Grid>
+        <Grid container item>
+          <Image
+            src={InProgressIcon}
+            width="20%"
+            style={{
+              visibility: inProgress ? "visible" : "hidden",
+            }}
+          />
+        </Grid>
+      </>
+    );
+  };
 
   // Dental chart template
   const chart = (
@@ -61,16 +93,24 @@ function DentalChart({ selectedTooth, onChangeTooth }) {
             key={tooth.number}
             container
             direction="column"
-            justifyContent="space-between"
             onClick={() => handleChangeTooth(tooth.number)}
+            sx={{
+              opacity:
+                selectedTooth && tooth.number !== selectedTooth ? 0.3 : 1,
+            }}
           >
             {/* Numbers */}
-            <Grid item xs={1} mb={5} textAlign="center">
+            <Grid item xs={1} pb={1} textAlign="center">
               {numberItem(tooth.number)}
             </Grid>
 
+            {/* Status */}
+            <Grid container item xs={1} textAlign="center">
+              {statusItem(tooth.number)}
+            </Grid>
+
             {/* Teeth */}
-            {toothItem(tooth)}
+            <Grid item>{toothItem(tooth)}</Grid>
           </Grid>
         ))}
       </ImageList>
@@ -85,14 +125,28 @@ function DentalChart({ selectedTooth, onChangeTooth }) {
             key={tooth.number}
             container
             direction="column"
-            justifyContent="space-between"
             onClick={() => handleChangeTooth(tooth.number)}
+            sx={{
+              opacity:
+                selectedTooth && tooth.number !== selectedTooth ? 0.3 : 1,
+            }}
           >
             {/* Teeth */}
-            {toothItem(tooth)}
+            <Grid item>{toothItem(tooth)}</Grid>
+
+            {/* Status */}
+            <Grid
+              container
+              item
+              xs={1}
+              direction="column-reverse"
+              textAlign="center"
+            >
+              {statusItem(tooth.number)}
+            </Grid>
 
             {/* Numbers */}
-            <Grid item xs={1} mt={5} textAlign="center">
+            <Grid item xs={1} pt={1} textAlign="center">
               {numberItem(tooth.number)}
             </Grid>
           </Grid>

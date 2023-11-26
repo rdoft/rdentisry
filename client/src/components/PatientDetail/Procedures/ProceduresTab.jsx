@@ -64,15 +64,14 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
           patientId,
           tooth
         );
-        procedures = response.data;
       } else {
         response = await PatientProcedureService.getPatientProcedures(
           patientId
         );
-        procedures = response.data;
-        groupProcedures(procedures);
       }
-
+      
+      procedures = response.data;
+      groupProcedures(procedures);
       setProcedures(procedures);
     } catch (error) {
       toast.error(toastErrorMessage(error));
@@ -178,6 +177,7 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
           pb={{ xs: 3, lg: 0 }}
         >
           <DentalChart
+            procedures={groupedProcedures}
             selectedTooth={selectedTooth}
             onChangeTooth={setSelectedTooth}
           />
@@ -189,7 +189,7 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
           lg={6}
           xs={12}
           p={3}
-          sx={{ borderRadius: 2, backgroundColor: "#f5f5f5"}}
+          sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
         >
           <Grid item pb={2}>
             <ProcedureToolbar

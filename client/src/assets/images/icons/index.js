@@ -17,6 +17,8 @@ import ImplantIcon from "assets/images/icons/procedure/implant.png";
 import SurgeryIcon from "assets/images/icons/procedure/surgery.png";
 import EmptyToothIcon from "assets/images/icons/procedure/empty-tooth.png";
 import TeethIcon from "assets/images/icons/dentures.png";
+import InProgressIcon from "assets/images/icons/in-progress.png";
+import CompletedIcon from "assets/images/icons/completed.png";
 
 export {
   CalendarIcon,
@@ -38,4 +40,6 @@ export {
   SurgeryIcon,
   EmptyToothIcon,
   TeethIcon,
+  InProgressIcon,
+  CompletedIcon,
 };
