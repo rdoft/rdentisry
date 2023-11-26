@@ -161,7 +161,13 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
 
   return (
     <>
-      <Grid container justifyContent="space-between" mt={2}>
+      <Grid
+        container
+        justifyContent="space-between"
+        mt={2}
+        p={3}
+        sx={{ borderRadius: 2, backgroundColor: "#FFFFFF" }}
+      >
         {/* Dental chart */}
         <Grid
           container
@@ -182,10 +188,10 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
           item
           lg={6}
           xs={12}
-          px={3}
-          sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
+          p={3}
+          sx={{ borderRadius: 2, backgroundColor: "#f5f5f5"}}
         >
-          <Grid item p={2}>
+          <Grid item pb={2}>
             <ProcedureToolbar
               selectedTooth={selectedTooth}
               onChangeTooth={setSelectedTooth}

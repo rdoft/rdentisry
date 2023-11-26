@@ -31,7 +31,7 @@ import tooth46 from "assets/images/charts/down/46.png";
 import tooth47 from "assets/images/charts/down/47.png";
 import tooth48 from "assets/images/charts/down/48.png";
 
-const teeth = [
+const upTeeth = [
   { img: tooth18, number: "18" },
   { img: tooth17, number: "17" },
   { img: tooth16, number: "16" },
@@ -48,6 +48,9 @@ const teeth = [
   { img: tooth26, number: "26" },
   { img: tooth27, number: "27" },
   { img: tooth28, number: "28" },
+];
+
+const downTeeth = [
   { img: tooth48, number: "48" },
   { img: tooth47, number: "47" },
   { img: tooth46, number: "46" },
@@ -66,4 +69,4 @@ const teeth = [
   { img: tooth38, number: "38" },
 ];
 
-export { teeth };
+export { upTeeth, downTeeth };
