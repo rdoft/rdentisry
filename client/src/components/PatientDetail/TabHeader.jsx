@@ -1,15 +1,24 @@
 import React from "react";
 import { Badge } from "primereact";
 
-function TabHeader({ label, badge, onClick, isActive }) {
+function TabHeader({ label, badge, onClick }) {
   return (
     <div
       className="flex align-items-center px-3"
       style={{ cursor: "pointer" }}
       onClick={onClick}
     >
-      <h4 style={{ color: isActive ? 'primary' : '' }}>{label}</h4>
-      <Badge severity="secondary" value={badge ? badge : 0} className="ml-2"></Badge>
+      <h4>{label}</h4>
+      <Badge
+        value={badge ? badge : 0}
+        className="ml-2"
+        style={{
+          // borderRadius: 20,
+          
+          backgroundColor: "#F5F5F5",
+          color: "unset",
+        }}
+      ></Badge>
     </div>
   );
 }
