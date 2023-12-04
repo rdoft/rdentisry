@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { toastErrorMessage } from "components/errorMesage";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import moment from "moment";
 import { Calendar, momentLocalizer } from "react-big-calendar";
+import { activeItem } from "store/reducers/menu";
 import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
 import CalendarToolbar from "components/AppointmentCalendar/CalendarToolbar";
 import convert from "components/AppointmentCalendar/CalendarEvent";
@@ -20,6 +22,8 @@ const today = new Date();
 
 const AppointmentCalendar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const PAGE = "patients";
 
   // Set the default values
   const [step, setStep] = useState(30);
@@ -113,7 +117,8 @@ const AppointmentCalendar = () => {
 
   // onSelectEvent handler for goto patient page
   const handleSelectEvent = async (event) => {
-    navigate(`/patients/${event.patient.id}`);
+    navigate(`/${PAGE}/${event.patient.id}`);
+    dispatch(activeItem({ openItem: [PAGE] }));
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -189,7 +194,11 @@ const AppointmentCalendar = () => {
 
   return (
     <div>
-      <CalendarToolbar onClickAdd={showAppointmentDialog} checked={showAll} setChecked={setShowAll} />
+      <CalendarToolbar
+        onClickAdd={showAppointmentDialog}
+        checked={showAll}
+        setChecked={setShowAll}
+      />
       <Calendar
         style={{
           height: "calc(100vh - 190px)",
