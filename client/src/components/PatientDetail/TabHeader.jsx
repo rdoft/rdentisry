@@ -9,7 +9,16 @@ function TabHeader({ label, badge, onClick }) {
       onClick={onClick}
     >
       <h4>{label}</h4>
-      <Badge severity="secondary" value={badge ? badge : 0} className="ml-2"></Badge>
+      <Badge
+        value={badge ? badge : 0}
+        className="ml-2"
+        style={{
+          // borderRadius: 20,
+          
+          backgroundColor: "#F5F5F5",
+          color: "unset",
+        }}
+      ></Badge>
     </div>
   );
 }

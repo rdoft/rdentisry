@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Chip, Dialog, Dropdown, Divider, InputNumber } from "primereact";
+import {
+  Chip,
+  Dialog,
+  Dropdown,
+  Divider,
+  InputNumber,
+  Checkbox,
+} from "primereact";
 import { toast } from "react-hot-toast";
 import { toastErrorMessage } from "components/errorMesage";
 import DialogFooter from "components/DialogFooter/DialogFooter";
@@ -28,6 +35,7 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
     ...emptyPatientProcedure,
     ..._patientProcedure,
   });
+  const [isAnother, setIsAnother] = useState(false);
   // Validation of payment object & properties
   const [isValid, setIsValid] = useState(false);
 
@@ -110,6 +118,7 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
     for (let i = 0; i < quantity; i++) {
       onSubmit(patientProcedure);
     }
+    !isAnother && onHide();
   };
 
   // onKeyDown handler
@@ -248,6 +257,15 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
               backgroundColor: "transparent",
               border: "1px solid #CED4D9",
             }}
+          />
+        </div>
+
+        {/* Create another procedure */}
+        <div className="flex align-items-center justify-content-end">
+          <small className=" mr-2">Tedavi eklemeye devam et</small>
+          <Checkbox
+            onChange={(event) => setIsAnother(event.checked)}
+            checked={isAnother}
           />
         </div>
       </Dialog>

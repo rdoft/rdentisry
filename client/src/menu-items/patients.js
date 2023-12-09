@@ -14,7 +14,7 @@ const patients = {
   type: "group",
   children: [
     {
-      id: "patients-list",
+      id: "patients",
       title: "Hastalar",
       type: "item",
       url: "/patients",

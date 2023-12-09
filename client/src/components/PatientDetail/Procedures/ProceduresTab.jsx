@@ -91,7 +91,6 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
 
       // Get and set the updated list of procedures
       getProcedures(patient.id, selectedTooth);
-      hideDialog();
       setProcedure(null);
     } catch (error) {
       toast.error(toastErrorMessage(error));

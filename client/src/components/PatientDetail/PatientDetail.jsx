@@ -254,7 +254,13 @@ function PatientDetail() {
               <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
-                    label=<Typography variant="span" sx={{ fontWeight: "light" }}>
+                    label=<Typography
+                      variant="span"
+                      sx={{
+                        fontWeight: "light",
+                        color: activeIndex === 0 && "primary.main",
+                      }}
+                    >
                       Randevular
                     </Typography>
                     badge={countAppointment}
@@ -274,7 +280,13 @@ function PatientDetail() {
               <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
-                    label=<Typography variant="span" sx={{ fontWeight: "light" }}>
+                    label=<Typography
+                      variant="span"
+                      sx={{
+                        fontWeight: "light",
+                        color: activeIndex === 1 && "primary.main",
+                      }}
+                    >
                       Ödemeler
                     </Typography>
                     badge={countPayment}
@@ -294,7 +306,13 @@ function PatientDetail() {
               <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
-                    label=<Typography variant="span" sx={{ fontWeight: "light" }}>
+                    label=<Typography
+                      variant="span"
+                      sx={{
+                        fontWeight: "light",
+                        color: activeIndex === 2 && "primary.main",
+                      }}
+                    >
                       Notlar
                     </Typography>
                     badge={countNote}
@@ -313,7 +331,13 @@ function PatientDetail() {
               <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
-                    label=<Typography variant="span" sx={{ fontWeight: "light" }}>
+                    label=<Typography
+                      variant="span"
+                      sx={{
+                        fontWeight: "light",
+                        color: activeIndex === 3 && "primary.main",
+                      }}
+                    >
                       Tedaviler
                     </Typography>
                     badge={countProcedure}
@@ -332,7 +356,9 @@ function PatientDetail() {
               {/* <TabPanel
                 headerTemplate={(options) => (
                   <TabHeader
-                    label="Dökümanlar"
+                    label=<Typography variant="span" sx={{ fontWeight: "light", color: activeIndex === 0 && 'primary.main' }}>
+                    Dökümanmlar
+                    </Typography>
                     badge={countDocument}
                     onClick={options.onClick}
                   />
