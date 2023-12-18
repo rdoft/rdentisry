@@ -144,6 +144,46 @@ db.notification.belongsTo(db.patient, {
   foreignKey: "PatientId",
 });
 
+// User - Patient
+db.user.hasMany(db.patient, {
+  as: "patients",
+  foreignKey: "UserId",
+});
+db.patient.belongsTo(db.user, {
+  as: "user",
+  foreignKey: "UserId",
+});
+
+// User - Doctor
+db.user.hasMany(db.doctor, {
+  as: "doctors",
+  foreignKey: "UserId",
+});
+db.doctor.belongsTo(db.user, {
+  as: "user",
+  foreignKey: "UserId",
+});
+
+// User - Procedure
+db.user.hasMany(db.procedure, {
+  as: "procedures",
+  foreignKey: "UserId",
+});
+db.procedure.belongsTo(db.user, {
+  as: "user",
+  foreignKey: "UserId",
+});
+
+// User - Notification
+db.user.hasMany(db.notification, {
+  as: "notifications",
+  foreignKey: "UserId",
+});
+db.notification.belongsTo(db.user, {
+  as: "user",
+  foreignKey: "UserId",
+});
+
 // HOOKS
 // Control If doctor has any appointments before destroy
 db.doctor.beforeDestroy(async (doctor) => {
@@ -165,6 +205,15 @@ db.patient.beforeDestroy(async (patient) => {
 db.procedure.beforeDestroy(async (procedure) => {
   const patientCount = await procedure.countPatientProcedures();
   if (patientCount > 0) {
+    throw new Sequelize.ForeignKeyConstraintError();
+  }
+});
+
+// Control If user has any patients or doctors before destroy
+db.user.beforeDestroy(async (user) => {
+  const patientCount = await user.countPatients();
+  const doctorCount = await user.countDoctors();
+  if (patientCount > 0 || doctorCount > 0) {
     throw new Sequelize.ForeignKeyConstraintError();
   }
 });
