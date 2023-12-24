@@ -14,6 +14,7 @@ module.exports = (sequelize, Sequelize) => {
       Email: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true,
         validate: {
           isEmail: true,
         },
@@ -30,7 +31,7 @@ module.exports = (sequelize, Sequelize) => {
     {
       timestamps: false,
       tableName: "User",
-    },
+    }
   );
 
   return User;

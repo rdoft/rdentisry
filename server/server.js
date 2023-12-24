@@ -1,35 +1,59 @@
 const express = require("express");
 const cors = require("cors");
-require('dotenv').config();
+require("dotenv").config();
 
 const app = express();
+const morgan = require("morgan");
+const session = require("express-session");
+// Requiring passport as we've configured it
+const passport = require("./app/config/passport.config");
 
 const HOST = process.env.HOST_SERVER || "localhost";
 const PORT = process.env.PORT_SERVER || 8080;
 const PORT_CLIENT = process.env.PORT || 3000;
+const SECRET_KEY = process.env.SECRET_KEY;
 const corsOptions = {
-  origin: [`http://${HOST}:${PORT}`, `http://${HOST}:${PORT_CLIENT}`, `http://${HOST}`, `http://srv.rdoft.com`]
+  origin: [
+    `http://${HOST}:${PORT}`,
+    `http://${HOST}:${PORT_CLIENT}`,
+    `http://${HOST}`,
+    `http://srv.rdoft.com`,
+  ],
 };
+
+// db models
+const db = require("./app/models");
+db.sequelize.sync({ alter: true });
 
 app.use(cors(corsOptions));
 // parse requests of content-type - application/json
 app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
-// db models
-const db = require("./app/models/index");
-db.sequelize.sync({ alter: true })
+// development logging
+app.use(morgan("dev"));
+app.use(
+  session({
+    secret: SECRET_KEY,
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
+// routes
+require("./app/routes/index")(app);
 
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to rdentistry" });
 });
 
-// routes
-require("./app/routes/index")(app);
 
-// cron jobs
+// CRON JOBS
 // For example, '0 9 * * *' means every day at 9:00 AM.
 // * * * * * *
 // | | | | | |
