@@ -43,7 +43,7 @@ module.exports = function (app) {
      * Register
      * @body User informations
      */
-    .post(validate(schema.user, "body"), controller.register);
+    .post(validate(schema.register, "body"), controller.register);
 
   app.use(API_URL, router);
 };

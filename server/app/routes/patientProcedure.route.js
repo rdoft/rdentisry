@@ -15,6 +15,10 @@ module.exports = function (app) {
     next();
   });
 
+  // Control user authentication
+  // TODO: Add control for routes that need isActive check
+  router.use(isAuthenticated);
+
   router
     .route(`/patients/:patientId/procedures`)
     /**
