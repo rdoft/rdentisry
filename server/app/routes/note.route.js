@@ -30,12 +30,6 @@ module.exports = function (app) {
      */
     .get(controller.getNotes)
 
-    /**
-     * Delete all notes of given patient
-     * @param patientId: Id of the patient
-     */
-    .delete(controller.deleteNotes);
-
   router
     .route(`/notes`)
     /**

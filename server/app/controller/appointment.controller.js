@@ -84,9 +84,6 @@ exports.getAppointments = async (req, res) => {
   }
 };
 
-// TODO: Check if null doctor is listed
-// TODO: Check if not user listed
-// TODO: Check if appointment listed
 /**
  * Get an Appointment
  */
