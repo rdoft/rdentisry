@@ -6,6 +6,7 @@ const Doctor = db.doctor;
  * Get doctor list
  */
 exports.getDoctors = async (req, res) => {
+  const { UserId } = req.user;
   let doctors;
 
   try {
@@ -16,6 +17,9 @@ exports.getDoctors = async (req, res) => {
         ["Name", "name"],
         ["Surname", "surname"],
       ],
+      where: {
+        UserId: UserId,
+      },
     });
 
     res.status(200).send(doctors);
@@ -29,8 +33,9 @@ exports.getDoctors = async (req, res) => {
  * @body Doctor informations
  */
 exports.saveDoctor = async (req, res) => {
+  const { UserId } = req.user;
   const { name, surname } = req.body;
-  let values = { Name: name, Surname: surname };
+  let values = { Name: name, Surname: surname, UserId: UserId };
   let doctor;
 
   try {
@@ -53,6 +58,7 @@ exports.saveDoctor = async (req, res) => {
  * @body Doctor informations
  */
 exports.updateDoctor = async (req, res) => {
+  const { UserId } = req.user;
   const { doctorId } = req.params;
   const { name, surname } = req.body;
   let values = { Name: name, Surname: surname };
@@ -60,7 +66,12 @@ exports.updateDoctor = async (req, res) => {
 
   try {
     // Find the doctor record
-    doctor = await Patient.findByPk(doctorId);
+    doctor = await Patient.findOne({
+      where: {
+        DoctorId: doctorId,
+        UserId: UserId,
+      },
+    });
 
     if (doctor) {
       // Update doctor record

@@ -46,7 +46,7 @@ module.exports = (sequelize, Sequelize) => {
       indexes: [
         {
           unique: true,
-          fields: ["Name", "Surname", "Phone"],
+          fields: ["UserId", "Name", "Surname", "Phone"],
         },
       ],
       timestamps: false,

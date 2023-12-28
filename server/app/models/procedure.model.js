@@ -32,7 +32,7 @@ module.exports = (sequelize, Sequelize) => {
       indexes: [
         {
           unique: true,
-          fields: ["Code"],
+          fields: ["Code", "UserId"],
         },
       ],
       timestamps: false,

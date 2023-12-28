@@ -14,7 +14,6 @@ module.exports = (sequelize, Sequelize) => {
       Email: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
         validate: {
           isEmail: true,
         },
@@ -29,6 +28,12 @@ module.exports = (sequelize, Sequelize) => {
       },
     },
     {
+      indexes: [
+        {
+          unique: true,
+          fields: ["Email"],
+        },
+      ],
       timestamps: false,
       tableName: "User",
     }
