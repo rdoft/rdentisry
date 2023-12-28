@@ -8,6 +8,7 @@ const Doctor = db.doctor;
  * Get appointment list
  */
 exports.getAppointments = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { patientId, doctorId, from, to, status } = req.query;
   let appointments;
 
@@ -49,8 +50,9 @@ exports.getAppointments = async (req, res) => {
             ["BirthYear", "birthYear"],
             ["Phone", "phone"],
           ],
-          where: patientId && {
-            PatientId: patientId,
+          where: {
+            UserId: userId,
+            ...(patientId && { PatientId: patientId }),
           },
         },
         {
@@ -70,7 +72,6 @@ exports.getAppointments = async (req, res) => {
       nest: true,
     });
 
-
     let appointments_ = [];
     appointments.map((appointment) => {
       appointment.startTime = new Date(`1970-01-01T${appointment.startTime}`);
@@ -83,10 +84,14 @@ exports.getAppointments = async (req, res) => {
   }
 };
 
+// TODO: Check if null doctor is listed
+// TODO: Check if not user listed
+// TODO: Check if appointment listed
 /**
  * Get an Appointment
  */
 exports.getAppointment = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { appointmentId } = req.params;
   let appointment;
 
@@ -119,6 +124,9 @@ exports.getAppointment = async (req, res) => {
             ["BirthYear", "birthYear"],
             ["Phone", "phone"],
           ],
+          where: {
+            UserId: userId,
+          },
         },
         {
           model: Doctor,
@@ -151,15 +159,9 @@ exports.getAppointment = async (req, res) => {
  * @body Appointment information
  */
 exports.saveAppointment = async (req, res) => {
-  const {
-    patient,
-    doctor,
-    date,
-    startTime,
-    endTime,
-    description,
-    status,
-  } = req.body;
+  const { UserId: userId } = req.user;
+  const { patient, doctor, date, startTime, endTime, description, status } =
+    req.body;
   let values = {
     PatientId: patient.id,
     DoctorId: doctor ? doctor.id : null,
@@ -172,6 +174,29 @@ exports.saveAppointment = async (req, res) => {
   let appointment;
 
   try {
+    // Get patient and doctor and control if they belongs to the authenticated user
+    const patientRecord = await Patient.findOne({
+      where: {
+        PatientId: patient.id,
+        UserId: userId,
+      },
+    });
+    const doctorRecord = doctor
+      ? await Doctor.findOne({
+          where: {
+            DoctorId: doctor.id,
+            UserId: userId,
+          },
+        })
+      : null;
+
+    if (!patientRecord || (doctor && !doctorRecord)) {
+      return res.status(403).send({
+        message:
+          "Yetkiniz olmayan bir hastaya veya doktora randevu oluşturulamaz",
+      });
+    }
+
     // Create Appointment record
     appointment = await Appointment.create(values);
     appointment = {
@@ -204,16 +229,10 @@ exports.saveAppointment = async (req, res) => {
  * @param appointmentId: Id of the Appointment
  */
 exports.updateAppointment = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { appointmentId } = req.params;
-  const {
-    patient,
-    doctor,
-    date,
-    startTime,
-    endTime,
-    description,
-    status,
-  } = req.body;
+  const { patient, doctor, date, startTime, endTime, description, status } =
+    req.body;
   let values = {
     PatientId: patient.id,
     DoctorId: doctor ? doctor.id : null,
@@ -227,7 +246,21 @@ exports.updateAppointment = async (req, res) => {
 
   try {
     // Find Appointment
-    appointment = await Appointment.findByPk(appointmentId);
+    appointment = await Appointment.findOne({
+      where: {
+        AppointmentId: appointmentId,
+      },
+      include: [
+        {
+          model: Patient,
+          as: "patient",
+          attributes: [],
+          where: {
+            UserId: userId,
+          },
+        },
+      ],
+    });
 
     if (appointment) {
       // Update the Appointment
@@ -256,12 +289,27 @@ exports.updateAppointment = async (req, res) => {
  * @param appointmentId: Id of the Appointment
  */
 exports.deleteAppointment = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { appointmentId } = req.params;
   let appointment;
 
   try {
     // Find Appointment
-    appointment = await Appointment.findByPk(appointmentId);
+    appointment = await Appointment.findOne({
+      where: {
+        AppointmentId: appointmentId,
+      },
+      include: [
+        {
+          model: Patient,
+          as: "patient",
+          attributes: [],
+          where: {
+            UserId: userId,
+          },
+        },
+      ],
+    });
 
     // Delete the Appointment if it exists
     if (appointment) {
