@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
+const { isAuthenticated } = require("../middleware/auth");
 
 // Appointment specific imports
 const controller = require("../controller/appointment.controller");

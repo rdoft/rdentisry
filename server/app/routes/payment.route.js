@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
+const { isAuthenticated } = require("../middleware/auth");
 
 // Patient specific imports
 const controller = require("../controller/payment.controller");

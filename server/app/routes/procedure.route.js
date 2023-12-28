@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { isAuthenticated } = require("../middleware/auth");
 
 // Procedure specific imports
 const controller = require("../controller/procedure.controller");

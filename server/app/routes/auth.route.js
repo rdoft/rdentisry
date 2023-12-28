@@ -25,6 +25,7 @@ module.exports = function (app) {
      * @body User informations
      */
     .post(
+      // TODO: remove this belove comment
       // validate(schema.login, "body"),
       passport.authenticate("local"),
       controller.login
