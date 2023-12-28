@@ -7,6 +7,7 @@ const Patient = db.patient;
  * Get notification list
  */
 exports.getNotifications = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { status } = req.query;
   let notifications;
 
@@ -19,8 +20,9 @@ exports.getNotifications = async (req, res) => {
         ["Message", "message"],
         ["Status", "status"],
       ],
-      where: status && {
-        Status: status,
+      where: {
+        UserId: userId,
+        ...(status && { Status: status }),
       },
       order: [["createdAt", "ASC"]],
       include: [
@@ -59,13 +61,19 @@ exports.getNotifications = async (req, res) => {
  * @param notificationId: Id of the Notification
  */
 exports.updateNotification = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { notificationId } = req.params;
   const { status } = req.body;
   let notification;
 
   try {
     // Find notification
-    notification = await Notification.findByPk(notificationId);
+    notification = await Notification.findOne({
+      where: {
+        NotificationId: notificationId,
+        UserId: userId,
+      },
+    });
 
     if (notification) {
       // Update notification
@@ -86,6 +94,7 @@ exports.updateNotification = async (req, res) => {
  * Update the all Notifications
  */
 exports.updateNotifications = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { status } = req.body;
 
   try {
@@ -93,7 +102,9 @@ exports.updateNotifications = async (req, res) => {
     await Notification.update(
       { Status: status },
       {
-        where: {},
+        where: {
+          UserId: userId,
+        },
       }
     );
 
