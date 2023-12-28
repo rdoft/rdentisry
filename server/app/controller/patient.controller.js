@@ -7,9 +7,9 @@ const Payment = db.payment;
  * Get patient list
  */
 exports.getPatients = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { payments } = req.query;
   let patients;
-  let _patients = [];
 
   try {
     // Find patient list
@@ -23,6 +23,9 @@ exports.getPatients = async (req, res) => {
           ["Phone", "phone"],
           ["BirthYear", "birthYear"],
         ],
+        where: {
+          UserId: userId,
+        },
         include: [
           {
             model: Payment,
@@ -61,6 +64,9 @@ exports.getPatients = async (req, res) => {
           ["Phone", "phone"],
           ["BirthYear", "birthYear"],
         ],
+        where: {
+          UserId: userId,
+        },
         order: [
           ["Name", "ASC"],
           ["Surname", "ASC"],
@@ -79,12 +85,13 @@ exports.getPatients = async (req, res) => {
  * @param patientId id of the patient
  */
 exports.getPatient = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { patientId } = req.params;
   let patient;
 
   try {
     // Find the patient record
-    patient = await Patient.findByPk(patientId, {
+    patient = await Patient.findOne({
       attributes: [
         ["PatientId", "id"],
         ["IdNumber", "idNumber"],
@@ -93,6 +100,10 @@ exports.getPatient = async (req, res) => {
         ["BirthYear", "birthYear"],
         ["Phone", "phone"],
       ],
+      where: {
+        PatientId: patientId,
+        UserId: userId,
+      },
     });
 
     if (patient) {
@@ -110,6 +121,7 @@ exports.getPatient = async (req, res) => {
  * @body Patient informations
  */
 exports.savePatient = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { idNumber, name, surname, phone, birthYear } = req.body;
   let values = {
     Name: name,
@@ -117,6 +129,7 @@ exports.savePatient = async (req, res) => {
     Phone: phone,
     IdNumber: idNumber,
     BirthYear: birthYear ?? null,
+    UserId: userId,
   };
   let patient;
 
@@ -152,6 +165,7 @@ exports.savePatient = async (req, res) => {
  * @body Patient informations
  */
 exports.updatePatient = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { patientId } = req.params;
   const { idNumber, name, surname, phone, birthYear } = req.body;
   let values = {
@@ -165,7 +179,12 @@ exports.updatePatient = async (req, res) => {
 
   try {
     // Find the patient record
-    patient = await Patient.findByPk(patientId);
+    patient = await Patient.findOne({
+      where: {
+        PatientId: patientId,
+        UserId: userId,
+      },
+    });
 
     if (patient) {
       // Update patient record
@@ -195,6 +214,7 @@ exports.updatePatient = async (req, res) => {
  * @query patientId: Id list of patients
  */
 exports.deletePatients = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { patientId } = req.query;
   let patientIds;
   let count = 0;
@@ -208,6 +228,7 @@ exports.deletePatients = async (req, res) => {
       where:
         patientIds.length > 0
           ? {
+              UserId: userId,
               PatientId: {
                 [Sequelize.Op.in]: patientIds,
               },
@@ -233,6 +254,7 @@ exports.deletePatients = async (req, res) => {
  * @param patientId: Id of the patient
  */
 exports.deletePatient = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { patientId } = req.params;
   let patient;
 
@@ -241,6 +263,7 @@ exports.deletePatient = async (req, res) => {
     patient = await Patient.findOne({
       where: {
         PatientId: patientId,
+        UserId: userId,
       },
     });
 
