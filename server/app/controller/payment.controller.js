@@ -8,6 +8,7 @@ const Patient = db.patient;
  * @param {string} patientId id of the patient
  */
 exports.getPayments = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { patientId } = req.params;
   let payments;
 
@@ -37,8 +38,9 @@ exports.getPayments = async (req, res) => {
             ["BirthYear", "birthYear"],
             ["Phone", "phone"],
           ],
-          where: patientId && {
-            PatientId: patientId,
+          where: {
+            UserId: userId,
+            ...(patientId && { PatientId: patientId }),
           },
         },
       ],
@@ -57,6 +59,7 @@ exports.getPayments = async (req, res) => {
  * @body Payment information
  */
 exports.savePayment = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { patient, type, amount, plannedDate, actualDate } = req.body;
   let values = {
     PatientId: patient.id,
@@ -68,6 +71,18 @@ exports.savePayment = async (req, res) => {
   let payment;
 
   try {
+    // Find the patient and control if it belongs to the authenticated user
+    const patientRecord = await Patient.findOne({
+      where: {
+        PatientId: patient.id,
+        UserId: userId,
+      },
+    });
+    
+    if (!patientRecord) {
+      return res.status(404).send({ message: "Böyle bir hasta bulunamadı" });
+    }
+
     // Create payment record
     payment = await Payment.create(values);
     payment = {
@@ -96,6 +111,7 @@ exports.savePayment = async (req, res) => {
  * @param paymentId: Id of the Payment
  */
 exports.updatePayment = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { paymentId } = req.params;
   const { patient, type, amount, plannedDate, actualDate } = req.body;
   let values = {
@@ -109,7 +125,21 @@ exports.updatePayment = async (req, res) => {
 
   try {
     // Find the payment
-    payment = await Payment.findByPk(paymentId);
+    payment = await Payment.findOne({
+      where: {
+        PaymentId: paymentId,
+      },
+      include: [
+        {
+          model: Patient,
+          as: "patient",
+          attributes: [],
+          where: {
+            UserId: userId,
+          },
+        },
+      ],
+    });
 
     if (payment) {
       // Update the payment
@@ -135,12 +165,27 @@ exports.updatePayment = async (req, res) => {
  * @param paymentId: Id of the Payment
  */
 exports.deletePayment = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { paymentId } = req.params;
   let payment;
 
   try {
     // Find payment
-    payment = await Payment.findByPk(paymentId);
+    payment = await Payment.findOne({
+      where: {
+        PaymentId: paymentId,
+      },
+      include: [
+        {
+          model: Patient,
+          as: "patient",
+          attributes: [],
+          where: {
+            UserId: userId,
+          },
+        },
+      ],
+    });
 
     if (payment) {
       payment.destroy();
