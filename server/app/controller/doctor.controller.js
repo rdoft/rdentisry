@@ -79,7 +79,7 @@ exports.updateDoctor = async (req, res) => {
 
       res.status(200).send({ id: doctorId });
     } else {
-      res.status(404).send({ message: "Böyle bir doktor mevcut değil" });
+      res.status(404).send({ message: "Doktor mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);

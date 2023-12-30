@@ -90,7 +90,7 @@ exports.getNote = async (req, res) => {
     if (note) {
       res.status(200).send(note);
     } else {
-      res.status(404).send({ message: "Not bulunamadı" });
+      res.status(404).send({ message: "Not mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);
@@ -121,8 +121,8 @@ exports.saveNote = async (req, res) => {
     });
 
     if (!patientRecord) {
-      return res.status(403).send({
-        message: "Yetkiniz olmayan bir hasta için not eklenemez",
+      return res.status(404).send({
+        message: "Not eklenmek istenen hasta mevcut değil",
       });
     }
 
@@ -186,7 +186,7 @@ exports.updateNote = async (req, res) => {
 
       res.status(200).send({ id: noteId });
     } else {
-      res.status(404).send({ message: "Böyle bir not mevcut değil" });
+      res.status(404).send({ message: "Not mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);
@@ -226,7 +226,7 @@ exports.deleteNote = async (req, res) => {
 
       res.status(200).send({ id: noteId });
     } else {
-      res.status(404).send({ message: "Not bulunamadı" });
+      res.status(404).send({ message: "Not mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);

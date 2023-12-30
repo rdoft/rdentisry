@@ -122,7 +122,7 @@ exports.savePatientProcedure = async (req, res) => {
       },
     });
     if (!patient) {
-      return res.status(404).send({ message: "Böyle bir hasta mevcut değil" });
+      return res.status(404).send({ message: "Hasta mevcut değil" });
     }
 
     procedure_ = await Procedure.findOne({
@@ -132,7 +132,7 @@ exports.savePatientProcedure = async (req, res) => {
       },
     });
     if (!procedure_) {
-      return res.status(404).send({ message: "Böyle bir tedavi mevcut değil" });
+      return res.status(404).send({ message: "Tedavi mevcut değil" });
     }
 
     // Create patient procedure record
@@ -232,7 +232,7 @@ exports.updatePatientProcedure = async (req, res) => {
 
       res.status(200).send({ id: patientProcedureId });
     } else {
-      res.status(404).send({ message: "Tedavi kaydı bulunamadı" });
+      res.status(404).send({ message: "Tedavi mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);
@@ -280,7 +280,7 @@ exports.deletePatientProcedure = async (req, res) => {
 
       res.status(200).send({ id: patientProcedureId });
     } else {
-      res.status(404).send({ message: "Tedavi kaydı bulunamadı" });
+      res.status(404).send({ message: "Tedavi mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);

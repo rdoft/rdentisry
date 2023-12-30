@@ -80,7 +80,7 @@ exports.savePayment = async (req, res) => {
     });
     
     if (!patientRecord) {
-      return res.status(404).send({ message: "Böyle bir hasta bulunamadı" });
+      return res.status(404).send({ message: "Hasta bulunamadı" });
     }
 
     // Create payment record
@@ -147,7 +147,7 @@ exports.updatePayment = async (req, res) => {
 
       res.status(200).send({ id: paymentId });
     } else {
-      res.status(404).send({ message: "Böyle bir ödeme kaydı mevcut değil" });
+      res.status(404).send({ message: "Ödeme mevcut değil" });
     }
   } catch (error) {
     if (error instanceof Sequelize.ValidationError) {
@@ -192,7 +192,7 @@ exports.deletePayment = async (req, res) => {
 
       res.status(200).send({ id: paymentId });
     } else {
-      res.status(404).send({ message: "Ödeme kaydı bulunamadı" });
+      res.status(404).send({ message: "Ödeme mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);

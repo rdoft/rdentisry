@@ -86,7 +86,7 @@ exports.getProcedure = async (req, res) => {
     if (procedure) {
       res.status(200).send(procedure);
     } else {
-      res.status(404).send({ message: "İşlem bulunamadı" });
+      res.status(404).send({ message: "Tedavi mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);
@@ -126,7 +126,7 @@ exports.saveProcedure = async (req, res) => {
       error.name === "SequelizeUniqueConstraintError"
     ) {
       res.status(400).send({
-        message: "Aynı işlem koduna sahip yeni bir işlem oluşturulamaz",
+        message: "Aynı işlem koduna sahip yeni bir tedavi oluşturulamaz",
       });
     } else {
       res.status(500).send(error);
@@ -166,7 +166,7 @@ exports.updateProcedure = async (req, res) => {
 
       res.status(200).send({ id: procedureId });
     } else {
-      res.status(404).send({ message: "Böyle bir işlem mevcut değil" });
+      res.status(404).send({ message: "Tedavi mevcut değil" });
     }
   } catch (error) {
     if (
@@ -174,7 +174,7 @@ exports.updateProcedure = async (req, res) => {
       error.name === "SequelizeUniqueConstraintError"
     ) {
       res.status(400).send({
-        message: "İşlem kodu mevcut, aynı işlem koduna sahip yeni bir işlem oluşturulamaz",
+        message: "Tedavi zaten mevcut, aynı işlem koduna sahip yeni bir tedavi oluşturulamaz",
       });
     } else {
       res.status(500).send(error);
@@ -206,13 +206,13 @@ exports.deleteProcedure = async (req, res) => {
 
       res.status(200).send({ id: procedureId });
     } else {
-      res.status(404).send({ message: "İşlem bulunamadı" });
+      res.status(404).send({ message: "Tedavi mevcut değil" });
     }
   } catch (error) {
     if (error instanceof Sequelize.ForeignKeyConstraintError) {
       res
         .status(400)
-        .send({ message: "Silmek istediğiniz işlem bazı hastalarınızda kullanılmış olduğundan işlem tamamlanamadı" });
+        .send({ message: "Silmek istediğiniz tedavi bazı hastalarınızda kullanılmış olduğundan işlem tamamlanamadı" });
     } else {
       res.status(500).send(error);
     }

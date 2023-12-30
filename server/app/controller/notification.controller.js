@@ -83,7 +83,7 @@ exports.updateNotification = async (req, res) => {
 
       res.status(200).send({ id: notificationId });
     } else {
-      res.status(404).send({ message: "Böyle bir bildirim bulunamadı" });
+      res.status(404).send({ message: "Bildirim mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);

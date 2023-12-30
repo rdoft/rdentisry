@@ -144,7 +144,7 @@ exports.getAppointment = async (req, res) => {
       appointment.endTime = new Date(`1970-01-01T${appointment.endTime}`);
       res.status(200).send(appointment);
     } else {
-      res.status(404).send({ message: "Randevu bulunamadı" });
+      res.status(404).send({ message: "Randevu mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);
@@ -188,9 +188,9 @@ exports.saveAppointment = async (req, res) => {
       : null;
 
     if (!patientRecord || (doctor && !doctorRecord)) {
-      return res.status(403).send({
+      return res.status(404).send({
         message:
-          "Yetkiniz olmayan bir hastaya veya doktora randevu oluşturulamaz",
+          "Randevu oluşturmak istenen hasta veya doktor mevcut değil",
       });
     }
 
@@ -265,7 +265,7 @@ exports.updateAppointment = async (req, res) => {
 
       res.status(200).send({ id: appointmentId });
     } else {
-      res.status(404).send({ message: "Böyle bir randevu mevcut değil" });
+      res.status(404).send({ message: "Randevu mevcut değil" });
     }
   } catch (error) {
     if (
@@ -314,7 +314,7 @@ exports.deleteAppointment = async (req, res) => {
 
       res.status(200).send({ id: appointmentId });
     } else {
-      res.status(404).send({ message: "Randevu bulunamadı" });
+      res.status(404).send({ message: "Randevu mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);

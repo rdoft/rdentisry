@@ -109,7 +109,7 @@ exports.getPatient = async (req, res) => {
     if (patient) {
       res.status(200).send(patient);
     } else {
-      res.status(404).send({ message: "Hasta bulunamadı" });
+      res.status(404).send({ message: "Hasta mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);
@@ -192,7 +192,7 @@ exports.updatePatient = async (req, res) => {
 
       res.status(200).send({ id: patientId });
     } else {
-      res.status(404).send({ message: "Böyle bir hasta mevcut değil" });
+      res.status(404).send({ message: "Hasta mevcut değil" });
     }
   } catch (error) {
     if (
@@ -273,7 +273,7 @@ exports.deletePatient = async (req, res) => {
 
       res.status(200).send({ id: patientId });
     } else {
-      res.status(404).send({ message: "Hasta bulunamadı" });
+      res.status(404).send({ message: "Hasta mevcut değil" });
     }
   } catch (error) {
     if (error instanceof Sequelize.ForeignKeyConstraintError) {
