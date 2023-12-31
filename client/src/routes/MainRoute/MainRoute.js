@@ -14,39 +14,45 @@ const Register = Loadable(lazy(() => import("pages/Auth/RegisterPage")));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
-const MainRoutes = {
-  path: "/",
-  element: <MainLayout />,
-  children: [
-    {
-      path: "/",
-      element: <Calendar />,
-    },
-    {
-      path: "/login",
-      element: <Login />,
-    },
-    {
-      path: "/register",
-      element: <Register />,
-    },
-    // {
-    //   path: "/overview",
-    //   element: <Overview />,
-    // },
-    {
-      path: "patients",
-      element: <Patients />,
-    },
-    {
-      path: "patients/:id",
-      element: <Patient />,
-    },
-    {
-      path: "/calendar",
-      element: <Calendar />,
-    },
-  ],
-};
+const MainRoutes = [
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  // {
+  //   path: "/not-found",
+  //   element: <NotFound />,
+  // },
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      {
+        path: "/",
+        element: <Calendar />,
+      },
+      // {
+      //   path: "/overview",
+      //   element: <Overview />,
+      // },
+      {
+        path: "patients",
+        element: <Patients />,
+      },
+      {
+        path: "patients/:id",
+        element: <Patient />,
+      },
+      {
+        path: "/calendar",
+        element: <Calendar />,
+      },
+    ],
+  },
+];
 
 export default MainRoutes;

@@ -72,8 +72,8 @@ export default function Login() {
   };
 
   return (
-    <Grid container justifyContent="center" alignItems="center">
-      <Grid item lg={2}>
+    <Grid container my={10} justifyContent="center" alignItems="center">
+      <Grid item md={4} lg={2}>
         <Card className="p-fluid">
           <div className="flex mb-5" style={{ justifyContent: "center" }}>
             <img src={logo} alt="Logo" style={{ width: "85%" }} />
