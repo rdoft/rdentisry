@@ -174,6 +174,21 @@ export default function Register() {
             />
           </div>
 
+          <div className="flex mb-3" style={{ alignItems: "center"}}>
+            <div className="mr-5">
+              <Typography variant="body1">
+                Zaten bir hesabınız var mı?
+              </Typography>
+            </div>
+            <div>
+              <Button
+                label="Giriş Yap"
+                onClick={() => navigate("/login")}
+                className="p-button-text p-button-secondary"
+              />
+            </div>
+          </div>
+
           <Divider />
 
           <div className="flex m-2" style={{ justifyContent: "center" }}>
