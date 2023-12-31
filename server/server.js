@@ -19,6 +19,7 @@ const corsOptions = {
     `http://${HOST}`,
     `http://srv.rdoft.com`,
   ],
+  credentials: true,
 };
 
 // db models
@@ -51,7 +52,6 @@ require("./app/routes/index")(app);
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to rdentistry" });
 });
-
 
 // CRON JOBS
 // For example, '0 9 * * *' means every day at 9:00 AM.

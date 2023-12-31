@@ -8,6 +8,10 @@
     sans-serif;
 }
 
+a, a:visited {
+  color: #3b5dbf;
+}
+
 /* Calendar */
 .rbc-calendar {
   /* background: white; */

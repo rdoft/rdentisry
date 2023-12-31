@@ -19,7 +19,7 @@ const Logo = ({ sx, to }) => (
   >
     <Stack direction="row" spacing={2} alignItems="center">
       <LogoImage />
-      <Typography variant="h4">dendis</Typography>
+      {/* <Typography variant="h4">dendis</Typography> */}
     </Stack>
   </ButtonBase>
 );
