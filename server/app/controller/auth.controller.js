@@ -9,7 +9,7 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = async (req, res) => {
-  req.logout(err => {
+  req.logout((err) => {
     if (err) {
       return next(err);
     }
@@ -27,6 +27,16 @@ exports.register = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, salt);
 
   // Add user record
+  user = await User.findOne({
+    where: {
+      Email: email,
+    },
+  });
+
+  if (user) {
+    return res.status(400).send({ message: "Mail adresi zaten kayıtlı" });
+  }
+
   user = await User.create({
     Name: name,
     Email: email,
