@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { toastErrorMessage } from "components/errorMesage";
+import { errorHandler } from "utils/errorHandler";
 import { DataTable, Column, Image } from "primereact";
 import PatientDialog from "./PatientDialog";
 import DeletePatientDialog from "./DeletePatientDialog";
@@ -111,8 +111,8 @@ function PatientsTable() {
       // Set new patients
       setPatients(patients);
     } catch (error) {
-      // Set error status and show error toast message
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -148,8 +148,8 @@ function PatientsTable() {
       setPatients(_patients);
       setPatientDialog(false);
     } catch (error) {
-      // Set error status and show error toast message
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -160,7 +160,8 @@ function PatientsTable() {
       setAppointmentDialog(false);
       toast.success("Yeni randevu başarıyla eklendi");
     } catch (error) {
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -182,8 +183,8 @@ function PatientsTable() {
       setPatients(_patients);
       setSelectedPatients(_selectedPatients);
     } catch (error) {
-      // Set error status and show error toast message
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
 
     // Close delete dialog and empty patient variable
@@ -215,8 +216,8 @@ function PatientsTable() {
       setPatients(_patients);
       setSelectedPatients(null);
     } catch (error) {
-      // Set error status and show error toast message
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
 
     // Close the dialog and set selec

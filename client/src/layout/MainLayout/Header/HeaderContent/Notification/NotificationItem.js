@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { toastErrorMessage } from "components/errorMesage";
+import { errorHandler } from "utils/errorHandler";
 import {
   Avatar,
   ListItemButton,
@@ -59,7 +59,8 @@ function NotificationItem({ notification, getNotifications, onClose }) {
       // Set the notifications list
       getNotifications();
     } catch (error) {
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 

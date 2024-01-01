@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { toastErrorMessage } from "components/errorMesage";
+import { errorHandler } from "utils/errorHandler";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider, Card } from "primereact";
 
@@ -42,7 +42,8 @@ export default function Register() {
       await AuthService.register(auth);
       navigate("/");
     } catch (error) {
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -90,7 +91,7 @@ export default function Register() {
 
   return (
     <Grid container my={10} justifyContent="center" alignItems="center">
-      <Grid item md={4} lg={2}>
+      <Grid item md={4} lg={3}>
         <Card className="p-fluid">
           <div className="flex mb-5" style={{ justifyContent: "center" }}>
             <img src={logo} alt="Logo" style={{ width: "85%" }} />
@@ -182,7 +183,7 @@ export default function Register() {
             </div>
             <div>
               <Button
-                label="Giriş Yap"
+                label="Oturum aç"
                 onClick={() => navigate("/login")}
                 className="p-button-text p-button-secondary"
               />

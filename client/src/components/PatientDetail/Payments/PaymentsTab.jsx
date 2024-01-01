@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
 import { Timeline, ProgressBar } from "primereact";
-import { toastErrorMessage } from "components/errorMesage";
+import { errorHandler } from "utils/errorHandler";
 import PaymentDialog from "./PaymentDialog";
 import PaymentCard from "./PaymentCard";
 import PaymentMarker from "./PaymentMarker";
@@ -12,7 +13,15 @@ import StatisticCard from "./StatisticCard";
 import { PaymentService } from "services";
 import NotFoundText from "components/NotFoundText";
 
-function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog, getCounts }) {
+function PaymentsTab({
+  patient,
+  paymentDialog,
+  showDialog,
+  hideDialog,
+  getCounts,
+}) {
+  const navigate = useNavigate();
+
   // Set the default values
   const [payments, setPayments] = useState([]);
   const [payment, setPayment] = useState(null);
@@ -73,7 +82,8 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog, getCounts
 
       setPayments(payments);
     } catch (error) {
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -99,7 +109,8 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog, getCounts
       hideDialog();
       setPayment(null);
     } catch (error) {
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -150,8 +161,8 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog, getCounts
       hideDialog();
       setPayment(null);
     } catch (error) {
-      // Set error status and show error toast message
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -190,7 +201,7 @@ function PaymentsTab({ patient, paymentDialog, showDialog, hideDialog, getCounts
   };
 
   return (
-    <div style={{ backgroundColor: "white", borderRadius: "8px"}}>
+    <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
       {payments.length === 0 ? (
         <NotFoundText text="Ödeme yok" p={3} />
       ) : (

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { toastErrorMessage } from "components/errorMesage";
+import { errorHandler } from "utils/errorHandler";
 import { TabView, TabPanel, Button } from "primereact";
 import { Grid, Typography } from "@mui/material";
 import TabHeader from "./TabHeader";
@@ -42,6 +42,7 @@ const getActiveIndex = (tab) => {
 };
 
 function PatientDetail() {
+  const navigate = useNavigate();
   // Get patient id
   let { id } = useParams();
   id = Number.isInteger(parseInt(id)) ? parseInt(id) : null;
@@ -88,8 +89,8 @@ function PatientDetail() {
       // Set new patients
       setPatient(patient);
     } catch (error) {
-      // Set error status and show error toast message
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -139,7 +140,8 @@ function PatientDetail() {
           break;
       }
     } catch (error) {
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 

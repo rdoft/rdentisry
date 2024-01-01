@@ -8,7 +8,9 @@ import { MainLayout } from "layout";
 // const Overview = Loadable(lazy(() => import("pages/Overview/OverviewPage")));
 const Patients = Loadable(lazy(() => import("pages/Patients/PatientsPage")));
 const Patient = Loadable(lazy(() => import("pages/Patients/PatientPage")));
-const Calendar = Loadable(lazy(() => import("pages/AppointmentCalendar/AppointmentCalendarPage")));
+const Calendar = Loadable(
+  lazy(() => import("pages/AppointmentCalendar/AppointmentCalendarPage"))
+);
 const Login = Loadable(lazy(() => import("pages/Auth/LoginPage")));
 const Register = Loadable(lazy(() => import("pages/Auth/RegisterPage")));
 
@@ -23,10 +25,6 @@ const MainRoutes = [
     path: "/register",
     element: <Register />,
   },
-  // {
-  //   path: "/not-found",
-  //   element: <NotFound />,
-  // },
   {
     path: "/",
     element: <MainLayout />,
@@ -53,6 +51,10 @@ const MainRoutes = [
       },
     ],
   },
+  // {
+  //   path: "/*",
+  //   element: <NotFound />,
+  // },
 ];
 
 export default MainRoutes;

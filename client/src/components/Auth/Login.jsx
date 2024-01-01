@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { toastErrorMessage } from "components/errorMesage";
+import { errorHandler } from "utils/errorHandler";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider, Card } from "primereact";
 
@@ -34,9 +34,10 @@ export default function Login() {
       await AuthService.login(auth);
       navigate("/");
     } catch (error) {
-      error.response?.status === 401
+      const { code, message } = errorHandler(error);
+      code === 401
         ? toast.error("Kullanıcı adı veya parola hatalı")
-        : toast.error(toastErrorMessage(error));
+        : toast.error(message);
     }
   };
 
@@ -73,7 +74,7 @@ export default function Login() {
 
   return (
     <Grid container my={10} justifyContent="center" alignItems="center">
-      <Grid item md={4} lg={2}>
+      <Grid item md={4} lg={3}>
         <Card className="p-fluid">
           <div className="flex mb-5" style={{ justifyContent: "center" }}>
             <img src={logo} alt="Logo" style={{ width: "85%" }} />

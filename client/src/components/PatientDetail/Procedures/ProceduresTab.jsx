@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { toastErrorMessage } from "components/errorMesage";
+import { useNavigate } from "react-router-dom";
+import { errorHandler } from "utils/errorHandler";
 import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
 import { DataScroller, Fieldset } from "primereact";
@@ -16,6 +17,8 @@ import "assets/styles/PatientDetail/ProceduresTab.css";
 import { PatientProcedureService } from "services/index";
 
 function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
+  const navigate = useNavigate();
+
   const [procedures, setProcedures] = useState([]);
   const [groupedProcedures, setGroupedProcedures] = useState({});
   const [selectedTooth, setSelectedTooth] = useState(null);
@@ -69,12 +72,13 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
           patientId
         );
       }
-      
+
       procedures = response.data;
       groupProcedures(procedures);
       setProcedures(procedures);
     } catch (error) {
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -93,7 +97,8 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
       getProcedures(patient.id, selectedTooth);
       setProcedure(null);
     } catch (error) {
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -108,7 +113,8 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
       // Get and set the updated list of procedures
       getProcedures(patient.id, selectedTooth);
     } catch (error) {
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 

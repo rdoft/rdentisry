@@ -1,4 +1,5 @@
-export const toastErrorMessage = (error) => {
+export const errorHandler = (error) => {
+  let code = 500;
   let message = "";
 
   if (error.response) {
@@ -6,15 +7,19 @@ export const toastErrorMessage = (error) => {
     // that falls out of the range of 2xx
     switch (error.response.status) {
       case 400:
+        code = 400;
         message = error.response.data.message;
         break;
       case 401:
-        message = "Lütfen oturum açınız";
+        code = 401;
+        message = "Oturumunuzun süresi doldu, lütfen tekrar giriş yapınız";
         break;
       case 403:
+        code = 403;
         message = "Erişim reddedildi";
         break;
       case 404:
+        code = 404;
         message = error.response.data.message;
         break;
       default:
@@ -26,5 +31,5 @@ export const toastErrorMessage = (error) => {
     message = "Sunucuya bağlanılamadı, daha sonra tekrar deneyiniz";
   }
 
-  return message;
+  return { code, message };
 };
