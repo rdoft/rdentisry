@@ -1,5 +1,8 @@
 import PropTypes from "prop-types";
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { errorHandler } from "utils/errorHandler";
 
 // material-ui
 import { useTheme } from "@mui/material/styles";
@@ -25,8 +28,11 @@ import ProfileTab from "./ProfileTab";
 import SettingTab from "./SettingTab";
 
 // assets
-import avatar1 from "assets/images/avatars/dentist-avatar.png";
+import logoutAvatar from "assets/images/avatars/logout.png";
 import { SettingOutlined, UserOutlined } from "@ant-design/icons";
+
+// services
+import { AuthService } from "services";
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -59,6 +65,7 @@ function a11yProps(index) {
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
 const Profile = () => {
+  const navigate = useNavigate();
   const theme = useTheme();
 
   const anchorRef = useRef(null);
@@ -82,6 +89,35 @@ const Profile = () => {
 
   const iconBackColorOpen = "grey.300";
 
+  // const [userName, setUserName] = useState("Diş Kliniği");
+
+  // HANDLERS ---------------------------------------------------------
+  const handleLogout = async () => {
+    try {
+      await AuthService.logout();
+      navigate(`/login`);
+    } catch (error) {
+      const { code, message } = errorHandler(error);
+      toast.error(message);
+    }
+  };
+
+  // SERVICES ---------------------------------------------------------
+  // const getUser = async () => {
+  //   let response;
+  //   let userName;
+
+  //   try {
+  //     response = await AuthService.getUser();
+  //     userName = response.data.name ?? "Diş Kliniği";
+  //     userName = userName.length > 20 ? userName.slice(0, 20) + "..." : userName;
+  //     setUserName(userName);
+  //   } catch (error) {
+  //     const { code, message } = errorHandler(error);
+  //     code === 401 ? navigate(`/login`) : toast.error(message);
+  //   }
+  // };
+
   return (
     <Box sx={{ flexShrink: 0, ml: 0.75 }}>
       <ButtonBase
@@ -95,19 +131,20 @@ const Profile = () => {
         ref={anchorRef}
         aria-controls={open ? "profile-grow" : undefined}
         aria-haspopup="true"
-        onClick={handleToggle}
+        // onClick={handleToggle}
+        onClick={handleLogout}
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
           <Avatar
             alt="profile user"
-            src={avatar1}
-            sx={{ width: 32, height: 32 }}
+            src={logoutAvatar}
+            sx={{ width: 16, height: 16 }}
           />
           <Stack>
-            <Typography variant="h6">Gül Diş Kliniği</Typography>
-            <Typography variant="body2" color="textSecondary">
-              Çayırova/Kocaeli
-            </Typography>
+            <Typography variant="h6">Oturumu kapat</Typography>
+            {/* <Typography variant="body2" color="textSecondary">
+              {userName}
+            </Typography> */}
           </Stack>
         </Stack>
       </ButtonBase>
