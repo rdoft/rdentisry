@@ -7,7 +7,7 @@ import { InputText, Button, Password, Divider, Card } from "primereact";
 
 // assets
 import logo from "assets/images/logo.png";
-import { ReactComponent as Rdoft } from "assets/svg/rdoft.svg";
+import { ReactComponent as Rdoft } from "assets/svg/rdoft/rdoft.svg";
 
 // services
 import { AuthService } from "services";
