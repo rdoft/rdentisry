@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils/errorHandler";
 import { Grid, Typography } from "@mui/material";
@@ -7,6 +7,7 @@ import { InputText, Button, Password, Divider, Card } from "primereact";
 
 // assets
 import logo from "assets/images/logo.png";
+import svgGoogle from "assets/svg/google.svg";
 import { ReactComponent as Rdoft } from "assets/svg/rdoft/rdoft.svg";
 
 // services
@@ -16,6 +17,9 @@ import schema from "schemas/user.schema";
 
 export default function Login() {
   const navigate = useNavigate();
+  const GOOGLE_AUTH = process.env.REACT_APP_AUTH_URL
+    ? `${process.env.REACT_APP_AUTH_URL}google`
+    : "http://localhost:8080/auth/google";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -55,6 +59,11 @@ export default function Login() {
     }
   };
 
+  // Login with google
+  const handleLoginGoogle = () => {
+    window.location.href = GOOGLE_AUTH;
+  };
+
   // Login handler
   const handleLogin = () => {
     login({ email, password });
@@ -84,7 +93,7 @@ export default function Login() {
             <Typography variant="h3">Oturum aç</Typography>
           </div>
 
-          <div className="field mb-3">
+          <div className="field mb-2">
             <InputText
               id="email"
               type="email"
@@ -97,7 +106,7 @@ export default function Login() {
             />
           </div>
 
-          <div className="field mb-2">
+          <div className="field mb-3">
             <Password
               id="password"
               placeholder="Parola"
@@ -110,7 +119,7 @@ export default function Login() {
             />
           </div>
 
-          <div className="field mb-3">
+          {/* <div className="field mb-3">
             <label htmlFor="reset-password">
               <Link to="/reset-password" style={{ textDecoration: "none" }}>
                 <Typography variant="body1">
@@ -118,18 +127,33 @@ export default function Login() {
                 </Typography>
               </Link>
             </label>
-          </div>
+          </div> */}
 
           <div className="field mb-3">
             <Button label="Devam" onClick={handleLogin} disabled={!isValid} />
           </div>
 
-          <div className="field mb-5">
+          <div className="field mb-3">
             <Button
               label="Hesap oluştur"
               onClick={handleRegister}
               className="p-button-text p-button-secondary"
             />
+          </div>
+
+          <Divider align="center" style={{height: "1px"}}>
+            <Typography variant="caption">veya</Typography>
+          </Divider>
+
+          <div className="field mb-5">
+            <Button
+              className="flex p-button p-button-secondary"
+              style={{ justifyContent: "center" }}
+              onClick={handleLoginGoogle}
+            >
+              <img src={svgGoogle} alt="Google" style={{ width: "25px" }} />
+              <span className="px-3">Google ile devam et</span>
+            </Button>
           </div>
 
           <Divider />

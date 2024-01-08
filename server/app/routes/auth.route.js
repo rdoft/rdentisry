@@ -2,7 +2,6 @@ const router = require("express").Router();
 var passport = require("../config/passport.config");
 const { validate } = require("../middleware/validation");
 
-
 // Auth specific imports
 const controller = require("../controller/auth.controller");
 const schema = require("../schemas/user.schema");
@@ -25,8 +24,7 @@ module.exports = function (app) {
      * @body User informations
      */
     .post(
-      // TODO: remove this belove comment
-      // validate(schema.login, "body"),
+      validate(schema.login, "body"),
       passport.authenticate("local"),
       controller.login
     );
@@ -45,6 +43,20 @@ module.exports = function (app) {
      * @body User informations
      */
     .post(validate(schema.register, "body"), controller.register);
+
+  router
+    .route(`/google`)
+    /**
+     * Google login
+     */
+    .get(passport.authenticate("google", { scope: ["profile", "email"] }));
+
+  router
+    .route(`/google/callback`)
+    /**
+     * Google login callback
+     */
+    .get(passport.authenticate("google"), controller.google);
 
   app.use(API_URL, router);
 };

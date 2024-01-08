@@ -2,9 +2,14 @@ const { Sequelize } = require("../models");
 const db = require("../models");
 const User = db.user;
 
-const passport = require("passport");
-const LocalStrategy = require("passport-local");
 const bcrypt = require("bcrypt");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+
+// Get env variables
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, HOST_SERVER, PORT_SERVER } =
+  process.env;
 
 // Local strategy for username password login
 passport.use(
@@ -29,6 +34,12 @@ passport.use(
         }
 
         // Check password is valid
+        if (!user.Password) {
+          return cb(null, false, {
+            message: "Kullanıcı adı veya şifre yanlış",
+          });
+        }
+        
         const isValid = await bcrypt.compare(password, user.Password);
         if (!isValid) {
           return cb(null, false, {
@@ -36,6 +47,28 @@ passport.use(
           });
         }
 
+        return cb(null, user);
+      } catch (err) {
+        return cb(err);
+      }
+    }
+  )
+);
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: GOOGLE_CLIENT_ID,
+      clientSecret: GOOGLE_CLIENT_SECRET,
+      callbackURL: `http://${HOST_SERVER}:${PORT_SERVER}/auth/google/callback`,
+    },
+    async function (accessToken, refreshToken, profile, cb) {
+      try {
+        const [user, created] = await User.findOrCreate({
+          where: {
+            Email: profile.emails[0].value,
+          },
+        });
         return cb(null, user);
       } catch (err) {
         return cb(err);

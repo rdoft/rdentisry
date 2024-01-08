@@ -9,7 +9,7 @@ module.exports = (sequelize, Sequelize) => {
       },
       Name: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       Email: {
         type: Sequelize.STRING,
@@ -20,7 +20,7 @@ module.exports = (sequelize, Sequelize) => {
       },
       Password: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       AccountExpiration: {
         type: Sequelize.DATE,
