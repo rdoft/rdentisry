@@ -18,6 +18,8 @@ const corsOptions = {
     `http://${HOST}:${PORT_CLIENT}`,
     `http://${HOST}`,
     `http://srv.rdoft.com`,
+    `http://disheki.me`,
+    `http://disheki.me:${PORT_CLIENT}`,
   ],
   credentials: true,
 };
