@@ -1,5 +1,5 @@
-const fs = require('fs');
-const https = require('https');
+const fs = require("fs");
+const https = require("https");
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -81,12 +81,12 @@ cron.schedule("00 22 * * *", () => {
   notification.run();
 });
 
-
 // SERVER HTTPS
 // options for https server
 const options = {
-  key: fs.readFileSync('./app/cert/server.key'),
-  cert: fs.readFileSync('./app/cert/server.crt')
+  key: fs.readFileSync("./app/cert/server.key"),
+  cert: fs.readFileSync("./app/cert/certificate.crt"),
+  ca: fs.readFileSync("./app/cert/intermediate.crt"),
 };
 
 // create https server

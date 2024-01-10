@@ -118,4 +118,7 @@ dist
 # TernJS port file
 .tern-port
 
+# certificates
+certs
+
 db
