@@ -1,3 +1,5 @@
+const fs = require('fs');
+const https = require('https');
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -14,12 +16,12 @@ const PORT_CLIENT = process.env.PORT || 3000;
 const SECRET_KEY = process.env.SECRET_KEY;
 const corsOptions = {
   origin: [
-    `http://${HOST}:${PORT}`,
-    `http://${HOST}:${PORT_CLIENT}`,
-    `http://${HOST}`,
-    `http://srv.rdoft.com`,
-    `http://disheki.me`,
-    `http://disheki.me:${PORT_CLIENT}`,
+    `https://${HOST}:${PORT}`,
+    `https://${HOST}:${PORT_CLIENT}`,
+    `https://${HOST}`,
+    `https://srv.rdoft.com`,
+    `https://disheki.me`,
+    `https://disheki.me:${PORT_CLIENT}`,
   ],
   credentials: true,
 };
@@ -79,7 +81,18 @@ cron.schedule("00 22 * * *", () => {
   notification.run();
 });
 
+
+// SERVER HTTPS
+// options for https server
+const options = {
+  key: fs.readFileSync('./app/cert/server.key'),
+  cert: fs.readFileSync('./app/cert/server.crt')
+};
+
+// create https server
+const httpsServer = https.createServer(options, app);
+
 // set port, listen for requests
-app.listen(PORT, () => {
+httpsServer.listen(PORT, () => {
   console.log(`Server is running on ${HOST}:${PORT}.`);
 });
