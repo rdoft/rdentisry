@@ -76,9 +76,9 @@ exports.register = async (req, res) => {
 
 exports.google = async (req, res) => {
   if (req.user) {
-    res.redirect(`http://${HOST}:${PORT_CLIENT}/`);
+    res.redirect(`https://${HOST}:${PORT_CLIENT}/`);
   } else {
-    res.redirect(`http://${HOST}:${PORT_CLIENT}/login`);
+    res.redirect(`https://${HOST}:${PORT_CLIENT}/login`);
   }
   res.status(200).send();
 };
