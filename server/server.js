@@ -1,4 +1,5 @@
 const fs = require("fs");
+const http = require("http");
 const https = require("https");
 const express = require("express");
 const cors = require("cors");
@@ -10,7 +11,7 @@ const session = require("express-session");
 // Requiring passport as we've configured it
 const passport = require("./app/config/passport.config");
 
-const HOSTNAME = process.env.HOSTNAME || "disheki.me";
+const HOSTNAME = process.env.HOSTNAME || "disheki.me";
 const HOST = process.env.HOST_SERVER || "localhost";
 const PORT = process.env.PORT_SERVER || 8080;
 const PORT_CLIENT = process.env.PORT || 3000;
@@ -82,14 +83,28 @@ cron.schedule("00 22 * * *", () => {
 });
 
 // SERVER HTTPS
+app.use((req, res, next) => {
+  if (req.protocol === "http") {
+    res.redirect(301, `https://${req.headers.host}${req.url}`);
+  } else {
+    next();
+  }
+});
+
 // options for https server
 const options = {
   key: fs.readFileSync("./app/certs/server.key"),
   cert: fs.readFileSync("./app/certs/certificate.crt"),
   ca: fs.readFileSync("./app/certs/intermediate.crt"),
+  ca: [
+    fs.readFileSync("gd1.crt"),
+    fs.readFileSync("gd2.crt"),
+    fs.readFileSync("gd3.crt"),
+  ],
 };
 
 // create https server
+http.createServer(app).listen(PORT);
 const httpsServer = https.createServer(options, app);
 
 // set port, listen for requests
