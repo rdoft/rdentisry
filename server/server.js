@@ -103,7 +103,7 @@ const options = {
 };
 
 // create https server
-http.createServer(app).listen(PORT);
+http.createServer(app).listen(80);
 const httpsServer = https.createServer(options, app);
 
 // set port, listen for requests
