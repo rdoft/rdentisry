@@ -96,9 +96,9 @@ const options = {
   key: fs.readFileSync("./app/certs/server.key"),
   cert: fs.readFileSync("./app/certs/certificate.crt"),
   ca: [
-    fs.readFileSync("gd1.crt"),
-    fs.readFileSync("gd2.crt"),
-    fs.readFileSync("gd3.crt"),
+    fs.readFileSync("./app/certs/gd1.crt"),
+    fs.readFileSync("./app/certs/gd2.crt"),
+    fs.readFileSync("./app/certs/gd3.crt"),
   ],
 };
 
