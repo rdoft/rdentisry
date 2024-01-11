@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 
 const { HOSTNAME, HOST_SERVER, PORT } = process.env;
 const HOST = HOSTNAME || HOST_SERVER || "localhost";
-PORT = PORT || 3000;
+const PORT_CLIENT = PORT || 3000;
 
 exports.login = async (req, res) => {
   res.status(200).send();
@@ -77,9 +77,9 @@ exports.register = async (req, res) => {
 
 exports.google = async (req, res) => {
   if (req.user) {
-    res.redirect(`https://${HOST}:${PORT}/`);
+    res.redirect(`https://${HOST}:${PORT_CLIENT}/`);
   } else {
-    res.redirect(`https://${HOST}:${PORT}/login`);
+    res.redirect(`https://${HOST}:${PORT_CLIENT}/login`);
   }
   res.status(200).send();
 };
