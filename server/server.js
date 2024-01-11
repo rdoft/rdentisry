@@ -95,7 +95,6 @@ app.use((req, res, next) => {
 const options = {
   key: fs.readFileSync("./app/certs/server.key"),
   cert: fs.readFileSync("./app/certs/certificate.crt"),
-  ca: fs.readFileSync("./app/certs/intermediate.crt"),
   ca: [
     fs.readFileSync("gd1.crt"),
     fs.readFileSync("gd2.crt"),
