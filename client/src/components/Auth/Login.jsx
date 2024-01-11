@@ -19,7 +19,7 @@ export default function Login() {
   const navigate = useNavigate();
   const GOOGLE_AUTH = process.env.REACT_APP_AUTH_URL
     ? `${process.env.REACT_APP_AUTH_URL}google`
-    : "http://localhost:8080/auth/google";
+    : "https://localhost:8080/auth/google";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

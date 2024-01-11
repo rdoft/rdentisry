@@ -5,8 +5,9 @@ const User = db.user;
 
 const bcrypt = require("bcrypt");
 
-const HOST = process.env.HOST_SERVER || "localhost";
-const PORT_CLIENT = process.env.PORT || 3000;
+const { HOSTNAME, HOST_SERVER, PORT } = process.env;
+const HOST = HOSTNAME || HOST_SERVER || "localhost";
+PORT = PORT || 3000;
 
 exports.login = async (req, res) => {
   res.status(200).send();
@@ -76,9 +77,9 @@ exports.register = async (req, res) => {
 
 exports.google = async (req, res) => {
   if (req.user) {
-    res.redirect(`https://${HOST}:${PORT_CLIENT}/`);
+    res.redirect(`https://${HOST}:${PORT}/`);
   } else {
-    res.redirect(`https://${HOST}:${PORT_CLIENT}/login`);
+    res.redirect(`https://${HOST}:${PORT}/login`);
   }
   res.status(200).send();
 };

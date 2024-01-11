@@ -8,8 +8,10 @@ const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 // Get env variables
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, HOST_SERVER, PORT_SERVER } =
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, HOSTNAME, HOST_SERVER, PORT_SERVER } =
   process.env;
+const HOST = HOSTNAME || HOST_SERVER || "localhost";
+const PORT = PORT_SERVER || 8080;
 
 // Local strategy for username password login
 passport.use(
@@ -60,7 +62,7 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: `https://${HOST_SERVER}:${PORT_SERVER}/auth/google/callback`,
+      callbackURL: `https://${HOST}:${PORT}/auth/google/callback`,
     },
     async function (accessToken, refreshToken, profile, cb) {
       try {

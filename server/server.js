@@ -10,6 +10,7 @@ const session = require("express-session");
 // Requiring passport as we've configured it
 const passport = require("./app/config/passport.config");
 
+const HOSTNAME = process.env.HOSTNAME || "disheki.me";
 const HOST = process.env.HOST_SERVER || "localhost";
 const PORT = process.env.PORT_SERVER || 8080;
 const PORT_CLIENT = process.env.PORT || 3000;
@@ -19,9 +20,8 @@ const corsOptions = {
     `https://${HOST}:${PORT}`,
     `https://${HOST}:${PORT_CLIENT}`,
     `https://${HOST}`,
-    `https://srv.rdoft.com`,
-    `https://disheki.me`,
-    `https://disheki.me:${PORT_CLIENT}`,
+    `https://${HOSTNAME}`,
+    `https://${HOSTNAME}:${PORT_CLIENT}`,
   ],
   credentials: true,
 };
