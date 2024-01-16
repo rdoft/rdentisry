@@ -1,5 +1,4 @@
 const fs = require("fs");
-const http = require("http");
 const https = require("https");
 const express = require("express");
 const cors = require("cors");
@@ -18,7 +17,6 @@ const PORT_CLIENT = process.env.PORT || 3000;
 const SECRET_KEY = process.env.SECRET_KEY;
 const corsOptions = {
   origin: [
-    `https://${HOST}:${PORT}`,
     `https://${HOST}:${PORT_CLIENT}`,
     `https://${HOST}`,
     `https://${HOSTNAME}`,
@@ -83,18 +81,10 @@ cron.schedule("00 22 * * *", () => {
 });
 
 // SERVER HTTPS
-app.use((req, res, next) => {
-  if (req.protocol === "http") {
-    res.redirect(301, `https://${req.headers.host}${req.url}`);
-  } else {
-    next();
-  }
-});
-
 // options for https server
 const options = {
   key: fs.readFileSync("./app/certs/server.key"),
-  cert: fs.readFileSync("./app/certs/certificate.crt"),
+  cert: fs.readFileSync("./app/certs/server.crt"),
   ca: [
     fs.readFileSync("./app/certs/gd1.crt"),
     fs.readFileSync("./app/certs/gd2.crt"),
@@ -103,7 +93,6 @@ const options = {
 };
 
 // create https server
-http.createServer(app).listen(80);
 const httpsServer = https.createServer(options, app);
 
 // set port, listen for requests
