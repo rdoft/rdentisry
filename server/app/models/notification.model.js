@@ -18,6 +18,7 @@ module.exports = (sequelize, Sequelize) => {
       UserId: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        defaultValue: 1,
       },
       Message: {
         type: Sequelize.STRING,
