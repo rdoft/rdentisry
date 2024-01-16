@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
+const { isAuthenticated } = require("../middleware/auth");
 
 // Appointment specific imports
 const controller = require("../controller/note.controller");
@@ -17,6 +18,10 @@ module.exports = function (app) {
     next();
   });
 
+  // Control user authentication
+  // TODO: Add control for routes that need isActive check
+  router.use(isAuthenticated);
+
   router
     .route(`/patients/:patientId/notes`)
     /**
@@ -24,12 +29,6 @@ module.exports = function (app) {
      * @param {string} patientId id of the patient
      */
     .get(controller.getNotes)
-
-    /**
-     * Delete all notes of given patient
-     * @param patientId: Id of the patient
-     */
-    .delete(controller.deleteNotes);
 
   router
     .route(`/notes`)

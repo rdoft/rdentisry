@@ -8,6 +8,7 @@ const Patient = db.patient;
  * @param {string} patientId id of the patient
  */
 exports.getNotes = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { patientId } = req.params;
   let notes;
 
@@ -33,8 +34,9 @@ exports.getNotes = async (req, res) => {
             ["BirthYear", "birthYear"],
             ["Phone", "phone"],
           ],
-          where: patientId && {
-            PatientId: patientId,
+          where: {
+            UserId: userId,
+            ...(patientId && { PatientId: patientId }),
           },
         },
       ],
@@ -51,6 +53,7 @@ exports.getNotes = async (req, res) => {
  * @param noteId: Id of the Note
  */
 exports.getNote = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { noteId } = req.params;
   let note;
 
@@ -75,6 +78,9 @@ exports.getNote = async (req, res) => {
             ["BirthYear", "birthYear"],
             ["Phone", "phone"],
           ],
+          where: {
+            UserId: userId,
+          },
         },
       ],
       raw: true,
@@ -84,7 +90,7 @@ exports.getNote = async (req, res) => {
     if (note) {
       res.status(200).send(note);
     } else {
-      res.status(404).send({ message: "Not bulunamadı" });
+      res.status(404).send({ message: "Not mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);
@@ -96,6 +102,7 @@ exports.getNote = async (req, res) => {
  * @body Note information
  */
 exports.saveNote = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { patient, detail, title } = req.body;
   let values = {
     PatientId: patient.id,
@@ -105,6 +112,20 @@ exports.saveNote = async (req, res) => {
   let note;
 
   try {
+    // Get patient and control if it belongs to the authenticated user
+    const patientRecord = await Patient.findOne({
+      where: {
+        PatientId: patient.id,
+        UserId: userId,
+      },
+    });
+
+    if (!patientRecord) {
+      return res.status(404).send({
+        message: "Not eklenmek istenen hasta mevcut değil",
+      });
+    }
+
     // Create Note record
     note = await Note.create(values);
     note = {
@@ -132,6 +153,7 @@ exports.saveNote = async (req, res) => {
  * @param noteId: Id of the Note
  */
 exports.updateNote = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { noteId } = req.params;
   const { patient, detail, title } = req.body;
   let values = {
@@ -142,7 +164,21 @@ exports.updateNote = async (req, res) => {
   let note;
 
   try {
-    note = await Note.findByPk(noteId);
+    note = await Note.findOne({
+      where: {
+        NoteId: noteId,
+      },
+      include: [
+        {
+          model: Patient,
+          as: "patient",
+          attributes: [],
+          where: {
+            UserId: userId,
+          },
+        },
+      ],
+    });
 
     if (note) {
       // Update the note
@@ -150,7 +186,7 @@ exports.updateNote = async (req, res) => {
 
       res.status(200).send({ id: noteId });
     } else {
-      res.status(404).send({ message: "Böyle bir not mevcut değil" });
+      res.status(404).send({ message: "Not mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);
@@ -162,42 +198,36 @@ exports.updateNote = async (req, res) => {
  * @param noteId: Id of the Note
  */
 exports.deleteNote = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { noteId } = req.params;
   let note;
 
   try {
     // Find Note
-    note = await Note.findByPk(noteId);
+    note = await Note.findOne({
+      where: {
+        NoteId: noteId,
+      },
+      include: [
+        {
+          model: Patient,
+          as: "patient",
+          attributes: [],
+          where: {
+            UserId: userId,
+          },
+        },
+      ],
+    });
 
+    // Delete the Note if it exists
     if (note) {
       note.destroy();
 
       res.status(200).send({ id: noteId });
     } else {
-      res.status(404).send({ message: "Not bulunamadı" });
+      res.status(404).send({ message: "Not mevcut değil" });
     }
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
-
-/**
- * Delete all Notes of given patient
- * @param patientId: Id of the patient
- */
-exports.deleteNotes = async (req, res) => {
-  const { patientId } = req.params;
-  let count;
-
-  try {
-    // Find Note
-    count = await Note.destroy({
-      where: {
-        PatientId: patientId,
-      },
-    });
-
-    res.status(200).send({ count: count });
   } catch (error) {
     res.status(500).send(error);
   }

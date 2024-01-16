@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { toastErrorMessage } from "components/errorMesage";
+import { errorHandler } from "utils/errorHandler";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import NoteCard from "./NoteCard";
@@ -14,6 +15,8 @@ import { NoteService } from "services";
 import NotFoundText from "components/NotFoundText";
 
 function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
+  const navigate = useNavigate();
+  
   let emptyNote = {
     patient: patient,
     title: "",
@@ -53,7 +56,8 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
 
       setNotes(notes);
     } catch (error) {
-      toast.error(toastErrorMessage);
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -73,7 +77,8 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
       getNotes(patient.id);
       setNote(note);
     } catch (error) {
-      toast.error(toastErrorMessage);
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -87,7 +92,8 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
         setNote({ ...emptyNote });
       }
     } catch (error) {
-      toast.error(toastErrorMessage);
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 

@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
+const { isAuthenticated } = require("../middleware/auth");
 
 // Patient specific imports
 const controller = require("../controller/doctor.controller");
@@ -16,6 +17,10 @@ module.exports = function (app) {
     );
     next();
   });
+
+  // Control user authentication
+  // TODO: Add control for routes that need isActive check
+  router.use(isAuthenticated);
 
   router
     .route(``)

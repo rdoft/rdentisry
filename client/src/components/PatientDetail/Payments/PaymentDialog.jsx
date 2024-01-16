@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { toastErrorMessage } from "components/errorMesage";
+import { errorHandler } from "utils/errorHandler";
 import {
   Dialog,
   Dropdown,
@@ -24,6 +25,8 @@ import avatarPatient from "assets/images/avatars/patient-avatar.png";
 import { PatientService } from "services";
 
 function PaymentDialog({ _payment = {}, onHide, onSubmit, onDelete }) {
+  const navigate = useNavigate();
+
   // Set default empty Payment
   let emptyPayment = {
     patient: null,
@@ -92,8 +95,8 @@ function PaymentDialog({ _payment = {}, onHide, onSubmit, onDelete }) {
       // Set new patients
       setPatients(patients);
     } catch (error) {
-      // Set error status and show error toast message
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 

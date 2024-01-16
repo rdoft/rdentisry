@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { toastErrorMessage } from "components/errorMesage";
+import { errorHandler } from "utils/errorHandler";
 import {
   Dialog,
   Dropdown,
@@ -31,6 +32,8 @@ import schema from "schemas/appointment.schema";
 import { PatientService, DoctorService } from "services";
 
 function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
+  const navigate = useNavigate();
+  
   // Set default empty Appointment
   let emptyAppointment = {
     patient: null,
@@ -98,8 +101,8 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
       // Set new doctors
       setDoctors(doctors);
     } catch (error) {
-      // Set error status and show error toast message
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 

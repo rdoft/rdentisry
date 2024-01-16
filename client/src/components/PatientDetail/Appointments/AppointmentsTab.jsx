@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
-import { toastErrorMessage } from "components/errorMesage";
+import { errorHandler } from "utils/errorHandler";
 import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
 import NotFoundText from "components/NotFoundText";
 import CardTitle from "components/cards/CardTitle";
@@ -21,6 +22,7 @@ function AppointmentsTab({
   hideDialog,
   getCounts,
 }) {
+  const navigate = useNavigate();
   // Set the default values
   const [appointments, setAppointments] = useState([]);
   const [activeAppointments, setActiveAppointments] = useState([]);
@@ -69,7 +71,8 @@ function AppointmentsTab({
 
       setAppointments(appointments);
     } catch (error) {
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -89,7 +92,8 @@ function AppointmentsTab({
       hideDialog();
       setAppointment(null);
     } catch (error) {
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -103,8 +107,8 @@ function AppointmentsTab({
       hideDialog();
       setAppointment(null);
     } catch (error) {
-      // Set error status and show error toast message
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 

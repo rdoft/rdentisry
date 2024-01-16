@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { isAuthenticated } = require("../middleware/auth");
 
 // Appointment specific imports
 const controller = require("../controller/notification.controller");
@@ -15,6 +16,10 @@ module.exports = function (app) {
     next();
   });
 
+  // Control user authentication
+  // TODO: Add control for routes that need isActive check
+  router.use(isAuthenticated);
+
   router
     .route(`/notifications`)
     /**
@@ -25,7 +30,7 @@ module.exports = function (app) {
      * Update the all Notifications
      */
     .put(controller.updateNotifications);
-  
+
   router
     .route(`/notifications/:notificationId`)
     /**

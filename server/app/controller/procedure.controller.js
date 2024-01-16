@@ -7,6 +7,7 @@ const ProcedureCategory = db.procedureCategory;
  * Get Procedure list
  */
 exports.getProcedures = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { categoryId } = req.query;
   let procedures;
 
@@ -19,6 +20,9 @@ exports.getProcedures = async (req, res) => {
         ["Name", "name"],
         ["Price", "price"],
       ],
+      where: {
+        UserId: userId,
+      },
       order: [["Code", "ASC"]],
       include: [
         {
@@ -48,18 +52,23 @@ exports.getProcedures = async (req, res) => {
  * @param procedureId id of the procedure
  */
 exports.getProcedure = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { procedureId } = req.params;
   let procedure;
 
   try {
     // Find procedure
-    procedure = await Procedure.findByPk(procedureId, {
+    procedure = await Procedure.findOne({
       attributes: [
         ["ProcedureId", "id"],
         ["Code", "code"],
         ["Name", "name"],
         ["Price", "price"],
       ],
+      where: {
+        ProcedureId: procedureId,
+        UserId: userId,
+      },
       include: [
         {
           model: ProcedureCategory,
@@ -77,7 +86,7 @@ exports.getProcedure = async (req, res) => {
     if (procedure) {
       res.status(200).send(procedure);
     } else {
-      res.status(404).send({ message: "İşlem bulunamadı" });
+      res.status(404).send({ message: "Tedavi mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);
@@ -89,12 +98,14 @@ exports.getProcedure = async (req, res) => {
  * @body Procedure information
  */
 exports.saveProcedure = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { code, name, price, procedureCategory } = req.body;
   let values = {
     ProcedureCategoryId: procedureCategory.id,
     Code: code,
     Name: name,
     Price: price,
+    UserId: userId,
   };
   let procedure;
 
@@ -115,7 +126,7 @@ exports.saveProcedure = async (req, res) => {
       error.name === "SequelizeUniqueConstraintError"
     ) {
       res.status(400).send({
-        message: "Aynı işlem koduna sahip yeni bir işlem oluşturulamaz",
+        message: "Aynı işlem koduna sahip yeni bir tedavi oluşturulamaz",
       });
     } else {
       res.status(500).send(error);
@@ -129,6 +140,7 @@ exports.saveProcedure = async (req, res) => {
  * @body Procedure informations
  */
 exports.updateProcedure = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { procedureId } = req.params;
   const { code, name, price, procedureCategory } = req.body;
   let values = {
@@ -141,7 +153,12 @@ exports.updateProcedure = async (req, res) => {
 
   try {
     // Find Procedure
-    procedure = await Procedure.findByPk(procedureId);
+    procedure = await Procedure.findOne({
+      where: {
+        ProcedureId: procedureId,
+        UserId: userId,
+      },
+    });
 
     if (procedure) {
       // Update the procedure
@@ -149,7 +166,7 @@ exports.updateProcedure = async (req, res) => {
 
       res.status(200).send({ id: procedureId });
     } else {
-      res.status(404).send({ message: "Böyle bir işlem mevcut değil" });
+      res.status(404).send({ message: "Tedavi mevcut değil" });
     }
   } catch (error) {
     if (
@@ -157,7 +174,7 @@ exports.updateProcedure = async (req, res) => {
       error.name === "SequelizeUniqueConstraintError"
     ) {
       res.status(400).send({
-        message: "İşlem kodu mevcut, aynı işlem koduna sahip yeni bir işlem oluşturulamaz",
+        message: "Tedavi zaten mevcut, aynı işlem koduna sahip yeni bir tedavi oluşturulamaz",
       });
     } else {
       res.status(500).send(error);
@@ -170,6 +187,7 @@ exports.updateProcedure = async (req, res) => {
  * @param procedureId: Id of the procedure
  */
 exports.deleteProcedure = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { procedureId } = req.params;
   let procedure;
 
@@ -178,6 +196,7 @@ exports.deleteProcedure = async (req, res) => {
     procedure = await Procedure.findOne({
       where: {
         ProcedureId: procedureId,
+        UserId: userId,
       },
     });
 
@@ -187,13 +206,13 @@ exports.deleteProcedure = async (req, res) => {
 
       res.status(200).send({ id: procedureId });
     } else {
-      res.status(404).send({ message: "İşlem bulunamadı" });
+      res.status(404).send({ message: "Tedavi mevcut değil" });
     }
   } catch (error) {
     if (error instanceof Sequelize.ForeignKeyConstraintError) {
       res
         .status(400)
-        .send({ message: "Silmek istediğiniz işlem bazı hastalarınızda kullanılmış olduğundan işlem tamamlanamadı" });
+        .send({ message: "Silmek istediğiniz tedavi bazı hastalarınızda kullanılmış olduğundan işlem tamamlanamadı" });
     } else {
       res.status(500).send(error);
     }

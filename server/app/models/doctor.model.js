@@ -7,6 +7,10 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
+      UserId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       Name: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -19,7 +23,7 @@ module.exports = (sequelize, Sequelize) => {
     {
       timestamps: false,
       tableName: "Doctor",
-    },
+    }
   );
 
   return Doctor;

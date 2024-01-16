@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { toastErrorMessage } from "components/errorMesage";
+import { errorHandler } from "utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import moment from "moment";
@@ -23,7 +23,7 @@ const today = new Date();
 const AppointmentCalendar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const PAGE = "patients";
+  const PAGE_PATIENTS = "patients";
 
   // Set the default values
   const [step, setStep] = useState(30);
@@ -54,7 +54,8 @@ const AppointmentCalendar = () => {
 
       setAppointments(appointments);
     } catch (error) {
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -74,7 +75,8 @@ const AppointmentCalendar = () => {
       setAppointmentDialog(false);
       setAppointment(null);
     } catch (error) {
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -89,7 +91,8 @@ const AppointmentCalendar = () => {
       setAppointment(null);
     } catch (error) {
       // Set error status and show error toast message
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message)
     }
   };
 
@@ -117,8 +120,8 @@ const AppointmentCalendar = () => {
 
   // onSelectEvent handler for goto patient page
   const handleSelectEvent = async (event) => {
-    navigate(`/${PAGE}/${event.patient.id}`);
-    dispatch(activeItem({ openItem: [PAGE] }));
+    navigate(`/${PAGE_PATIENTS}/${event.patient.id}`);
+    dispatch(activeItem({ openItem: [PAGE_PATIENTS] }));
   };
 
   // TEMPLATES -----------------------------------------------------------------

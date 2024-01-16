@@ -7,6 +7,10 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
+      UserId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       Name: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -42,7 +46,7 @@ module.exports = (sequelize, Sequelize) => {
       indexes: [
         {
           unique: true,
-          fields: ["Name", "Surname", "Phone"],
+          fields: ["UserId", "Name", "Surname", "Phone"],
         },
       ],
       timestamps: false,

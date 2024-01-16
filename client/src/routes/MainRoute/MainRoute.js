@@ -8,35 +8,53 @@ import { MainLayout } from "layout";
 // const Overview = Loadable(lazy(() => import("pages/Overview/OverviewPage")));
 const Patients = Loadable(lazy(() => import("pages/Patients/PatientsPage")));
 const Patient = Loadable(lazy(() => import("pages/Patients/PatientPage")));
-const Calendar = Loadable(lazy(() => import("pages/AppointmentCalendar/AppointmentCalendarPage")));
+const Calendar = Loadable(
+  lazy(() => import("pages/AppointmentCalendar/AppointmentCalendarPage"))
+);
+const Login = Loadable(lazy(() => import("pages/Auth/LoginPage")));
+const Register = Loadable(lazy(() => import("pages/Auth/RegisterPage")));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
-const MainRoutes = {
-  path: "/",
-  element: <MainLayout />,
-  children: [
-    {
-      path: "/",
-      element: <Calendar />,
-    },
-    // {
-    //   path: "/overview",
-    //   element: <Overview />,
-    // },
-    {
-      path: "patients",
-      element: <Patients />,
-    },
-    {
-      path: "patients/:id",
-      element: <Patient />,
-    },
-    {
-      path: "/calendar",
-      element: <Calendar />,
-    },
-  ],
-};
+const MainRoutes = [
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      {
+        path: "/",
+        element: <Calendar />,
+      },
+      // {
+      //   path: "/overview",
+      //   element: <Overview />,
+      // },
+      {
+        path: "patients",
+        element: <Patients />,
+      },
+      {
+        path: "patients/:id",
+        element: <Patient />,
+      },
+      {
+        path: "/calendar",
+        element: <Calendar />,
+      },
+    ],
+  },
+  // {
+  //   path: "/*",
+  //   element: <NotFound />,
+  // },
+];
 
 export default MainRoutes;

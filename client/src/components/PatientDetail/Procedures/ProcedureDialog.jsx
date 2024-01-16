@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Chip,
   Dialog,
@@ -8,7 +9,7 @@ import {
   Checkbox,
 } from "primereact";
 import { toast } from "react-hot-toast";
-import { toastErrorMessage } from "components/errorMesage";
+import { errorHandler } from "utils/errorHandler";
 import DialogFooter from "components/DialogFooter/DialogFooter";
 import DropdownPersonItem from "components/DropdownItem/DropdownPersonItem";
 import DropdownProcedureItem from "components/DropdownItem/DropdownProcedureItem";
@@ -20,6 +21,8 @@ import avatarPatient from "assets/images/avatars/patient-avatar.png";
 import { PatientService, ProcedureService } from "services";
 
 function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
+  const navigate = useNavigate();
+
   // Set default empty procedure
   let emptyPatientProcedure = {
     patient: null,
@@ -67,7 +70,8 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
 
       setProcedures(procedures);
     } catch (error) {
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -82,7 +86,8 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
 
       setPatients(patients);
     } catch (error) {
-      toast.error(toastErrorMessage(error));
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 

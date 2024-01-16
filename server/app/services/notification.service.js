@@ -6,7 +6,7 @@ const Patient = db.patient;
 const Notification = db.notification;
 const NotificationEvent = db.notificationEvent;
 
-const UPCOMMING = 2;
+const UPCOMMING = 2; // Days of upcoming payment
 
 /**
  * Add notifications for upcoming and overdue payments of the patients
@@ -72,6 +72,7 @@ exports.run = async () => {
         Message: `${patient.Name} ${patient.Surname} isimli hastanın vadesi geçen ödemesi bulunmaktadır`,
         Status: "sent",
         PatientId: patient.PatientId,
+        UserId: patient.UserId,
         NotificationEventId: overdueEvent.NotificationEventId,
       });
     }
@@ -81,6 +82,7 @@ exports.run = async () => {
         Message: `${patient.Name} ${patient.Surname} isimli hastanın yaklaşan ödemesi bulunmaktadır`,
         Status: "sent",
         PatientId: patient.PatientId,
+        UserId: patient.UserId,
         NotificationEventId: upcomingEvent.NotificationEventId,
       });
     }

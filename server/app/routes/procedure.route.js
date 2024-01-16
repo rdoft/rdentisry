@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { isAuthenticated } = require("../middleware/auth");
 
 // Procedure specific imports
 const controller = require("../controller/procedure.controller");
@@ -14,6 +15,10 @@ module.exports = function (app) {
     );
     next();
   });
+
+  // Control user authentication
+  // TODO: Add control for routes that need isActive check
+  router.use(isAuthenticated);
 
   router
     .route(`/procedures`)

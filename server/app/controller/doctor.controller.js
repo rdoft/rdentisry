@@ -6,6 +6,7 @@ const Doctor = db.doctor;
  * Get doctor list
  */
 exports.getDoctors = async (req, res) => {
+  const { UserId: userId } = req.user;
   let doctors;
 
   try {
@@ -16,6 +17,9 @@ exports.getDoctors = async (req, res) => {
         ["Name", "name"],
         ["Surname", "surname"],
       ],
+      where: {
+        UserId: userId,
+      },
     });
 
     res.status(200).send(doctors);
@@ -29,8 +33,9 @@ exports.getDoctors = async (req, res) => {
  * @body Doctor informations
  */
 exports.saveDoctor = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { name, surname } = req.body;
-  let values = { Name: name, Surname: surname };
+  let values = { Name: name, Surname: surname, UserId: userId };
   let doctor;
 
   try {
@@ -53,6 +58,7 @@ exports.saveDoctor = async (req, res) => {
  * @body Doctor informations
  */
 exports.updateDoctor = async (req, res) => {
+  const { UserId: userId } = req.user;
   const { doctorId } = req.params;
   const { name, surname } = req.body;
   let values = { Name: name, Surname: surname };
@@ -60,7 +66,12 @@ exports.updateDoctor = async (req, res) => {
 
   try {
     // Find the doctor record
-    doctor = await Patient.findByPk(doctorId);
+    doctor = await Doctor.findOne({
+      where: {
+        DoctorId: doctorId,
+        UserId: userId,
+      },
+    });
 
     if (doctor) {
       // Update doctor record
@@ -68,7 +79,7 @@ exports.updateDoctor = async (req, res) => {
 
       res.status(200).send({ id: doctorId });
     } else {
-      res.status(404).send({ message: "Böyle bir doktor mevcut değil" });
+      res.status(404).send({ message: "Doktor mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);

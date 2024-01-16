@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { isAuthenticated } = require("../middleware/auth");
 
 // Patient specific imports
 const controller = require("../controller/procedureCategory.controller");
@@ -14,6 +15,10 @@ module.exports = function (app) {
     );
     next();
   });
+
+  // Control user authentication
+  // TODO: Add control for routes that need isActive check
+  router.use(isAuthenticated);
 
   router
     .route(`/procedure-categories`)
