@@ -20,7 +20,7 @@ const patient = Joi.object({
     .default(null)
     .empty("")
     .allow(null),
-});
+}).unknown();
 
 const id = Joi.object({
   patientId: Joi.number().empty(null).id(),
