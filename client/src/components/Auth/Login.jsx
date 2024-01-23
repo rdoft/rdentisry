@@ -6,8 +6,8 @@ import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider, Card } from "primereact";
 
 // assets
-import logo from "assets/images/logo.png";
 import svgGoogle from "assets/svg/google.svg";
+import { ReactComponent as Logo } from "assets/svg/dishekime/dishekime.svg";
 import { ReactComponent as Rdoft } from "assets/svg/rdoft/rdoft.svg";
 
 // services
@@ -83,43 +83,42 @@ export default function Login() {
 
   return (
     <Grid container my={10} justifyContent="center" alignItems="center">
-      <Grid item md={4} lg={3}>
-        <Card className="p-fluid">
-          <div className="flex mb-5" style={{ justifyContent: "center" }}>
-            <img src={logo} alt="Logo" style={{ width: "85%" }} />
-          </div>
+      <Grid item sm={9} md={4} lg={3} className="p-fluid">
+        <div className="flex mb-7" style={{ justifyContent: "center" }}>
+          <Logo style={{ width: "40%" }} />
+        </div>
 
-          <div className="field mb-3">
-            <Typography variant="h3">Oturum aç</Typography>
-          </div>
+        <div className="field mb-4">
+          <Typography variant="h2">Oturum aç</Typography>
+        </div>
 
-          <div className="field mb-2">
-            <InputText
-              id="email"
-              type="email"
-              placeholder="Email"
-              keyfilter="email"
-              value={email}
-              onChange={(e) => handleChange(e, "email")}
-              onKeyDown={handleKeyDown}
-              required
-            />
-          </div>
+        <div className="field mb-3">
+          <InputText
+            id="email"
+            type="email"
+            placeholder="Email"
+            keyfilter="email"
+            value={email}
+            onChange={(e) => handleChange(e, "email")}
+            onKeyDown={handleKeyDown}
+            required
+          />
+        </div>
 
-          <div className="field mb-3">
-            <Password
-              id="password"
-              placeholder="Parola"
-              value={password}
-              toggleMask
-              feedback={false}
-              onChange={(e) => handleChange(e, "password")}
-              onKeyDown={handleKeyDown}
-              required
-            />
-          </div>
+        <div className="field mb-4">
+          <Password
+            id="password"
+            placeholder="Parola"
+            value={password}
+            toggleMask
+            feedback={false}
+            onChange={(e) => handleChange(e, "password")}
+            onKeyDown={handleKeyDown}
+            required
+          />
+        </div>
 
-          {/* <div className="field mb-3">
+        {/* <div className="field mb-3">
             <label htmlFor="reset-password">
               <Link to="/reset-password" style={{ textDecoration: "none" }}>
                 <Typography variant="body1">
@@ -129,39 +128,42 @@ export default function Login() {
             </label>
           </div> */}
 
-          <div className="field mb-3">
-            <Button label="Devam" onClick={handleLogin} disabled={!isValid} />
-          </div>
+        <div className="field mb-3">
+          <Button label="Devam" onClick={handleLogin} disabled={!isValid} />
+        </div>
 
-          <div className="field mb-3">
+        <div className="field mb-3" align="center">
+          <Typography variant="caption">veya</Typography>
+        </div>
+
+        <div className="field mb-4">
+          <Button
+            className="flex p-text p-button-outlined p-button-secondary"
+            style={{ justifyContent: "center" }}
+            onClick={handleLoginGoogle}
+          >
+            <img src={svgGoogle} alt="Google" style={{ width: "25px" }} />
+            <span className="px-3">Google ile devam et</span>
+          </Button>
+        </div>
+
+        <Divider className="field mt-5" />
+
+        <div
+          className="flex"
+          style={{ justifyContent: "center", alignItems: "center" }}
+        >
+          <div className="mr-3">
+            <Typography variant="body1">Hesabınız yok mu? </Typography>
+          </div>
+          <div>
             <Button
               label="Hesap oluştur"
               onClick={handleRegister}
               className="p-button-text p-button-secondary"
             />
           </div>
-
-          <Divider align="center" style={{height: "1px"}}>
-            <Typography variant="caption">veya</Typography>
-          </Divider>
-
-          <div className="field mb-5">
-            <Button
-              className="flex p-button p-button-secondary"
-              style={{ justifyContent: "center" }}
-              onClick={handleLoginGoogle}
-            >
-              <img src={svgGoogle} alt="Google" style={{ width: "25px" }} />
-              <span className="px-3">Google ile devam et</span>
-            </Button>
-          </div>
-
-          <Divider />
-
-          <div className="flex m-2" style={{ justifyContent: "center" }}>
-            <Rdoft />
-          </div>
-        </Card>
+        </div>
       </Grid>
     </Grid>
   );

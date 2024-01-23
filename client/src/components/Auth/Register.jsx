@@ -6,7 +6,7 @@ import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider, Card } from "primereact";
 
 // assets
-import logo from "assets/images/logo.png";
+import { ReactComponent as Logo } from "assets/svg/dishekime/dishekime.svg";
 import { ReactComponent as Rdoft } from "assets/svg/rdoft/rdoft.svg";
 
 // services
@@ -91,111 +91,106 @@ export default function Register() {
 
   return (
     <Grid container my={10} justifyContent="center" alignItems="center">
-      <Grid item md={4} lg={3}>
-        <Card className="p-fluid">
-          <div className="flex mb-5" style={{ justifyContent: "center" }}>
-            <img src={logo} alt="Logo" style={{ width: "85%" }} />
-          </div>
+      <Grid item sm={9} md={4} lg={3} className="p-fluid">
+        <div className="flex mb-7" style={{ justifyContent: "center" }}>
+          <Logo style={{ width: "40%" }} />
+        </div>
 
-          <div className="field mb-3">
-            <Typography variant="h3">Hesap oluştur</Typography>
-          </div>
+        <div className="field mb-4">
+          <Typography variant="h2">Hesap oluştur</Typography>
+        </div>
 
-          <div className="field mb-3">
-            <InputText
-              id="name"
-              type="text"
-              placeholder="Kullanıcı adı"
-              value={name}
-              onChange={(e) => handleChange(e, "name")}
-              onKeyDown={handleKeyDown}
-            />
-          </div>
+        <div className="field mb-3">
+          <InputText
+            id="name"
+            type="text"
+            placeholder="Kullanıcı adı"
+            value={name}
+            onChange={(e) => handleChange(e, "name")}
+            onKeyDown={handleKeyDown}
+          />
+        </div>
 
-          <div className="field mb-3">
-            <InputText
-              id="email"
-              type="email"
-              placeholder="Email *"
-              keyfilter="email"
-              value={email}
-              onChange={(e) => handleChange(e, "email")}
-              onKeyDown={handleKeyDown}
-              required
-            />
-            {isError.email && (
-              <small id="email-help" className="p-error">
-                Geçersiz email adresi
-              </small>
-            )}
-          </div>
+        <div className="field mb-3">
+          <InputText
+            id="email"
+            type="email"
+            placeholder="Email *"
+            keyfilter="email"
+            value={email}
+            onChange={(e) => handleChange(e, "email")}
+            onKeyDown={handleKeyDown}
+            required
+          />
+          {isError.email && (
+            <small id="email-help" className="p-error">
+              Geçersiz email adresi
+            </small>
+          )}
+        </div>
 
-          <div className="field mb-2">
-            <Password
-              id="password"
-              placeholder="Parola *"
-              value={password}
-              toggleMask
-              feedback={false}
-              onChange={(e) => handleChange(e, "password")}
-              onKeyDown={handleKeyDown}
-              required
-            />
-            {isError.password && (
-              <small id="password-help" className="p-error">
-                Parola en az 8 karakterden oluşmalıdır
-              </small>
-            )}
-          </div>
+        <div className="field mb-3">
+          <Password
+            id="password"
+            placeholder="Parola *"
+            value={password}
+            toggleMask
+            feedback={false}
+            onChange={(e) => handleChange(e, "password")}
+            onKeyDown={handleKeyDown}
+            required
+          />
+          {isError.password && (
+            <small id="password-help" className="p-error">
+              Parola en az 8 karakterden oluşmalıdır
+            </small>
+          )}
+        </div>
 
-          <div className="field mb-3">
-            <Password
-              id="confirm-password"
-              placeholder="Parola (Tekrar) *"
-              value={confirmPassword}
-              toggleMask
-              feedback={false}
-              onChange={(e) => handleChange(e, "confirmPassword")}
-              onPaste={(e) => e.preventDefault()}
-              onKeyDown={handleKeyDown}
-              required
-            />
-            {isError.confirmPassword && (
-              <small id="repassword-help" className="p-error">
-                Parolalar eşleşmiyor
-              </small>
-            )}
-          </div>
+        <div className="field mb-4">
+          <Password
+            id="confirm-password"
+            placeholder="Parola (Tekrar) *"
+            value={confirmPassword}
+            toggleMask
+            feedback={false}
+            onChange={(e) => handleChange(e, "confirmPassword")}
+            onPaste={(e) => e.preventDefault()}
+            onKeyDown={handleKeyDown}
+            required
+          />
+          {isError.confirmPassword && (
+            <small id="repassword-help" className="p-error">
+              Parolalar eşleşmiyor
+            </small>
+          )}
+        </div>
 
-          <div className="field mb-3">
+        <div className="field mb-4">
+          <Button
+            label="Kayıt Ol"
+            onClick={handleRegister}
+            disabled={!isValid}
+          />
+        </div>
+
+        <Divider className="field mt-5" />
+
+        <div
+          className="flex mb-4"
+          style={{ justifyContent: "center", alignItems: "center" }}
+        >
+          <div className="mr-3">
+            <Typography variant="body1">Zaten bir hesabınız var mı?</Typography>
+          </div>
+          <div>
             <Button
-              label="Kayıt Ol"
-              onClick={handleRegister}
-              disabled={!isValid}
+              label="Oturum aç"
+              onClick={() => navigate("/login")}
+              className="p-button-text p-button-secondary"
             />
           </div>
-
-          <div className="flex mb-3" style={{ alignItems: "center" }}>
-            <div className="mr-5">
-              <Typography variant="body1">
-                Zaten bir hesabınız var mı?
-              </Typography>
-            </div>
-            <div>
-              <Button
-                label="Oturum aç"
-                onClick={() => navigate("/login")}
-                className="p-button-text p-button-secondary"
-              />
-            </div>
-          </div>
-
-          <Divider />
-
-          <div className="flex m-2" style={{ justifyContent: "center" }}>
-            <Rdoft />
-          </div>
-        </Card>
+        </div>
       </Grid>
     </Grid>
   );
