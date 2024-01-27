@@ -281,6 +281,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
             valueTemplate={doctorDropdownItemTemplate}
             itemTemplate={doctorDropdownItemTemplate}
             onChange={(event) => handleChange(event, "doctor")}
+            showClear
           />
         </div>
 
