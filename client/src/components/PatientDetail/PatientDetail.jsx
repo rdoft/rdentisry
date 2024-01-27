@@ -103,7 +103,9 @@ function PatientDetail() {
       switch (_activeIndex) {
         case 0:
           // Get the list of appointments of the patient and set appointments count
-          response = await AppointmentService.getAppointments(patient.id);
+          response = await AppointmentService.getAppointments({
+            patientId: patient.id,
+          });
           setCountAppointment(response.data.length || 0);
           break;
         case 1:
@@ -127,7 +129,9 @@ function PatientDetail() {
         //   return null;
         default:
           // Get all counts and set it
-          response = await AppointmentService.getAppointments(patient.id);
+          response = await AppointmentService.getAppointments({
+            patientId: patient.id,
+          });
           setCountAppointment(response.data.length || 0);
           response = await PaymentService.getPayments(patient.id);
           setCountPayment(response.data.length || 0);

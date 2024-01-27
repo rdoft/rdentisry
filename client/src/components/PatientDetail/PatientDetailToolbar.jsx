@@ -8,7 +8,7 @@ import avatarPatient from "assets/images/avatars/patient-avatar.png";
 import "assets/styles/PatientDetail/PatientDetailToolbar.css";
 
 // services
-import { PatientService } from "services/index";
+import { PatientService } from "services";
 
 function PatientDetailToolbar({ patient, actionTemplate }) {
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ function PatientDetailToolbar({ patient, actionTemplate }) {
   };
 
   // Toolbar content thats are on left
-  const rightContent = (
+  const centerContent = (
     <React.Fragment>
       {/* Get patient information */}
       <Dropdown
@@ -69,14 +69,14 @@ function PatientDetailToolbar({ patient, actionTemplate }) {
         placeholder="Hasta seçiniz..."
         valueTemplate={patientDropdownTemplate}
         itemTemplate={patientDropdownTemplate}
-        onChange={(event) => handleChange(event)}
+        onChange={handleChange}
         className="w-full"
       />
     </React.Fragment>
   );
 
   // Toolbar content thats are on left
-  const leftContent = (
+  const startContent = (
     <React.Fragment>
       {/* Get action button */}
       {actionTemplate()}
@@ -84,7 +84,7 @@ function PatientDetailToolbar({ patient, actionTemplate }) {
   );
   
   return (
-    <Toolbar className="mb-4 p-2" left={leftContent} right={rightContent} />
+    <Toolbar className="mb-4 p-2" start={startContent} center={centerContent} />
   );
 }
 

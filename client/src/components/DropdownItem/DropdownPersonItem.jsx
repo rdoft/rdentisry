@@ -4,7 +4,7 @@ import { Typography, Avatar } from "@mui/material";
 // assets
 import { PhoneOutlined } from "@ant-design/icons";
 
-function DropdownItem({ option, placeholder, avatar }) {
+function DropdownItem({ option, placeholder, avatar, isDoctor }) {
   return option ? (
     <div className="w-full p-link flex align-items-center">
       {/* Avatar icon */}
@@ -13,7 +13,13 @@ function DropdownItem({ option, placeholder, avatar }) {
       )}
       {/* Option info */}
       <div className="flex flex-column align">
-        <Typography variant="h5">{`${option.name} ${option.surname}`}</Typography>
+        {isDoctor ? (
+          <Typography variant="h5">
+            Dt. {option.name} {option.surname}
+          </Typography>
+        ) : (
+          <Typography variant="h5">{`${option.name} ${option.surname}`}</Typography>
+        )}
         {option.phone && (
           <Typography variant="body2">
             <PhoneOutlined /> {`${option.phone}`}

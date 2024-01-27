@@ -226,6 +226,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
         option={option}
         placeholder={props?.placeholder}
         avatar={avatarDoctor}
+        isDoctor={true}
       />
     );
   };

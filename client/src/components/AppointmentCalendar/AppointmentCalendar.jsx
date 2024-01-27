@@ -32,11 +32,12 @@ const AppointmentCalendar = () => {
   const [appointments, setAppointments] = useState([]);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
   const [showAll, setShowAll] = useState(false);
+  const [doctor, setDoctor] = useState(null);
 
   // Set the page on loading
   useEffect(() => {
     getAppointments();
-  }, []);
+  }, [doctor]);
 
   useEffect(() => {
     getEvents();
@@ -49,7 +50,9 @@ const AppointmentCalendar = () => {
     let appointments;
 
     try {
-      response = await AppointmentService.getAppointments();
+      response = await AppointmentService.getAppointments({
+        doctorId: doctor?.id,
+      });
       appointments = response.data;
 
       setAppointments(appointments);
@@ -92,7 +95,7 @@ const AppointmentCalendar = () => {
     } catch (error) {
       // Set error status and show error toast message
       const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message)
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -198,9 +201,11 @@ const AppointmentCalendar = () => {
   return (
     <div>
       <CalendarToolbar
+        doctor={doctor}
+        showAll={showAll}
+        setDoctor={setDoctor}
+        setShowAll={setShowAll}
         onClickAdd={showAppointmentDialog}
-        checked={showAll}
-        setChecked={setShowAll}
       />
       <Calendar
         style={{

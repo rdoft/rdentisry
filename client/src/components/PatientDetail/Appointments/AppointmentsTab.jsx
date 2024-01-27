@@ -65,7 +65,7 @@ function AppointmentsTab({
     let appointments;
 
     try {
-      response = await AppointmentService.getAppointments(patientId);
+      response = await AppointmentService.getAppointments({ patientId });
       // appointments = response.data.reverse();
       appointments = response.data;
 
