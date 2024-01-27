@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Toolbar, Dropdown, Button, InputSwitch } from "primereact";
+import React from "react";
 import { Typography } from "@mui/material";
-import DropdownItem from "components/DropdownItem/DropdownPersonItem";
+import { Toolbar, Dropdown, Button, InputSwitch, Divider } from "primereact";
+import DropdownPersonItem from "components/DropdownItem/DropdownPersonItem";
+import ActionGroup from "components/ActionGroup/ActionGroup";
 
 // assets
 import avatarDoctor from "assets/images/avatars/doctor-avatar.png";
@@ -27,16 +28,32 @@ function CalendarToolbar({
     setDoctor(value);
   };
 
+  // TODO:
+  // onClick handler for add doctor button
+  const handleClickAdd = () => {
+    console.log("Add doctor");
+  };
+
   // TEMPLATES -----------------------------------------------------------------
   // Dropdown item template
-  const doctorDropdownTemplate = (option, props) => {
+  const doctorDropdownItemTemplate = (option, props) => {
     return (
-      <DropdownItem
+      <DropdownPersonItem
         option={option}
         placeholder={props?.placeholder}
         avatar={avatarDoctor}
         isDoctor={true}
       />
+    );
+  };
+
+  // Dropdown panel footer
+  const doctorDropdownFooter = () => {
+    return (
+      <div className="m-2">
+        <Divider className="mt-0 mb-2" />
+        <ActionGroup label="Doktor Ekle" onClickAdd={handleClickAdd} />
+      </div>
     );
   };
 
@@ -47,8 +64,9 @@ function CalendarToolbar({
         value={doctor}
         options={doctors}
         optionLabel="name"
-        valueTemplate={doctorDropdownTemplate}
-        itemTemplate={doctorDropdownTemplate}
+        valueTemplate={doctorDropdownItemTemplate}
+        itemTemplate={doctorDropdownItemTemplate}
+        panelFooterTemplate={doctorDropdownFooter}
         onChange={handleChangeDropdown}
         className={doctor ? "w-full" : "w-full p-2"}
         filter

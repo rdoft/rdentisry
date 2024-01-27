@@ -7975,15 +7975,15 @@
   "resolved" "https://registry.npmjs.org/primeflex/-/primeflex-3.3.0.tgz"
   "version" "3.3.0"
 
-"primeicons@^5.0.0 || ^6.0.0", "primeicons@^6.0.1":
+"primeicons@^6.0.1":
   "integrity" "sha512-KDeO94CbWI4pKsPnYpA1FPjo79EsY9I+M8ywoPBSf9XMXoe/0crjbUK7jcQEDHuc0ZMRIZsxH3TYLv4TUtHmAA=="
   "resolved" "https://registry.npmjs.org/primeicons/-/primeicons-6.0.1.tgz"
   "version" "6.0.1"
 
 "primereact@^9.2.0":
-  "integrity" "sha512-Du9GlRi9QelUynTW0nDamG+aj3UmSvbk0pu5zvw1tqp+mH1IntJ3dWKaOnqqPaNPF1dx0N/TmcIjQvXRjUVagw=="
-  "resolved" "https://registry.npmjs.org/primereact/-/primereact-9.2.0.tgz"
-  "version" "9.2.0"
+  "integrity" "sha512-jW5t1Ct1coMGi1e+GWyLgVmxHQpEGtP3Pu2S/zsX8/yUgzDvn/ef0gaQ8l9/gihSnt/n4z4lFsHmn8Vb3j89yg=="
+  "resolved" "https://registry.npmjs.org/primereact/-/primereact-9.6.4.tgz"
+  "version" "9.6.4"
   dependencies:
     "@types/react-transition-group" "^4.4.1"
     "react-transition-group" "^4.4.1"
