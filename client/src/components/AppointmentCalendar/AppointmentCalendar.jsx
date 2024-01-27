@@ -14,7 +14,7 @@ import convert from "components/AppointmentCalendar/CalendarEvent";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 
 // services
-import { AppointmentService } from "services";
+import { AppointmentService, DoctorService } from "services";
 
 require("moment/locale/tr.js");
 const localizer = momentLocalizer(moment);
@@ -33,8 +33,13 @@ const AppointmentCalendar = () => {
   const [appointmentDialog, setAppointmentDialog] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const [doctor, setDoctor] = useState(null);
+  const [doctors, setDoctors] = useState(null);
 
   // Set the page on loading
+  useEffect(() => {
+    getDoctors();
+  }, []);
+
   useEffect(() => {
     getAppointments();
   }, [doctor]);
@@ -44,6 +49,22 @@ const AppointmentCalendar = () => {
   }, [appointments, step, showAll]);
 
   // SERVICES -----------------------------------------------------------------
+  // Get the list of doctors and set doctors value
+  const getDoctors = async () => {
+    let response;
+    let doctors;
+
+    try {
+      response = await DoctorService.getDoctors();
+      doctors = response.data;
+      // Set new doctors
+      setDoctors(doctors);
+      setDoctor(doctors?.[0]);
+    } catch (error) {
+      // Set error status and show error toast message
+    }
+  };
+
   // Get the list of appointments and set appointmets value
   const getAppointments = async () => {
     let response;
@@ -202,6 +223,7 @@ const AppointmentCalendar = () => {
     <div>
       <CalendarToolbar
         doctor={doctor}
+        doctors={doctors}
         showAll={showAll}
         setDoctor={setDoctor}
         setShowAll={setShowAll}
@@ -240,7 +262,7 @@ const AppointmentCalendar = () => {
       />
       {appointmentDialog && (
         <AppointmentDialog
-          _appointment={appointment}
+          _appointment={{ doctor, ...appointment }}
           onHide={hideAppointmentDialog}
           onSubmit={saveAppointment}
           onDelete={appointment && deleteAppointment}

@@ -7,40 +7,14 @@ import DropdownItem from "components/DropdownItem/DropdownPersonItem";
 import avatarDoctor from "assets/images/avatars/doctor-avatar.png";
 import "assets/styles/AppointmentCalendar/CalendarToolbar.css";
 
-// services
-import { DoctorService } from "services";
-
 function CalendarToolbar({
   doctor,
+  doctors,
   showAll,
   setDoctor,
   setShowAll,
   onClickAdd,
 }) {
-  // Set the default values
-  const [doctors, setDoctors] = useState(null);
-
-  // Set the page on loading
-  useEffect(() => {
-    getDoctors();
-  }, []);
-
-  // SERVICES -----------------------------------------------------------------
-  // Get the list of doctors and set doctors value
-  const getDoctors = async () => {
-    let response;
-    let doctors;
-
-    try {
-      response = await DoctorService.getDoctors();
-      doctors = response.data;
-      // Set new doctors
-      setDoctors(doctors);
-    } catch (error) {
-      // Set error status and show error toast message
-    }
-  };
-
   // HANDLERS -----------------------------------------------------------------
   // onChange handler for showAll switch
   const handleChangeSwitch = (event) => {
@@ -79,7 +53,8 @@ function CalendarToolbar({
         valueTemplate={doctorDropdownTemplate}
         itemTemplate={doctorDropdownTemplate}
         onChange={handleChangeDropdown}
-        className="w-full"
+        showClear
+        className={doctor ? "w-full" : "w-full p-2"}
       />
     </React.Fragment>
   );
