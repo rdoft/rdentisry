@@ -47,14 +47,16 @@ function CalendarToolbar({
         value={doctor}
         options={doctors}
         optionLabel="name"
-        filter
-        filterBy="name,surname"
-        placeholder="Doktor seçiniz..."
         valueTemplate={doctorDropdownTemplate}
         itemTemplate={doctorDropdownTemplate}
         onChange={handleChangeDropdown}
-        showClear
         className={doctor ? "w-full" : "w-full p-2"}
+        filter
+        filterBy="name,surname"
+        placeholder="Doktor seçiniz..."
+        emptyMessage="Sonuç bulunamadı"
+        emptyFilterMessage="Sonuç bulunamadı"
+        showClear
       />
     </React.Fragment>
   );

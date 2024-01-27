@@ -64,13 +64,15 @@ function PatientDetailToolbar({ patient, actionTemplate }) {
         value={patient}
         options={patients}
         optionLabel="name"
-        filter
-        filterBy="name,surname,phone"
-        placeholder="Hasta seçiniz..."
         valueTemplate={patientDropdownTemplate}
         itemTemplate={patientDropdownTemplate}
         onChange={handleChange}
         className="w-full"
+        filter
+        filterBy="name,surname,phone"
+        placeholder="Hasta seçiniz..."
+        emptyMessage="Sonuç bulunamadı"
+        emptyFilterMessage="Sonuç bulunamadı"
       />
     </React.Fragment>
   );
@@ -82,7 +84,7 @@ function PatientDetailToolbar({ patient, actionTemplate }) {
       {actionTemplate()}
     </React.Fragment>
   );
-  
+
   return (
     <Toolbar className="mb-4 p-2" start={startContent} center={centerContent} />
   );

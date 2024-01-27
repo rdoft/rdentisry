@@ -193,12 +193,14 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
             value={patientProcedure.patient}
             options={patients}
             optionLabel="name"
-            filter
-            filterBy="name,surname,phone"
-            placeholder="Hasta seçiniz..."
             valueTemplate={patientDropdownItem}
             itemTemplate={patientDropdownItem}
             onChange={(event) => handleChange(event, "patient")}
+            filter
+            filterBy="name,surname,phone"
+            placeholder="Hasta seçiniz..."
+            emptyMessage="Sonuç bulunamadı"
+            emptyFilterMessage="Sonuç bulunamadı"
           />
         </div>
 
@@ -208,13 +210,15 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
             value={patientProcedure.procedure}
             options={procedures}
             optionLabel="name"
-            filter
-            filterBy="name,code,procedureCategory.title"
-            placeholder="Tedavi seçiniz..."
-            scrollHeight="300px"
             valueTemplate={procedureDropdownValue}
             itemTemplate={procedureDropdownItem}
             onChange={(event) => handleChange(event, "procedure")}
+            scrollHeight="300px"
+            filter
+            filterBy="name,code,procedureCategory.title"
+            placeholder="Tedavi seçiniz..."
+            emptyMessage="Sonuç bulunamadı"
+            emptyFilterMessage="Sonuç bulunamadı"
           />
         </div>
 

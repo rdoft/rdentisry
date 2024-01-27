@@ -20,7 +20,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 
-
 // assets
 import avatarPatient from "assets/images/avatars/patient-avatar.png";
 import avatarDoctor from "assets/images/avatars/doctor-avatar.png";
@@ -33,7 +32,7 @@ import { PatientService, DoctorService } from "services";
 
 function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
   const navigate = useNavigate();
-  
+
   // Set default empty Appointment
   let emptyAppointment = {
     patient: null,
@@ -154,7 +153,9 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
         _appointment.endTime.getMinutes() + parseInt(value)
       );
     } else if (attr === "date") {
-      value = new Date(Date.UTC(value.getFullYear(), value.getMonth(), value.getDate()));
+      value = new Date(
+        Date.UTC(value.getFullYear(), value.getMonth(), value.getDate())
+      );
       _isError[attr] = schema[attr].validate(value).error ? true : false;
     }
 
@@ -260,12 +261,14 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
             value={appointment.patient}
             options={patients}
             optionLabel="name"
-            filter
-            filterBy="name,surname,phone"
-            placeholder="Hasta seçiniz..."
             valueTemplate={patientDropdownItemTemplate}
             itemTemplate={patientDropdownItemTemplate}
             onChange={(event) => handleChange(event, "patient")}
+            filter
+            filterBy="name,surname,phone"
+            placeholder="Hasta seçiniz..."
+            emptyMessage="Sonuç bulunamadı"
+            emptyFilterMessage="Sonuç bulunamadı"
           />
         </div>
 
@@ -275,12 +278,14 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
             value={appointment.doctor}
             options={doctors}
             optionLabel="name"
-            filter
-            filterBy="name,surname"
-            placeholder="Doktor seçiniz..."
             valueTemplate={doctorDropdownItemTemplate}
             itemTemplate={doctorDropdownItemTemplate}
             onChange={(event) => handleChange(event, "doctor")}
+            filter
+            filterBy="name,surname"
+            placeholder="Doktor seçiniz..."
+            emptyMessage="Sonuç bulunamadı"
+            emptyFilterMessage="Sonuç bulunamadı"
             showClear
           />
         </div>

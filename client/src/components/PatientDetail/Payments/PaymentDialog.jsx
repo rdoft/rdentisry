@@ -204,12 +204,14 @@ function PaymentDialog({ _payment = {}, onHide, onSubmit, onDelete }) {
             value={payment.patient}
             options={patients}
             optionLabel="name"
-            filter
-            filterBy="name,surname,phone"
-            placeholder="Hasta seçiniz..."
             valueTemplate={patientDropdownItemTemplate}
             itemTemplate={patientDropdownItemTemplate}
             onChange={(event) => handleChange(event, "patient")}
+            filter
+            filterBy="name,surname,phone"
+            placeholder="Hasta seçiniz..."
+            emptyMessage="Sonuç bulunamadı"
+            emptyFilterMessage="Sonuç bulunamadı"
           />
         </div>
 
