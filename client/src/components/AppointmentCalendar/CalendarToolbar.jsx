@@ -14,7 +14,8 @@ function CalendarToolbar({
   showAll,
   setDoctor,
   setShowAll,
-  onClickAdd,
+  onClickAddDoctor,
+  onClickAddAppointment,
 }) {
   // HANDLERS -----------------------------------------------------------------
   // onChange handler for showAll switch
@@ -26,12 +27,6 @@ function CalendarToolbar({
   const handleChangeDropdown = (event) => {
     let value = event.target && event.target.value;
     setDoctor(value);
-  };
-
-  // TODO:
-  // onClick handler for add doctor button
-  const handleClickAdd = () => {
-    console.log("Add doctor");
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -52,7 +47,7 @@ function CalendarToolbar({
     return (
       <div className="m-2">
         <Divider className="mt-0 mb-2" />
-        <ActionGroup label="Doktor Ekle" onClickAdd={handleClickAdd} />
+        <ActionGroup label="Doktor Ekle" onClickAdd={onClickAddDoctor} />
       </div>
     );
   };
@@ -98,7 +93,7 @@ function CalendarToolbar({
         label="Randevu Ekle"
         icon="pi pi-plus"
         className="p-button-text p-button-info mr-2"
-        onClick={onClickAdd}
+        onClick={onClickAddAppointment}
       />
     </React.Fragment>
   );
