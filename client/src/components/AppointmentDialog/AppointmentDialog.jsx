@@ -46,7 +46,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
     duration: "",
   };
 
-  // Dropdown selected Item
+  // Set the default values
   const [doctors, setDoctors] = useState(null);
   const [patients, setPatients] = useState(null);
   const [appointment, setAppointment] = useState({
@@ -230,7 +230,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
     });
 
   // Show doctor dialog
-  const showDoctorDialog = (event) => {
+  const showDoctorDialog = () => {
     setDoctorDialog(true);
   };
 

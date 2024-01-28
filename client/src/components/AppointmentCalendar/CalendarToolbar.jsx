@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { errorHandler } from "utils/errorHandler";
 import { Typography } from "@mui/material";
 import { Toolbar, Dropdown, Button, InputSwitch, Divider } from "primereact";
 import DropdownPersonItem from "components/DropdownItem/DropdownPersonItem";
 import ActionGroup from "components/ActionGroup/ActionGroup";
+import DoctorDialog from "components/Dialog/DoctorDialog";
+
+// services
+import { DoctorService } from "services";
 
 // assets
 import avatarDoctor from "assets/images/avatars/doctor-avatar.png";
@@ -10,13 +17,57 @@ import "assets/styles/AppointmentCalendar/CalendarToolbar.css";
 
 function CalendarToolbar({
   doctor,
-  doctors,
   showAll,
   setDoctor,
   setShowAll,
-  onClickAddDoctor,
   onClickAddAppointment,
 }) {
+  const navigate = useNavigate();
+
+  // Set the default values
+  const [doctorDialog, setDoctorDialog] = useState(false);
+  const [doctors, setDoctors] = useState(null);
+
+  // Get doctors on loading
+  useEffect(() => {
+    getDoctors();
+  }, []);
+
+  // SERVICES -----------------------------------------------------------------
+  // Get the list of doctors and set doctors value
+  const getDoctors = async () => {
+    let response;
+    let doctors;
+
+    try {
+      response = await DoctorService.getDoctors();
+      doctors = response.data;
+      // Set new doctors
+      setDoctors(doctors);
+      // !doctor && setDoctor(doctors?.[0]);
+    } catch (error) {
+      // Set error status and show error toast message
+    }
+  };
+
+  // Save doctor (create)
+  const saveDoctor = async (doctor) => {
+    let response;
+
+    try {
+      response = await DoctorService.saveDoctor(doctor);
+      doctor = response.data;
+
+      // Get and set the updated list of doctors
+      getDoctors();
+      setDoctorDialog(false);
+      setDoctor(doctor);
+    } catch (error) {
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
+    }
+  };
+
   // HANDLERS -----------------------------------------------------------------
   // onChange handler for showAll switch
   const handleChangeSwitch = (event) => {
@@ -27,6 +78,16 @@ function CalendarToolbar({
   const handleChangeDropdown = (event) => {
     let value = event.target && event.target.value;
     setDoctor(value);
+  };
+
+  // Show add doctor dialog
+  const showDoctorDialog = () => {
+    setDoctorDialog(true);
+  };
+
+  // Hide add doctor dialog
+  const hideDoctorDialog = () => {
+    setDoctorDialog(false);
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -47,7 +108,7 @@ function CalendarToolbar({
     return (
       <div className="m-2">
         <Divider className="mt-0 mb-2" />
-        <ActionGroup label="Doktor Ekle" onClickAdd={onClickAddDoctor} />
+        <ActionGroup label="Doktor Ekle" onClickAdd={showDoctorDialog} />
       </div>
     );
   };
@@ -77,7 +138,9 @@ function CalendarToolbar({
   // Get showAll switch
   const endContent = () => (
     <React.Fragment>
-      <Typography variant="subtitle2">Tümünü göster</Typography>
+      <Typography variant="subtitle2" margin={1}>
+        Geçmiş randevu
+      </Typography>
       <InputSwitch
         checked={showAll}
         onChange={handleChangeSwitch}
@@ -99,12 +162,17 @@ function CalendarToolbar({
   );
 
   return (
-    <Toolbar
-      className="mb-4 p-2"
-      start={startContent}
-      center={centerContent}
-      end={endContent}
-    />
+    <>
+      <Toolbar
+        className="mb-4 p-2"
+        start={startContent}
+        center={centerContent}
+        end={endContent}
+      />
+      {doctorDialog && (
+        <DoctorDialog onHide={hideDoctorDialog} onSubmit={saveDoctor} />
+      )}
+    </>
   );
 }
 

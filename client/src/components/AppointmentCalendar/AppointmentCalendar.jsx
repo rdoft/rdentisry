@@ -9,13 +9,12 @@ import { activeItem } from "store/reducers/menu";
 import convert from "components/AppointmentCalendar/CalendarEvent";
 import CalendarToolbar from "components/AppointmentCalendar/CalendarToolbar";
 import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
-import DoctorDialog from "components/Dialog/DoctorDialog";
 
 // assets
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 
 // services
-import { AppointmentService, DoctorService } from "services";
+import { AppointmentService } from "services";
 
 require("moment/locale/tr.js");
 const localizer = momentLocalizer(moment);
@@ -34,13 +33,6 @@ const AppointmentCalendar = () => {
   const [appointments, setAppointments] = useState([]);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
   const [doctor, setDoctor] = useState(null);
-  const [doctors, setDoctors] = useState(null);
-  const [doctorDialog, setDoctorDialog] = useState(false);
-
-  // Set the page on loading
-  useEffect(() => {
-    getDoctors();
-  }, []);
 
   useEffect(() => {
     getAppointments();
@@ -51,22 +43,6 @@ const AppointmentCalendar = () => {
   }, [appointments, step, showAll]);
 
   // SERVICES -----------------------------------------------------------------
-  // Get the list of doctors and set doctors value
-  const getDoctors = async () => {
-    let response;
-    let doctors;
-
-    try {
-      response = await DoctorService.getDoctors();
-      doctors = response.data;
-      // Set new doctors
-      setDoctors(doctors);
-      !doctor && setDoctor(doctors?.[0]);
-    } catch (error) {
-      // Set error status and show error toast message
-    }
-  };
-
   // Get the list of appointments and set appointmets value
   const getAppointments = async () => {
     let response;
@@ -122,24 +98,6 @@ const AppointmentCalendar = () => {
     }
   };
 
-  // Save doctor (create)
-  const saveDoctor = async (doctor) => {
-    let response;
-
-    try {
-      response = await DoctorService.saveDoctor(doctor);
-      doctor = response.data;
-
-      // Get and set the updated list of doctors
-      getDoctors();
-      setDoctorDialog(false);
-      setDoctor(doctor);
-    } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
-    }
-  };
-
   // HANDLERS -----------------------------------------------------------------
   // Show add appointment dialog
   const showAppointmentDialog = () => {
@@ -150,16 +108,6 @@ const AppointmentCalendar = () => {
   const hideAppointmentDialog = () => {
     setAppointment(null);
     setAppointmentDialog(false);
-  };
-
-  // Show add doctor dialog
-  const showDoctorDialog = () => {
-    setDoctorDialog(true);
-  };
-
-  // Hide add doctor dialog
-  const hideDoctorDialog = () => {
-    setDoctorDialog(false);
   };
 
   // onEditClick, get appointment and show dialog
@@ -252,11 +200,9 @@ const AppointmentCalendar = () => {
     <div>
       <CalendarToolbar
         doctor={doctor}
-        doctors={doctors}
         showAll={showAll}
         setDoctor={setDoctor}
         setShowAll={setShowAll}
-        onClickAddDoctor={showDoctorDialog}
         onClickAddAppointment={showAppointmentDialog}
       />
       <Calendar
@@ -297,9 +243,6 @@ const AppointmentCalendar = () => {
           onSubmit={saveAppointment}
           onDelete={appointment && deleteAppointment}
         />
-      )}
-      {doctorDialog && (
-        <DoctorDialog onHide={hideDoctorDialog} onSubmit={saveDoctor} />
       )}
     </div>
   );
