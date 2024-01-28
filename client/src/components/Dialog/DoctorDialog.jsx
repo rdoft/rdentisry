@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Dialog, InputText } from "primereact";
+import { Dialog, InputText, Divider } from "primereact";
 import DialogFooter from "components/DialogFooter/DialogFooter";
 
 function DoctorDialog({ _doctor = {}, onHide, onSubmit }) {
@@ -52,6 +52,7 @@ function DoctorDialog({ _doctor = {}, onHide, onSubmit }) {
   return (
     <Dialog
       visible
+      header="Yeni Doktor"
       modal
       className="p-fluid"
       style={{ height: "fit-content" }}
@@ -65,6 +66,10 @@ function DoctorDialog({ _doctor = {}, onHide, onSubmit }) {
       onHide={handleHide}
       onKeyDown={handleKeyDown}
     >
+      {/* Divider */}
+      <Divider type="solid" className="mt-0" />
+
+      {/* Form */}
       <div className="flex">
         <div className="field mr-2">
           <label>Ad</label>

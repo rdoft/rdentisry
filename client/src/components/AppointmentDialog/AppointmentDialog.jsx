@@ -14,6 +14,8 @@ import {
 } from "primereact";
 import DialogFooter from "components/DialogFooter/DialogFooter";
 import DropdownPersonItem from "components/DropdownItem/DropdownPersonItem";
+import ActionGroup from "components/ActionGroup/ActionGroup";
+import DoctorDialog from "components/Dialog/DoctorDialog";
 
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -63,6 +65,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
     endTime: false,
     duration: false,
   });
+  const [doctorDialog, setDoctorDialog] = useState(false);
 
   // Set the doctors from dropdown on loading
   useEffect(() => {
@@ -118,6 +121,24 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
       setPatients(patients);
     } catch (error) {
       // Set error status and show error toast message
+    }
+  };
+
+  // Save doctor (create)
+  const saveDoctor = async (doctor) => {
+    let response;
+
+    try {
+      response = await DoctorService.saveDoctor(doctor);
+      doctor = response.data;
+
+      // Get and set the updated list of doctors
+      getDoctors();
+      setDoctorDialog(false);
+      setAppointment({ ...appointment, doctor });
+    } catch (error) {
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
@@ -208,6 +229,16 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
       });
     });
 
+  // Show doctor dialog
+  const showDoctorDialog = (event) => {
+    setDoctorDialog(true);
+  };
+
+  // Hide doctor dialog
+  const hideDoctorDialog = () => {
+    setDoctorDialog(false);
+  };
+
   // TEMPLATES
   // Dropdwon item template
   const patientDropdownItemTemplate = (option, props) => {
@@ -229,6 +260,16 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
         avatar={avatarDoctor}
         isDoctor={true}
       />
+    );
+  };
+
+  // Dropdown panel footer
+  const doctorDropdownFooter = () => {
+    return (
+      <div className="m-2">
+        <Divider className="mt-0 mb-2" />
+        <ActionGroup label="Doktor Ekle" onClickAdd={showDoctorDialog} />
+      </div>
     );
   };
 
@@ -280,6 +321,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
             optionLabel="name"
             valueTemplate={doctorDropdownItemTemplate}
             itemTemplate={doctorDropdownItemTemplate}
+            panelFooterTemplate={doctorDropdownFooter}
             onChange={(event) => handleChange(event, "doctor")}
             filter
             filterBy="name,surname"
@@ -369,6 +411,9 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
           </div>
         </div>
       </Dialog>
+      {doctorDialog && (
+        <DoctorDialog onHide={hideDoctorDialog} onSubmit={saveDoctor} />
+      )}
     </>
   );
 }
