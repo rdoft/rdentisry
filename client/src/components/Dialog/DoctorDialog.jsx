@@ -72,7 +72,9 @@ function DoctorDialog({ _doctor = {}, onHide, onSubmit }) {
       {/* Form */}
       <div className="flex">
         <div className="field mr-2">
-          <label>Ad</label>
+          <label className="font-bold">
+            Ad <small className="p-error">*</small>
+          </label>
           <InputText
             id="name"
             value={doctor.name}
@@ -80,7 +82,9 @@ function DoctorDialog({ _doctor = {}, onHide, onSubmit }) {
           />
         </div>
         <div className="field ml-2">
-          <label>Soyad</label>
+          <label className="font-bold">
+            Soyad <small className="p-error">*</small>
+          </label>
           <InputText
             id="surname"
             value={doctor.surname}
