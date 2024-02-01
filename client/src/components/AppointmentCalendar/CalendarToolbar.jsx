@@ -66,7 +66,7 @@ function CalendarToolbar({
     }
   };
 
-// Delete the doctor
+  // Delete the doctor
   const deleteDoctor = async (doctor) => {
     let response;
 
@@ -76,13 +76,12 @@ function CalendarToolbar({
 
       // Get and set the updated list of doctors
       getDoctors();
-      setDoctor(null)
+      setDoctor(null);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
-
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler for showAll switch
@@ -115,6 +114,8 @@ function CalendarToolbar({
       onChange={handleChangeDropdown}
       onClickAdd={showDoctorDialog}
       onClickDelete={deleteDoctor}
+      className={!doctor && "p-2"}
+      style={{ width: "20vw" }}
     />
   );
 

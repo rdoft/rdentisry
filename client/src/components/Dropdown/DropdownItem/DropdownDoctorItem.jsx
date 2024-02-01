@@ -6,6 +6,7 @@ import { ConfirmDialog } from "primereact";
 import avatarDoctor from "assets/images/avatars/doctor-avatar.png";
 import ActionGroup from "components/ActionGroup/ActionGroup";
 import DialogFooter from "components/DialogFooter/DialogFooter";
+import { Grid } from "../../../../node_modules/@mui/material/index";
 
 function DropdownDoctorItem({ option, onDelete }) {
   const [isHover, setIsHover] = useState(false);
@@ -59,36 +60,40 @@ function DropdownDoctorItem({ option, onDelete }) {
   );
 
   return option ? (
-    <>
-      <div
-        className="w-full p-link flex align-items-center"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {/* Avatar icon */}
+    <Grid
+      container
+      alignItems="center"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Avatar icon */}
+      <Grid item xs={2}>
         <Avatar
           alt="avatar"
           className="mr-2 p-1"
           src={avatarDoctor}
           shape="circle"
         />
+      </Grid>
 
-        {/* Option info */}
-        <div className="flex flex-column align">
-          <Typography variant="h5">
-            Dt. {option.name} {option.surname}
-          </Typography>
-        </div>
+      {/* Option info */}
+      <Grid item xs={8}>
+        <Typography variant="h5">
+          Dt. {option.name} {option.surname}
+        </Typography>
+      </Grid>
 
-        {/* Delete icon */}
+      {/* Delete icon */}
+      <Grid item xs={2}>
         {onDelete &&
           (isHover || window.matchMedia("(hover: none)").matches) && (
             <ActionGroup onClickDelete={handleDelete} />
           )}
-        {/* Confirm delete dialog */}
-        {deleteDialog}
-      </div>
-    </>
+      </Grid>
+
+      {/* Confirm delete dialog */}
+      {deleteDialog}
+    </Grid>
   ) : (
     // Placeholder
     <div className="flex flex-column align">

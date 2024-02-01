@@ -9,6 +9,7 @@ function DropdownDoctor({
   onChange,
   onClickAdd,
   onClickDelete,
+  ...props
 }) {
   // TEMPLATES -----------------------------------------------------------------
   // Dropdown item template
@@ -41,7 +42,8 @@ function DropdownDoctor({
         itemTemplate={doctorDropdownItem}
         panelFooterTemplate={doctorDropdownFooter}
         onChange={onChange}
-        className={value ? "w-full" : "w-full p-2"}
+        className={props?.className}
+        style={props?.style}
         filter
         filterBy="name,surname"
         placeholder="Doktor seçiniz..."

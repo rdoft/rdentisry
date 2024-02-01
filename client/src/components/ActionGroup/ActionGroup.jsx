@@ -15,7 +15,7 @@ function ActionGroup({
         <Button
           text
           outlined
-          size="sm"
+          size="small"
           icon="pi pi-plus"
           severity="secondary"
           label={label}
@@ -26,7 +26,7 @@ function ActionGroup({
         <Button
           text
           outlined
-          size="sm"
+          size="small"
           icon="pi pi-pencil"
           severity="secondary"
           onClick={onClickEdit}
@@ -36,7 +36,7 @@ function ActionGroup({
         <Button
           text
           outlined
-          size="sm"
+          size="small"
           icon="pi pi-trash"
           severity="danger"
           onClick={onClickDelete}
@@ -45,7 +45,7 @@ function ActionGroup({
       {onClickMore && (
         <Button
           className="bg-bluegray-50 hover:bg-bluegray-100 border-0 text-bluegray-900"
-          size="sm"
+          size="small"
           icon="pi pi-ellipsis-h"
           severity="secondary"
           onClick={onClickMore}
