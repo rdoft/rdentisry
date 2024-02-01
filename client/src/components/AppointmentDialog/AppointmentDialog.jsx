@@ -16,6 +16,7 @@ import DialogFooter from "components/DialogFooter/DialogFooter";
 import DropdownPersonItem from "components/DropdownItem/DropdownPersonItem";
 import ActionGroup from "components/ActionGroup/ActionGroup";
 import DoctorDialog from "components/Dialog/DoctorDialog";
+import PatientDialog from "components/PatientTable/PatientDialog";
 
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -65,7 +66,9 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
     endTime: false,
     duration: false,
   });
+  // Dialog display states
   const [doctorDialog, setDoctorDialog] = useState(false);
+  const [patientDialog, setPatientDialog] = useState(false);
 
   // Set the doctors from dropdown on loading
   useEffect(() => {
@@ -136,6 +139,24 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
       getDoctors();
       setDoctorDialog(false);
       setAppointment({ ...appointment, doctor });
+    } catch (error) {
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
+    }
+  };
+
+  // Save patient (create)
+  const savePatient = async (patient) => {
+    let response;
+
+    try {
+      response = await PatientService.savePatient(patient);
+      patient = response.data;
+
+      // Get and setthe updated list of patients
+      getPatients();
+      setPatientDialog(false);
+      setAppointment({ ...appointment, patient });
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -239,6 +260,16 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
     setDoctorDialog(false);
   };
 
+  // Show patient dialog
+  const showPatientDialog = () => {
+    setPatientDialog(true);
+  };
+
+  // Hide patient dialog
+  const hidePatientDialog = () => {
+    setPatientDialog(false);
+  };
+
   // TEMPLATES
   // Dropdwon item template
   const patientDropdownItemTemplate = (option, props) => {
@@ -263,12 +294,22 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
     );
   };
 
-  // Dropdown panel footer
+  // Dropdown panel footer for doctor
   const doctorDropdownFooter = () => {
     return (
       <div className="m-2">
         <Divider className="mt-0 mb-2" />
         <ActionGroup label="Doktor Ekle" onClickAdd={showDoctorDialog} />
+      </div>
+    );
+  };
+
+  // Dropdown panel footer for patient
+  const patientDropdownFooter = () => {
+    return (
+      <div className="m-2">
+        <Divider className="mt-0 mb-2" />
+        <ActionGroup label="Hasta Ekle" onClickAdd={showPatientDialog} />
       </div>
     );
   };
@@ -304,6 +345,7 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
             optionLabel="name"
             valueTemplate={patientDropdownItemTemplate}
             itemTemplate={patientDropdownItemTemplate}
+            panelFooterTemplate={patientDropdownFooter}
             onChange={(event) => handleChange(event, "patient")}
             filter
             filterBy="name,surname,phone"
@@ -413,6 +455,9 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
       </Dialog>
       {doctorDialog && (
         <DoctorDialog onHide={hideDoctorDialog} onSubmit={saveDoctor} />
+      )}
+      {patientDialog && (
+        <PatientDialog onHide={hidePatientDialog} onSubmit={savePatient} />
       )}
     </>
   );
