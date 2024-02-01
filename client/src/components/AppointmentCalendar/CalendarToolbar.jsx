@@ -3,16 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils/errorHandler";
 import { Typography } from "@mui/material";
-import { Toolbar, Dropdown, Button, InputSwitch, Divider } from "primereact";
-import DropdownPersonItem from "components/DropdownItem/DropdownPersonItem";
-import ActionGroup from "components/ActionGroup/ActionGroup";
+import { Toolbar, Button, InputSwitch } from "primereact";
+import DropdownDoctor from "components/Dropdown/DropdownDoctor";
 import DoctorDialog from "components/Dialog/DoctorDialog";
 
 // services
 import { DoctorService } from "services";
 
 // assets
-import avatarDoctor from "assets/images/avatars/doctor-avatar.png";
 import "assets/styles/AppointmentCalendar/CalendarToolbar.css";
 
 function CalendarToolbar({
@@ -91,48 +89,14 @@ function CalendarToolbar({
   };
 
   // TEMPLATES -----------------------------------------------------------------
-  // Dropdown item template
-  const doctorDropdownItemTemplate = (option, props) => {
-    return (
-      <DropdownPersonItem
-        option={option}
-        placeholder={props?.placeholder}
-        avatar={avatarDoctor}
-        isDoctor={true}
-      />
-    );
-  };
-
-  // Dropdown panel footer
-  const doctorDropdownFooter = () => {
-    return (
-      <div className="m-2">
-        <Divider className="mt-0 mb-2" />
-        <ActionGroup label="Doktor Ekle" onClickAdd={showDoctorDialog} />
-      </div>
-    );
-  };
-
   // Get doctor dropdown
   const centerContent = () => (
-    <React.Fragment>
-      <Dropdown
-        value={doctor}
-        options={doctors}
-        optionLabel="name"
-        valueTemplate={doctorDropdownItemTemplate}
-        itemTemplate={doctorDropdownItemTemplate}
-        panelFooterTemplate={doctorDropdownFooter}
-        onChange={handleChangeDropdown}
-        className={doctor ? "w-full" : "w-full p-2"}
-        filter
-        filterBy="name,surname"
-        placeholder="Doktor seçiniz..."
-        emptyMessage="Sonuç bulunamadı"
-        emptyFilterMessage="Sonuç bulunamadı"
-        showClear
-      />
-    </React.Fragment>
+    <DropdownDoctor
+      value={doctor}
+      options={doctors}
+      onChange={handleChangeDropdown}
+      onClickAdd={showDoctorDialog}
+    />
   );
 
   // Get showAll switch

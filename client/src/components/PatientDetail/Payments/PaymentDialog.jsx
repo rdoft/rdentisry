@@ -4,7 +4,6 @@ import { toast } from "react-hot-toast";
 import { errorHandler } from "utils/errorHandler";
 import {
   Dialog,
-  Dropdown,
   Divider,
   Calendar,
   Checkbox,
@@ -14,12 +13,9 @@ import {
   MultiStateCheckbox,
 } from "primereact";
 import DialogFooter from "components/DialogFooter/DialogFooter";
-import DropdownItem from "components/DropdownItem/DropdownPersonItem";
+import DropdownPatient from "components/Dropdown/DropdownPatient";
 
 import schema from "schemas/payment.schema";
-
-// assets
-import avatarPatient from "assets/images/avatars/patient-avatar.png";
 
 // services
 import { PatientService } from "services";
@@ -163,18 +159,6 @@ function PaymentDialog({ _payment = {}, onHide, onSubmit, onDelete }) {
       });
     });
 
-  // TEMPLATES
-  // Dropdwon item template
-  const patientDropdownItemTemplate = (option, props) => {
-    return (
-      <DropdownItem
-        option={option}
-        placeholder={props?.placeholder}
-        avatar={avatarPatient}
-      />
-    );
-  };
-
   return (
     <>
       <ConfirmDialog />
@@ -200,18 +184,10 @@ function PaymentDialog({ _payment = {}, onHide, onSubmit, onDelete }) {
 
         {/* Dropdown Patients */}
         <div className="field mb-4">
-          <Dropdown
+          <DropdownPatient
             value={payment.patient}
             options={patients}
-            optionLabel="name"
-            valueTemplate={patientDropdownItemTemplate}
-            itemTemplate={patientDropdownItemTemplate}
             onChange={(event) => handleChange(event, "patient")}
-            filter
-            filterBy="name,surname,phone"
-            placeholder="Hasta seçiniz..."
-            emptyMessage="Sonuç bulunamadı"
-            emptyFilterMessage="Sonuç bulunamadı"
           />
         </div>
 

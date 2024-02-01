@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Dropdown, Toolbar } from "primereact";
-import DropdownItem from "components/DropdownItem/DropdownPersonItem";
+import { Toolbar } from "primereact";
+import DropdownPatient from "components/Dropdown/DropdownPatient";
 
 // assets
-import avatarPatient from "assets/images/avatars/patient-avatar.png";
 import "assets/styles/PatientDetail/PatientDetailToolbar.css";
 
 // services
@@ -45,36 +44,13 @@ function PatientDetailToolbar({ patient, actionTemplate }) {
   };
 
   // TEMPLATES ----------------------------------------------------------------
-  // Dropdwon item template
-  const patientDropdownTemplate = (option, props) => {
-    return (
-      <DropdownItem
-        option={option}
-        placeholder={props?.placeholder}
-        avatar={avatarPatient}
-      />
-    );
-  };
-
   // Toolbar content thats are on left
   const centerContent = (
-    <React.Fragment>
-      {/* Get patient information */}
-      <Dropdown
-        value={patient}
-        options={patients}
-        optionLabel="name"
-        valueTemplate={patientDropdownTemplate}
-        itemTemplate={patientDropdownTemplate}
-        onChange={handleChange}
-        className="w-full"
-        filter
-        filterBy="name,surname,phone"
-        placeholder="Hasta seçiniz..."
-        emptyMessage="Sonuç bulunamadı"
-        emptyFilterMessage="Sonuç bulunamadı"
-      />
-    </React.Fragment>
+    <DropdownPatient
+      value={patient}
+      options={patients}
+      onChange={handleChange}
+    />
   );
 
   // Toolbar content thats are on left

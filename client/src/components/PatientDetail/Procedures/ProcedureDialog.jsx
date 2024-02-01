@@ -1,21 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Chip,
-  Dialog,
-  Dropdown,
-  Divider,
-  InputNumber,
-  Checkbox,
-} from "primereact";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils/errorHandler";
+import { Chip, Dialog, Divider, InputNumber, Checkbox } from "primereact";
 import DialogFooter from "components/DialogFooter/DialogFooter";
-import DropdownPersonItem from "components/DropdownItem/DropdownPersonItem";
-import DropdownProcedureItem from "components/DropdownItem/DropdownProcedureItem";
-
-// assets
-import avatarPatient from "assets/images/avatars/patient-avatar.png";
+import DropdownPatient from "components/Dropdown/DropdownPatient";
+import DropdownProcedure from "components/Dropdown/DropdownProcedure";
 
 // services
 import { PatientService, ProcedureService } from "services";
@@ -133,39 +123,6 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
     }
   };
 
-  // TEMPLATES ----------------------------------------------------------------
-  // Patient dropdown item template
-  const patientDropdownItem = (option, props) => {
-    return (
-      <DropdownPersonItem
-        option={option}
-        placeholder={props?.placeholder}
-        avatar={avatarPatient}
-      />
-    );
-  };
-
-  // Procedure dropdown item template
-  const procedureDropdownItem = (option, props) => {
-    return (
-      <DropdownProcedureItem
-        option={option}
-        placeholder={props?.placeholder}
-        isValue={false}
-      />
-    );
-  };
-  // Procedure dropdown value template
-  const procedureDropdownValue = (option, props) => {
-    return (
-      <DropdownProcedureItem
-        option={option}
-        placeholder={props?.placeholder}
-        isValue={true}
-      />
-    );
-  };
-
   return (
     <>
       <Dialog
@@ -189,36 +146,19 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
 
         {/* Dropdown Patients */}
         <div className="field mb-3">
-          <Dropdown
+          <DropdownPatient
             value={patientProcedure.patient}
             options={patients}
-            optionLabel="name"
-            valueTemplate={patientDropdownItem}
-            itemTemplate={patientDropdownItem}
             onChange={(event) => handleChange(event, "patient")}
-            filter
-            filterBy="name,surname,phone"
-            placeholder="Hasta seçiniz..."
-            emptyMessage="Sonuç bulunamadı"
-            emptyFilterMessage="Sonuç bulunamadı"
           />
         </div>
 
         {/* Dropdown Procedures */}
         <div className="field mb-4">
-          <Dropdown
+          <DropdownProcedure
             value={patientProcedure.procedure}
             options={procedures}
-            optionLabel="name"
-            valueTemplate={procedureDropdownValue}
-            itemTemplate={procedureDropdownItem}
             onChange={(event) => handleChange(event, "procedure")}
-            scrollHeight="300px"
-            filter
-            filterBy="name,code,procedureCategory.title"
-            placeholder="Tedavi seçiniz..."
-            emptyMessage="Sonuç bulunamadı"
-            emptyFilterMessage="Sonuç bulunamadı"
           />
         </div>
 

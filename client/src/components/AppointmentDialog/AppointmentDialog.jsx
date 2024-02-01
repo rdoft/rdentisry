@@ -4,7 +4,6 @@ import { toast } from "react-hot-toast";
 import { errorHandler } from "utils/errorHandler";
 import {
   Dialog,
-  Dropdown,
   InputText,
   InputTextarea,
   Divider,
@@ -12,20 +11,16 @@ import {
   ConfirmDialog,
   confirmDialog,
 } from "primereact";
-import DialogFooter from "components/DialogFooter/DialogFooter";
-import DropdownPersonItem from "components/DropdownItem/DropdownPersonItem";
-import ActionGroup from "components/ActionGroup/ActionGroup";
+import DropdownDoctor from "components/Dropdown/DropdownDoctor";
+import DropdownPatient from "components/Dropdown/DropdownPatient";
 import DoctorDialog from "components/Dialog/DoctorDialog";
 import PatientDialog from "components/PatientTable/PatientDialog";
+import DialogFooter from "components/DialogFooter/DialogFooter";
 
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
-
-// assets
-import avatarPatient from "assets/images/avatars/patient-avatar.png";
-import avatarDoctor from "assets/images/avatars/doctor-avatar.png";
 
 // schemas
 import schema from "schemas/appointment.schema";
@@ -270,50 +265,6 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
     setPatientDialog(false);
   };
 
-  // TEMPLATES
-  // Dropdwon item template
-  const patientDropdownItemTemplate = (option, props) => {
-    return (
-      <DropdownPersonItem
-        option={option}
-        placeholder={props?.placeholder}
-        avatar={avatarPatient}
-      />
-    );
-  };
-
-  // Dropdwon item template
-  const doctorDropdownItemTemplate = (option, props) => {
-    return (
-      <DropdownPersonItem
-        option={option}
-        placeholder={props?.placeholder}
-        avatar={avatarDoctor}
-        isDoctor={true}
-      />
-    );
-  };
-
-  // Dropdown panel footer for doctor
-  const doctorDropdownFooter = () => {
-    return (
-      <div className="m-2">
-        <Divider className="mt-0 mb-2" />
-        <ActionGroup label="Doktor Ekle" onClickAdd={showDoctorDialog} />
-      </div>
-    );
-  };
-
-  // Dropdown panel footer for patient
-  const patientDropdownFooter = () => {
-    return (
-      <div className="m-2">
-        <Divider className="mt-0 mb-2" />
-        <ActionGroup label="Hasta Ekle" onClickAdd={showPatientDialog} />
-      </div>
-    );
-  };
-
   return (
     <>
       <ConfirmDialog />
@@ -339,38 +290,21 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
 
         {/* Dropdown Patients */}
         <div className="field mb-3">
-          <Dropdown
+          <DropdownPatient
             value={appointment.patient}
             options={patients}
-            optionLabel="name"
-            valueTemplate={patientDropdownItemTemplate}
-            itemTemplate={patientDropdownItemTemplate}
-            panelFooterTemplate={patientDropdownFooter}
             onChange={(event) => handleChange(event, "patient")}
-            filter
-            filterBy="name,surname,phone"
-            placeholder="Hasta seçiniz..."
-            emptyMessage="Sonuç bulunamadı"
-            emptyFilterMessage="Sonuç bulunamadı"
+            onClickAdd={showPatientDialog}
           />
         </div>
 
         {/* Dropdown Doctors */}
         <div className="field mb-3">
-          <Dropdown
+          <DropdownDoctor
             value={appointment.doctor}
             options={doctors}
-            optionLabel="name"
-            valueTemplate={doctorDropdownItemTemplate}
-            itemTemplate={doctorDropdownItemTemplate}
-            panelFooterTemplate={doctorDropdownFooter}
             onChange={(event) => handleChange(event, "doctor")}
-            filter
-            filterBy="name,surname"
-            placeholder="Doktor seçiniz..."
-            emptyMessage="Sonuç bulunamadı"
-            emptyFilterMessage="Sonuç bulunamadı"
-            showClear
+            onClickAdd={showDoctorDialog}
           />
         </div>
 

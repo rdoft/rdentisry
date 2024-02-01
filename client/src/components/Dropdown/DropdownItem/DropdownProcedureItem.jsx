@@ -15,12 +15,12 @@ import {
   EmptyToothIcon,
 } from "assets/images/icons";
 
-function DropdownProcedureItem({ option, placeholder, isValue }) {
+function DropdownProcedureItem({ option, isValue }) {
   if (!option) {
     return (
       // Placeholder
       <div className="flex flex-column align">
-        <span>{placeholder}</span>
+        <span>Tedavi seçiniz...</span>
       </div>
     );
   }

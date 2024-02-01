@@ -3,23 +3,21 @@ import { Typography, Avatar } from "@mui/material";
 
 // assets
 import { PhoneOutlined } from "@ant-design/icons";
+import avatarPatient from "assets/images/avatars/patient-avatar.png";
 
-function DropdownItem({ option, placeholder, avatar, isDoctor }) {
+function DropdownPatientItem({ option }) {
   return option ? (
     <div className="w-full p-link flex align-items-center">
       {/* Avatar icon */}
-      {avatar && (
-        <Avatar alt="avatar" className="mr-2 p-1" src={avatar} shape="circle" />
-      )}
+      <Avatar
+        alt="avatar"
+        className="mr-2 p-1"
+        src={avatarPatient}
+        shape="circle"
+      />
       {/* Option info */}
       <div className="flex flex-column align">
-        {isDoctor ? (
-          <Typography variant="h5">
-            Dt. {option.name} {option.surname}
-          </Typography>
-        ) : (
-          <Typography variant="h5">{`${option.name} ${option.surname}`}</Typography>
-        )}
+        <Typography variant="h5">{`${option.name} ${option.surname}`}</Typography>
         {option.phone && (
           <Typography variant="body2">
             <PhoneOutlined /> {`${option.phone}`}
@@ -30,9 +28,9 @@ function DropdownItem({ option, placeholder, avatar, isDoctor }) {
   ) : (
     // Placeholder
     <div className="flex flex-column align">
-      <span>{placeholder}</span>
+      <span>Hasta Seçiniz...</span>
     </div>
   );
 }
 
-export default DropdownItem;
+export default DropdownPatientItem;
