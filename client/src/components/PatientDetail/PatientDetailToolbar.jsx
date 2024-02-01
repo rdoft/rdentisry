@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { errorHandler } from "utils/errorHandler";
 import { Toolbar } from "primereact";
 import DropdownPatient from "components/Dropdown/DropdownPatient";
+import PatientDialog from "components/PatientTable/PatientDialog";
 
 // assets
 import "assets/styles/PatientDetail/PatientDetailToolbar.css";
@@ -9,10 +12,11 @@ import "assets/styles/PatientDetail/PatientDetailToolbar.css";
 // services
 import { PatientService } from "services";
 
-function PatientDetailToolbar({ patient, actionTemplate }) {
+function PatientDetailToolbar({ patient, setPatient, actionTemplate }) {
   const navigate = useNavigate();
   // Set the default values
   const [patients, setPatients] = useState(null);
+  const [patientDialog, setPatientDialog] = useState(false);
 
   // Set the page on loading
   useEffect(() => {
@@ -36,11 +40,40 @@ function PatientDetailToolbar({ patient, actionTemplate }) {
     }
   };
 
+  // Save patient (create)
+  const savePatient = async (patient) => {
+    let response;
+
+    try {
+      // Create a new patient
+      response = await PatientService.savePatient(patient);
+      patient = response.data;
+
+      // Set the patients and close the dialog
+      getPatients();
+      setPatientDialog(false);
+      setPatient(patient)
+    } catch (error) {
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
+    }
+  };
+
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
   const handleChange = (event) => {
     let value = event.target && event.target.value;
     navigate(`/patients/${value.id}`);
+  };
+
+  // Show add patient dialog
+  const showPatientDialog = () => {
+    setPatientDialog(true);
+  };
+
+  // Hide add patient dialog
+  const hidePatientDialog = () => {
+    setPatientDialog(false);
   };
 
   // TEMPLATES ----------------------------------------------------------------
@@ -50,6 +83,7 @@ function PatientDetailToolbar({ patient, actionTemplate }) {
       value={patient}
       options={patients}
       onChange={handleChange}
+      onClickAdd={showPatientDialog}
     />
   );
 
@@ -62,7 +96,16 @@ function PatientDetailToolbar({ patient, actionTemplate }) {
   );
 
   return (
-    <Toolbar className="mb-4 p-2" start={startContent} center={centerContent} />
+    <>
+      <Toolbar
+        className="mb-4 p-2"
+        start={startContent}
+        center={centerContent}
+      />
+      {patientDialog && (
+        <PatientDialog onHide={hidePatientDialog} onSubmit={savePatient} />
+      )}
+    </>
   );
 }
 

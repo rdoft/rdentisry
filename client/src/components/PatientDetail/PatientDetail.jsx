@@ -249,6 +249,7 @@ function PatientDetail() {
           <div>
             <PatientDetailToolbar
               patient={patient}
+              setPatient={setPatient}
               actionTemplate={actionTemplate}
             />
 
