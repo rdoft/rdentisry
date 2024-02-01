@@ -21,7 +21,7 @@ function PatientDialog({ _patient = {}, onHide, onSubmit }) {
     birthYear: "",
   };
 
-  const [patient, setPatient] = useState({ ...emptyPatient, ..._patient })
+  const [patient, setPatient] = useState({ ...emptyPatient, ..._patient });
   // Validation of patient object
   const [isValid, setIsValid] = useState(false);
   // Validation(error) of patient properties
@@ -103,7 +103,9 @@ function PatientDialog({ _patient = {}, onHide, onSubmit }) {
 
       {/* TC */}
       <div className="field mb-3">
-        <label htmlFor="idNumber">TC Kimlik Numarası</label>
+        <label htmlFor="idNumber" className="font-bold">
+          TC Kimlik Numarası
+        </label>
         <InputText
           id="idNumber"
           value={patient.idNumber}
@@ -120,7 +122,7 @@ function PatientDialog({ _patient = {}, onHide, onSubmit }) {
 
       {/* Name */}
       <div className="field mb-3">
-        <label htmlFor="name">
+        <label htmlFor="name" className="font-bold">
           Ad <small className="p-error">*</small>
         </label>
         <InputText
@@ -134,7 +136,7 @@ function PatientDialog({ _patient = {}, onHide, onSubmit }) {
 
       {/* Surname */}
       <div className="field mb-3">
-        <label htmlFor="surname">
+        <label htmlFor="surname" className="font-bold">
           Soyad <small className="p-error">*</small>
         </label>
         <InputText
@@ -148,7 +150,7 @@ function PatientDialog({ _patient = {}, onHide, onSubmit }) {
 
       {/* Phone */}
       <div className="field mb-3">
-        <label htmlFor="phone">
+        <label htmlFor="phone" className="font-bold">
           Telefon <small className="p-error">*</small>
         </label>
         <InputText
@@ -166,7 +168,9 @@ function PatientDialog({ _patient = {}, onHide, onSubmit }) {
 
       {/* BirthYear */}
       <div className="field">
-        <label htmlFor="birthYear">Doğum yılı</label>
+        <label htmlFor="birthYear" className="font-bold">
+          Doğum yılı
+        </label>
         <InputText
           id="birthYear"
           value={patient.birthYear}
