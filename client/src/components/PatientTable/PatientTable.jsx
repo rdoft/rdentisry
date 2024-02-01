@@ -20,18 +20,8 @@ import { PatientService, AppointmentService } from "services";
 function PatientsTable() {
   const navigate = useNavigate();
 
-  // Set default empty Patient
-  let emptyPatient = {
-    id: null,
-    idNumber: "",
-    name: "",
-    surname: "",
-    phone: "",
-    birthYear: "",
-  };
-
   // Set the default values
-  const [patient, setPatient] = useState(emptyPatient);
+  const [patient, setPatient] = useState(null);
   const [patients, setPatients] = useState(null);
   const [patientDialog, setPatientDialog] = useState(false);
   const [deletePatientDialog, setDeletePatientDialog] = useState(false);
@@ -45,12 +35,12 @@ function PatientsTable() {
   // Set the page on loading
   useEffect(() => {
     getPatients();
-  }, [patientDialog]);
+  }, []);
 
   // SHOW/HIDE OPTIONS --------------------------------------------------------
   // Show add patient dialog
   const showAddPatientDialog = () => {
-    setPatient(emptyPatient);
+    setPatient(null);
     setPatientDialog(true);
   };
 
@@ -74,7 +64,6 @@ function PatientsTable() {
   // Show add appointment dialog
   const showAppointmentDialog = (patient) => {
     setPatient({ ...patient });
-    // setAppointment({ ...appointment, patientId: patient.id });
     setAppointmentDialog(true);
   };
 
@@ -118,34 +107,19 @@ function PatientsTable() {
 
   // Save patient (create/update)
   const savePatient = async (patient) => {
-    let response;
-    let index;
-    let _patients;
-
     try {
-      // Copy patients into new variable
-      _patients = [...patients];
-
       if (patient.id) {
         // Update the patient
-        // PUT /patients/:patientId
         await PatientService.updatePatient(patient);
-        // Find the index of the patinet in the patients array
-        index = patients.findIndex((item) => item.id === patient.id);
-        _patients[index] = patient;
         toast.success("Hasta bilgileri başarıyla güncellendi");
       } else {
         // Create a new patient
-        // POST /patients
-        response = await PatientService.savePatient(patient);
-        // Set created patient's id, and add into patients
-        patient.id = response.data.id;
-        _patients.push(patient);
+        await PatientService.savePatient(patient);
         toast.success("Yeni hasta başarıyla eklendi");
       }
 
       // Set the patients and close the dialog
-      setPatients(_patients);
+      getPatients();
       setPatientDialog(false);
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -171,7 +145,6 @@ function PatientsTable() {
     let _selectedPatients;
 
     try {
-      // DELETE /patients/:patientId
       await PatientService.deletePatient(patient.id);
 
       // Remove deleted patient from patients and selectedPatients
@@ -189,7 +162,7 @@ function PatientsTable() {
 
     // Close delete dialog and empty patient variable
     setDeletePatientDialog(false);
-    setPatient(emptyPatient);
+    setPatient(null);
   };
 
   // Delete selected patients
@@ -225,11 +198,6 @@ function PatientsTable() {
   };
 
   // HANDLERS -----------------------------------------------------------------
-  // onChange patient inside children handler
-  const handleChangePatient = (patient) => {
-    setPatient(patient);
-  };
-
   // onInput handler for search
   const handleInputSearch = (event) => {
     setTimeout(() => setGlobalFilter(event.target.value), 400);
@@ -370,8 +338,7 @@ function PatientsTable() {
       {/* Patient information and confirmation dialogs  */}
       {patientDialog && (
         <PatientDialog
-          patient={patient}
-          onChange={handleChangePatient}
+          _patient={patient}
           onHide={hidePatientDialog}
           onSubmit={savePatient}
         />

@@ -10,7 +10,18 @@ import avatarPatient from "assets/images/avatars/patient-avatar.png";
 
 import schema from "schemas/patient.schema";
 
-function PatientDialog({ patient, onChange, onHide, onSubmit }) {
+function PatientDialog({ _patient = {}, onHide, onSubmit }) {
+  // Set default empty Patient
+  let emptyPatient = {
+    id: null,
+    idNumber: "",
+    name: "",
+    surname: "",
+    phone: "",
+    birthYear: "",
+  };
+
+  const [patient, setPatient] = useState({ ...emptyPatient, ..._patient })
   // Validation of patient object
   const [isValid, setIsValid] = useState(false);
   // Validation(error) of patient properties
@@ -32,11 +43,10 @@ function PatientDialog({ patient, onChange, onHide, onSubmit }) {
   // onChange handler
   const handleChange = (event, attr) => {
     const value = (event.target && event.target.value) || "";
-    let _patient;
+    let _patient = { ...patient };
     let _isError;
 
     // set patient new value
-    _patient = { ...patient };
     _patient[`${attr}`] = value;
 
     // Set isError
@@ -47,18 +57,11 @@ function PatientDialog({ patient, onChange, onHide, onSubmit }) {
 
     // Set isError and patient
     setIsError(_isError);
-    onChange(_patient);
+    setPatient(_patient);
   };
 
   // onHide handler
   const handleHide = () => {
-    setIsError({
-      idNumber: false,
-      name: false,
-      surname: false,
-      phone: false,
-      birtYear: false,
-    });
     onHide();
   };
 
@@ -117,7 +120,9 @@ function PatientDialog({ patient, onChange, onHide, onSubmit }) {
 
       {/* Name */}
       <div className="field mb-3">
-        <label htmlFor="name">Ad <small className="p-error">*</small></label>
+        <label htmlFor="name">
+          Ad <small className="p-error">*</small>
+        </label>
         <InputText
           id="name"
           value={patient.name}
@@ -129,7 +134,9 @@ function PatientDialog({ patient, onChange, onHide, onSubmit }) {
 
       {/* Surname */}
       <div className="field mb-3">
-        <label htmlFor="surname">Soyad <small className="p-error">*</small></label>
+        <label htmlFor="surname">
+          Soyad <small className="p-error">*</small>
+        </label>
         <InputText
           id="surname"
           value={patient.surname}
@@ -141,7 +148,9 @@ function PatientDialog({ patient, onChange, onHide, onSubmit }) {
 
       {/* Phone */}
       <div className="field mb-3">
-        <label htmlFor="phone">Telefon <small className="p-error">*</small></label>
+        <label htmlFor="phone">
+          Telefon <small className="p-error">*</small>
+        </label>
         <InputText
           id="phone"
           value={patient.phone}
@@ -165,7 +174,9 @@ function PatientDialog({ patient, onChange, onHide, onSubmit }) {
           keyfilter="num"
         />
         {isError["birthYear"] && (
-          <small className="p-error">Geçersiz doğum yılı (1900-{new Date().getFullYear()})</small>
+          <small className="p-error">
+            Geçersiz doğum yılı (1900-{new Date().getFullYear()})
+          </small>
         )}
       </div>
     </Dialog>

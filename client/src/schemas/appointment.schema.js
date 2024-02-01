@@ -17,7 +17,7 @@ const appointment = Joi.object({
   description: Joi.string().default(null).empty("").allow(null),
   status: Joi.string().default("active").empty(null),
   duration: Joi.number().empty(null).allow(null),
-});
+}).unknown();
 
 const id = Joi.object({
   appointmentId: Joi.number().empty(null).id(),
