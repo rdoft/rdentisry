@@ -3,10 +3,21 @@ import { Dropdown, Divider } from "primereact";
 import DropdownDoctorItem from "components/Dropdown/DropdownItem/DropdownDoctorItem";
 import ActionGroup from "components/ActionGroup/ActionGroup";
 
-function DropdownDoctor({ value, options, onChange, onClickAdd }) {
+function DropdownDoctor({
+  value,
+  options,
+  onChange,
+  onClickAdd,
+  onClickDelete,
+}) {
   // TEMPLATES -----------------------------------------------------------------
   // Dropdown item template
   const doctorDropdownItem = (option) => {
+    return <DropdownDoctorItem option={option} onDelete={onClickDelete} />;
+  };
+
+  // Dropdown value template
+  const doctorDropdownValue = (option) => {
     return <DropdownDoctorItem option={option} />;
   };
 
@@ -26,7 +37,7 @@ function DropdownDoctor({ value, options, onChange, onClickAdd }) {
         value={value}
         options={options}
         optionLabel="name"
-        valueTemplate={doctorDropdownItem}
+        valueTemplate={doctorDropdownValue}
         itemTemplate={doctorDropdownItem}
         panelFooterTemplate={doctorDropdownFooter}
         onChange={onChange}

@@ -46,7 +46,12 @@ module.exports = function (app) {
       validate(schema.id, "params"),
       validate(schema.doctor, "body"),
       controller.updateDoctor
-    );
+    )
+    /**
+     * Delete the doctor
+     * @param doctorId id of the doctor
+     */
+    .delete(validate(schema.id, "params"), controller.deleteDoctor);
 
   app.use(API_URL, router);
 };

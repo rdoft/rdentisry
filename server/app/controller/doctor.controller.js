@@ -85,3 +85,41 @@ exports.updateDoctor = async (req, res) => {
     res.status(500).send(error);
   }
 };
+
+/**
+ * Delete the doctor
+ * @param doctorId: Id of the doctor
+ */
+exports.deleteDoctor = async (req, res) => {
+  const { UserId: userId } = req.user;
+  const { doctorId } = req.params;
+  let doctor;
+
+  try {
+    // Find the doctor record
+    doctor = await Doctor.findOne({
+      where: {
+        DoctorId: doctorId,
+        UserId: userId,
+      },
+    });
+
+    // Delete the doctor if it exists
+    if (doctor) {
+      await doctor.destroy();
+
+      res.status(200).send({ id: doctorId });
+    } else {
+      res.status(404).send({ message: "Doktor mevcut değil" });
+    }
+  } catch (error) {
+    if (error instanceof Sequelize.ForeignKeyConstraintError) {
+      res.status(400).send({
+        message:
+          "Silmek istediğiniz doktora ait randevular olduğundan işlem tamamlanamadı",
+      });
+    } else {
+      res.status(500).send(error);
+    }
+  }
+};
