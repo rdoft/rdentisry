@@ -14,9 +14,11 @@ import { DoctorService } from "services";
 import "assets/styles/AppointmentCalendar/CalendarToolbar.css";
 
 function CalendarToolbar({
-  doctor,
   showAll,
+  doctor,
+  doctors,
   setDoctor,
+  setDoctors,
   setShowAll,
   onClickAddAppointment,
 }) {
@@ -24,7 +26,6 @@ function CalendarToolbar({
 
   // Set the default values
   const [doctorDialog, setDoctorDialog] = useState(false);
-  const [doctors, setDoctors] = useState(null);
 
   // Get doctors on loading
   useEffect(() => {

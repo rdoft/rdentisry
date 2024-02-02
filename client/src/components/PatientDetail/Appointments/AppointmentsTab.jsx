@@ -17,7 +17,9 @@ import { AppointmentService } from "services";
 
 function AppointmentsTab({
   patient,
+  patients,
   appointmentDialog,
+  setPatients,
   showDialog,
   hideDialog,
   getCounts,
@@ -28,6 +30,7 @@ function AppointmentsTab({
   const [activeAppointments, setActiveAppointments] = useState([]);
   const [otherAppointments, setOtherAppointments] = useState([]);
   const [appointment, setAppointment] = useState(null);
+  const [doctors, setDoctors] = useState(null);
 
   // Set the page on loading
   useEffect(() => {
@@ -189,6 +192,10 @@ function AppointmentsTab({
       {appointmentDialog && (
         <AppointmentDialog
           _appointment={appointment ? appointment : { patient }}
+          doctors={doctors}
+          patients={patients}
+          setDoctors={setDoctors}
+          setPatients={setPatients}
           onHide={handleHideDialog}
           onSubmit={saveAppointment}
           onDelete={appointment && deleteAppointment}

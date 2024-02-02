@@ -23,6 +23,7 @@ function PatientsTable() {
   // Set the default values
   const [patient, setPatient] = useState(null);
   const [patients, setPatients] = useState(null);
+  const [doctors, setDoctors] = useState(null);
   const [patientDialog, setPatientDialog] = useState(false);
   const [deletePatientDialog, setDeletePatientDialog] = useState(false);
   const [deletePatientsDialog, setDeletePatientsDialog] = useState(false);
@@ -373,6 +374,10 @@ function PatientsTable() {
               birthYear: patient.birthYear,
             },
           }}
+          doctors={doctors}
+          patients={patients}
+          setDoctors={setDoctors}
+          setPatients={setPatients}
           onHide={hideAppointmentDialog}
           onSubmit={saveAppointment}
         />

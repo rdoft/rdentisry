@@ -54,6 +54,7 @@ function PatientDetail() {
 
   // Set the default values
   const [patient, setPatient] = useState(null);
+  const [patients, setPatients] = useState(null);
   const [activeIndex, setActiveIndex] = useState(idx);
   const [countAppointment, setCountAppointment] = useState(0);
   const [countPayment, setCountPayment] = useState(0);
@@ -249,7 +250,9 @@ function PatientDetail() {
           <div>
             <PatientDetailToolbar
               patient={patient}
+              patients={patients}
               setPatient={setPatient}
+              setPatients={setPatients}
               actionTemplate={actionTemplate}
             />
 
@@ -278,6 +281,8 @@ function PatientDetail() {
                 <AppointmentsTab
                   key={patient.id}
                   patient={patient}
+                  patients={patients}
+                  setPatients={setPatients}
                   appointmentDialog={appointmentDialog}
                   showDialog={showAppointmentDialog}
                   hideDialog={hideAppointmentDialog}

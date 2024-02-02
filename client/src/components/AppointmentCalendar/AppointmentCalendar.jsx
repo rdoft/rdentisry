@@ -33,6 +33,8 @@ const AppointmentCalendar = () => {
   const [appointments, setAppointments] = useState([]);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
   const [doctor, setDoctor] = useState(null);
+  const [doctors, setDoctors] = useState(null);
+  const [patients, setPatients] = useState(null);
 
   useEffect(() => {
     getAppointments();
@@ -199,9 +201,11 @@ const AppointmentCalendar = () => {
   return (
     <div>
       <CalendarToolbar
-        doctor={doctor}
         showAll={showAll}
+        doctor={doctor}
+        doctors={doctors}
         setDoctor={setDoctor}
+        setDoctors={setDoctors}
         setShowAll={setShowAll}
         onClickAddAppointment={showAppointmentDialog}
       />
@@ -239,6 +243,10 @@ const AppointmentCalendar = () => {
       {appointmentDialog && (
         <AppointmentDialog
           _appointment={{ doctor, ...appointment }}
+          doctors={doctors}
+          patients={patients}
+          setDoctors={setDoctors}
+          setPatients={setPatients}
           onHide={hideAppointmentDialog}
           onSubmit={saveAppointment}
           onDelete={appointment && deleteAppointment}

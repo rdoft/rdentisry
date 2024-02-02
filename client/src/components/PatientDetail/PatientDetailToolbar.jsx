@@ -12,10 +12,15 @@ import "assets/styles/PatientDetail/PatientDetailToolbar.css";
 // services
 import { PatientService } from "services";
 
-function PatientDetailToolbar({ patient, setPatient, actionTemplate }) {
+function PatientDetailToolbar({
+  patient,
+  patients,
+  setPatient,
+  setPatients,
+  actionTemplate,
+}) {
   const navigate = useNavigate();
   // Set the default values
-  const [patients, setPatients] = useState(null);
   const [patientDialog, setPatientDialog] = useState(false);
 
   // Set the page on loading
@@ -52,7 +57,7 @@ function PatientDetailToolbar({ patient, setPatient, actionTemplate }) {
       // Set the patients and close the dialog
       getPatients();
       setPatientDialog(false);
-      setPatient(patient)
+      setPatient(patient);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);

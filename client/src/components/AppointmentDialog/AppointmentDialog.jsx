@@ -28,7 +28,16 @@ import schema from "schemas/appointment.schema";
 // services
 import { PatientService, DoctorService } from "services";
 
-function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
+function AppointmentDialog({
+  _appointment = {},
+  doctors,
+  patients,
+  setDoctors,
+  setPatients,
+  onHide,
+  onSubmit,
+  onDelete,
+}) {
   const navigate = useNavigate();
 
   // Set default empty Appointment
@@ -43,8 +52,6 @@ function AppointmentDialog({ _appointment = {}, onHide, onSubmit, onDelete }) {
   };
 
   // Set the default values
-  const [doctors, setDoctors] = useState(null);
-  const [patients, setPatients] = useState(null);
   const [appointment, setAppointment] = useState({
     ...emptyAppointment,
     ..._appointment,
