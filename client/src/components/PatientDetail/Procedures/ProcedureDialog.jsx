@@ -123,6 +123,11 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
     }
   };
 
+  // onClickProcedureOptions handler
+  const handleClickProcedureOptions = () => {
+    navigate(`/procedures`);
+  };
+
   return (
     <>
       <Dialog
@@ -159,6 +164,7 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
             value={patientProcedure.procedure}
             options={procedures}
             onChange={(event) => handleChange(event, "procedure")}
+            onClickOptions={handleClickProcedureOptions}
           />
         </div>
 

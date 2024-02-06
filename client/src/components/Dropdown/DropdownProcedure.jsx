@@ -1,9 +1,8 @@
 import React from "react";
-import { Dropdown, Divider } from "primereact";
+import { Dropdown, Divider, Button } from "primereact";
 import DropdownProcedureItem from "components/Dropdown/DropdownItem/DropdownProcedureItem";
-import ActionGroup from "components/ActionGroup/ActionGroup";
 
-function DropdownProcedure({ value, options, onChange, onClickAdd }) {
+function DropdownProcedure({ value, options, onChange, onClickOptions }) {
   // TEMPLATES -----------------------------------------------------------------
   // Dropdown item template
   const procedureDropdownItem = (option) => {
@@ -18,10 +17,16 @@ function DropdownProcedure({ value, options, onChange, onClickAdd }) {
   // Dropdown panel footer
   const procedureDropdownFooter = () => {
     return (
-      onClickAdd && (
+      onClickOptions && (
         <div className="m-2">
           <Divider className="mt-0 mb-2" />
-          <ActionGroup label="Tedavi Ekle" onClickAdd={onClickAdd} />
+          <Button
+              label="Tedavi Ayarları"
+              icon="pi pi-cog"
+              className="p-button-text p-button-secondary"
+              size="small"
+              onClick={onClickOptions}
+            />
         </div>
       )
     );

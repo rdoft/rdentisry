@@ -243,15 +243,16 @@ function PatientDetail() {
             />
             <Menu
               model={[{ label: "Tedavi ayarları" }]}
-              popup
               ref={menuLeft}
               id="popup_menu_left"
+              popup
             />
             <Button
               icon="pi pi-ellipsis-h"
               className="p-button-text p-button-secondary"
               aria-controls="popup_menu_left"
               size="small"
+              aria-haspopup
               onClick={(event) => menuLeft.current.toggle(event)}
             />
           </>
