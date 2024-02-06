@@ -11,6 +11,7 @@ const Patient = Loadable(lazy(() => import("pages/Patients/PatientPage")));
 const Calendar = Loadable(
   lazy(() => import("pages/AppointmentCalendar/AppointmentCalendarPage"))
 );
+const Procedures = Loadable(lazy(() => import("pages/Procedures/ProceduresPage")));
 const Login = Loadable(lazy(() => import("pages/Auth/LoginPage")));
 const Register = Loadable(lazy(() => import("pages/Auth/RegisterPage")));
 
@@ -49,6 +50,10 @@ const MainRoutes = [
         path: "/calendar",
         element: <Calendar />,
       },
+      {
+        path: "/procedures",
+        element: <Procedures />,
+      }
     ],
   },
   // {

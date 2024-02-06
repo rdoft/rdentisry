@@ -242,7 +242,13 @@ function PatientDetail() {
               onClick={showProcedureDialog}
             />
             <Menu
-              model={[{ label: "Tedavi ayarları" }]}
+              model={[
+                {
+                  label: "Tedavi Ayarları",
+                  icon: "pi pi-cog",
+                  url: "/procedures",
+                },
+              ]}
               ref={menuLeft}
               id="popup_menu_left"
               popup
