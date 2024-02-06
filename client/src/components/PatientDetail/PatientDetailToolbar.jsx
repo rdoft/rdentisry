@@ -17,7 +17,7 @@ function PatientDetailToolbar({
   patients,
   setPatient,
   setPatients,
-  actionTemplate,
+  startContent,
 }) {
   const navigate = useNavigate();
   // Set the default values
@@ -83,7 +83,7 @@ function PatientDetailToolbar({
 
   // TEMPLATES ----------------------------------------------------------------
   // Toolbar content thats are on left
-  const centerContent = (
+  const endContent = (
     <DropdownPatient
       value={patient}
       options={patients}
@@ -92,21 +92,9 @@ function PatientDetailToolbar({
     />
   );
 
-  // Toolbar content thats are on left
-  const startContent = (
-    <React.Fragment>
-      {/* Get action button */}
-      {actionTemplate()}
-    </React.Fragment>
-  );
-
   return (
     <>
-      <Toolbar
-        className="mb-4 p-2"
-        start={startContent}
-        center={centerContent}
-      />
+      <Toolbar className="mb-4 p-2" start={startContent} end={endContent} />
       {patientDialog && (
         <PatientDialog onHide={hidePatientDialog} onSubmit={savePatient} />
       )}

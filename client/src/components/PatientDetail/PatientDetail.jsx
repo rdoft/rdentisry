@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils/errorHandler";
-import { TabView, TabPanel, Button } from "primereact";
+import { Menu, TabView, TabPanel, Button } from "primereact";
 import { Grid, Typography } from "@mui/material";
 import TabHeader from "./TabHeader";
 import AppointmentsTab from "./Appointments/AppointmentsTab";
@@ -53,6 +53,7 @@ function PatientDetail() {
   let idx = getActiveIndex(tab);
 
   // Set the default values
+  const menuLeft = useRef(null);
   const [patient, setPatient] = useState(null);
   const [patients, setPatients] = useState(null);
   const [activeIndex, setActiveIndex] = useState(idx);
@@ -198,14 +199,15 @@ function PatientDetail() {
 
   // TEMPLATES ----------------------------------------------------------------
   // Toolbar action template
-  const actionTemplate = () => {
+  const toolbarAction = () => {
     switch (activeIndex) {
       case 0:
         return (
           <Button
             label="Randevu Ekle"
             icon="pi pi-plus"
-            className="p-button-text p-button-info"
+            className="p-button-info"
+            size="small"
             onClick={showAppointmentDialog}
           />
         );
@@ -214,7 +216,8 @@ function PatientDetail() {
           <Button
             label="Ödeme Ekle"
             icon="pi pi-plus"
-            className="p-button-text p-button-info"
+            className="p-button-info"
+            size="small"
             onClick={showPaymentDialog}
           />
         );
@@ -223,18 +226,35 @@ function PatientDetail() {
           <Button
             label="Not Ekle"
             icon="pi pi-plus"
-            className="p-button-text p-button-info"
+            className="p-button-info"
+            size="small"
             onClick={showNoteDialog}
           />
         );
       case 3:
         return (
-          <Button
-            label="Tedavi Ekle"
-            icon="pi pi-plus"
-            className="p-button-text p-button-info"
-            onClick={showProcedureDialog}
-          />
+          <>
+            <Button
+              label="Tedavi Ekle"
+              icon="pi pi-plus"
+              className="p-button-info mr-2"
+              size="small"
+              onClick={showProcedureDialog}
+            />
+            <Menu
+              model={[{ label: "Tedavi ayarları" }]}
+              popup
+              ref={menuLeft}
+              id="popup_menu_left"
+            />
+            <Button
+              icon="pi pi-ellipsis-h"
+              className="p-button-text p-button-secondary"
+              aria-controls="popup_menu_left"
+              size="small"
+              onClick={(event) => menuLeft.current.toggle(event)}
+            />
+          </>
         );
       // case 4:
       //   return null;
@@ -253,7 +273,7 @@ function PatientDetail() {
               patients={patients}
               setPatient={setPatient}
               setPatients={setPatients}
-              actionTemplate={actionTemplate}
+              startContent={toolbarAction}
             />
 
             <TabView

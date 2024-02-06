@@ -140,7 +140,8 @@ function CalendarToolbar({
       <Button
         label="Randevu Ekle"
         icon="pi pi-plus"
-        className="p-button-text p-button-info mr-2"
+        size="small"
+        className="p-button-info mr-2"
         onClick={onClickAddAppointment}
       />
     </React.Fragment>

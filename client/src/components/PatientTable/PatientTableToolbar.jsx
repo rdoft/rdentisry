@@ -10,12 +10,14 @@ function PatientTableToolbar({ visibleDelete, onClickAdd, onClickDelete, onInput
         <Button
           label="Hasta Ekle"
           icon="pi pi-plus"
-          className="p-button-text p-button-info mr-2"
+          size="small"
+          className="p-button-info mr-2"
           onClick={onClickAdd}
         />
         <Button
           label="Sil"
           icon="pi pi-trash"
+          size="small"
           className="p-button-text p-button-danger"
           onClick={onClickDelete}
           visible={visibleDelete}
