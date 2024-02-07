@@ -14,7 +14,7 @@ import DentalChart from "./DentalChart";
 import "assets/styles/PatientDetail/ProceduresTab.css";
 
 // services
-import { PatientProcedureService } from "services/index";
+import { PatientProcedureService } from "services";
 
 function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
   const navigate = useNavigate();

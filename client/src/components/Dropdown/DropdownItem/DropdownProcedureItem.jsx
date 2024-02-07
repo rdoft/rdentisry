@@ -29,11 +29,13 @@ function DropdownProcedureItem({ option, isValue }) {
   let icon;
   let label;
   switch (option.procedureCategory.title) {
-    case "Muayene" || "Teşhis":
+    case "Muayene":
+    case "Teşhis":
       icon = DiagnosisIcon;
       label = "Muayene / Teşhis";
       break;
-    case "Hijyen" || "Beyazlatma":
+    case "Hijyen":
+    case "Beyazlatma":
       icon = CleaningIcon;
       label = "Hijyen / Beyazlatma";
       break;
@@ -49,7 +51,8 @@ function DropdownProcedureItem({ option, isValue }) {
       icon = BridgeIcon;
       label = "Köprü";
       break;
-    case "Kaplama" || "Protez":
+    case "Kaplama":
+    case "Protez":
       icon = VeneerIcon;
       label = "Kaplama / Protez";
       break;

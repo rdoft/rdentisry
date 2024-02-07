@@ -1,0 +1,15 @@
+.categoryDropdown .p-dropdown-label {
+  padding: 0.3rem;
+}
+
+.categoryDropdown {
+  border: none;
+}
+
+.categoryDropdown .p-dropdown-trigger {
+  display: none;
+}
+
+.categoryDropdown:hover .p-dropdown-trigger {
+  display: flex;
+}

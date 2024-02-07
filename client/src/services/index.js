@@ -6,6 +6,7 @@ import notification from "services/notification.service";
 import note from "services/note.service";
 import procedure from "./procedure.service";
 import patientProcedure from "./patientProcedure.service";
+import procedureCategory from "./procedureCategory.service";
 import auth from "./auth.service";
 
 const PatientService = patient;
@@ -16,6 +17,7 @@ const NotificationService = notification;
 const NoteService = note;
 const ProcedureService = procedure;
 const PatientProcedureService = patientProcedure;
+const ProcedureCategoryService = procedureCategory;
 const AuthService = auth;
 
 export {
@@ -27,5 +29,6 @@ export {
   NoteService,
   ProcedureService,
   PatientProcedureService,
+  ProcedureCategoryService,
   AuthService,
 };

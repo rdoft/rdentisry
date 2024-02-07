@@ -40,11 +40,13 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
   let icon;
   let label;
   switch (procedure.procedure.procedureCategory.title) {
-    case "Muayene" || "Teşhis":
+    case "Muayene":
+    case "Teşhis":
       icon = DiagnosisIcon;
       label = "Muayene / Teşhis";
       break;
-    case "Hijyen" || "Beyazlatma":
+    case "Hijyen":
+    case "Beyazlatma":
       icon = CleaningIcon;
       label = "Hijyen / Beyazlatma";
       break;
@@ -60,7 +62,8 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
       icon = BridgeIcon;
       label = "Köprü";
       break;
-    case "Kaplama" || "Protez":
+    case "Kaplama":
+    case "Protez":
       icon = VeneerIcon;
       label = "Kaplama / Protez";
       break;
