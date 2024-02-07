@@ -2,10 +2,13 @@ import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils/errorHandler";
-import { DataTable, Column } from "primereact";
+import { DataTable, Column, ConfirmDialog } from "primereact";
+import { Typography } from "@mui/material";
 import PriceColumn from "components/ProcedureTable/PriceColumn";
 import CategoryColumn from "components/ProcedureTable/CategoryColumn";
 import NameColumn from "components/ProcedureTable/NameColumn";
+import ProcedureTableToolbar from "components/ProcedureTable/ProcedureTableToolbar";
+import DialogFooter from "components/DialogFooter/DialogFooter";
 
 // services
 import { ProcedureService, ProcedureCategoryService } from "services";
@@ -17,6 +20,8 @@ function ProcedureTable({}) {
   const [categories, setCategories] = useState(null);
   const [procedures, setProcedures] = useState(null);
   const [selectedProcedures, setSelectedProcedures] = useState(null);
+  const [procedureDialog, setProcedureDialog] = useState(false);
+  const [deleteProceduresDialog, setDeleteProceduresDialog] = useState(false);
 
   // Set the page on loading
   useEffect(() => {
@@ -77,7 +82,32 @@ function ProcedureTable({}) {
     }
   };
 
+  // Delete the selected procedures
+  const deleteProcedures = async () => {
+    // TODO: Implement deleteProcedures
+  };
+
   // HANDLERS -----------------------------------------------------------------
+  // Show add procedure dialog
+  const showProcedureDialog = () => {
+    setProcedureDialog(true);
+  };
+
+  // Hide add procedure dialog
+  const hideProcedureDialog = () => {
+    setProcedureDialog(false);
+  };
+
+  // Show confirm delete procedures dialog
+  const showDeleteProceduresDialog = () => {
+    setDeleteProceduresDialog(true);
+  };
+
+  // Hide confirm delete procedures dialog
+  const hideDeleteProceduresDialog = () => {
+    setDeleteProceduresDialog(false);
+  };
+
   // onInput handler for search
   const handleInputSearch = (event) => {
     setTimeout(() => setGlobalFilter(event.target.value), 400);
@@ -88,11 +118,39 @@ function ProcedureTable({}) {
     setSelectedProcedures(event.value);
   };
 
+  // onDelete handler for confirm delete procedures dialog
+  const handleDeleteProceduresConfirm = () => {
+    deleteProcedures(selectedProcedures);
+    hideDeleteProceduresDialog();
+  };
+
+  // TEMPLATES -----------------------------------------------------------------
+  const deleteProceduresDialogTemplate = (
+    <ConfirmDialog
+      visible={deleteProceduresDialog}
+      onHide={hideDeleteProceduresDialog}
+      message=<Typography variant="body1">
+        <strong>{selectedProcedures?.length || 0}</strong> adet tedaviyi silmek
+        istediğinize emin misiniz?
+      </Typography>
+      header="Tedavileri Sil"
+      footer=<DialogFooter
+        onHide={hideDeleteProceduresDialog}
+        onDelete={handleDeleteProceduresConfirm}
+      />
+    />
+  );
+
   return (
     <div className="datatable-crud">
       <div className="card">
         {/* Procedure table toolbar */}
-        {/* <ProcedureTableToolbar /> */}
+        <ProcedureTableToolbar
+          visibleDelete={selectedProcedures?.length ? true : false}
+          onClickAdd={showProcedureDialog}
+          onClickDelete={showDeleteProceduresDialog}
+          onInput={handleInputSearch}
+        />
 
         <DataTable
           paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
@@ -110,6 +168,7 @@ function ProcedureTable({}) {
           rowHover={true}
           sortField="code"
           size="small"
+          dragSelection={true}
         >
           {/* Checkbox */}
           <Column
@@ -159,6 +218,19 @@ function ProcedureTable({}) {
           ></Column>
         </DataTable>
       </div>
+
+      {/* Add procedure dialog */}
+      {procedureDialog &&
+        {
+          /* <ProcedureDialog
+          onHide={hideProcedureDialog}
+          onSubmit={saveProcedure}
+          categories={categories}
+        /> */
+        }}
+
+      {/* Confirm delete procedures dialog */}
+      {deleteProceduresDialogTemplate}
     </div>
   );
 }

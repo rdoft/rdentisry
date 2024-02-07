@@ -2,13 +2,18 @@ import React from "react";
 import { Toolbar, Button } from "primereact";
 import Search from "components/Search";
 
-function PatientTableToolbar({ visibleDelete, onClickAdd, onClickDelete, onInput }) {
-  // Get Add/Delete patient buttons
+function ProcedureTableToolbar({
+  visibleDelete,
+  onClickAdd,
+  onClickDelete,
+  onInput,
+}) {
+  // Get Add/Delete procedure buttons
   const getActionButton = () => {
     return (
       <React.Fragment>
         <Button
-          label="Hasta Ekle"
+          label="Tedavi Ekle"
           icon="pi pi-plus"
           size="small"
           className="p-button-info mr-2"
@@ -32,8 +37,12 @@ function PatientTableToolbar({ visibleDelete, onClickAdd, onClickDelete, onInput
   };
 
   return (
-    <Toolbar className="mb-4 p-2" left={getActionButton} right={getSearchInput} />
+    <Toolbar
+      className="mb-4 p-2"
+      left={getActionButton}
+      right={getSearchInput}
+    />
   );
 }
 
-export default PatientTableToolbar;
+export default ProcedureTableToolbar;

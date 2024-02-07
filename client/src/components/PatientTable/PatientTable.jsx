@@ -267,6 +267,7 @@ function PatientsTable() {
           rowHover={true}
           sortField="overdue"
           sortOrder={-1}
+          dragSelection={true}
         >
           {/* Checkbox */}
           <Column
