@@ -1,11 +1,11 @@
-import React, { useState, useRef } from "react";
-import { InputNumber, Button } from "primereact";
+import React, { useRef, useState } from "react";
 import { Grid, Typography, ClickAwayListener } from "@mui/material";
+import { InputText, Button } from "primereact";
 
-function PriceColumn({ procedure, onSubmit }) {
-  const prevPrice = useRef(procedure.price);
+function NameColumn({ procedure, onSubmit }) {
+  const prevName = useRef(procedure.name);
   const [isEdit, setIsEdit] = useState(false);
-  const [price, setPrice] = useState(procedure.price);
+  const [name, setName] = useState(procedure.name);
 
   // HANDLERS -----------------------------------------------------------------
   // onEdit handler
@@ -15,25 +15,30 @@ function PriceColumn({ procedure, onSubmit }) {
 
   // onChange handler
   const handleChange = (event) => {
-    const value = event.value || 0;
-    setPrice(value);
+    const value = event.target.value;
+    setName(value);
   };
 
   // onSave handler, to save changes
   const handleSave = () => {
+    if (!name.trim()) {
+      setName(prevName.current);
+    } else {
+      prevName.current = name;
+      procedure.name = name;
+      onSubmit(procedure);
+    }
+
     setIsEdit(false);
-    prevPrice.current = price;
-    procedure.price = price;
-    onSubmit(procedure);
   };
 
-  // onCancel handler, discard changes to amount
+  // onCancel handler, discard changes to name
   const handleCancel = () => {
-    setPrice(prevPrice.current);
+    setName(prevName.current);
     setIsEdit(false);
   };
 
-  // onKeyDown handler, save the amount on Ctrl+Enter and discard changes on Escape
+  // onKeyDown handler, save the name on Enter and discard changes on Escape
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       handleSave();
@@ -42,7 +47,7 @@ function PriceColumn({ procedure, onSubmit }) {
     }
   };
 
-  // handleClickAway handler, save the amount
+  // handleClickAway handler, save the name
   const handleClickAway = () => {
     handleSave();
   };
@@ -51,18 +56,14 @@ function PriceColumn({ procedure, onSubmit }) {
     <Grid container alignItems="center" m={"-16px"}>
       <Grid item xs={9} m={1}>
         <ClickAwayListener onClickAway={handleClickAway}>
-          <InputNumber
-            id="price"
-            value={price}
-            mode="currency"
-            min={0}
-            currency="TRY"
-            locale="tr-TR"
+          <InputText
+            id="name"
+            value={name}
             variant="outlined"
             autoFocus={true}
             className="w-full"
-            inputStyle={{ padding: "8px" }}
-            onValueChange={handleChange}
+            style={{ padding: "8px" }}
+            onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
         </ClickAwayListener>
@@ -79,15 +80,11 @@ function PriceColumn({ procedure, onSubmit }) {
     </Grid>
   ) : (
     <Grid container onClick={handleEdit}>
-      <Typography variant="h6">₺</Typography>
-      <Typography variant="h5" fontWeight="bold">
-        {price.toLocaleString("tr-TR", {
-          style: "decimal",
-          maximumFractionDigits: 2,
-        })}
+      <Typography variant="h5" fontWeight="regular">
+        {name || "-"}
       </Typography>
     </Grid>
   );
 }
 
-export default PriceColumn;
+export default NameColumn;

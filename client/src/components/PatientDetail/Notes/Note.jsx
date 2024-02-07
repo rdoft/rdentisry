@@ -133,7 +133,7 @@ function Note({ _note, onSave, setEdit, onDelete }) {
   // Title
   const title = editTitle ? (
     <>
-      <Grid item xs={11} m={1}>
+      <Grid item xs={10} m={1}>
         <ClickAwayListener onClickAway={handleClickAway}>
           <InputText
             id="title"
@@ -159,7 +159,7 @@ function Note({ _note, onSave, setEdit, onDelete }) {
   ) : (
     <Grid
       item
-      xs={11}
+      xs={10}
       m={1}
       p={1}
       sx={{
@@ -185,7 +185,7 @@ function Note({ _note, onSave, setEdit, onDelete }) {
   // Detail
   const detail = editDetail ? (
     <>
-      <Grid item xs={11} m={1}>
+      <Grid item xs={10} m={1}>
         <ClickAwayListener onClickAway={handleClickAway}>
           <InputTextarea
             id="detail"

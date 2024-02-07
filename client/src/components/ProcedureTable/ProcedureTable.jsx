@@ -5,6 +5,7 @@ import { errorHandler } from "utils/errorHandler";
 import { DataTable, Column } from "primereact";
 import PriceColumn from "components/ProcedureTable/PriceColumn";
 import CategoryColumn from "components/ProcedureTable/CategoryColumn";
+import NameColumn from "components/ProcedureTable/NameColumn";
 
 // services
 import { ProcedureService, ProcedureCategoryService } from "services";
@@ -120,14 +121,21 @@ function ProcedureTable({}) {
             field="code"
             header="Kod"
             sortable
-            style={{ width: "9rem" }}
+            style={{ width: "12rem" }}
           ></Column>
           {/* Name */}
-          <Column field="name" header="Ad" sortable></Column>
+          <Column
+            header="Ad"
+            field="name"
+            sortable
+            body={(procedure) => (
+              <NameColumn procedure={procedure} onSubmit={saveProcedure} />
+            )}
+          ></Column>
           {/* Price */}
           <Column
             header="Fiyat"
-            style={{ width: "16rem" }}
+            style={{ width: "18rem" }}
             sortable
             field="price"
             body={(procedure) => (
