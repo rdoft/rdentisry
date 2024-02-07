@@ -32,4 +32,21 @@ procedure.updateProcedure = (procedure) => {
   return API.put(`${API_URL}/${procedure.id}`, procedure);
 };
 
+/**
+ * Delete the procedure
+ * @param id: Id of the procedure
+ */
+procedure.deleteProcedure = (id) => {
+  return API.delete(`${API_URL}/${id}`);
+};
+
+/**
+ * Delete procedures of the given Ids
+ * If ids not given then delete all procedures
+ * @query ids: Id list of procedures
+ */
+procedure.deleteProcedures = (ids) => {
+  return API.delete(`${API_URL}?procedureId=${ids.join(",")}`);
+};
+
 export default procedure;

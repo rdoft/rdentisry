@@ -134,6 +134,7 @@ function PaymentCard({ payment, onClickEdit, onClickPay, direction }) {
           icon="pi pi-check-circle"
           severity="secondary"
           onClick={handleClickPay}
+          tooltip="Ödeme yap"
         />
       );
     }

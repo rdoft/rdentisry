@@ -7,13 +7,16 @@ function DeletePatientsDialog({ selectedPatients, onHide, onDelete }) {
     <Dialog
       visible
       style={{ width: "450px" }}
-      header={`${selectedPatients?.length ?? 0} Hastayı Sil`}
+      header={`Hastaları Sil`}
       modal
       footer={<DialogFooter onHide={onHide} onDelete={onDelete} />}
       onHide={onHide}
     >
       <div className="confirmation-content">
-        <span>Seçili hastaları silmek istediğinizden emin misiniz?</span>
+        <span>
+          <strong>{selectedPatients?.length ?? 0}</strong> adet hastayı silmek
+          istediğinizden emin misiniz?
+        </span>
       </div>
     </Dialog>
   );

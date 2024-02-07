@@ -233,7 +233,9 @@ exports.deletePatients = async (req, res) => {
                 [Sequelize.Op.in]: patientIds,
               },
             }
-          : {},
+          : {
+              UserId: userId,
+            },
     });
 
     res.status(200).send({ count: count });

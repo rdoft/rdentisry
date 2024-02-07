@@ -84,7 +84,28 @@ function ProcedureTable({}) {
 
   // Delete the selected procedures
   const deleteProcedures = async () => {
-    // TODO: Implement deleteProcedures
+    let selectedIds;
+
+    // Get IDs of the selected procedures
+    selectedIds = selectedProcedures.map((item) => item.id);
+
+    try {
+      // Delete the procedures
+      await ProcedureService.deleteProcedures(selectedIds);
+
+      if (selectedIds.length > 1) {
+        toast.success("Seçili tedaviler başarıyla silindi");
+      } else {
+        toast.success("Seçili tedavi başarıyla silindi");
+      }
+
+      // Get and set the updated list of procedures
+      getProcedures();
+      setSelectedProcedures(null);
+    } catch (error) {
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
+    }
   };
 
   // HANDLERS -----------------------------------------------------------------

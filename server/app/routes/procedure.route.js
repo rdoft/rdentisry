@@ -30,7 +30,13 @@ module.exports = function (app) {
      * Add a Procedure
      * @body Procedure information
      */
-    .post(controller.saveProcedure);
+    .post(controller.saveProcedure)
+    /**
+     * Delete procedures of the given Ids
+     * If ids not given then delete all procedures
+     * @query ids: Id list of procedures
+     */
+    .delete(controller.deleteProcedures);
 
   router
     .route(`/procedures/:procedureId`)

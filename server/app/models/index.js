@@ -201,9 +201,33 @@ db.patient.beforeDestroy(async (patient) => {
   }
 });
 
+// Control If patient has any appointments before bulk destroy
+db.patient.beforeBulkDestroy(async (options) => {
+  const paymentCount = await db.payment.count({
+    where: {
+      PatientId: options.where.PatientId,
+    },
+  });
+  if (paymentCount > 0) {
+    throw new Sequelize.ForeignKeyConstraintError();
+  }
+});
+
 // Control If procedure has any patients before destroy
 db.procedure.beforeDestroy(async (procedure) => {
   const patientCount = await procedure.countPatientProcedures();
+  if (patientCount > 0) {
+    throw new Sequelize.ForeignKeyConstraintError();
+  }
+});
+
+// Control If procedure has any patients before bulk destroy
+db.procedure.beforeBulkDestroy(async (options) => {
+  const patientCount = await db.patientProcedure.count({
+    where: {
+      ProcedureId: options.where.ProcedureId,
+    },
+  });
   if (patientCount > 0) {
     throw new Sequelize.ForeignKeyConstraintError();
   }
