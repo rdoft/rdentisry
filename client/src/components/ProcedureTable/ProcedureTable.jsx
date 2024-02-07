@@ -85,7 +85,7 @@ function ProcedureTable({}) {
 
   // onSelectedChange handler
   const handleChangeSelection = (event) => {
-    selectedProcedures(event.value);
+    setSelectedProcedures(event.value);
   };
 
   return (
@@ -109,6 +109,7 @@ function ProcedureTable({}) {
           currentPageReportTemplate="({totalRecords} tedavi)"
           rowHover={true}
           sortField="code"
+          size="small"
         >
           {/* Checkbox */}
           <Column
@@ -118,8 +119,8 @@ function ProcedureTable({}) {
           ></Column>
           {/* Code */}
           <Column
-            field="code"
             header="Kod"
+            field="code"
             sortable
             style={{ width: "12rem" }}
           ></Column>

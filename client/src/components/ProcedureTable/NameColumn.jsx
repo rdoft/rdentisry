@@ -4,8 +4,8 @@ import { InputText, Button } from "primereact";
 
 function NameColumn({ procedure, onSubmit }) {
   const prevName = useRef(procedure.name);
-  const [isEdit, setIsEdit] = useState(false);
   const [name, setName] = useState(procedure.name);
+  const [isEdit, setIsEdit] = useState(false);
 
   // HANDLERS -----------------------------------------------------------------
   // onEdit handler
