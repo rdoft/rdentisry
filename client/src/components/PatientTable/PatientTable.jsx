@@ -270,11 +270,12 @@ function PatientsTable() {
           dataKey="id"
           paginator
           rows={10}
-          currentPageReportTemplate="({totalRecords} hasta)"
           rowHover={true}
           sortField="overdue"
           sortOrder={-1}
           dragSelection={true}
+          currentPageReportTemplate="({totalRecords} hasta)"
+          emptyMessage="Hiçbir sonuç bulunamadı"
         >
           {/* Checkbox */}
           <Column

@@ -254,11 +254,12 @@ function ProcedureTable({}) {
           dataKey="id"
           paginator
           rows={10}
-          currentPageReportTemplate="({totalRecords} tedavi)"
           rowHover={true}
           sortField="code"
           size="small"
           dragSelection={true}
+          currentPageReportTemplate="({totalRecords} tedavi)"
+          emptyMessage="Hiçbir sonuç bulunamadı"
         >
           {/* Checkbox */}
           <Column
