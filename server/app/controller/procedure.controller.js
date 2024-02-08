@@ -101,7 +101,7 @@ exports.saveProcedure = async (req, res) => {
   const { UserId: userId } = req.user;
   const { code, name, price, procedureCategory } = req.body;
   let values = {
-    ProcedureCategoryId: procedureCategory.id,
+    ProcedureCategoryId: procedureCategory?.id ?? null,
     Code: code,
     Name: name,
     Price: price,

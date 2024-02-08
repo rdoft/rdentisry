@@ -10,6 +10,7 @@ import NameColumn from "components/ProcedureTable/NameColumn";
 import ProcedureTableToolbar from "components/ProcedureTable/ProcedureTableToolbar";
 import DialogFooter from "components/DialogFooter/DialogFooter";
 import ActionGroup from "components/ActionGroup/ActionGroup";
+import ProcedureDialog from "components/ProcedureTable/ProcedureDialog";
 
 // services
 import { ProcedureService, ProcedureCategoryService } from "services";
@@ -323,14 +324,13 @@ function ProcedureTable({}) {
       </div>
 
       {/* Add procedure dialog */}
-      {procedureDialog &&
-        {
-          /* <ProcedureDialog
+      {procedureDialog && (
+        <ProcedureDialog
           onHide={hideProcedureDialog}
           onSubmit={saveProcedure}
           categories={categories}
-        /> */
-        }}
+        />
+      )}
 
       {/* Confirm delete procedure dialog */}
       {deleteProcedureDialogTemplate}
