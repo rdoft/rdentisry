@@ -99,7 +99,7 @@ function PaymentDialog({ _payment = {}, onHide, onSubmit, onDelete }) {
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
   const handleChange = (event, attr) => {
-    let value = event.target && event.target.value;
+    let value = event.value ?? event.target?.value;
     let _isError = { ...isError };
     let _payment = { ...payment };
 
@@ -223,7 +223,7 @@ function PaymentDialog({ _payment = {}, onHide, onSubmit, onDelete }) {
             <InputNumber
               id="amount"
               value={payment.amount}
-              onValueChange={(event) => handleChange(event, "amount")}
+              onChange={(event) => handleChange(event, "amount")}
               mode="currency"
               currency="TRY"
               locale="tr-TR"

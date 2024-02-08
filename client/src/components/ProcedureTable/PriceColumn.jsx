@@ -21,10 +21,10 @@ function PriceColumn({ procedure, onSubmit }) {
 
   // onSave handler, to save changes
   const handleSave = () => {
-    setIsEdit(false);
     prevPrice.current = price;
     procedure.price = price;
     onSubmit(procedure);
+    setIsEdit(false);
   };
 
   // onCancel handler, discard changes to amount
@@ -62,7 +62,7 @@ function PriceColumn({ procedure, onSubmit }) {
             autoFocus={true}
             className="w-full"
             inputStyle={{ padding: "8px" }}
-            onValueChange={handleChange}
+            onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
         </ClickAwayListener>

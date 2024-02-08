@@ -84,7 +84,7 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
   const handleChange = (event, attr) => {
-    let value = event.target && event.target.value;
+    let value = event.value ?? event.target?.value;
     let _patientProcedure = { ...patientProcedure };
 
     if (attr === "patient") {
@@ -193,7 +193,7 @@ function ProcedureDialog({ _patientProcedure = {}, onHide, onSubmit }) {
             <InputNumber
               id="quantity"
               value={quantity}
-              onValueChange={(event) => handleChange(event, "quantity")}
+              onChange={(event) => handleChange(event, "quantity")}
               useGrouping={false}
               mode="decimal"
               min={1}
