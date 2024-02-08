@@ -211,6 +211,13 @@ function PatientsTable() {
 
   // onRowClick handler for goto patient page
   const handleRowClick = (event) => {
+    // Check if the click target is the checkbox
+    if (
+      event.originalEvent.target.classList.contains("p-selection-column") ||
+      event.originalEvent.target.classList.contains("p-checkbox-icon")
+    ) {
+      return;
+    }
     navigate(`/patients/${event.data.id}?tab=payments`);
   };
 
@@ -273,6 +280,7 @@ function PatientsTable() {
           <Column
             selectionMode="multiple"
             headerStyle={{ width: "3rem" }}
+            bodyStyle={{ height: "4.5rem" }}
             exportable={false}
           ></Column>
           {/* TC */}
@@ -326,12 +334,14 @@ function PatientsTable() {
           )}
           {/* Patient action buttons */}
           <Column
-            body={(patient) => (
-              <ActionGroup
-                onClickEdit={() => showEditPatientDialog(patient)}
-                onClickDelete={() => showConfirmDeletePatientDialog(patient)}
-              />
-            )}
+            body={(patient) =>
+              patient.id === rowIndex ? (
+                <ActionGroup
+                  onClickEdit={() => showEditPatientDialog(patient)}
+                  onClickDelete={() => showConfirmDeletePatientDialog(patient)}
+                />
+              ) : null
+            }
             style={{ width: "8rem" }}
           ></Column>
         </DataTable>

@@ -9,6 +9,7 @@ import CategoryColumn from "components/ProcedureTable/CategoryColumn";
 import NameColumn from "components/ProcedureTable/NameColumn";
 import ProcedureTableToolbar from "components/ProcedureTable/ProcedureTableToolbar";
 import DialogFooter from "components/DialogFooter/DialogFooter";
+import ActionGroup from "components/ActionGroup/ActionGroup";
 
 // services
 import { ProcedureService, ProcedureCategoryService } from "services";
@@ -17,10 +18,13 @@ function ProcedureTable({}) {
   const navigate = useNavigate();
   const dt = useRef(null);
   const [globalFilter, setGlobalFilter] = useState(null);
+  const [rowIndex, setRowIndex] = useState(null);
   const [categories, setCategories] = useState(null);
+  const [procedure, setProcedure] = useState(null);
   const [procedures, setProcedures] = useState(null);
   const [selectedProcedures, setSelectedProcedures] = useState(null);
   const [procedureDialog, setProcedureDialog] = useState(false);
+  const [deleteProcedureDialog, setDeleteProcedureDialog] = useState(false);
   const [deleteProceduresDialog, setDeleteProceduresDialog] = useState(false);
 
   // Set the page on loading
@@ -82,6 +86,26 @@ function ProcedureTable({}) {
     }
   };
 
+  // Delete the procedure
+  const deleteProcedure = async () => {
+    let _selectedProcedures;
+
+    try {
+      await ProcedureService.deleteProcedure(procedure.id);
+
+      _selectedProcedures = selectedProcedures
+        ? selectedProcedures.filter((item) => item.id !== procedure.id)
+        : null;
+      // Set the updated list of procedures and the selected procedures
+      getProcedures();
+      setSelectedProcedures(_selectedProcedures);
+      setProcedure(null);
+    } catch (error) {
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
+    }
+  };
+
   // Delete the selected procedures
   const deleteProcedures = async () => {
     let selectedIds;
@@ -129,6 +153,29 @@ function ProcedureTable({}) {
     setDeleteProceduresDialog(false);
   };
 
+  // onDelete handler for confirm delete procedures dialog
+  const handleDeleteProceduresConfirm = () => {
+    deleteProcedures(selectedProcedures);
+    hideDeleteProceduresDialog();
+  };
+
+  // Show confirm delete procedure dialog
+  const showDeleteProcedureDialog = (procedure) => {
+    setProcedure({ ...procedure });
+    setDeleteProcedureDialog(true);
+  };
+
+  // Hide confirm delete procedure dialog
+  const hideDeleteProcedureDialog = () => {
+    setDeleteProcedureDialog(false);
+  };
+
+  // onDelete handler for confirm delete procedure dialog
+  const handleDeleteProcedureConfirm = () => {
+    deleteProcedure();
+    hideDeleteProcedureDialog();
+  };
+
   // onInput handler for search
   const handleInputSearch = (event) => {
     setTimeout(() => setGlobalFilter(event.target.value), 400);
@@ -139,13 +186,33 @@ function ProcedureTable({}) {
     setSelectedProcedures(event.value);
   };
 
-  // onDelete handler for confirm delete procedures dialog
-  const handleDeleteProceduresConfirm = () => {
-    deleteProcedures(selectedProcedures);
-    hideDeleteProceduresDialog();
+  // onRowMouseEnter handler for display buttons
+  const handleRowMouseEnter = (event) => {
+    setRowIndex(event.data.id);
+  };
+
+  // onRowMouseLeave handler for hide buttons
+  const handleRowMouseLeave = () => {
+    setRowIndex(null);
   };
 
   // TEMPLATES -----------------------------------------------------------------
+  const deleteProcedureDialogTemplate = (
+    <ConfirmDialog
+      visible={deleteProcedureDialog}
+      onHide={hideDeleteProcedureDialog}
+      message=<Typography variant="body1">
+        <strong>{procedure?.name}</strong> tedavisini silmek istediğinize emin
+        misiniz?
+      </Typography>
+      header="Tedavi Sil"
+      footer=<DialogFooter
+        onHide={hideDeleteProcedureDialog}
+        onDelete={handleDeleteProcedureConfirm}
+      />
+    />
+  );
+
   const deleteProceduresDialogTemplate = (
     <ConfirmDialog
       visible={deleteProceduresDialog}
@@ -180,6 +247,8 @@ function ProcedureTable({}) {
           globalFilter={globalFilter}
           selection={selectedProcedures}
           onSelectionChange={handleChangeSelection}
+          onRowMouseEnter={handleRowMouseEnter}
+          onRowMouseLeave={handleRowMouseLeave}
           selectionMode="checkbox"
           responsiveLayout="scroll"
           dataKey="id"
@@ -195,6 +264,7 @@ function ProcedureTable({}) {
           <Column
             selectionMode="multiple"
             headerStyle={{ width: "3rem" }}
+            bodyStyle={{ height: "4.5rem" }}
             exportable={false}
           ></Column>
           {/* Code */}
@@ -237,6 +307,17 @@ function ProcedureTable({}) {
               />
             )}
           ></Column>
+          {/* Procedure action buttons */}
+          <Column
+            body={(procedure) =>
+              procedure.id === rowIndex ? (
+                <ActionGroup
+                  onClickDelete={() => showDeleteProcedureDialog(procedure)}
+                />
+              ) : null
+            }
+            style={{ width: "8rem" }}
+          ></Column>
         </DataTable>
       </div>
 
@@ -249,6 +330,9 @@ function ProcedureTable({}) {
           categories={categories}
         /> */
         }}
+
+      {/* Confirm delete procedure dialog */}
+      {deleteProcedureDialogTemplate}
 
       {/* Confirm delete procedures dialog */}
       {deleteProceduresDialogTemplate}
