@@ -19,6 +19,11 @@ function ProcedureDialog({ _procedure = {}, categories, onHide, onSubmit }) {
   });
   const [isAnother, setIsAnother] = useState(false);
   const [isValid, setIsValid] = useState(false);
+  const [isError, setIsError] = useState({
+    code: false,
+    name: false,
+    price: false,
+  });
 
   useEffect(() => {
     const _isValid = !schema.procedure.validate(procedure).error;
@@ -31,8 +36,16 @@ function ProcedureDialog({ _procedure = {}, categories, onHide, onSubmit }) {
   const handleChange = (event, attr) => {
     const value = event.value ?? event.target?.value;
     let _procedure = { ...procedure };
+    let _isError;
 
+    // set procedure new value
     _procedure[attr] = value;
+
+    // Set isError
+    _isError = { ...isError };
+    _isError[attr] = schema[attr].validate(value).error ? true : false;
+
+    setIsError(_isError);
     setProcedure(_procedure);
   };
 
@@ -90,6 +103,7 @@ function ProcedureDialog({ _procedure = {}, categories, onHide, onSubmit }) {
                 onChange={(e) => handleChange(e, "code")}
                 className="w-full"
               />
+              {isError["code"] && <small className="p-error">Zorunlu</small>}
             </div>
           </div>
 
@@ -105,6 +119,7 @@ function ProcedureDialog({ _procedure = {}, categories, onHide, onSubmit }) {
                 onChange={(e) => handleChange(e, "name")}
                 className="w-full"
               />
+              {isError["name"] && <small className="p-error">Zorunlu</small>}
             </div>
           </div>
         </div>
@@ -135,6 +150,7 @@ function ProcedureDialog({ _procedure = {}, categories, onHide, onSubmit }) {
               currency="TRY"
               locale="tr-TR"
             />
+            {isError["price"] && <small className="p-error">Zorunlu</small>}
           </div>
         </div>
 
