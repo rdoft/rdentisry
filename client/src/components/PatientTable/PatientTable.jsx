@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils/errorHandler";
-import { DataTable, Column, Image } from "primereact";
-import DeletePatientDialog from "./DeletePatientDialog";
-import DeletePatientsDialog from "./DeletePatientsDialog";
+import { DataTable, Column, Image, ConfirmDialog } from "primereact";
+import { Typography } from "@mui/material";
+import { AppointmentDialog, PatientDialog } from "components/Dialog";
+import { DialogFooter } from "components/DialogFooter";
 import PatientTableToolbar from "./PatientTableToolbar";
 import ActionGroup from "components/ActionGroup/ActionGroup";
-import { AppointmentDialog, PatientDialog } from "components/Dialog";
 
 // assets
 import "assets/styles/PatientTable/PatientTable.css";
@@ -242,6 +242,46 @@ function PatientsTable() {
     // Control overdue status
     patient.overdue ? <Image src={LiraDangerIcon} width="75%" /> : null;
 
+  // Delete patient dialog template
+  const deletePatientDialogTemplate = (
+    <ConfirmDialog
+      visible={deletePatientDialog}
+      onHide={hideDeletePatientDialog}
+      message=<Typography variant="body1">
+        <strong>
+          {patient?.name} {patient?.surname}
+        </strong>{" "}
+        isimli hastayı silmek istediğinizden emin misiniz?
+      </Typography>
+      header="Hastayı Sil"
+      footer={
+        <DialogFooter
+          onHide={hideDeletePatientDialog}
+          onDelete={deletePatient}
+        />
+      }
+    />
+  );
+
+  // Delete patients dialog template
+  const deletePatientsDialogTemplate = (
+    <ConfirmDialog
+      visible={deletePatientsDialog}
+      onHide={hideDeletePatientsDialog}
+      message=<Typography variant="body1">
+        <strong>{selectedPatients?.length || 0}</strong> adet hastayı silmek
+        istediğinizden emin misiniz?
+      </Typography>
+      header="Hastaları Sil"
+      footer={
+        <DialogFooter
+          onHide={hideDeletePatientsDialog}
+          onDelete={deletePatients}
+        />
+      }
+    />
+  );
+
   // Return the PatientTable
   return (
     <div className="datatable-crud">
@@ -356,21 +396,9 @@ function PatientsTable() {
         />
       )}
 
-      {deletePatientDialog && (
-        <DeletePatientDialog
-          patient={patient}
-          onHide={hideDeletePatientDialog}
-          onDelete={deletePatient}
-        />
-      )}
-
-      {deletePatientsDialog && (
-        <DeletePatientsDialog
-          selectedPatients={selectedPatients}
-          onHide={hideDeletePatientsDialog}
-          onDelete={deletePatients}
-        />
-      )}
+      {/* Confirm deletation dialog */}
+      {deletePatientDialogTemplate}
+      {deletePatientsDialogTemplate}
 
       {/* Appointment dialog */}
       {appointmentDialog && (
