@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Dialog, InputText, Divider } from "primereact";
-import DialogFooter from "components/DialogFooter/DialogFooter";
+import { DialogFooter } from "components/DialogFooter";
 
 function DoctorDialog({ _doctor = {}, onHide, onSubmit }) {
   let emptyDoctor = {

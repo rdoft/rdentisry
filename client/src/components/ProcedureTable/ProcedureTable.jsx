@@ -8,7 +8,7 @@ import PriceColumn from "components/ProcedureTable/PriceColumn";
 import CategoryColumn from "components/ProcedureTable/CategoryColumn";
 import NameColumn from "components/ProcedureTable/NameColumn";
 import ProcedureTableToolbar from "components/ProcedureTable/ProcedureTableToolbar";
-import DialogFooter from "components/DialogFooter/DialogFooter";
+import { DialogFooter } from "components/DialogFooter";
 import ActionGroup from "components/ActionGroup/ActionGroup";
 import ProcedureDialog from "components/ProcedureTable/ProcedureDialog";
 

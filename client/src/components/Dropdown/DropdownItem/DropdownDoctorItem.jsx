@@ -5,7 +5,7 @@ import { ConfirmDialog } from "primereact";
 // assets
 import avatarDoctor from "assets/images/avatars/doctor-avatar.png";
 import ActionGroup from "components/ActionGroup/ActionGroup";
-import DialogFooter from "components/DialogFooter/DialogFooter";
+import { DialogFooter } from "components/DialogFooter";
 import { Grid } from "../../../../node_modules/@mui/material/index";
 
 function DropdownDoctorItem({ option, onDelete }) {

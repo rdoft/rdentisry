@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Grid, Typography, ClickAwayListener } from "@mui/material";
 import { InputText, InputTextarea, Button, ConfirmDialog } from "primereact";
 import ActionGroup from "components/ActionGroup/ActionGroup";
-import DialogFooter from "components/DialogFooter/DialogFooter";
+import { DialogFooter } from "components/DialogFooter";
 
 function Note({ _note, onSave, setEdit, onDelete }) {
   const [note, setNote] = useState({ ..._note });

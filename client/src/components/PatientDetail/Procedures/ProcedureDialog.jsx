@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils/errorHandler";
 import { Chip, Dialog, Divider, InputNumber, Checkbox } from "primereact";
-import DialogFooter from "components/DialogFooter/DialogFooter";
+import { DialogFooter } from "components/DialogFooter";
 import DropdownPatient from "components/Dropdown/DropdownPatient";
 import DropdownProcedure from "components/Dropdown/DropdownProcedure";
 

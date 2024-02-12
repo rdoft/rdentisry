@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { Avatar } from "@mui/material";
 import { Dialog, InputText } from "primereact";
-import DialogFooter from "components/DialogFooter/DialogFooter";
+import { DialogFooter } from "components/DialogFooter";
 
 // assets
 // import classes from "assets/styles/Patient.module.css";

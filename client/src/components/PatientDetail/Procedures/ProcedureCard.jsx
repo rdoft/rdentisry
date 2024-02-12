@@ -8,7 +8,7 @@ import {
   ClickAwayListener,
 } from "@mui/material";
 import ActionGroup from "components/ActionGroup/ActionGroup";
-import DialogFooter from "components/DialogFooter/DialogFooter";
+import { DialogFooter } from "components/DialogFooter";
 
 // assets
 import {

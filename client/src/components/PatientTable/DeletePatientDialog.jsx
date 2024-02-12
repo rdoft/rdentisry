@@ -1,6 +1,6 @@
 import React from "react";
 import { Dialog } from "primereact";
-import DialogFooter from "components/DialogFooter/DialogFooter";
+import { DialogFooter } from "components/DialogFooter";
 
 function DeletePatientDialog({ patient, onHide, onDelete }) {
   return (

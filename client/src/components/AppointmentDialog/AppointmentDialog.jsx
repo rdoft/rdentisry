@@ -15,7 +15,7 @@ import DropdownDoctor from "components/Dropdown/DropdownDoctor";
 import DropdownPatient from "components/Dropdown/DropdownPatient";
 import DoctorDialog from "components/Dialog/DoctorDialog";
 import PatientDialog from "components/PatientTable/PatientDialog";
-import DialogFooter from "components/DialogFooter/DialogFooter";
+import { DialogFooter } from "components/DialogFooter";
 
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";

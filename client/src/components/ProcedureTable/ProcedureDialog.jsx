@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { InputText, InputNumber, Divider, Dialog, Checkbox } from "primereact";
-import DialogFooter from "components/DialogFooter/DialogFooter";
+import { DialogFooter } from "components/DialogFooter";
 import DropdownProcedureCategory from "components/Dropdown/DropdownProcedureCategory";
 
 import schema from "schemas/procedure.schema";
