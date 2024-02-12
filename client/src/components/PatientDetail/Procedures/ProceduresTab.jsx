@@ -7,7 +7,7 @@ import { DataScroller, Fieldset } from "primereact";
 import NotFoundText from "components/NotFoundText";
 import ProcedureCard from "./ProcedureCard";
 import ProcedureToolbar from "./ProcedureToolbar";
-import ProcedureDialog from "./ProcedureDialog";
+import { ProcedureDialog } from "components/Dialog";
 import DentalChart from "./DentalChart";
 
 // assets

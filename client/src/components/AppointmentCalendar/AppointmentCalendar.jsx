@@ -8,7 +8,7 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import { activeItem } from "store/reducers/menu";
 import convert from "components/AppointmentCalendar/CalendarEvent";
 import CalendarToolbar from "components/AppointmentCalendar/CalendarToolbar";
-import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
+import { AppointmentDialog } from "components/Dialog";
 
 // assets
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";

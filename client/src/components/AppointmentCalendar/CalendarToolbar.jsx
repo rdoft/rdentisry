@@ -5,7 +5,7 @@ import { errorHandler } from "utils/errorHandler";
 import { Typography } from "@mui/material";
 import { Toolbar, Button, InputSwitch } from "primereact";
 import DropdownDoctor from "components/Dropdown/DropdownDoctor";
-import DoctorDialog from "components/Dialog/DoctorDialog";
+import { DoctorDialog } from "components/Dialog";
 
 // services
 import { DoctorService } from "services";

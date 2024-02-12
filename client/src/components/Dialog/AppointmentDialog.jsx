@@ -13,8 +13,7 @@ import {
 } from "primereact";
 import DropdownDoctor from "components/Dropdown/DropdownDoctor";
 import DropdownPatient from "components/Dropdown/DropdownPatient";
-import DoctorDialog from "components/Dialog/DoctorDialog";
-import PatientDialog from "components/PatientTable/PatientDialog";
+import { DoctorDialog, PatientDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
 
 import dayjs from "dayjs";

@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import { errorHandler } from "utils/errorHandler";
-import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
+import { AppointmentDialog } from "components/Dialog";
 import NotFoundText from "components/NotFoundText";
 import CardTitle from "components/cards/CardTitle";
 import AppointmentCard from "./AppointmentCard";

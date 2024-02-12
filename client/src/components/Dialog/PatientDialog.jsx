@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-
 import { Avatar } from "@mui/material";
 import { Dialog, InputText } from "primereact";
 import { DialogFooter } from "components/DialogFooter";
 
 // assets
-// import classes from "assets/styles/Patient.module.css";
 import avatarPatient from "assets/images/avatars/patient-avatar.png";
 
 import schema from "schemas/patient.schema";

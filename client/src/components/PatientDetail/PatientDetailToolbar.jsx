@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { errorHandler } from "utils/errorHandler";
 import { Toolbar } from "primereact";
 import DropdownPatient from "components/Dropdown/DropdownPatient";
-import PatientDialog from "components/PatientTable/PatientDialog";
+import { PatientDialog } from "components/Dialog";
 
 // assets
 import "assets/styles/PatientDetail/PatientDetailToolbar.css";

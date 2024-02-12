@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
 import { Timeline, ProgressBar } from "primereact";
 import { errorHandler } from "utils/errorHandler";
-import PaymentDialog from "./PaymentDialog";
+import { PaymentDialog } from "components/Dialog";
 import PaymentCard from "./PaymentCard";
 import PaymentMarker from "./PaymentMarker";
 import StatisticCard from "./StatisticCard";

@@ -3,12 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils/errorHandler";
 import { DataTable, Column, Image } from "primereact";
-import PatientDialog from "./PatientDialog";
 import DeletePatientDialog from "./DeletePatientDialog";
 import DeletePatientsDialog from "./DeletePatientsDialog";
 import PatientTableToolbar from "./PatientTableToolbar";
 import ActionGroup from "components/ActionGroup/ActionGroup";
-import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
+import { AppointmentDialog, PatientDialog } from "components/Dialog";
 
 // assets
 import "assets/styles/PatientTable/PatientTable.css";
