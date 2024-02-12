@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { errorHandler } from "utils/errorHandler";
 import { Typography } from "@mui/material";
 import { Toolbar, Button, InputSwitch } from "primereact";
-import DropdownDoctor from "components/Dropdown/DropdownDoctor";
+import { DropdownDoctor } from "components/Dropdown";
 import { DoctorDialog } from "components/Dialog";
 
 // services

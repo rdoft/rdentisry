@@ -13,7 +13,7 @@ import {
   MultiStateCheckbox,
 } from "primereact";
 import { DialogFooter } from "components/DialogFooter";
-import DropdownPatient from "components/Dropdown/DropdownPatient";
+import { DropdownPatient } from "components/Dropdown";
 
 import schema from "schemas/payment.schema";
 

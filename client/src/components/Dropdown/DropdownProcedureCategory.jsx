@@ -1,6 +1,6 @@
 import React from "react";
 import { Dropdown, Button, Divider } from "primereact";
-import DropdownProcedureCategoryItem from "components/Dropdown/DropdownItem/DropdownProcedureCategoryItem";
+import DropdownProcedureCategoryItem from "./DropdownItem/DropdownProcedureCategoryItem";
 
 function DropdownProcedureCategory({ value, options, onChange, onClickAdd }) {
   // TEMPLATES -----------------------------------------------------------------

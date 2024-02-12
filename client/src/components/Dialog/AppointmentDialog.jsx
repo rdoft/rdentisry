@@ -11,8 +11,7 @@ import {
   ConfirmDialog,
   confirmDialog,
 } from "primereact";
-import DropdownDoctor from "components/Dropdown/DropdownDoctor";
-import DropdownPatient from "components/Dropdown/DropdownPatient";
+import { DropdownDoctor, DropdownPatient } from "components/Dropdown";
 import { DoctorDialog, PatientDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
 

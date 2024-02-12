@@ -1,6 +1,6 @@
 import React from "react";
 import { Dropdown, Divider } from "primereact";
-import DropdownDoctorItem from "components/Dropdown/DropdownItem/DropdownDoctorItem";
+import DropdownDoctorItem from "./DropdownItem/DropdownDoctorItem";
 import ActionGroup from "components/ActionGroup/ActionGroup";
 
 function DropdownDoctor({
