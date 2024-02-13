@@ -1,27 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Tag, Divider, InputNumber, ConfirmDialog } from "primereact";
-import {
-  Grid,
-  Avatar,
-  Tooltip,
-  Typography,
-  ClickAwayListener,
-} from "@mui/material";
-import ActionGroup from "components/ActionGroup/ActionGroup";
+import { Grid, Typography, ClickAwayListener } from "@mui/material";
 import { DialogFooter } from "components/DialogFooter";
-
-// assets
-import {
-  DiagnosisIcon,
-  CleaningIcon,
-  FillingIcon,
-  RootCanalIcon,
-  BridgeIcon,
-  VeneerIcon,
-  ExtractionIcon,
-  ImplantIcon,
-  SurgeryIcon,
-} from "assets/images/icons";
+import { ProcedureCategory } from "components/ProcedureCategory";
+import ActionGroup from "components/ActionGroup/ActionGroup";
 
 function ProcedureCard({ procedure, onDelete, onSubmit }) {
   const [isHover, setIsHover] = useState(false);
@@ -35,55 +17,6 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
     setIsComplete(procedure.isComplete);
     setPrevAmount(procedure.invoice.amount);
   }, [procedure]);
-
-  // Icons for procedure categories
-  let icon;
-  let label;
-  switch (procedure.procedure.procedureCategory.title) {
-    case "Muayene":
-    case "Teşhis":
-      icon = DiagnosisIcon;
-      label = "Muayene / Teşhis";
-      break;
-    case "Hijyen":
-    case "Beyazlatma":
-      icon = CleaningIcon;
-      label = "Hijyen / Beyazlatma";
-      break;
-    case "Dolgu":
-      icon = FillingIcon;
-      label = "Dolgu";
-      break;
-    case "Kanal":
-      icon = RootCanalIcon;
-      label = "Kanal";
-      break;
-    case "Köprü":
-      icon = BridgeIcon;
-      label = "Köprü";
-      break;
-    case "Kaplama":
-    case "Protez":
-      icon = VeneerIcon;
-      label = "Kaplama / Protez";
-      break;
-    case "Çekme":
-      icon = ExtractionIcon;
-      label = "Çekme";
-      break;
-    case "İmplant":
-      icon = ImplantIcon;
-      label = "İmplant";
-      break;
-    case "Cerrahi":
-      icon = SurgeryIcon;
-      label = "Cerrahi";
-      break;
-    default:
-      icon = null;
-      label = null;
-      break;
-  }
 
   // HANDLERS -----------------------------------------------------------------
   // onMouseEnter handler for display buttons
@@ -157,13 +90,11 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
 
   // TEMPLATES -----------------------------------------------------------------
   // Set category of the procedure
-  const category = icon && (
-    <Tooltip title={label} placement="left">
-      <Avatar
-        src={icon}
-        // sx={{ width: "32px", height: "32px" }}
-      />
-    </Tooltip>
+  const category = (
+    <ProcedureCategory
+      category={procedure.procedure.procedureCategory.title}
+      isLabel={false}
+    />
   );
 
   // Set price of procedure

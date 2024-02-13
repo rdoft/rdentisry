@@ -1,19 +1,6 @@
 import React from "react";
-import { Typography, Avatar, Tooltip, Grid } from "@mui/material";
-
-// assets
-import {
-  DiagnosisIcon,
-  CleaningIcon,
-  FillingIcon,
-  RootCanalIcon,
-  BridgeIcon,
-  VeneerIcon,
-  ExtractionIcon,
-  ImplantIcon,
-  SurgeryIcon,
-  EmptyToothIcon,
-} from "assets/images/icons";
+import { Typography, Grid } from "@mui/material";
+import { ProcedureCategory } from "components/ProcedureCategory";
 
 function DropdownProcedureItem({ option, isValue }) {
   if (!option) {
@@ -25,65 +12,13 @@ function DropdownProcedureItem({ option, isValue }) {
     );
   }
 
-  // Icons for procedure categories
-  let icon;
-  let label;
-  switch (option.procedureCategory.title) {
-    case "Muayene":
-    case "Teşhis":
-      icon = DiagnosisIcon;
-      label = "Muayene / Teşhis";
-      break;
-    case "Hijyen":
-    case "Beyazlatma":
-      icon = CleaningIcon;
-      label = "Hijyen / Beyazlatma";
-      break;
-    case "Dolgu":
-      icon = FillingIcon;
-      label = "Dolgu";
-      break;
-    case "Kanal":
-      icon = RootCanalIcon;
-      label = "Kanal";
-      break;
-    case "Köprü":
-      icon = BridgeIcon;
-      label = "Köprü";
-      break;
-    case "Kaplama":
-    case "Protez":
-      icon = VeneerIcon;
-      label = "Kaplama / Protez";
-      break;
-    case "Çekme":
-      icon = ExtractionIcon;
-      label = "Çekme";
-      break;
-    case "İmplant":
-      icon = ImplantIcon;
-      label = "İmplant";
-      break;
-    case "Cerrahi":
-      icon = SurgeryIcon;
-      label = "Cerrahi";
-      break;
-    default:
-      icon = EmptyToothIcon;
-      label = "Belirsiz";
-      break;
-  }
-
   // TEMPLATE -----------------------------------------------------------------
   // Set category of the procedure
-  const category = icon && (
-    <Tooltip title={label} placement="left">
-      <Avatar
-        src={icon}
-        className="mr-2 p-1"
-        // sx={{ width: "32px", height: "32px" }}
-      />
-    </Tooltip>
+  const category = (
+    <ProcedureCategory
+      category={option.procedureCategory.title}
+      isLabel={false}
+    />
   );
 
   // Set name of procedure
