@@ -4,11 +4,12 @@ import { errorHandler } from "utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import moment from "moment";
-import { Calendar, momentLocalizer } from "react-big-calendar";
+import { Calendar, Day, momentLocalizer } from "react-big-calendar";
 import { activeItem } from "store/reducers/menu";
-import convert from "components/AppointmentCalendar/CalendarEvent";
-import CalendarToolbar from "components/AppointmentCalendar/CalendarToolbar";
 import { AppointmentDialog } from "components/Dialog";
+import convert from "./CalendarEvent";
+import CalendarToolbar from "./CalendarToolbar";
+import DayHeader from "./DayHeader";
 
 // assets
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
@@ -23,7 +24,6 @@ const today = new Date();
 const AppointmentCalendar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const PAGE_PATIENTS = "patients";
 
   // Set the default values
   const [step, setStep] = useState(30);
@@ -123,8 +123,8 @@ const AppointmentCalendar = () => {
 
   // onSelectEvent handler for goto patient page
   const handleSelectEvent = async (event) => {
-    navigate(`/${PAGE_PATIENTS}/${event.patient.id}`);
-    dispatch(activeItem({ openItem: [PAGE_PATIENTS] }));
+    navigate(`/patients/${event.patient.id}`);
+    dispatch(activeItem({ openItem: ["patients"] }));
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -143,16 +143,7 @@ const AppointmentCalendar = () => {
     setEvents(events);
   };
 
-  // header of the calendar
-  const header = ({ label }) => (
-    <div style={{ textAlign: "center" }}>
-      <div style={{ position: "relative" }}>
-        <div>
-          <p>{label}</p>
-        </div>
-      </div>
-    </div>
-  );
+  // header
 
   // Style the today background
   const dayPropGetter = (date) => ({
@@ -163,6 +154,11 @@ const AppointmentCalendar = () => {
     }),
   });
 
+  // custom components
+  const components = {
+    header: ({ date, label }) => <DayHeader date={date} label={label} />,
+  };
+
   // Set the date formatting
   const formats = {
     agendaDateFormat: (date, culture, localizer) =>
@@ -171,6 +167,18 @@ const AppointmentCalendar = () => {
         month: "long",
         day: "numeric",
       }),
+    dayFormat: (date, culture, localizer) =>
+      localizer.format(date, `DD dddd`, culture),
+    weekdayFormat: (date, culture, localizer) =>
+      localizer.format(date, "dddd", culture),
+    dayRangeHeaderFormat: ({ start, end }, culture, localizer) =>
+      end.getMonth() !== start.getMonth()
+        ? `${localizer.format(start, "MMMM", culture)} - ${localizer.format(
+            end,
+            "MMMM",
+            culture
+          )}`
+        : localizer.format(start, "MMMM", culture),
   };
 
   const messages = {
@@ -218,9 +226,7 @@ const AppointmentCalendar = () => {
         localizer={localizer}
         events={events}
         dayPropGetter={dayPropGetter}
-        components={{
-          header: header,
-        }}
+        components={components}
         views={["month", "week"]}
         defaultView={"week"}
         startAccessor={"start"}
