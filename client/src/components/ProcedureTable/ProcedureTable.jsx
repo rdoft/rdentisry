@@ -4,13 +4,13 @@ import { toast } from "react-hot-toast";
 import { errorHandler } from "utils/errorHandler";
 import { DataTable, Column, ConfirmDialog } from "primereact";
 import { Typography } from "@mui/material";
+import { BaseProcedureDialog } from "components/Dialog";
+import { DialogFooter } from "components/DialogFooter";
+import ActionGroup from "components/ActionGroup/ActionGroup";
 import PriceColumn from "components/ProcedureTable/PriceColumn";
 import CategoryColumn from "components/ProcedureTable/CategoryColumn";
 import NameColumn from "components/ProcedureTable/NameColumn";
 import ProcedureTableToolbar from "components/ProcedureTable/ProcedureTableToolbar";
-import { DialogFooter } from "components/DialogFooter";
-import ActionGroup from "components/ActionGroup/ActionGroup";
-import { ProcedureDialog } from "components/Dialog";
 
 // services
 import { ProcedureService, ProcedureCategoryService } from "services";
@@ -325,7 +325,7 @@ function ProcedureTable({}) {
 
       {/* Add procedure dialog */}
       {procedureDialog && (
-        <ProcedureDialog
+        <BaseProcedureDialog
           onHide={hideProcedureDialog}
           onSubmit={saveProcedure}
           categories={categories}
