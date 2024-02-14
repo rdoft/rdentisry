@@ -4,7 +4,7 @@ import { errorHandler } from "utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import moment from "moment";
-import { Calendar, Day, momentLocalizer } from "react-big-calendar";
+import { Calendar, momentLocalizer } from "react-big-calendar";
 import { activeItem } from "store/reducers/menu";
 import { AppointmentDialog } from "components/Dialog";
 import convert from "./CalendarEvent";
@@ -38,7 +38,7 @@ const AppointmentCalendar = () => {
 
   useEffect(() => {
     getAppointments();
-  }, [doctor]);
+  }, []);
 
   useEffect(() => {
     getEvents();
@@ -46,13 +46,13 @@ const AppointmentCalendar = () => {
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of appointments and set appointmets value
-  const getAppointments = async () => {
+  const getAppointments = async (doctorId) => {
     let response;
     let appointments;
 
     try {
       response = await AppointmentService.getAppointments({
-        doctorId: doctor?.id,
+        doctorId: doctorId,
       });
       appointments = response.data;
 
@@ -75,7 +75,7 @@ const AppointmentCalendar = () => {
       }
 
       // Get and set the updated list of appointments
-      getAppointments();
+      getAppointments(doctor?.id);
       setAppointmentDialog(false);
       setAppointment(null);
     } catch (error) {
@@ -90,7 +90,7 @@ const AppointmentCalendar = () => {
       await AppointmentService.deleteAppointment(appointment.id);
 
       // Get and set the updated list of appointments
-      getAppointments();
+      getAppointments(doctor?.id);
       setAppointmentDialog(false);
       setAppointment(null);
     } catch (error) {
@@ -127,6 +127,12 @@ const AppointmentCalendar = () => {
     dispatch(activeItem({ openItem: ["patients"] }));
   };
 
+  // onChange doctor
+  const handleChangeDoctor = (doctor) => {
+    setDoctor(doctor);
+    getAppointments(doctor?.id);
+  };
+
   // TEMPLATES -----------------------------------------------------------------
   // Convert appointment format to events
   // And filter only active appointments if "show all" not selected
@@ -142,8 +148,6 @@ const AppointmentCalendar = () => {
     );
     setEvents(events);
   };
-
-  // header
 
   // Style the today background
   const dayPropGetter = (date) => ({
@@ -212,7 +216,7 @@ const AppointmentCalendar = () => {
         showAll={showAll}
         doctor={doctor}
         doctors={doctors}
-        setDoctor={setDoctor}
+        setDoctor={handleChangeDoctor}
         setDoctors={setDoctors}
         setShowAll={setShowAll}
         onClickAddAppointment={showAppointmentDialog}
