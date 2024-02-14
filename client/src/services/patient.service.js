@@ -6,8 +6,8 @@ let patient = {};
 /**
  * Get patient list
  */
-patient.getPatients = (payments) => {
-  return API.get(`${API_URL}?payments=${payments}`);
+patient.getPatients = (payments = null, options = {}) => {
+  return API.get(`${API_URL}?payments=${payments}`, options);
 };
 
 /**

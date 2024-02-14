@@ -36,6 +36,7 @@ function DropdownDoctor({
     <React.Fragment>
       <Dropdown
         value={value}
+        name="doctor"
         options={options}
         optionLabel="name"
         valueTemplate={doctorDropdownValue}

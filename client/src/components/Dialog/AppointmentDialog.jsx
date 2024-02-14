@@ -56,15 +56,33 @@ function AppointmentDialog({
 
   // Set the doctors from dropdown on loading
   useEffect(() => {
-    getDoctors();
-    getPatients();
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    PatientService.getPatients(null, { signal })
+      .then((res) => {
+        setPatients(res.data);
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
+    DoctorService.getDoctors({ signal })
+      .then((res) => {
+        setDoctors(res.data);
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
+    return () => {
+      controller.abort();
+    };
   }, []);
-
-  useEffect(() => {
-    const _isValid = !schema.appointment.validate(appointment).error;
-
-    setIsValid(_isValid);
-  }, [appointment]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of doctors and set doctors value
@@ -182,6 +200,7 @@ function AppointmentDialog({
 
     _appointment[name] = value;
     setAppointment(_appointment);
+    setIsValid(!schema.appointment.validate(_appointment).error);
   };
 
   // onHide handler
@@ -268,7 +287,6 @@ function AppointmentDialog({
           <DropdownPatient
             value={appointment.patient}
             options={patients}
-            name="patient"
             onChange={handleChange}
             onClickAdd={showPatientDialog}
           />
@@ -279,7 +297,6 @@ function AppointmentDialog({
           <DropdownDoctor
             value={appointment.doctor}
             options={doctors}
-            name="doctor"
             onChange={handleChange}
             onClickAdd={showDoctorDialog}
           />

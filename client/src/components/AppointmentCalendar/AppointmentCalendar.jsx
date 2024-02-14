@@ -37,12 +37,14 @@ const AppointmentCalendar = () => {
 
   useEffect(() => {
     const controller = new AbortController();
+    const signal = controller.signal;
 
-    AppointmentService.getAppointments({})
+    AppointmentService.getAppointments({}, { signal })
       .then((res) => {
         setAppointments(res.data);
       })
       .catch((error) => {
+        if (error.name === "CanceledError") return;
         const { code, message } = errorHandler(error);
         code === 401 ? navigate(`/login`) : toast.error(message);
       });

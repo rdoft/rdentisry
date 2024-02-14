@@ -6,8 +6,8 @@ let doctor = {};
 /**
  * Get doctor list
  */
-doctor.getDoctors = () => {
-  return API.get(API_URL);
+doctor.getDoctors = (options = {}) => {
+  return API.get(API_URL, options);
 };
 
 /**

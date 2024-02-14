@@ -26,6 +26,7 @@ function DropdownPatient({ value, options, onChange, onClickAdd }) {
     <React.Fragment>
       <Dropdown
         value={value}
+        name="patient"
         options={options}
         optionLabel="name"
         valueTemplate={patientDropdownItem}

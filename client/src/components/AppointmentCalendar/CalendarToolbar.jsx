@@ -30,8 +30,9 @@ function CalendarToolbar({
   // Get doctors on loading
   useEffect(() => {
     const controller = new AbortController();
+    const signal = controller.signal;
 
-    DoctorService.getDoctors()
+    DoctorService.getDoctors({ signal })
       .then((res) => {
         setDoctors(res.data);
       })
