@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
 import { errorHandler } from "utils/errorHandler";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider, Card } from "primereact";
@@ -17,69 +16,91 @@ import schema from "schemas/user.schema";
 export default function Register() {
   const navigate = useNavigate();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  // Validation of form fields
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [isValid, setIsValid] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [isError, setIsError] = useState({
     email: false,
     password: false,
     confirmPassword: false,
   });
 
-  useEffect(() => {
-    const _isValid = !schema.register.validate({ name, email, password }).error;
-    _isValid && password === confirmPassword
-      ? setIsValid(true)
-      : setIsValid(false);
-  }, [name, email, password, confirmPassword]);
-
   // SERVICES ---------------------------------------------------------
   const register = async (auth) => {
+    setLoading(true);
+    setError(null);
+
     try {
       await AuthService.register(auth);
       navigate("/");
     } catch (error) {
       const { code, message } = errorHandler(error);
-      toast.error(message);
+      setError(message);
+    } finally {
+      setLoading(false);
     }
   };
 
   // HANDLERS ---------------------------------------------------------
   // onChange handler
-  const handleChange = (event, attr) => {
-    const value = (event.target && event.target.value) || "";
-    const _isError = { ...isError };
+  const handleChange = (event) => {
+    // user
+    const _user = {
+      ...user,
+      [event.target.name]: event.target.value,
+    };
 
-    if (attr === "name") {
-      // Set name
-      setName(value);
-    } else if (attr === "email") {
-      // Set email
-      schema.email.validate(value).error
-        ? (_isError.email = true)
-        : (_isError.email = false);
-      setEmail(value);
-    } else if (attr === "password") {
-      // Set password
-      schema.password.validate(value).error
-        ? (_isError.password = true)
-        : (_isError.password = false);
-      setPassword(value);
-    } else {
-      // Set confirm password
-      _isError.confirmPassword = value !== password ? true : false;
-      setConfirmPassword(value);
+    // error
+    const _isError = { ...isError };
+    switch (event.target.name) {
+      case "email":
+        schema.email.validate(_user.email).error
+          ? (_isError.email = true)
+          : (_isError.email = false);
+        break;
+      case "password":
+        schema.password.validate(_user.password).error
+          ? (_isError.password = true)
+          : (_isError.password = false);
+
+        _isError.confirmPassword =
+          _user.confirmPassword !== _user.password ? true : false;
+        break;
+      case "confirmPassword":
+        _isError.confirmPassword =
+          _user.confirmPassword !== _user.password ? true : false;
+        break;
+      default:
+        break;
     }
 
+    // validation
+    const _isValid =
+      !schema.register.validate({
+        name: _user.name,
+        email: _user.email,
+        password: _user.password,
+      }).error && _user.password === _user.confirmPassword;
+
+    setUser(_user);
     setIsError(_isError);
+    setIsValid(_isValid);
+    setError(null);
   };
 
   // Register handler
   const handleRegister = () => {
-    register({ name, email, password });
+    register({
+      name: user.name,
+      email: user.email,
+      password: user.password,
+    });
   };
 
   // onKeyDown handler
@@ -100,13 +121,22 @@ export default function Register() {
           <Typography variant="h2">Hesap oluştur</Typography>
         </div>
 
+        {error && (
+          <div className="field mb-2">
+            <Typography variant="body2" color="error">
+              {error}
+            </Typography>
+          </div>
+        )}
+
         <div className="field mb-3">
           <InputText
             id="name"
+            name="name"
             type="text"
             placeholder="Kullanıcı adı"
-            value={name}
-            onChange={(e) => handleChange(e, "name")}
+            value={user.name}
+            onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
         </div>
@@ -114,11 +144,12 @@ export default function Register() {
         <div className="field mb-3">
           <InputText
             id="email"
+            name="email"
             type="email"
             placeholder="Email *"
             keyfilter="email"
-            value={email}
-            onChange={(e) => handleChange(e, "email")}
+            value={user.email}
+            onChange={handleChange}
             onKeyDown={handleKeyDown}
             required
           />
@@ -132,11 +163,12 @@ export default function Register() {
         <div className="field mb-3">
           <Password
             id="password"
+            name="password"
             placeholder="Parola *"
-            value={password}
+            value={user.password}
             toggleMask
             feedback={false}
-            onChange={(e) => handleChange(e, "password")}
+            onChange={handleChange}
             onKeyDown={handleKeyDown}
             required
           />
@@ -150,11 +182,12 @@ export default function Register() {
         <div className="field mb-4">
           <Password
             id="confirm-password"
+            name="confirmPassword"
             placeholder="Parola (Tekrar) *"
-            value={confirmPassword}
+            value={user.confirmPassword}
             toggleMask
             feedback={false}
-            onChange={(e) => handleChange(e, "confirmPassword")}
+            onChange={handleChange}
             onPaste={(e) => e.preventDefault()}
             onKeyDown={handleKeyDown}
             required
@@ -167,11 +200,15 @@ export default function Register() {
         </div>
 
         <div className="field mb-4">
-          <Button
-            label="Kayıt Ol"
-            onClick={handleRegister}
-            disabled={!isValid}
-          />
+          {loading ? (
+            <Button label=<i className="pi pi-spin pi-spinner" /> disabled />
+          ) : (
+            <Button
+              label="Kayıt Ol"
+              onClick={handleRegister}
+              disabled={!isValid}
+            />
+          )}
         </div>
 
         <Divider className="field mt-5" />
