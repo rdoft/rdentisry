@@ -3,13 +3,13 @@ import { toast } from "react-hot-toast";
 import { errorHandler } from "utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import moment from "moment";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import { activeItem } from "store/reducers/menu";
 import { AppointmentDialog } from "components/Dialog";
+import moment from "moment";
+import DayHeader from "./DayHeader";
 import convert from "./CalendarEvent";
 import CalendarToolbar from "./CalendarToolbar";
-import DayHeader from "./DayHeader";
 
 // assets
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
@@ -27,7 +27,6 @@ const AppointmentCalendar = () => {
 
   // Set the default values
   const [step, setStep] = useState(30);
-  const [events, setEvents] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const [appointment, setAppointment] = useState(null);
   const [appointments, setAppointments] = useState([]);
@@ -40,20 +39,22 @@ const AppointmentCalendar = () => {
     getAppointments();
   }, []);
 
-  useEffect(() => {
-    getEvents();
-  }, [appointments, step, showAll]);
+  // And filter only active appointments if "show all" not selected
+  // And filter by doctor if doctor selected
+  const filteredAppointments = appointments.filter(
+    (appointment) =>
+      (!doctor || appointment.doctor.id === doctor?.id) &&
+      (showAll || appointment.status === "active")
+  );
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of appointments and set appointmets value
-  const getAppointments = async (doctorId) => {
+  const getAppointments = async () => {
     let response;
     let appointments;
 
     try {
-      response = await AppointmentService.getAppointments({
-        doctorId: doctorId,
-      });
+      response = await AppointmentService.getAppointments({});
       appointments = response.data;
 
       setAppointments(appointments);
@@ -75,7 +76,7 @@ const AppointmentCalendar = () => {
       }
 
       // Get and set the updated list of appointments
-      getAppointments(doctor?.id);
+      getAppointments();
       setAppointmentDialog(false);
       setAppointment(null);
     } catch (error) {
@@ -90,7 +91,7 @@ const AppointmentCalendar = () => {
       await AppointmentService.deleteAppointment(appointment.id);
 
       // Get and set the updated list of appointments
-      getAppointments(doctor?.id);
+      getAppointments();
       setAppointmentDialog(false);
       setAppointment(null);
     } catch (error) {
@@ -127,28 +128,7 @@ const AppointmentCalendar = () => {
     dispatch(activeItem({ openItem: ["patients"] }));
   };
 
-  // onChange doctor
-  const handleChangeDoctor = (doctor) => {
-    setDoctor(doctor);
-    getAppointments(doctor?.id);
-  };
-
   // TEMPLATES -----------------------------------------------------------------
-  // Convert appointment format to events
-  // And filter only active appointments if "show all" not selected
-  const getEvents = () => {
-    let events;
-    let appointments_;
-
-    appointments_ = showAll
-      ? appointments
-      : appointments.filter((appointment) => appointment.status === "active");
-    events = appointments_.map((appointment) =>
-      convert(appointment, step, handleClickEdit)
-    );
-    setEvents(events);
-  };
-
   // Style the today background
   const dayPropGetter = (date) => ({
     ...(today.toLocaleDateString() === date.toLocaleDateString() && {
@@ -185,6 +165,7 @@ const AppointmentCalendar = () => {
         : localizer.format(start, "MMMM", culture),
   };
 
+  // Set the messages
   const messages = {
     today: "Bugün",
     previous: <LeftOutlined />,
@@ -210,13 +191,18 @@ const AppointmentCalendar = () => {
     yearFormat: "YYYY",
   };
 
+  // Convert appointments format to events
+  const events = filteredAppointments.map((appointment) =>
+    convert(appointment, step, handleClickEdit)
+  );
+
   return (
-    <div>
+    <>
       <CalendarToolbar
         showAll={showAll}
         doctor={doctor}
         doctors={doctors}
-        setDoctor={handleChangeDoctor}
+        setDoctor={setDoctor}
         setDoctors={setDoctors}
         setShowAll={setShowAll}
         onClickAddAppointment={showAppointmentDialog}
@@ -262,7 +248,7 @@ const AppointmentCalendar = () => {
           onDelete={appointment && deleteAppointment}
         />
       )}
-    </div>
+    </>
   );
 };
 
