@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler } from "utils";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import NoteCard from "./NoteCard";

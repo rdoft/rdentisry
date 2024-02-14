@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler } from "utils";
 import { Menu, TabView, TabPanel, Button } from "primereact";
 import { Grid, Typography } from "@mui/material";
 import TabHeader from "./TabHeader";

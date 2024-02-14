@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler } from "utils";
 
 // material-ui
 import { useTheme } from "@mui/material/styles";

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler } from "utils";
 import { DataTable, Column, Image, ConfirmDialog } from "primereact";
 import { Typography } from "@mui/material";
 import { AppointmentDialog, PatientDialog } from "components/Dialog";
@@ -403,7 +403,7 @@ function PatientsTable() {
       {/* Appointment dialog */}
       {appointmentDialog && (
         <AppointmentDialog
-          _appointment={{
+          initAppointment={{
             patient: {
               id: patient.id,
               idNumber: patient.idNumber,

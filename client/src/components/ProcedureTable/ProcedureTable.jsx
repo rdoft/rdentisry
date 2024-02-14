@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler } from "utils";
 import { DataTable, Column, ConfirmDialog } from "primereact";
 import { Typography } from "@mui/material";
 import { BaseProcedureDialog } from "components/Dialog";

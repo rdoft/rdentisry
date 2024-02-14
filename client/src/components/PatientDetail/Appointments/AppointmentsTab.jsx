@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler } from "utils";
 import { AppointmentDialog } from "components/Dialog";
 import NotFoundText from "components/NotFoundText";
 import CardTitle from "components/cards/CardTitle";
@@ -191,7 +191,7 @@ function AppointmentsTab({
       </Grid>
       {appointmentDialog && (
         <AppointmentDialog
-          _appointment={appointment ? appointment : { patient }}
+          initAppointment={appointment ? appointment : { patient }}
           doctors={doctors}
           patients={patients}
           setDoctors={setDoctors}

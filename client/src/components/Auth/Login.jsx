@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler } from "utils";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider, Card } from "primereact";
 

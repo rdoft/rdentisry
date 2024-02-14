@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler } from "utils";
 import { Chip, Dialog, Divider, InputNumber, Checkbox } from "primereact";
 import { DialogFooter } from "components/DialogFooter";
 import { DropdownPatient, DropdownProcedure } from "components/Dropdown";

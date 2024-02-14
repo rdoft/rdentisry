@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler } from "utils";
 import {
   Dialog,
   InputText,
@@ -14,6 +14,7 @@ import {
 import { DropdownDoctor, DropdownPatient } from "components/Dropdown";
 import { DoctorDialog, PatientDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
+import { calcDuration } from "utils";
 
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -27,7 +28,7 @@ import schema from "schemas/appointment.schema";
 import { PatientService, DoctorService } from "services";
 
 function AppointmentDialog({
-  _appointment = {},
+  initAppointment = {},
   doctors,
   patients,
   setDoctors,
@@ -38,8 +39,10 @@ function AppointmentDialog({
 }) {
   const navigate = useNavigate();
 
-  // Set default empty Appointment
-  let emptyAppointment = {
+  // Set the default values
+  const [doctorDialog, setDoctorDialog] = useState(false);
+  const [patientDialog, setPatientDialog] = useState(false);
+  const [appointment, setAppointment] = useState({
     patient: null,
     doctor: null,
     description: "",
@@ -47,28 +50,9 @@ function AppointmentDialog({
     startTime: new Date(),
     endTime: new Date(),
     duration: "",
-  };
-
-  // Set the default values
-  const [appointment, setAppointment] = useState({
-    ...emptyAppointment,
-    ..._appointment,
+    ...initAppointment,
   });
-  // Validation of appointment object
   const [isValid, setIsValid] = useState(false);
-  // Validation(error) of appointment properties
-  const [isError, setIsError] = useState({
-    patient: false,
-    doctor: false,
-    description: false,
-    date: false,
-    startTime: false,
-    endTime: false,
-    duration: false,
-  });
-  // Dialog display states
-  const [doctorDialog, setDoctorDialog] = useState(false);
-  const [patientDialog, setPatientDialog] = useState(false);
 
   // Set the doctors from dropdown on loading
   useEffect(() => {
@@ -81,17 +65,6 @@ function AppointmentDialog({
 
     setIsValid(_isValid);
   }, [appointment]);
-
-  // Old appointment for update
-  const calcDuration = (start, end) => {
-    if ((start, end)) {
-      const hoursDiff = end.getHours() - start.getHours();
-      const minutesDiff = end.getMinutes() - start.getMinutes();
-      return hoursDiff * 60 + minutesDiff;
-    } else {
-      return 0;
-    }
-  };
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of doctors and set doctors value
@@ -165,57 +138,54 @@ function AppointmentDialog({
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
-  const handleChange = (event, attr) => {
-    let value = event.target && event.target.value;
+  const handleChange = (event) => {
+    const _appointment = { ...appointment };
+    let { name, value } = event.target ?? { name: "startTime", value: event };
 
-    let _isError = { ...isError };
-    let _appointment = { ...appointment };
+    switch (name) {
+      case "startTime":
+        let start = new Date(0);
+        let end = new Date(0);
 
-    if (attr === "startTime") {
-      let start = new Date(0);
-      let end = new Date(0);
+        start.setHours(event.hour());
+        start.setMinutes(event.minute());
+        value = start;
 
-      start.setHours(event.hour());
-      start.setMinutes(event.minute());
-      value = start;
+        _appointment.endTime = new Date(_appointment.endTime);
+        end.setHours(_appointment.endTime.getHours());
+        end.setMinutes(_appointment.endTime.getMinutes());
 
-      _appointment.endTime = new Date(_appointment.endTime);
-      end.setHours(_appointment.endTime.getHours());
-      end.setMinutes(_appointment.endTime.getMinutes());
+        if (start > end) {
+          end = start;
+          _appointment.endTime = start;
+        }
+        _appointment.duration = calcDuration(start, end);
+        break;
 
-      if (start > end) {
-        end = start;
-        _appointment.endTime = start;
-      }
-      _appointment.duration = calcDuration(start, end);
-    } else if (attr === "duration") {
-      value = value ?? 0;
-      _appointment.endTime = new Date(_appointment.startTime);
-      _appointment.endTime.setMinutes(
-        _appointment.endTime.getMinutes() + parseInt(value)
-      );
-    } else if (attr === "date") {
-      value = new Date(
-        Date.UTC(value.getFullYear(), value.getMonth(), value.getDate())
-      );
-      _isError[attr] = schema[attr].validate(value).error ? true : false;
+      case "duration":
+        value = value || 0;
+        _appointment.endTime = new Date(_appointment.startTime);
+        _appointment.endTime.setMinutes(
+          _appointment.endTime.getMinutes() + parseInt(value)
+        );
+        break;
+
+      case "date":
+        value = new Date(
+          Date.UTC(value.getFullYear(), value.getMonth(), value.getDate())
+        );
+        break;
+
+      default:
+        break;
     }
 
-    _appointment[attr] = value;
-    setIsError(_isError);
+    _appointment[name] = value;
     setAppointment(_appointment);
   };
 
   // onHide handler
   const handleHide = () => {
-    setIsError({
-      doctorId: false,
-      description: false,
-      date: false,
-      startTime: false,
-      endTime: false,
-      duration: false,
-    });
     onHide();
   };
 
@@ -298,7 +268,8 @@ function AppointmentDialog({
           <DropdownPatient
             value={appointment.patient}
             options={patients}
-            onChange={(event) => handleChange(event, "patient")}
+            name="patient"
+            onChange={handleChange}
             onClickAdd={showPatientDialog}
           />
         </div>
@@ -308,7 +279,8 @@ function AppointmentDialog({
           <DropdownDoctor
             value={appointment.doctor}
             options={doctors}
-            onChange={(event) => handleChange(event, "doctor")}
+            name="doctor"
+            onChange={handleChange}
             onClickAdd={showDoctorDialog}
           />
         </div>
@@ -318,7 +290,8 @@ function AppointmentDialog({
           <InputTextarea
             value={appointment.description ? appointment.description : ""}
             placeholder="Açıklama"
-            onChange={(event) => handleChange(event, "description")}
+            name="description"
+            onChange={handleChange}
             rows={5}
             cols={30}
           />
@@ -337,11 +310,11 @@ function AppointmentDialog({
             id="date"
             className="col-6 md:col-4"
             value={new Date(appointment.date)}
-            onChange={(event) => handleChange(event, "date")}
+            name="date"
+            onChange={handleChange}
             dateFormat="dd/mm/yy"
             minDate={new Date(new Date().setUTCHours(0, 0, 0, 0))}
           />
-          {isError["date"] && <small className="p-error">Geçersiz</small>}
         </div>
 
         {/* Time */}
@@ -355,7 +328,7 @@ function AppointmentDialog({
             <MobileTimePicker
               className="col-6 md:col-4"
               value={dayjs(appointment.startTime)}
-              onChange={(event) => handleChange(event, "startTime")}
+              onAccept={handleChange}
               ampm={false}
             />
 
@@ -366,7 +339,7 @@ function AppointmentDialog({
               className="col-6 md:col-4"
               disabled={true}
               value={dayjs(appointment.endTime)}
-              onChange={(event) => handleChange(event, "endTime")}
+              name="endTime"
               ampm={false}
             />
           </LocalizationProvider>
@@ -387,7 +360,8 @@ function AppointmentDialog({
               className="w-full"
               placeholder={"dk"}
               value={appointment.duration}
-              onChange={(event) => handleChange(event, "duration")}
+              name="duration"
+              onChange={handleChange}
             />
           </div>
         </div>

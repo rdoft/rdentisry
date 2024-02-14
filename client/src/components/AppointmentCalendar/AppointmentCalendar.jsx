@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Calendar, momentLocalizer } from "react-big-calendar";
@@ -64,10 +64,12 @@ const AppointmentCalendar = () => {
   // Get the list of appointments and set appointmets value
   const getAppointments = async () => {
     let response;
+    let appointments;
 
     try {
       response = await AppointmentService.getAppointments({});
-      return response.data;
+      appointments = response.data;
+      setAppointments(appointments);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -248,7 +250,7 @@ const AppointmentCalendar = () => {
       />
       {appointmentDialog && (
         <AppointmentDialog
-          _appointment={{ doctor, ...appointment }}
+          initAppointment={{ doctor, ...appointment }}
           doctors={doctors}
           patients={patients}
           setDoctors={setDoctors}
