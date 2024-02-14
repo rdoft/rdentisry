@@ -29,8 +29,18 @@ function CalendarToolbar({
 
   // Get doctors on loading
   useEffect(() => {
-    getDoctors();
-  }, []);
+    const controller = new AbortController();
+
+    DoctorService.getDoctors()
+      .then((res) => {
+        setDoctors(res.data);
+      })
+      .catch((error) => {});
+
+    return () => {
+      controller.abort();
+    };
+  }, [setDoctors]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of doctors and set doctors value
@@ -122,7 +132,7 @@ function CalendarToolbar({
 
   // Get showAll switch
   const endContent = () => (
-    <React.Fragment>
+    <>
       <Typography variant="subtitle2" margin={1}>
         Geçmiş randevu
       </Typography>
@@ -131,12 +141,12 @@ function CalendarToolbar({
         onChange={handleChangeSwitch}
         style={{ margin: 5, transform: "scale(0.8)" }}
       />
-    </React.Fragment>
+    </>
   );
 
   // Get Add appointment buttons
   const startContent = () => (
-    <React.Fragment>
+    <>
       <Button
         label="Randevu Ekle"
         icon="pi pi-plus"
@@ -144,7 +154,7 @@ function CalendarToolbar({
         className="p-button-info mr-2"
         onClick={onClickAddAppointment}
       />
-    </React.Fragment>
+    </>
   );
 
   return (
