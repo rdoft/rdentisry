@@ -36,8 +36,21 @@ const AppointmentCalendar = () => {
   const [patients, setPatients] = useState(null);
 
   useEffect(() => {
-    getAppointments();
-  }, []);
+    const controller = new AbortController();
+
+    AppointmentService.getAppointments({})
+      .then((res) => {
+        setAppointments(res.data);
+      })
+      .catch((error) => {
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [navigate]);
 
   // And filter only active appointments if "show all" not selected
   // And filter by doctor if doctor selected
@@ -51,13 +64,10 @@ const AppointmentCalendar = () => {
   // Get the list of appointments and set appointmets value
   const getAppointments = async () => {
     let response;
-    let appointments;
 
     try {
       response = await AppointmentService.getAppointments({});
-      appointments = response.data;
-
-      setAppointments(appointments);
+      return response.data;
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
