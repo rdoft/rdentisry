@@ -26,17 +26,14 @@ function BaseProcedureDialog({
     price: false,
   });
 
-  useEffect(() => {
-    const _isValid = !schema.procedure.validate(procedure).error;
-
-    setIsValid(_isValid);
-  }, [procedure]);
-
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
   const handleChange = (event) => {
-    const value = event.value ?? event.target.value;
-    const name = event.target.name;
+    let { value, name } = event.target;
+
+    if (name === "price") {
+      value = value || 0;
+    }
 
     // procedure
     const _procedure = {
@@ -50,8 +47,12 @@ function BaseProcedureDialog({
       [name]: schema[name].validate(value).error ? true : false,
     };
 
+    // validation
+    const _isValid = schema.procedure.validate(_procedure).error ? false : true;
+
     setProcedure(_procedure);
     setIsError(_isError);
+    setIsValid(_isValid);
   };
 
   // onHide handler
@@ -149,9 +150,13 @@ function BaseProcedureDialog({
           <div className="col-6 md:col-4">
             <InputNumber
               id="price"
-              value={procedure.price ?? 0}
+              value={procedure.price}
               name="price"
-              onValueChange={handleChange}
+              onChange={(e) =>
+                handleChange({
+                  target: { value: e.value, name: "price" },
+                })
+              }
               mode="currency"
               min={0}
               currency="TRY"
