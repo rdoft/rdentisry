@@ -30,6 +30,7 @@ function DropdownProcedureCategory({ value, options, onChange, onClickAdd }) {
   return (
     <Dropdown
       value={value}
+      name="procedureCategory"
       options={options}
       optionLabel="title"
       itemTemplate={procedureCategoryDropdownItem}

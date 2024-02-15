@@ -11,7 +11,6 @@ function BaseProcedureDialog({
   onHide,
   onSubmit,
 }) {
-  
   const [procedure, setProcedure] = useState({
     code: "",
     name: "",
@@ -35,20 +34,24 @@ function BaseProcedureDialog({
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
-  const handleChange = (event, attr) => {
-    const value = event.value ?? event.target?.value;
-    let _procedure = { ...procedure };
-    let _isError;
+  const handleChange = (event) => {
+    const value = event.value ?? event.target.value;
+    const name = event.target.name;
 
-    // set procedure new value
-    _procedure[attr] = value;
+    // procedure
+    const _procedure = {
+      ...procedure,
+      [name]: value,
+    };
 
-    // Set isError
-    _isError = { ...isError };
-    _isError[attr] = schema[attr].validate(value).error ? true : false;
+    // error
+    const _isError = {
+      ...isError,
+      [name]: schema[name].validate(value).error ? true : false,
+    };
 
-    setIsError(_isError);
     setProcedure(_procedure);
+    setIsError(_isError);
   };
 
   // onHide handler
@@ -101,7 +104,8 @@ function BaseProcedureDialog({
               <InputText
                 id="code"
                 value={procedure.code}
-                onChange={(e) => handleChange(e, "code")}
+                name="code"
+                onChange={handleChange}
                 className="w-full"
               />
               {isError["code"] && <small className="p-error">Zorunlu</small>}
@@ -117,7 +121,8 @@ function BaseProcedureDialog({
               <InputText
                 id="name"
                 value={procedure.name}
-                onChange={(e) => handleChange(e, "name")}
+                name="name"
+                onChange={handleChange}
                 className="w-full"
               />
               {isError["name"] && <small className="p-error">Zorunlu</small>}
@@ -130,7 +135,7 @@ function BaseProcedureDialog({
           <DropdownProcedureCategory
             value={procedure.procedureCategory}
             options={categories}
-            onChange={(event) => handleChange(event, "procedureCategory")}
+            onChange={handleChange}
           />
         </div>
 
@@ -145,7 +150,8 @@ function BaseProcedureDialog({
             <InputNumber
               id="price"
               value={procedure.price ?? 0}
-              onValueChange={(event) => handleChange(event, "price")}
+              name="price"
+              onValueChange={handleChange}
               mode="currency"
               min={0}
               currency="TRY"

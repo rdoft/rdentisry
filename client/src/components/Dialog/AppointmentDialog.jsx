@@ -157,8 +157,8 @@ function AppointmentDialog({
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
   const handleChange = (event) => {
-    const _appointment = { ...appointment };
     let { name, value } = event.target ?? { name: "startTime", value: event };
+    const _appointment = { ...appointment };
 
     switch (name) {
       case "startTime":
@@ -199,8 +199,11 @@ function AppointmentDialog({
     }
 
     _appointment[name] = value;
+    const _isValid = schema.appointment.validate(_appointment).error
+      ? false
+      : true;
     setAppointment(_appointment);
-    setIsValid(!schema.appointment.validate(_appointment).error);
+    setIsValid(_isValid);
   };
 
   // onHide handler

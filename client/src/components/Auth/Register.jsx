@@ -86,7 +86,9 @@ export default function Register() {
         name: _user.name,
         email: _user.email,
         password: _user.password,
-      }).error && _user.password === _user.confirmPassword;
+      }).error && _user.password === _user.confirmPassword
+        ? true
+        : false;
 
     setUser(_user);
     setIsError(_isError);

@@ -49,13 +49,17 @@ export default function Login() {
   // HANDLERS ---------------------------------------------------------
   // onChange handler
   const handleChange = (event) => {
+    // auth
     const _auth = {
       ...auth,
       [event.target.name]: event.target.value,
     };
 
+    // validation
+    const _isValid = schema.login.validate(_auth).error ? false : true;
+
     setAuth(_auth);
-    setIsValid(!schema.login.validate(_auth).error);
+    setIsValid(_isValid);
     setError(null);
   };
 
