@@ -5,17 +5,19 @@ import { DropdownProcedureCategory } from "components/Dropdown";
 
 import schema from "schemas/procedure.schema";
 
-function ProcedureDialog({ _procedure = {}, categories, onHide, onSubmit }) {
-  let emptyProcedure = {
+function BaseProcedureDialog({
+  initProcedure = {},
+  categories,
+  onHide,
+  onSubmit,
+}) {
+  
+  const [procedure, setProcedure] = useState({
     code: "",
     name: "",
     price: 0,
     procedureCategory: null,
-  };
-
-  const [procedure, setProcedure] = useState({
-    ...emptyProcedure,
-    ..._procedure,
+    ...initProcedure,
   });
   const [isAnother, setIsAnother] = useState(false);
   const [isValid, setIsValid] = useState(false);
@@ -58,7 +60,6 @@ function ProcedureDialog({ _procedure = {}, categories, onHide, onSubmit }) {
   const handleSubmit = () => {
     onSubmit(procedure);
     !isAnother && onHide();
-    setProcedure(emptyProcedure);
   };
 
   // onKeyDown handler
@@ -167,4 +168,4 @@ function ProcedureDialog({ _procedure = {}, categories, onHide, onSubmit }) {
   );
 }
 
-export default ProcedureDialog;
+export default BaseProcedureDialog;
