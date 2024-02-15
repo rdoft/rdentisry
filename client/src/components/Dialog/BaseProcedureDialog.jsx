@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { InputText, InputNumber, Divider, Dialog, Checkbox } from "primereact";
 import { DialogFooter } from "components/DialogFooter";
 import { DropdownProcedureCategory } from "components/Dropdown";

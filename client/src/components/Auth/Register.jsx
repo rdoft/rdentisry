@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { errorHandler } from "utils";
 import { Grid, Typography } from "@mui/material";
-import { InputText, Button, Password, Divider, Card } from "primereact";
+import { InputText, Button, Password, Divider } from "primereact";
 
 // assets
 import { ReactComponent as Logo } from "assets/svg/dishekime/dishekime.svg";
-import { ReactComponent as Rdoft } from "assets/svg/rdoft/rdoft.svg";
 
 // services
 import { AuthService } from "services";
@@ -40,7 +39,7 @@ export default function Register() {
       await AuthService.register(auth);
       navigate("/");
     } catch (error) {
-      const { code, message } = errorHandler(error);
+      const { message } = errorHandler(error);
       setError(message);
     } finally {
       setLoading(false);

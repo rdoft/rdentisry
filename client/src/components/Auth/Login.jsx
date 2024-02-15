@@ -2,12 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { errorHandler } from "utils";
 import { Grid, Typography } from "@mui/material";
-import { InputText, Button, Password, Divider, Card } from "primereact";
+import { InputText, Button, Password, Divider } from "primereact";
 
 // assets
 import svgGoogle from "assets/svg/google.svg";
 import { ReactComponent as Logo } from "assets/svg/dishekime/dishekime.svg";
-import { ReactComponent as Rdoft } from "assets/svg/rdoft/rdoft.svg";
 
 // services
 import { AuthService } from "services";

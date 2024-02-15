@@ -1,35 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Dialog, InputText, Divider } from "primereact";
 import { DialogFooter } from "components/DialogFooter";
 
-function DoctorDialog({ _doctor = {}, onHide, onSubmit }) {
-  let emptyDoctor = {
+function DoctorDialog({ initDoctor = {}, onHide, onSubmit }) {
+  const [doctor, setDoctor] = useState({
     name: "",
     surname: "",
-  };
-
-  const [doctor, setDoctor] = useState({ ...emptyDoctor, ..._doctor });
+    ...initDoctor,
+  });
   const [isValid, setIsValid] = useState(false);
-
-  useEffect(() => {
-    const _isValid = doctor.name && doctor.surname;
-
-    setIsValid(_isValid);
-  }, [doctor]);
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
-  const handleChange = (event, attr) => {
-    const value = (event.target && event.target.value) || "";
-    let _doctor = { ...doctor };
+  const handleChange = (event) => {
+    let { name, value } = event.target;
 
-    if (attr === "name") {
-      _doctor.name = value;
-    } else if (attr === "surname") {
-      _doctor.surname = value;
-    }
+    // doctor
+    const _doctor = {
+      ...doctor,
+      [name]: value,
+    };
+
+    // validation
+    const _isValid = _doctor.name && _doctor.surname;
 
     setDoctor(_doctor);
+    setIsValid(_isValid);
   };
 
   // onHide handler
@@ -78,7 +74,8 @@ function DoctorDialog({ _doctor = {}, onHide, onSubmit }) {
           <InputText
             id="name"
             value={doctor.name}
-            onChange={(event) => handleChange(event, "name")}
+            name="name"
+            onChange={handleChange}
           />
         </div>
         <div className="field ml-2">
@@ -88,7 +85,8 @@ function DoctorDialog({ _doctor = {}, onHide, onSubmit }) {
           <InputText
             id="surname"
             value={doctor.surname}
-            onChange={(event) => handleChange(event, "surname")}
+            name="surname"
+            onChange={handleChange}
           />
         </div>
       </div>

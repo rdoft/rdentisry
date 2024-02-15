@@ -82,7 +82,7 @@ function AppointmentDialog({
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [navigate, setDoctors, setPatients]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of doctors and set doctors value
