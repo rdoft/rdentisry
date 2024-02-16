@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Dialog, InputText, Divider } from "primereact";
-import { DialogFooter } from "components/DialogFooter";
+import { InputText, Divider } from "primereact";
+import { DialogTemp } from "components/Dialog";
 
 function DoctorDialog({ initDoctor = {}, onHide, onSubmit }) {
   const [doctor, setDoctor] = useState({
@@ -38,29 +38,13 @@ function DoctorDialog({ initDoctor = {}, onHide, onSubmit }) {
     onSubmit(doctor);
   };
 
-  // onKeyDown handler
-  const handleKeyDown = (event) => {
-    if (isValid && event.key === "Enter") {
-      handleSubmit();
-    }
-  };
-
   return (
-    <Dialog
-      visible
-      header="Yeni Doktor"
-      modal
-      className="p-fluid"
-      style={{ height: "fit-content" }}
-      footer={
-        <DialogFooter
-          disabled={!isValid}
-          onHide={handleHide}
-          onSubmit={handleSubmit}
-        />
-      }
+    <DialogTemp
+      isValid={isValid}
       onHide={handleHide}
-      onKeyDown={handleKeyDown}
+      onSubmit={handleSubmit}
+      header="Yeni Doktor"
+      style={{ height: "fit-content" }}
     >
       {/* Divider */}
       <Divider type="solid" className="mt-0" />
@@ -90,7 +74,7 @@ function DoctorDialog({ initDoctor = {}, onHide, onSubmit }) {
           />
         </div>
       </div>
-    </Dialog>
+    </DialogTemp>
   );
 }
 

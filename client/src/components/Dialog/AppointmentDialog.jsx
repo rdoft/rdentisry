@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import {
-  Dialog,
   InputText,
   InputTextarea,
   Divider,
@@ -12,7 +11,7 @@ import {
   confirmDialog,
 } from "primereact";
 import { DropdownDoctor, DropdownPatient } from "components/Dropdown";
-import { DoctorDialog, PatientDialog } from "components/Dialog";
+import { DialogTemp, DoctorDialog, PatientDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
 import { calcDuration } from "utils";
 
@@ -221,17 +220,6 @@ function AppointmentDialog({
     onDelete(appointment);
   };
 
-  // onKeyDown handler
-  const handleKeyDown = (event) => {
-    if (
-      isValid &&
-      event.key === "Enter" &&
-      event.target.tagName !== "TEXTAREA"
-    ) {
-      handleSubmit();
-    }
-  };
-
   const handleDeleteConfim =
     onDelete &&
     (() => {
@@ -265,22 +253,13 @@ function AppointmentDialog({
   return (
     <>
       <ConfirmDialog />
-      <Dialog
-        visible
-        style={{ width: "450px" }}
-        header="Randevu Planla"
-        modal
-        className="p-fluid"
-        footer={
-          <DialogFooter
-            disabled={!isValid}
-            onHide={handleHide}
-            onSubmit={handleSubmit}
-            onDelete={handleDeleteConfim}
-          />
-        }
+      <DialogTemp
+        isValid={isValid}
         onHide={handleHide}
-        onKeyDown={handleKeyDown}
+        onSubmit={handleSubmit}
+        onDelete={handleDeleteConfim}
+        header="Randevu Planla"
+        style={{ width: "450px" }}
       >
         {/* Divider */}
         <Divider type="solid" className="mt-0" />
@@ -385,7 +364,7 @@ function AppointmentDialog({
             />
           </div>
         </div>
-      </Dialog>
+      </DialogTemp>
       {doctorDialog && (
         <DoctorDialog onHide={hideDoctorDialog} onSubmit={saveDoctor} />
       )}

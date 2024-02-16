@@ -2,11 +2,22 @@ import React from "react";
 import { Dialog } from "primereact";
 import { DialogFooter } from "components/DialogFooter";
 
-function DialogTemp({ isValid, onHide, onSubmit, children, ...props }) {
+function DialogTemp({
+  children,
+  isValid,
+  onHide,
+  onSubmit,
+  onDelete,
+  ...props
+}) {
   // HANDLERS -----------------------------------------------------------------
   // OnKeyDown handler
   const handleKeyDown = (event) => {
-    if (isValid && event.key === "Enter") {
+    if (
+      isValid &&
+      event.key === "Enter" &&
+      event.target.tagName !== "TEXTAREA"
+    ) {
       onSubmit();
     }
   };
@@ -19,6 +30,11 @@ function DialogTemp({ isValid, onHide, onSubmit, children, ...props }) {
   // onSubmmit handler
   const handleSubmit = () => {
     onSubmit();
+  };
+
+  // onDelete handler
+  const handleDelete = () => {
+    onDelete();
   };
 
   return (
@@ -35,6 +51,7 @@ function DialogTemp({ isValid, onHide, onSubmit, children, ...props }) {
           disabled={!isValid}
           onHide={handleHide}
           onSubmit={handleSubmit}
+          onDelete={onDelete && handleDelete}
         />
       }
     >
