@@ -4,6 +4,7 @@ import PatientDialog from "./PatientDialog";
 import PaymentDialog from "./PaymentDialog";
 import ProcedureDialog from "./ProcedureDialog";
 import BaseProcedureDialog from "./BaseProcedureDialog";
+import DialogTemp from "./DialogTemp";
 
 export {
   AppointmentDialog,
@@ -12,4 +13,5 @@ export {
   PaymentDialog,
   ProcedureDialog,
   BaseProcedureDialog,
+  DialogTemp,
 };
