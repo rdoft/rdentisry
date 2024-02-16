@@ -90,9 +90,9 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
           Date.UTC(value.getFullYear(), value.getMonth(), value.getDate())
         );
 
-      _isError.name = schema[name].validate(value).error ? true : false;
+      _isError[name] = schema[name].validate(value).error ? true : false;
     } else if (name === "amount" || name === "type") {
-      _isError.name = schema[name].validate(value).error ? true : false;
+      _isError[name] = schema[name].validate(value).error ? true : false;
     }
 
     // payment
@@ -194,6 +194,11 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
         <div className="flex grid align-items-center mb-3">
           <label htmlFor="amount" className="col-12 md:col-6 font-bold">
             Tutar <small className="p-error">*</small>
+            {isError.amount && (
+              <small className="ml-3 p-error font-light">
+                Zorunlu
+              </small>
+            )}
           </label>
           <div className="col-12 md:col-6 p-0">
             <InputNumber
@@ -216,7 +221,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
         <div className="flex grid align-items-center justify-content-between mb-3">
           <label htmlFor="date" className="col-12 font-bold">
             Tarih <small className="p-error">*</small>
-            {isError["plannedDate"] && isError["actualDate"] && (
+            {(isError.plannedDate || isError.actualDate) && (
               <small className="ml-3 p-error font-light">
                 Tarihlerden en az biri seçilmelidir
               </small>

@@ -31,10 +31,6 @@ function BaseProcedureDialog({
   const handleChange = (event) => {
     let { value, name } = event.target;
 
-    if (name === "price") {
-      value = value || 0;
-    }
-
     // procedure
     const _procedure = {
       ...procedure,
@@ -92,7 +88,7 @@ function BaseProcedureDialog({
               onChange={handleChange}
               className="w-full"
             />
-            {isError["code"] && <small className="p-error">Zorunlu</small>}
+            {isError.code && <small className="p-error">Zorunlu</small>}
           </div>
         </div>
 
@@ -109,7 +105,7 @@ function BaseProcedureDialog({
               onChange={handleChange}
               className="w-full"
             />
-            {isError["name"] && <small className="p-error">Zorunlu</small>}
+            {isError.name && <small className="p-error">Zorunlu</small>}
           </div>
         </div>
       </div>
@@ -145,8 +141,10 @@ function BaseProcedureDialog({
             currency="TRY"
             locale="tr-TR"
           />
-          {isError["price"] && <small className="p-error">Zorunlu</small>}
         </div>
+          {isError.price && (
+            <small className="ml-3 p-error font-light">Zorunlu</small>
+          )}
       </div>
 
       {/* Create another procedure */}
