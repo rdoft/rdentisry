@@ -213,7 +213,7 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
       {/* Dialog */}
       {procedureDialog && (
         <ProcedureDialog
-          _patientProcedure={
+          initPatientProcedure={
             procedure ? procedure : { patient, toothNumber: selectedTooth || 0 }
           }
           onHide={handleHide}

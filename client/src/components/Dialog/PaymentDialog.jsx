@@ -53,7 +53,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
         setPatients(res.data);
       })
       .catch((error) => {
-        if (error.name === "CanceeledError") return;
+        if (error.name === "CanceledError") return;
         const { code, message } = errorHandler(error);
         code === 401 ? navigate(`/login`) : toast.error(message);
       });

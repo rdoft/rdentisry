@@ -33,23 +33,22 @@ function DropdownProcedure({ value, options, onChange, onClickOptions }) {
   };
 
   return (
-    <React.Fragment>
-      <Dropdown
-        value={value}
-        options={options}
-        optionLabel="name"
-        valueTemplate={procedureDropdownValue}
-        itemTemplate={procedureDropdownItem}
-        panelFooterTemplate={procedureDropdownFooter}
-        onChange={onChange}
-        scrollHeight="300px"
-        filter
-        filterBy="name,code,procedureCategory.title"
-        placeholder="Tedavi seçiniz..."
-        emptyMessage="Sonuç bulunamadı"
-        emptyFilterMessage="Sonuç bulunamadı"
-      />
-    </React.Fragment>
+    <Dropdown
+      value={value}
+      name="procedure"
+      options={options}
+      optionLabel="name"
+      valueTemplate={procedureDropdownValue}
+      itemTemplate={procedureDropdownItem}
+      panelFooterTemplate={procedureDropdownFooter}
+      onChange={onChange}
+      scrollHeight="300px"
+      filter
+      filterBy="name,code,procedureCategory.title"
+      placeholder="Tedavi seçiniz..."
+      emptyMessage="Sonuç bulunamadı"
+      emptyFilterMessage="Sonuç bulunamadı"
+    />
   );
 }
 

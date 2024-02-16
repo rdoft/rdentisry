@@ -7,11 +7,11 @@ let procedure = {};
  * Get the list of the procedures
  * @query categoryId: Category Id
  */
-procedure.getProcedures = (categoryId) => {
+procedure.getProcedures = (categoryId = null, options = {}) => {
   if (categoryId) {
-    return API.get(`${API_URL}?categoryId=${categoryId}`);
+    return API.get(`${API_URL}?categoryId=${categoryId}`, options);
   } else {
-    return API.get(API_URL);
+    return API.get(API_URL, options);
   }
 };
 
