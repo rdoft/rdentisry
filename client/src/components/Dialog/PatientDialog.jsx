@@ -1,28 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Avatar } from "@mui/material";
-import { Dialog, InputText } from "primereact";
-import { DialogFooter } from "components/DialogFooter";
+import { InputText } from "primereact";
+import { DialogTemp } from "components/Dialog";
 
 // assets
 import avatarPatient from "assets/images/avatars/patient-avatar.png";
 
 import schema from "schemas/patient.schema";
 
-function PatientDialog({ _patient = {}, onHide, onSubmit }) {
-  // Set default empty Patient
-  let emptyPatient = {
+function PatientDialog({ initPatient = {}, onHide, onSubmit }) {
+  const [patient, setPatient] = useState({
     id: null,
     idNumber: "",
     name: "",
     surname: "",
     phone: "",
     birthYear: "",
-  };
-
-  const [patient, setPatient] = useState({ ...emptyPatient, ..._patient });
-  // Validation of patient object
+    ...initPatient,
+  });
   const [isValid, setIsValid] = useState(false);
-  // Validation(error) of patient properties
   const [isError, setIsError] = useState({
     idNumber: false,
     name: false,
@@ -31,31 +27,30 @@ function PatientDialog({ _patient = {}, onHide, onSubmit }) {
     birtYear: false,
   });
 
-  useEffect(() => {
-    const _isValid = !schema.patient.validate(patient).error;
-
-    setIsValid(_isValid);
-  }, [patient]);
-
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
-  const handleChange = (event, attr) => {
-    const value = (event.target && event.target.value) || "";
-    let _patient = { ...patient };
-    let _isError;
+  const handleChange = (event) => {
+    let { name, value } = event.target;
 
-    // set patient new value
-    _patient[`${attr}`] = value;
+    // patient
+    const _patient = {
+      ...patient,
+      [name]: value,
+    };
 
-    // Set isError
-    _isError = { ...isError };
-    _isError[`${attr}`] = schema[`${attr}`].validate(value).error
-      ? true
-      : false;
+    // error
+    const _isError = {
+      ...isError,
+      [name]: schema[name].validate(value).error ? true : false,
+    };
+
+    // validation
+    const _isValid = schema.patient.validate(_patient).error ? false : true;
 
     // Set isError and patient
-    setIsError(_isError);
     setPatient(_patient);
+    setIsError(_isError);
+    setIsValid(_isValid);
   };
 
   // onHide handler
@@ -68,29 +63,13 @@ function PatientDialog({ _patient = {}, onHide, onSubmit }) {
     onSubmit(patient);
   };
 
-  // onSubmit handler
-  const handleKeyDown = (event) => {
-    if (isValid && event.key === "Enter") {
-      handleSubmit();
-    }
-  };
-
   return (
-    <Dialog
-      visible
+    <DialogTemp
+      isValid={isValid}
+      onHide={handleHide}
+      onSubmit={handleSubmit}
       style={{ width: "450px" }}
       header={!patient.id ? "Yeni Hasta" : "Hasta Bilgileri"}
-      modal
-      className="p-fluid"
-      footer={
-        <DialogFooter
-          disabled={!isValid}
-          onHide={handleHide}
-          onSubmit={handleSubmit}
-        />
-      }
-      onHide={handleHide}
-      onKeyDown={handleKeyDown}
     >
       {/* Avatar icon */}
       <Avatar
@@ -107,7 +86,8 @@ function PatientDialog({ _patient = {}, onHide, onSubmit }) {
         <InputText
           id="idNumber"
           value={patient.idNumber}
-          onChange={(event) => handleChange(event, "idNumber")}
+          name="idNumber"
+          onChange={handleChange}
           autoFocus
           keyfilter="num"
         />
@@ -126,7 +106,8 @@ function PatientDialog({ _patient = {}, onHide, onSubmit }) {
         <InputText
           id="name"
           value={patient.name}
-          onChange={(event) => handleChange(event, "name")}
+          name="name"
+          onChange={handleChange}
           required
         />
         {isError["name"] && <small className="p-error">Zorunlu</small>}
@@ -140,7 +121,8 @@ function PatientDialog({ _patient = {}, onHide, onSubmit }) {
         <InputText
           id="surname"
           value={patient.surname}
-          onChange={(event) => handleChange(event, "surname")}
+          name="surname"
+          onChange={handleChange}
           required
         />
         {isError["surname"] && <small className="p-error">Zorunlu</small>}
@@ -154,7 +136,8 @@ function PatientDialog({ _patient = {}, onHide, onSubmit }) {
         <InputText
           id="phone"
           value={patient.phone}
-          onChange={(event) => handleChange(event, "phone")}
+          name="phone"
+          onChange={handleChange}
           required
           keyfilter="num"
           placeholder="5XXXXXXXXX"
@@ -172,7 +155,8 @@ function PatientDialog({ _patient = {}, onHide, onSubmit }) {
         <InputText
           id="birthYear"
           value={patient.birthYear}
-          onChange={(event) => handleChange(event, "birthYear")}
+          name="birthYear"
+          onChange={handleChange}
           keyfilter="num"
         />
         {isError["birthYear"] && (
@@ -181,7 +165,7 @@ function PatientDialog({ _patient = {}, onHide, onSubmit }) {
           </small>
         )}
       </div>
-    </Dialog>
+    </DialogTemp>
   );
 }
 

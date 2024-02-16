@@ -390,7 +390,7 @@ function PatientsTable() {
       {/* Patient information and confirmation dialogs  */}
       {patientDialog && (
         <PatientDialog
-          _patient={patient}
+          initPatient={patient}
           onHide={hidePatientDialog}
           onSubmit={savePatient}
         />
