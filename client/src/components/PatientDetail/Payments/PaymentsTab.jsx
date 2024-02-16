@@ -267,7 +267,7 @@ function PaymentsTab({
       )}
       {paymentDialog && (
         <PaymentDialog
-          _payment={payment ? payment : { patient }}
+          initPayment={payment ? payment : { patient }}
           onHide={handleHideDialog}
           onSubmit={savePayment}
           onDelete={payment && deletePayment}
