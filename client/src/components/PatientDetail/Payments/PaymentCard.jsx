@@ -2,22 +2,11 @@ import React, { useState } from "react";
 import { Tag, Button } from "primereact";
 import { Grid, Typography } from "@mui/material";
 
+import PaymentType from "components/PatientDetail/Payments/PaymentType";
 import ActionGroup from "components/ActionGroup/ActionGroup";
 
 function PaymentCard({ payment, onClickEdit, onClickPay, direction }) {
   const [isHover, setIsHover] = useState(false);
-
-  // Payment types
-  const paymentTypes = [
-    { value: "cash", label: "Nakit", icon: "pi pi-wallet" },
-    { value: "card", label: "Kredi Kartı", icon: "pi pi-credit-card" },
-    {
-      value: "transfer",
-      label: "Transfer(Banka)",
-      icon: "pi pi-arrow-right-arrow-left",
-    },
-    { value: "other", label: "Diğer", icon: "pi pi-file" },
-  ];
 
   // HANDLERS -----------------------------------------------------------------
   // onMouseEnter handler for display buttons
@@ -44,20 +33,6 @@ function PaymentCard({ payment, onClickEdit, onClickPay, direction }) {
   };
 
   // TEMPLATES ----------------------------------------------------------
-  // Set label of the paymentType
-  const type = () => {
-    const type_ = paymentTypes.find((item) => item.value === payment.type);
-
-    return (
-      type_ && (
-        <>
-          <i className={type_.icon} style={{ fontSize: "0.7rem" }}></i>
-          <span>{type_.label}</span>
-        </>
-      )
-    );
-  };
-
   // Set amount of payment
   const amount = () => {
     return (
@@ -91,7 +66,11 @@ function PaymentCard({ payment, onClickEdit, onClickPay, direction }) {
     return (
       <Tag
         value={label}
-        style={{ backgroundColor: "#E8F0FF", color: "#1E7AFC", visibility: visibility }}
+        style={{
+          backgroundColor: "#E8F0FF",
+          color: "#1E7AFC",
+          visibility: visibility,
+        }}
       />
     );
   };
@@ -111,16 +90,18 @@ function PaymentCard({ payment, onClickEdit, onClickPay, direction }) {
         day: "numeric",
       });
     } else if (new Date(payment.plannedDate).getTime() < new Date().getTime()) {
-      color = "#EF4444"
+      color = "#EF4444";
       bgColor = "#FFD2CB";
       label = "Gecikti";
     } else {
-      color = "#1E7AFC"
+      color = "#1E7AFC";
       bgColor = "#E8F0FF";
       label = "Bekleniyor";
     }
 
-    return <Tag value={label} style={{ backgroundColor: bgColor, color: color }} />;
+    return (
+      <Tag value={label} style={{ backgroundColor: bgColor, color: color }} />
+    );
   };
 
   // Action button for pay
@@ -148,12 +129,7 @@ function PaymentCard({ payment, onClickEdit, onClickPay, direction }) {
       direction={direction}
       alignItems="center"
     >
-      <Grid
-        item
-        xs={9}
-        p={3}
-        className="border-1 surface-border border-round"
-      >
+      <Grid item xs={9} p={3} className="border-1 surface-border border-round">
         <div className="flex flex-wrap justify-content-between pb-2">
           {plannedDateTag()}
           {actualDateTag()}
@@ -162,7 +138,7 @@ function PaymentCard({ payment, onClickEdit, onClickPay, direction }) {
           {amount()}
         </div>
         <div className="flex flex-wrap align-items-center justify-content-center text-xs font-light gap-1">
-          {type()}
+          <PaymentType type={payment.type} />
         </div>
       </Grid>
       {isHover && (

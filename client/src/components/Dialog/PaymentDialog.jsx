@@ -9,11 +9,11 @@ import {
   InputNumber,
   ConfirmDialog,
   confirmDialog,
-  MultiStateCheckbox,
 } from "primereact";
 import { DropdownPatient } from "components/Dropdown";
 import { DialogTemp } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
+import PaymentType from "components/PatientDetail/Payments/PaymentType";
 
 import schema from "schemas/payment.schema";
 
@@ -58,24 +58,6 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
         code === 401 ? navigate(`/login`) : toast.error(message);
       });
   }, [navigate, setPatients]);
-
-  // Payment types
-  const paymentTypes = [
-    { value: "cash", label: "Nakit", icon: "pi pi-wallet" },
-    { value: "card", label: "Kredi Kartı", icon: "pi pi-credit-card" },
-    {
-      value: "transfer",
-      label: "Transfer(Banka)",
-      icon: "pi pi-arrow-right-arrow-left",
-    },
-    { value: "other", label: "Diğer", icon: "pi pi-file" },
-  ];
-
-  // Set label of the paymentType
-  const getTypeLabel = (type) => {
-    const type_ = paymentTypes.find((item) => item.value === type);
-    return type_.label;
-  };
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
@@ -172,21 +154,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
             Ödeme Türü
           </label>
           <div className="col-6 md:col-6 card flex flex-row align-items-center gap-2">
-            <MultiStateCheckbox
-              value={payment.type}
-              name="type"
-              onChange={handleChange}
-              options={paymentTypes}
-              optionValue="value"
-            />
-
-            <small>
-              {payment.type ? (
-                getTypeLabel(payment.type)
-              ) : (
-                <label>Seçiniz</label>
-              )}
-            </small>
+            <PaymentType type={payment.type} onChange={handleChange} />
           </div>
         </div>
 
@@ -195,9 +163,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
           <label htmlFor="amount" className="col-12 md:col-6 font-bold">
             Tutar <small className="p-error">*</small>
             {isError.amount && (
-              <small className="ml-3 p-error font-light">
-                Zorunlu
-              </small>
+              <small className="ml-3 p-error font-light">Zorunlu</small>
             )}
           </label>
           <div className="col-12 md:col-6 p-0">
