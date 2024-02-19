@@ -293,18 +293,17 @@ function AppointmentDialog({
         </div>
 
         {/* Date */}
-        <div className="flex grid align-items-center mb-3">
-          <label
+        <div className="flex grid align-items-center justify-content-center mb-3">
+          {/* <label
             htmlFor="date"
             className="col-12 md:col-2 font-bold text-right"
           >
             Tarih <small className="p-error">*</small>
-          </label>
+          </label> */}
 
           <DatePicker
             id="date"
             name="date"
-            className="col-6 md:col-4"
             value={new Date(appointment.date)}
             onChange={(event) =>
               handleChange({ target: { name: "date", value: event } })
