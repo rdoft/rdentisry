@@ -6,19 +6,15 @@ import {
   InputText,
   InputTextarea,
   Divider,
-  Calendar,
   ConfirmDialog,
   confirmDialog,
 } from "primereact";
+
+import { DatePicker, TimeRangePicker } from "components/DateTime";
 import { DropdownDoctor, DropdownPatient } from "components/Dropdown";
 import { DialogTemp, DoctorDialog, PatientDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
 import { calcDuration } from "utils";
-
-import dayjs from "dayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 
 // schemas
 import schema from "schemas/appointment.schema";
@@ -156,7 +152,7 @@ function AppointmentDialog({
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
   const handleChange = (event) => {
-    let { name, value } = event.target ?? { name: "startTime", value: event };
+    let { name, value } = event.target;
     const _appointment = { ...appointment };
 
     switch (name) {
@@ -164,8 +160,8 @@ function AppointmentDialog({
         let start = new Date(0);
         let end = new Date(0);
 
-        start.setHours(event.hour());
-        start.setMinutes(event.minute());
+        start.setHours(value.hour());
+        start.setMinutes(value.minute());
         value = start;
 
         _appointment.endTime = new Date(_appointment.endTime);
@@ -305,14 +301,14 @@ function AppointmentDialog({
             Tarih <small className="p-error">*</small>
           </label>
 
-          <Calendar
+          <DatePicker
             id="date"
+            name="date"
             className="col-6 md:col-4"
             value={new Date(appointment.date)}
-            name="date"
-            onChange={handleChange}
-            dateFormat="dd/mm/yy"
-            minDate={new Date(new Date().setUTCHours(0, 0, 0, 0))}
+            onChange={(event) =>
+              handleChange({ target: { name: "date", value: event } })
+            }
           />
         </div>
 
@@ -322,26 +318,11 @@ function AppointmentDialog({
             Saat <small className="p-error">*</small>
           </label>
 
-          {/* Start */}
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <MobileTimePicker
-              className="col-6 md:col-4"
-              value={dayjs(appointment.startTime)}
-              onAccept={handleChange}
-              ampm={false}
-            />
-
-            <label className="col-12 md:col-1 font-bold text-center">-</label>
-            {/* End */}
-
-            <MobileTimePicker
-              className="col-6 md:col-4"
-              disabled={true}
-              value={dayjs(appointment.endTime)}
-              name="endTime"
-              ampm={false}
-            />
-          </LocalizationProvider>
+          <TimeRangePicker
+            start={appointment.startTime}
+            end={appointment.endTime}
+            onChange={handleChange}
+          />
         </div>
 
         {/* Duration */}
