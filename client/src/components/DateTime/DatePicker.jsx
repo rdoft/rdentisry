@@ -5,12 +5,10 @@ import { DayPicker } from "react-day-picker";
 // assets
 import "react-day-picker/dist/style.css";
 
-function DatePicker({ value, onChange, ...props }) {
-  const initday = new Date(0);
-  const yesterday = new Date(
-    new Date().setDate(new Date().getDate() - 1)
-  ).setUTCHours(0, 0, 0, 0);
-  const disabledDays = [{ from: initday, to: yesterday }];
+function DatePicker({ value, onChange, minDate, ...props }) {
+  const from = new Date(0);
+  const to = minDate ? minDate : new Date(0);
+  const disabledDays = [{ from: from, to: to }];
 
   return (
     <DayPicker
@@ -18,16 +16,16 @@ function DatePicker({ value, onChange, ...props }) {
       selected={value}
       onSelect={onChange}
       locale={tr}
-      fixedWeeks
-      required
       disabled={disabledDays}
-      {...props}
+      defaultMonth={value}
+      fixedWeeks
       styles={{
         caption: { color: "#333C5E" },
       }}
       modifiersStyles={{
-        selected: { backgroundColor: "#21273D", color: "#fff" },
+        selected: { backgroundColor: "#21273D" },
       }}
+      {...props}
     />
   );
 }

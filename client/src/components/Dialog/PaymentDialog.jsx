@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import {
+  Tag,
   Divider,
-  Calendar,
   Checkbox,
   InputNumber,
   ConfirmDialog,
@@ -13,6 +13,7 @@ import {
 import { DropdownPatient } from "components/Dropdown";
 import { DialogTemp } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
+import { DatePicker } from "components/DateTime";
 import PaymentType from "components/PatientDetail/Payments/PaymentType";
 
 import schema from "schemas/payment.schema";
@@ -39,8 +40,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
     patient: false,
     type: false,
     amount: false,
-    plannedDate: false,
-    actualDate: false,
+    date: false,
   });
 
   // Set the patients from dropdown on loading
@@ -65,16 +65,37 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
     let { value, name } = event.target;
     let _isError = { ...isError };
 
-    if (name === "plannedDate" || name === "actualDate") {
-      value =
-        value &&
-        new Date(
-          Date.UTC(value.getFullYear(), value.getMonth(), value.getDate())
-        );
+    switch (name) {
+      case "plannedDate":
+        value = value
+          ? new Date(
+              Date.UTC(value.getFullYear(), value.getMonth(), value.getDate())
+            )
+          : null;
 
-      _isError[name] = schema[name].validate(value).error ? true : false;
-    } else if (name === "amount" || name === "type") {
-      _isError[name] = schema[name].validate(value).error ? true : false;
+        _isError["date"] =
+          schema[name].validate(value).error || (!payment.actualDate && !value)
+            ? true
+            : false;
+        break;
+      case "actualDate":
+        value = value
+          ? new Date(
+              Date.UTC(value.getFullYear(), value.getMonth(), value.getDate())
+            )
+          : null;
+
+        _isError["date"] =
+          schema[name].validate(value).error || (!payment.plannedDate && !value)
+            ? true
+            : false;
+        break;
+      case "amount":
+      case "type":
+        _isError[name] = schema[name].validate(value).error ? true : false;
+        break;
+      default:
+        break;
     }
 
     // payment
@@ -133,7 +154,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
         onSubmit={handleSubmit}
         onDelete={handleDeleteConfim}
         header={!payment.id ? "Yeni Ödeme" : "Ödeme Bilgileri"}
-        style={{ width: "450px" }}
+        style={{ width: "700px" }}
       >
         {/* Divider */}
         <Divider type="solid" className="mt-0" />
@@ -184,52 +205,80 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
         </div>
 
         {/* Date */}
-        <div className="flex grid align-items-center justify-content-between mb-3">
+        <div className="flex grid justify-content-center mb-3">
           <label htmlFor="date" className="col-12 font-bold">
             Tarih <small className="p-error">*</small>
-            {(isError.plannedDate || isError.actualDate) && (
+            {isError.date && (
               <small className="ml-3 p-error font-light">
                 Tarihlerden en az biri seçilmelidir
               </small>
             )}
           </label>
 
-          <small className="col-6 py-0">Planlanan</small>
-          <small className="col-6 py-0">Gerçekleşen</small>
           {/* PlannedDate */}
-          <Calendar
-            id="plannedDate"
-            className="col-6"
-            value={payment.plannedDate && new Date(payment.plannedDate)}
-            name="plannedDate"
-            onChange={handleChange}
-            dateFormat="dd/mm/yy"
-            minDate={new Date(new Date().setUTCHours(24, 0, 0, 0))}
-            showButtonBar
-          />
+          <div className="flex grid col-12 md:col-5 justify-content-center">
+            <Tag
+              value="Planlanan"
+              style={{
+                backgroundColor: "#E8F0FF",
+                color: "#1E7AFC",
+              }}
+            />
+            <DatePicker
+              id="plannedDate"
+              className="m-0"
+              value={payment.plannedDate && new Date(payment.plannedDate)}
+              onChange={(event) =>
+                handleChange({ target: { name: "plannedDate", value: event } })
+              }
+              minDate={new Date(new Date().setUTCHours(0, 0, 0, 0))}
+            />
+          </div>
+
+          {/* Divider */}
+          <div className="flex grid w-full md:w-2 justify-content-center ">
+            <Divider layout="vertical" className="hidden md:flex col-1" />
+            <Divider layout="horizontal" className="flex md:hidden col-6" />
+          </div>
 
           {/* ActualDate */}
-          <Calendar
-            id="actualDate"
-            className="col-6"
-            value={payment.actualDate && new Date(payment.actualDate)}
-            name="actualDate"
-            onChange={handleChange}
-            dateFormat="dd/mm/yy"
-            showButtonBar
-          />
+          <div className="flex grid col-12 md:col-5 justify-content-center">
+            <Tag
+              value="Gerçekleşen"
+              style={{
+                backgroundColor: "#DFFCF0",
+                color: "#22A069",
+              }}
+            />
+
+            <DatePicker
+              id="actualDate"
+              className="m-0"
+              value={payment.actualDate && new Date(payment.actualDate)}
+              onChange={(event) =>
+                handleChange({ target: { name: "actualDate", value: event } })
+              }
+            />
+          </div>
         </div>
 
         {/* Reduce from next payment */}
-        {!payment.id && !payment.plannedDate && payment.actualDate && (
-          <div className="flex align-items-center justify-content-end mb-3">
-            <small className=" mr-2">Planlanan ödemeden düşülsün</small>
-            <Checkbox
-              onChange={(event) => setReduce(event.checked)}
-              checked={reduce}
-            />
-          </div>
-        )}
+
+        <div
+          className="flex align-items-center justify-content-end"
+          style={{
+            visibility:
+              !payment.id && !payment.plannedDate && payment.actualDate
+                ? "visible"
+                : "hidden",
+          }}
+        >
+          <small className=" mr-2">Planlanan ödemeden düşülsün</small>
+          <Checkbox
+            onChange={(event) => setReduce(event.checked)}
+            checked={reduce}
+          />
+        </div>
       </DialogTemp>
     </>
   );

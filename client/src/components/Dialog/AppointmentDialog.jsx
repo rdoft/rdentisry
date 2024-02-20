@@ -305,6 +305,9 @@ function AppointmentDialog({
             id="date"
             name="date"
             value={new Date(appointment.date)}
+            minDate={new Date(
+              new Date().setDate(new Date().getDate() - 1)
+            ).setUTCHours(0, 0, 0, 0)}
             onChange={(event) =>
               handleChange({ target: { name: "date", value: event } })
             }
