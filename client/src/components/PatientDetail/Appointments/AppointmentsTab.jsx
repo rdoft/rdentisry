@@ -141,7 +141,7 @@ function AppointmentsTab({
       <AppointmentCard
         appointment={appointment}
         onClickEdit={handleSelectAppointment}
-        onChangeStatus={saveAppointment}
+        onSubmit={saveAppointment}
       />
     );
   };
