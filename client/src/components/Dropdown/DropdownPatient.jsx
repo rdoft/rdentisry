@@ -23,24 +23,22 @@ function DropdownPatient({ value, options, onChange, onClickAdd }) {
   };
 
   return (
-    <React.Fragment>
-      <Dropdown
-        value={value}
-        name="patient"
-        options={options}
-        optionLabel="name"
-        valueTemplate={patientDropdownItem}
-        itemTemplate={patientDropdownItem}
-        panelFooterTemplate={patientDropdownFooter}
-        onChange={onChange}
-        className="w-full"
-        filter
-        filterBy="name,surname,phone"
-        placeholder="Hasta seçiniz..."
-        emptyMessage="Sonuç bulunamadı"
-        emptyFilterMessage="Sonuç bulunamadı"
-      />
-    </React.Fragment>
+    <Dropdown
+      value={value}
+      name="patient"
+      options={options}
+      optionLabel="name"
+      valueTemplate={patientDropdownItem}
+      itemTemplate={patientDropdownItem}
+      panelFooterTemplate={patientDropdownFooter}
+      onChange={onChange}
+      className="w-full"
+      filter
+      filterBy="name,surname,phone"
+      placeholder="Hasta seçiniz..."
+      emptyMessage="Sonuç bulunamadı"
+      emptyFilterMessage="Sonuç bulunamadı"
+    />
   );
 }
 

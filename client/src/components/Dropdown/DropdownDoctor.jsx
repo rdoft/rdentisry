@@ -33,26 +33,24 @@ function DropdownDoctor({
   };
 
   return (
-    <React.Fragment>
-      <Dropdown
-        value={value}
-        name="doctor"
-        options={options}
-        optionLabel="name"
-        valueTemplate={doctorDropdownValue}
-        itemTemplate={doctorDropdownItem}
-        panelFooterTemplate={doctorDropdownFooter}
-        onChange={onChange}
-        className={props?.className}
-        style={props?.style}
-        filter
-        filterBy="name,surname"
-        placeholder="Doktor seçiniz..."
-        emptyMessage="Sonuç bulunamadı"
-        emptyFilterMessage="Sonuç bulunamadı"
-        showClear
-      />
-    </React.Fragment>
+    <Dropdown
+      value={value}
+      name="doctor"
+      options={options}
+      optionLabel="name"
+      valueTemplate={doctorDropdownValue}
+      itemTemplate={doctorDropdownItem}
+      panelFooterTemplate={doctorDropdownFooter}
+      onChange={onChange}
+      className={props?.className}
+      style={props?.style}
+      filter
+      filterBy="name,surname"
+      placeholder="Doktor seçiniz..."
+      emptyMessage="Sonuç bulunamadı"
+      emptyFilterMessage="Sonuç bulunamadı"
+      showClear
+    />
   );
 }
 

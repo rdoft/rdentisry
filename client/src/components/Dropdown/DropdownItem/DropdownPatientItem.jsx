@@ -3,7 +3,7 @@ import { Typography, Avatar } from "@mui/material";
 
 // assets
 import { PhoneOutlined } from "@ant-design/icons";
-import avatarPatient from "assets/images/avatars/patient-avatar.png";
+import { patientAvatar } from "assets/images/avatars";
 
 function DropdownPatientItem({ option }) {
   return option ? (
@@ -12,9 +12,10 @@ function DropdownPatientItem({ option }) {
       <Avatar
         alt="avatar"
         className="mr-2 p-1"
-        src={avatarPatient}
+        src={patientAvatar}
         shape="circle"
       />
+
       {/* Option info */}
       <div className="flex flex-column align">
         <Typography variant="h5">{`${option.name} ${option.surname}`}</Typography>

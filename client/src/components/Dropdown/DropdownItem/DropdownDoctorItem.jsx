@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { Typography, Avatar } from "@mui/material";
+import { Typography, Avatar, Grid } from "@mui/material";
 import { ConfirmDialog } from "primereact";
+import { DialogFooter } from "components/DialogFooter";
+import ActionGroup from "components/ActionGroup/ActionGroup";
 
 // assets
-import avatarDoctor from "assets/images/avatars/doctor-avatar.png";
-import ActionGroup from "components/ActionGroup/ActionGroup";
-import { DialogFooter } from "components/DialogFooter";
-import { Grid } from "../../../../node_modules/@mui/material/index";
+import { doctorAvatar } from "assets/images/avatars";
 
 function DropdownDoctorItem({ option, onDelete }) {
   const [isHover, setIsHover] = useState(false);
@@ -71,7 +70,7 @@ function DropdownDoctorItem({ option, onDelete }) {
         <Avatar
           alt="avatar"
           className="mr-2 p-1"
-          src={avatarDoctor}
+          src={doctorAvatar}
           shape="circle"
         />
       </Grid>
