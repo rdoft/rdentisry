@@ -150,9 +150,9 @@ function AppointmentsTab({
 
   return (
     <>
-      <Grid container justifyContent="space-between" mt={2}>
+      <Grid container alignItems="start" justifyContent="space-between" mt={2}>
         {/* Active appointments */}
-        <Grid container md={6} xs={12} justifyContent="center" pr={2}>
+        <Grid container item md={6} xs={12} justifyContent="center" pr={2}>
           <Grid item xs={1}>
             <CardTitle
               title="Aktif"
@@ -174,7 +174,7 @@ function AppointmentsTab({
         </Grid>
 
         {/* Other appointments */}
-        <Grid container md={6} xs={12} justifyContent="center" pl={2}>
+        <Grid container item md={6} xs={12} justifyContent="center" pl={2}>
           <Grid item xs={1}>
             <CardTitle
               title="Diğer"

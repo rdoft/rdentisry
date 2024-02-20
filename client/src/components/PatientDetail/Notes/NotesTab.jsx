@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
+import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
+import NotFoundText from "components/NotFoundText";
 import NoteCard from "./NoteCard";
 import Note from "./Note";
 
@@ -12,37 +13,49 @@ import "assets/styles/PatientDetail/NotesTab.css";
 
 // services
 import { NoteService } from "services";
-import NotFoundText from "components/NotFoundText";
 
 function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
   const navigate = useNavigate();
-  
-  let emptyNote = {
+
+  const [isEdit, setEdit] = useState(false);
+  const [notes, setNotes] = useState([]);
+  const [note, setNote] = useState({
     patient: patient,
     title: "",
     detail: "",
     date: new Date(),
-  };
-
-  const [note, setNote] = useState({ ...emptyNote });
-  const [notes, setNotes] = useState([]);
-  const [isEdit, setEdit] = useState(false);
+  });
 
   // Set the page on loading
   useEffect(() => {
-    getNotes(patient.id);
-  }, [patient]);
+    const controller = new AbortController();
+    const signal = controller.signal;
 
-  // Set the empty not for add new note
+    NoteService.getNotes(patient.id, { signal })
+      .then((res) => {
+        setNotes(res.data);
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [navigate, patient, setNotes]);
+
+  // Set the empty note to add new note
   useEffect(() => {
-    setNote({ ...emptyNote });
+    setNote({
+      patient: patient,
+      title: "",
+      detail: "",
+      date: new Date(),
+    });
     hideDialog();
-  }, [patient, noteDialog]);
-
-  // Set the counts for tab header
-  useEffect(() => {
-    getCounts();
-  }, [notes]);
+  }, [patient, noteDialog, hideDialog, setNote]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of the notes of the patient and set notes value
@@ -55,6 +68,7 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
       notes = response.data;
 
       setNotes(notes);
+      getCounts();
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -89,7 +103,12 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
         await NoteService.deleteNote(note.id);
 
         getNotes(patient.id);
-        setNote({ ...emptyNote });
+        setNote({
+          patient: patient,
+          title: "",
+          detail: "",
+          date: new Date(),
+        });
       }
     } catch (error) {
       const { code, message } = errorHandler(error);
