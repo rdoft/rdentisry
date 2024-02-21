@@ -28,7 +28,8 @@ function NoteCard({ note, onClick }) {
         container
         alignItems="center"
         justifyContent="space-between"
-        sx={{ marginTop: "1em", marginBottom: "1em", cursor: "pointer" }}
+        py={2}
+        sx={{ cursor: "pointer" }}
         onClick={handleClick}
       >
         {/* Title */}

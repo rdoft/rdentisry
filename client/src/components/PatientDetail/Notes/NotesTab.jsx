@@ -19,12 +19,7 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
 
   const [isEdit, setEdit] = useState(false);
   const [notes, setNotes] = useState([]);
-  const [note, setNote] = useState({
-    patient: patient,
-    title: "",
-    detail: "",
-    date: new Date(),
-  });
+  const [note, setNote] = useState(null);
 
   // Set the page on loading
   useEffect(() => {
@@ -46,16 +41,12 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
     };
   }, [navigate, patient, setNotes]);
 
-  // Set the empty note to add new note
+  // Reset note when noteDialog becomes true
   useEffect(() => {
-    setNote({
-      patient: patient,
-      title: "",
-      detail: "",
-      date: new Date(),
-    });
-    hideDialog();
-  }, [patient, noteDialog, hideDialog, setNote]);
+    if (noteDialog) {
+      setNote(null);
+    }
+  }, [noteDialog, patient]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of the notes of the patient and set notes value
@@ -89,6 +80,7 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
       }
 
       getNotes(patient.id);
+      hideDialog();
       setNote(note);
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -103,12 +95,8 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
         await NoteService.deleteNote(note.id);
 
         getNotes(patient.id);
-        setNote({
-          patient: patient,
-          title: "",
-          detail: "",
-          date: new Date(),
-        });
+        hideDialog();
+        setNote(null);
       }
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -119,7 +107,10 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
   // HANDLERS -----------------------------------------------------------------
   // onSelectNote handler to set the note value
   const handleSelectNote = (note) => {
-    !isEdit && setNote(note);
+    if (!isEdit) {
+      hideDialog();
+      setNote(note);
+    }
   };
 
   // TEMPLATES ----------------------------------------------------------------
@@ -151,8 +142,9 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
           sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
         >
           <Note
-            _note={note}
-            onSave={saveNote}
+            key={note?.id}
+            initNote={note ? note : { patient }}
+            onSubmit={saveNote}
             setEdit={setEdit}
             onDelete={deleteNote}
           />
