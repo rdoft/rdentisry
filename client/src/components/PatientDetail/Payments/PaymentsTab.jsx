@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { errorHandler } from "utils";
+import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { Timeline, ProgressBar } from "primereact";
-import { errorHandler } from "utils";
 import { PaymentDialog } from "components/Dialog";
+import { calcProgress } from "utils";
+import NotFoundText from "components/NotFoundText";
 import PaymentCard from "./PaymentCard";
 import PaymentMarker from "./PaymentMarker";
 import StatisticCard from "./StatisticCard";
 
 // services
 import { PaymentService } from "services";
-import NotFoundText from "components/NotFoundText";
 
 function PaymentsTab({
   patient,
@@ -25,50 +26,30 @@ function PaymentsTab({
   // Set the default values
   const [payments, setPayments] = useState([]);
   const [payment, setPayment] = useState(null);
-  const [progress, setProgress] = useState(0);
-  const [completedAmount, setCompletedAmount] = useState(0);
-  const [waitingAmount, setWaitingAmount] = useState(0);
-  const [overdueAmount, setOverdueAmount] = useState(0);
 
   // Set the page on loading
   useEffect(() => {
-    getPayments(patient.id);
-    calcProgress();
-  }, [patient]);
+    const controller = new AbortController();
+    const signal = controller.signal;
 
-  // Set the progress of payments
-  useEffect(() => {
-    calcProgress();
-    getCounts();
-  }, [payments]);
+    PaymentService.getPayments(patient.id, { signal })
+      .then((res) => {
+        setPayments(res.data);
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [navigate, patient, setPayments]);
 
   // Calculate the payments percentage
-  const calcProgress = () => {
-    let total = 0;
-    let overdue = 0;
-    let completed = 0;
-    let progress = 0;
-
-    for (let payment of payments) {
-      // Calc completed payment
-      if (payment.actualDate) {
-        completed += payment.amount;
-      } else {
-        // Calc overdue payment
-        if (payment.plannedDate && new Date(payment.plannedDate) < new Date()) {
-          overdue += payment.amount;
-        }
-      }
-      // Calc total payment
-      total += payment.amount;
-    }
-
-    progress = total > 0 ? Math.floor((completed / total) * 100) : 0;
-    setProgress(progress);
-    setCompletedAmount(completed);
-    setWaitingAmount(total - completed);
-    setOverdueAmount(overdue);
-  };
+  const { progress, completedAmount, waitingAmount, overdueAmount } =
+    calcProgress(payments);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of payments of the patient and set payments value
@@ -81,6 +62,7 @@ function PaymentsTab({
       payments = response.data;
 
       setPayments(payments);
+      getCounts();
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -93,7 +75,6 @@ function PaymentsTab({
       // If update payment, then update and return
       if (payment.id) {
         await PaymentService.updatePayment(payment.id, payment);
-        toast.success("Ödeme bilgileri başarıyla güncellendi!");
       } else {
         // If create payment, then create payment
         // and reduce from total incase of it is specified
@@ -101,7 +82,6 @@ function PaymentsTab({
           await reducePayment(payment);
         }
         await PaymentService.savePayment(payment);
-        toast.success("Yeni ödeme başarıyla kaydedildi!");
       }
 
       // Get and set the updated list of payments
@@ -118,7 +98,7 @@ function PaymentsTab({
   const reducePayment = async (payment) => {
     let i;
     let amount;
-    let payments_;
+    let _payments;
 
     try {
       // If payment is planned or actual date is not specified, then return
@@ -127,11 +107,11 @@ function PaymentsTab({
       }
 
       amount = payment.amount;
-      payments_ = payments.filter((payment_) => !payment_.actualDate);
+      _payments = payments.filter((_payment) => !_payment.actualDate);
 
       i = 0;
-      while (amount > 0 && i < payments_.length) {
-        let currentPayment = payments_[i];
+      while (amount > 0 && i < _payments.length) {
+        let currentPayment = _payments[i];
         let currentAmount = currentPayment.amount;
 
         // Delete planned payments and reduce paid amount until amount is zero

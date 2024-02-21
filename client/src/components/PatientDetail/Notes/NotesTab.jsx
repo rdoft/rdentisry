@@ -118,6 +118,7 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
     if (!note) {
       return;
     }
+
     return <NoteCard note={note} onClick={handleSelectNote} />;
   };
 
