@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Tag, Button } from "primereact";
-import { Grid, Typography } from "@mui/material";
+import { Button } from "primereact";
+import { Grid } from "@mui/material";
+import PaymentType from "./PaymentType";
+import CardAmount from "./CardAmount";
+import CardDateTag from "./CardDateTag";
 
-import PaymentType from "components/PatientDetail/Payments/PaymentType";
-import ActionGroup from "components/ActionGroup/ActionGroup";
-
-function PaymentCard({ payment, onClickEdit, onClickPay, direction }) {
+function PaymentCard({ payment, onClickEdit, onSubmit, direction }) {
   const [isHover, setIsHover] = useState(false);
 
   // HANDLERS -----------------------------------------------------------------
@@ -25,128 +25,104 @@ function PaymentCard({ payment, onClickEdit, onClickPay, direction }) {
   };
 
   // onClickPay handler
-  const handleClickPay = () => {
-    if (!payment.actualDate) {
-      payment.actualDate = new Date();
-      onClickPay(payment);
-    }
+  const handlePay = () => {
+    onSubmit({
+      ...payment,
+      actualDate: new Date(),
+    });
   };
 
-  // TEMPLATES ----------------------------------------------------------
-  // Set amount of payment
-  const amount = () => {
-    return (
-      <Grid container alignItems="center" justifyContent="center">
-        <Grid item pr={0.5}>
-          <Typography variant="h6">₺</Typography>
-        </Grid>
-        <Grid item>
-          <Typography variant="h3" fontWeight="light">
-            {payment.amount.toLocaleString("tr-TR", {
-              style: "decimal",
-              maximumFractionDigits: 2,
-            })}
-          </Typography>
-        </Grid>
-      </Grid>
-    );
+  // onClickCancel handler
+  const handleCancel = () => {
+    onSubmit({
+      ...payment,
+      actualDate: null,
+    });
   };
 
-  // plannedDate Tag item
-  const plannedDateTag = () => {
-    let visibility = payment.plannedDate ? "visible" : "hidden";
-    let label =
-      payment.plannedDate &&
-      new Date(payment.plannedDate).toLocaleDateString("tr-TR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
+  // TEMPLATES ----------------------------------------------------------------
+  // Button for cancel payment
+  const cancelButton = payment.plannedDate && payment.actualDate && (
+    <Button
+      text
+      outlined
+      size="small"
+      icon="pi pi-times-circle"
+      severity="danger"
+      onClick={handleCancel}
+      tooltip="İptal et"
+    />
+  );
 
-    return (
-      <Tag
-        value={label}
-        style={{
-          backgroundColor: "#E8F0FF",
-          color: "#1E7AFC",
-          visibility: visibility,
-        }}
-      />
-    );
-  };
+  // Button for make payment
+  const payButton = !payment.actualDate && (
+    <Button
+      text
+      outlined
+      size="small"
+      icon="pi pi-check-circle"
+      severity="success"
+      onClick={handlePay}
+      tooltip="Öde"
+    />
+  );
 
-  // actualDate Tag item
-  const actualDateTag = () => {
-    let label;
-    let color;
-    let bgColor;
-
-    if (payment.actualDate) {
-      color = "#22A069";
-      bgColor = "#DFFCF0";
-      label = new Date(payment.actualDate).toLocaleDateString("tr-TR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-    } else if (new Date(payment.plannedDate).getTime() < new Date().getTime()) {
-      color = "#EF4444";
-      bgColor = "#FFD2CB";
-      label = "Gecikti";
-    } else {
-      color = "#1E7AFC";
-      bgColor = "#E8F0FF";
-      label = "Bekleniyor";
-    }
-
-    return (
-      <Tag value={label} style={{ backgroundColor: bgColor, color: color }} />
-    );
-  };
-
-  // Action button for pay
-  const payButton = () => {
-    if (!payment.actualDate) {
-      return (
-        <Button
-          text
-          outlined
-          size="sm"
-          icon="pi pi-check-circle"
-          severity="secondary"
-          onClick={handleClickPay}
-          tooltip="Öde"
-        />
-      );
-    }
-  };
+  // Button for edit payment
+  const editButton = (
+    <Button
+      text
+      outlined
+      size="small"
+      icon="pi pi-pencil"
+      severity="secondary"
+      onClick={handleClickEdit}
+      tooltip="Düzenle"
+    />
+  );
 
   return (
-    <Grid
-      container
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      direction={direction}
-      alignItems="center"
-    >
-      <Grid item xs={9} p={3} className="border-1 surface-border border-round">
-        <div className="flex flex-wrap justify-content-between pb-2">
-          {plannedDateTag()}
-          {actualDateTag()}
-        </div>
-        <div className="flex flex-wrap align-item-center justify-content-center text-xl font-bold gap-1">
-          {amount()}
-        </div>
-        <div className="flex flex-wrap align-items-center justify-content-center text-xs font-light gap-1">
-          <PaymentType type={payment.type} />
-        </div>
-      </Grid>
-      {isHover && (
-        <Grid item xs={2} px={1}>
-          <ActionGroup onClickEdit={handleClickEdit} custom={payButton()} />
+    <>
+      <Grid
+        container
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        direction={direction}
+        alignItems="center"
+      >
+        <Grid
+          item
+          xs={9}
+          p={3}
+          className="border-1 surface-border border-round"
+        >
+          <div className="flex flex-wrap justify-content-between pb-2">
+            <CardDateTag
+              actual={payment.actualDate}
+              planned={payment.plannedDate}
+              isPlanned={true}
+            />
+            <CardDateTag
+              actual={payment.actualDate}
+              planned={payment.plannedDate}
+              isPlanned={false}
+            />
+          </div>
+          <div className="flex flex-wrap align-item-center justify-content-center text-xl font-bold gap-1">
+            <CardAmount amount={payment.amount} />
+          </div>
+          <div className="flex flex-wrap align-items-center justify-content-center text-xs font-light gap-1">
+            <PaymentType type={payment.type} />
+          </div>
         </Grid>
-      )}
-    </Grid>
+        {isHover && (
+          <Grid item xs={2} px={1}>
+            {editButton}
+            {payButton}
+            {cancelButton}
+          </Grid>
+        )}
+      </Grid>
+    </>
   );
 }
 

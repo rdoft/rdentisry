@@ -149,9 +149,9 @@ function PaymentsTab({
   // HANDLERS -----------------------------------------------------------------
   // onSelectEvent, get payment and show dialog
   const handleSelectPayment = async (event) => {
-    const payment_ = payments.find((payment) => payment.id === event.id);
-    setPayment(payment_);
+    const _payment = payments.find((payment) => payment.id === event.id);
 
+    setPayment(_payment);
     setTimeout(showDialog, 100);
   };
 
@@ -167,17 +167,24 @@ function PaymentsTab({
       return;
     }
 
-    const idx = payments.findIndex((item) => item.id === payment.id);
+    // Set the direction of the payment card based on the index
+    const idx = payments.findIndex((_payment) => _payment.id === payment.id);
     const direction = idx % 2 === 0 ? "row" : "row-reverse";
 
     return (
       <PaymentCard
         payment={payment}
         onClickEdit={handleSelectPayment}
-        onClickPay={savePayment}
+        onSubmit={savePayment}
+        onDelete={payment && deletePayment}
         direction={direction}
       />
     );
+  };
+
+  // Payment marker template
+  const paymentMarker = (payment) => {
+    return <PaymentMarker payment={payment} />;
   };
 
   return (
@@ -192,6 +199,7 @@ function PaymentsTab({
           mt={2}
           pb={4}
         >
+          {/* Statistics */}
           <Grid
             container
             item
@@ -204,16 +212,12 @@ function PaymentsTab({
               <StatisticCard
                 label={"Ödenen"}
                 amount={completedAmount}
-                backgroundColor="#DFFCF0"
-                color="#22A069"
               ></StatisticCard>
             </Grid>
             <Grid item xs={2}>
               <StatisticCard
                 label={"Kalan"}
                 amount={waitingAmount}
-                backgroundColor="#E8F0FF"
-                color="#1E7AFC"
               ></StatisticCard>
             </Grid>
             {overdueAmount !== 0 && (
@@ -221,12 +225,12 @@ function PaymentsTab({
                 <StatisticCard
                   label={"Vadesi Geçen"}
                   amount={overdueAmount}
-                  backgroundColor="#FFD2CB"
-                  color="#EF4444"
                 ></StatisticCard>
               </Grid>
             )}
           </Grid>
+
+          {/* Progressbar */}
           <Grid item xs={8} pb={6}>
             <ProgressBar
               value={progress}
@@ -235,16 +239,20 @@ function PaymentsTab({
               showValue={false}
             ></ProgressBar>
           </Grid>
+
+          {/* Timeline */}
           <Grid item md={8} xs={12}>
             <Timeline
               value={payments}
               align="alternate"
-              marker={(payment) => <PaymentMarker payment={payment} />}
+              marker={paymentMarker}
               content={paymentTemplate}
             />
           </Grid>
         </Grid>
       )}
+
+      {/* Payment dialog */}
       {paymentDialog && (
         <PaymentDialog
           initPayment={payment ? payment : { patient }}

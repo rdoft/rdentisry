@@ -180,7 +180,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
         </div>
 
         {/* Amount */}
-        <div className="flex grid align-items-center mb-3">
+        <div className="flex grid align-items-center mb-5">
           <label htmlFor="amount" className="col-12 md:col-6 font-bold">
             Tutar <small className="p-error">*</small>
             {isError.amount && (
@@ -226,7 +226,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
             />
             <DatePicker
               id="plannedDate"
-              className="m-0"
+              className="mt-4"
               value={payment.plannedDate && new Date(payment.plannedDate)}
               onChange={(event) =>
                 handleChange({ target: { name: "plannedDate", value: event } })
@@ -236,7 +236,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
           </div>
 
           {/* Divider */}
-          <div className="flex grid w-full md:w-2 justify-content-center ">
+          <div className="flex grid w-full md:w-2 justify-content-center py-8">
             <Divider layout="vertical" className="hidden md:flex col-1" />
             <Divider layout="horizontal" className="flex md:hidden col-6" />
           </div>
@@ -250,10 +250,9 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
                 color: "#22A069",
               }}
             />
-
             <DatePicker
               id="actualDate"
-              className="m-0"
+              className="m-4"
               value={payment.actualDate && new Date(payment.actualDate)}
               onChange={(event) =>
                 handleChange({ target: { name: "actualDate", value: event } })
