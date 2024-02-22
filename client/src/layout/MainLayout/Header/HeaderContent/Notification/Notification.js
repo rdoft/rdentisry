@@ -16,8 +16,8 @@ import {
   Grid,
   Divider,
 } from "@mui/material";
-import { Button, InputSwitch } from "primereact";
-import ActionGroup from "components/ActionGroup/ActionGroup";
+import { InputSwitch } from "primereact";
+import { Read } from "components/Button";
 
 // project import
 import MainCard from "components/MainCard";
@@ -156,19 +156,6 @@ const Notification = () => {
     </List>
   );
 
-  // Action button for mark all as read
-  const readButton = (
-    <Button
-      text
-      outlined
-      size="sm"
-      icon="pi pi-check-circle"
-      severity="secondary"
-      style={{ width: "2rem", padding: "0.4rem" }}
-      onClick={handleClickRead}
-    />
-  );
-
   // Count of the sent notifications (unread)
   const getSentCount = () => {
     const sentNotifications = notifications.filter(
@@ -244,7 +231,7 @@ const Notification = () => {
                     >
                       {/* Mark all as read */}
                       <Grid item xs="auto">
-                        <ActionGroup custom={readButton} />
+                        <Read onClick={handleClickRead} />
                       </Grid>
                       <Grid item xs={5}>
                         <Typography variant="caption">

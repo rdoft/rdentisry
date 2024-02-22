@@ -1,7 +1,7 @@
 import React from "react";
 import { Dropdown, Divider } from "primereact";
 import DropdownPatientItem from "./DropdownItem/DropdownPatientItem";
-import ActionGroup from "components/ActionGroup/ActionGroup";
+import { Add } from "components/Button";
 
 function DropdownPatient({ value, options, onChange, onClickAdd }) {
   // TEMPLATES -----------------------------------------------------------------
@@ -16,7 +16,7 @@ function DropdownPatient({ value, options, onChange, onClickAdd }) {
       onClickAdd && (
         <div className="m-2">
           <Divider className="mt-0 mb-2" />
-          <ActionGroup label="Hasta Ekle" onClickAdd={onClickAdd} />
+          <Add label="Hasta Ekle" onClick={onClickAdd} />
         </div>
       )
     );

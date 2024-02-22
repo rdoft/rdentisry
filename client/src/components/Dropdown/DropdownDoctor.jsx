@@ -1,7 +1,7 @@
 import React from "react";
 import { Dropdown, Divider } from "primereact";
+import { Add } from "components/Button";
 import DropdownDoctorItem from "./DropdownItem/DropdownDoctorItem";
-import ActionGroup from "components/ActionGroup/ActionGroup";
 
 function DropdownDoctor({
   value,
@@ -27,7 +27,7 @@ function DropdownDoctor({
     return (
       <div className="m-2">
         <Divider className="mt-0 mb-2" />
-        <ActionGroup label="Doktor Ekle" onClickAdd={onClickAdd} />
+        <Add label="Doktor Ekle" onClick={onClickAdd} />
       </div>
     );
   };

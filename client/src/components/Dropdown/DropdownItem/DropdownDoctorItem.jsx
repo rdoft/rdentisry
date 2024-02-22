@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Typography, Avatar, Grid } from "@mui/material";
 import { ConfirmDialog } from "primereact";
 import { DialogFooter } from "components/DialogFooter";
-import ActionGroup from "components/ActionGroup/ActionGroup";
+import { Delete } from "components/Button";
 
 // assets
 import { doctorAvatar } from "assets/images/avatars";
@@ -86,7 +86,7 @@ function DropdownDoctorItem({ option, onDelete }) {
       <Grid item xs={2}>
         {onDelete &&
           (isHover || window.matchMedia("(hover: none)").matches) && (
-            <ActionGroup onClickDelete={handleDelete} />
+            <Delete onClick={handleDelete} />
           )}
       </Grid>
 

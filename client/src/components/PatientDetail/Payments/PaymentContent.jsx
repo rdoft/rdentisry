@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Grid, Typography } from "@mui/material";
-import { Button, ConfirmDialog } from "primereact";
+import { ConfirmDialog } from "primereact";
 import { DialogFooter } from "components/DialogFooter";
-import ActionGroup from "components/ActionGroup/ActionGroup";
+import { Edit, Delete, Pay, CancelPay } from "components/Button";
 import PaymentAmount from "./PaymentAmount";
 
 function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
@@ -58,34 +58,6 @@ function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
   };
 
   // TEMPLATES -----------------------------------------------------------------
-  // Pay button template
-  const payButton = !payment.actualDate && (
-    <Button
-      text
-      outlined
-      size="small"
-      icon="pi pi-check-circle"
-      severity="success"
-      onClick={handlePay}
-      tooltip="Öde"
-      tooltipOptions={{ position: "bottom" }}
-    />
-  );
-
-  // Cancel payment button
-  const cancelButton = payment.plannedDate && payment.actualDate && (
-    <Button
-      text
-      outlined
-      size="small"
-      icon="pi pi-times-circle"
-      severity="info"
-      onClick={handleCancel}
-      tooltip="İptal et"
-      tooltipOptions={{ position: "bottom" }}
-    />
-  );
-
   // Delete confirm dialog
   const deleteDialog = (
     <ConfirmDialog
@@ -114,13 +86,19 @@ function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
         </Grid>
         {isHover && (
           <Grid item>
-            <ActionGroup
-              onClickEdit={handleEdit}
-              onClickDelete={handleDelete}
-            />
-            
-            {payButton}
-            {cancelButton}
+            {/* Edit button */}
+            <Edit onClick={handleEdit} />
+
+            {/* Delete button */}
+            <Delete onClick={handleDelete} />
+
+            {/* Pay button */}
+            {!payment.actualDate && <Pay onClick={handlePay} />}
+
+            {/* Cancel payment button */}
+            {payment.plannedDate && payment.actualDate && (
+              <CancelPay onClick={handleCancel} />
+            )}
           </Grid>
         )}
       </Grid>

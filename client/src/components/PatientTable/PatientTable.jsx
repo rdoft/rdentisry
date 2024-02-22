@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
-import { DataTable, Column, Image, ConfirmDialog } from "primereact";
 import { Typography } from "@mui/material";
+import { DataTable, Column, Image, ConfirmDialog } from "primereact";
 import { AppointmentDialog, PatientDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
+import { Add, Edit, Delete } from "components/Button";
 import PatientTableToolbar from "./PatientTableToolbar";
-import ActionGroup from "components/ActionGroup/ActionGroup";
 
 // assets
 import "assets/styles/PatientTable/PatientTable.css";
@@ -362,11 +362,9 @@ function PatientsTable() {
             <Column
               body={(patient) =>
                 patient.id === rowIndex ? (
-                  <ActionGroup
+                  <Add
                     label="Randevu"
-                    onClickAdd={(event) =>
-                      handleClickAddAppointment(event, patient)
-                    }
+                    onClick={(e) => handleClickAddAppointment(e, patient)}
                   />
                 ) : null
               }
@@ -376,10 +374,12 @@ function PatientsTable() {
           <Column
             body={(patient) =>
               patient.id === rowIndex ? (
-                <ActionGroup
-                  onClickEdit={() => showEditPatientDialog(patient)}
-                  onClickDelete={() => showConfirmDeletePatientDialog(patient)}
-                />
+                <>
+                  <Edit onClick={() => showEditPatientDialog(patient)} />
+                  <Delete
+                    onClick={() => showConfirmDeletePatientDialog(patient)}
+                  />
+                </>
               ) : null
             }
             style={{ width: "8rem" }}

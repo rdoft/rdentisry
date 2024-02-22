@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Divider } from "primereact";
 import { Grid, Typography } from "@mui/material";
-
+import { Edit } from "components/Button";
 import AppointmentStatus from "./AppointmentStatus";
-import ActionGroup from "components/ActionGroup/ActionGroup";
 
 // assets
 import {
@@ -88,7 +87,7 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
         {/* Edit Button */}
         {isHover && (
           <Grid container item xs={1} justifyContent="flex-end">
-            <ActionGroup onClickEdit={handleClickEdit} />
+            <Edit onClick={handleClickEdit} />
           </Grid>
         )}
       </Grid>

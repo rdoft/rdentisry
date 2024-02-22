@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Tag, Divider, InputNumber, ConfirmDialog } from "primereact";
 import { Grid, Typography, ClickAwayListener } from "@mui/material";
-import { DialogFooter } from "components/DialogFooter";
 import { ProcedureCategory } from "components/ProcedureCategory";
-import ActionGroup from "components/ActionGroup/ActionGroup";
+import { DialogFooter } from "components/DialogFooter";
+import { Delete } from "components/Button";
 
 function ProcedureCard({ procedure, onDelete, onSubmit }) {
   const [isHover, setIsHover] = useState(false);
@@ -138,9 +138,7 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
   );
 
   // Set delete button
-  const deleteButton = procedure.id && (
-    <ActionGroup onClickDelete={handleDelete} />
-  );
+  const deleteButton = procedure.id && <Delete onClick={handleDelete} />;
 
   // Icon for completed procedure
   const completed = !editAmount && (

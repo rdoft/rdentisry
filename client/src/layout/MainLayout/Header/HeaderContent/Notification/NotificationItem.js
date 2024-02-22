@@ -10,8 +10,7 @@ import {
   ListItemSecondaryAction,
   Typography,
 } from "@mui/material";
-import { Button } from "primereact";
-import ActionGroup from "components/ActionGroup/ActionGroup";
+import { Read } from "components/Button";
 
 // assets
 import { LiraDangerIcon } from "assets/images/icons";
@@ -78,18 +77,6 @@ function NotificationItem({ notification, getNotifications, onClose }) {
     updateNotification("read");
   };
 
-  // Action button for mark as read
-  const readButton = (
-    <Button
-      text
-      outlined
-      size="sm"
-      icon="pi pi-check-circle"
-      severity="secondary"
-      onClick={handleClickRead}
-    />
-  );
-
   return (
     <ListItemButton
       sx={{
@@ -124,7 +111,7 @@ function NotificationItem({ notification, getNotifications, onClose }) {
       </ListItemSecondaryAction>
       {notification.status === "read" || (
         <ListItemSecondaryAction sx={{ alignSelf: "center !important" }}>
-          <ActionGroup custom={readButton} />
+          <Read onClickRead={handleClickRead} />
         </ListItemSecondaryAction>
       )}
     </ListItemButton>

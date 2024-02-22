@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Grid, Typography } from "@mui/material";
 import { ConfirmDialog } from "primereact";
 import { DialogFooter } from "components/DialogFooter";
-import ActionGroup from "components/ActionGroup/ActionGroup";
+import { Delete } from "components/Button";
 import NoteTitle from "./NoteTitle";
 import NoteDetail from "./NoteDetail";
 
-function Note({initNote, onSubmit, setEdit, onDelete }) {
+function Note({ initNote, onSubmit, setEdit, onDelete }) {
   const [note, setNote] = useState({
     title: "",
     detail: "",
@@ -96,7 +96,7 @@ function Note({initNote, onSubmit, setEdit, onDelete }) {
 
           {/* Delete button */}
           <Grid container item xs={1} justifyContent="end">
-            {note.id && <ActionGroup onClickDelete={handleDelete} />}
+            {note.id && <Delete onClick={handleDelete} />}
           </Grid>
         </Grid>
 

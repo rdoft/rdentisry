@@ -6,7 +6,7 @@ import { DataTable, Column, ConfirmDialog } from "primereact";
 import { Typography } from "@mui/material";
 import { BaseProcedureDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
-import ActionGroup from "components/ActionGroup/ActionGroup";
+import { Delete } from "components/Button";
 import PriceColumn from "components/ProcedureTable/PriceColumn";
 import CategoryColumn from "components/ProcedureTable/CategoryColumn";
 import NameColumn from "components/ProcedureTable/NameColumn";
@@ -313,8 +313,8 @@ function ProcedureTable({}) {
           <Column
             body={(procedure) =>
               procedure.id === rowIndex ? (
-                <ActionGroup
-                  onClickDelete={() => showDeleteProcedureDialog(procedure)}
+                <Delete
+                  onClick={() => showDeleteProcedureDialog(procedure)}
                 />
               ) : null
             }
