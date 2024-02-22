@@ -5,5 +5,8 @@ import Delete from "./Delete";
 import Read from "./Read";
 import Pay from "./Pay";
 import CancelPay from "./CancelPay";
+import Next from "./Next";
+import Prev from "./Prev";
+import Cancel from "./Cancel";
 
-export { Add, Edit, More, Delete, Read, Pay, CancelPay };
+export { Add, Edit, More, Delete, Read, Pay, CancelPay, Next, Prev, Cancel };

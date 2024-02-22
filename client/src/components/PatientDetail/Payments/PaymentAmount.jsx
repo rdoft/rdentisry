@@ -19,7 +19,7 @@ function PaymentAmount({ amount, type }) {
       pb={6}
     >
       <Grid item xs={12}>
-        <CardTitle style={{ fontSize: "1.2rem" }}>
+        <CardTitle variant="h4">
           <Typography variant="caption">₺</Typography> {_amount}
         </CardTitle>
       </Grid>
