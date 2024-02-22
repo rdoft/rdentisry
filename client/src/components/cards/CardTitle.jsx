@@ -1,7 +1,7 @@
 import React from "react";
 import { Typography } from "@mui/material";
 
-function CardTitle({ title, style }) {
+function CardTitle({ children, style }) {
   return (
     <Typography
       variant="h5"
@@ -14,7 +14,7 @@ function CardTitle({ title, style }) {
         ...style,
       }}
     >
-      {`${title}`}
+      {children}
     </Typography>
   );
 }

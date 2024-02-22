@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import { AppointmentDialog } from "components/Dialog";
-import CardTitle from "components/cards/CardTitle";
+import { CardTitle } from "components/cards";
 import NotFoundText from "components/NotFoundText";
 import AppointmentCard from "./AppointmentCard";
 
@@ -154,10 +154,9 @@ function AppointmentsTab({
         {/* Active appointments */}
         <Grid container item md={6} xs={12} justifyContent="center" pr={2}>
           <Grid item xs={1}>
-            <CardTitle
-              title="Aktif"
-              style={{ textAlign: "center", marginY: 2 }}
-            />
+            <CardTitle style={{ textAlign: "center", marginY: 2 }}>
+              Aktif
+            </CardTitle>
           </Grid>
 
           <Grid item xs={12}>
@@ -176,10 +175,9 @@ function AppointmentsTab({
         {/* Other appointments */}
         <Grid container item md={6} xs={12} justifyContent="center" pl={2}>
           <Grid item xs={1}>
-            <CardTitle
-              title="Diğer"
-              style={{ textAlign: "center", marginY: 2 }}
-            />
+            <CardTitle style={{ textAlign: "center", marginY: 2 }}>
+              Diğer
+            </CardTitle>
           </Grid>
 
           <Grid item xs={12}>

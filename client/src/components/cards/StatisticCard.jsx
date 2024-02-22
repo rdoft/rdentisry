@@ -1,34 +1,15 @@
 import { React } from "react";
 import { Grid, Stack, Typography } from "@mui/material";
 
-function StatisticCard({ label, amount }) {
-  let backgroundColor;
-  let color;
-  switch (label) {
-    case "Ödenen":
-      backgroundColor = "#DFFCF0";
-      color = "#22A069";
-      break;
-    case "Kalan":
-      backgroundColor = "#E8F0FF";
-      color = "#1E7AFC";
-      break;
-    case "Vadesi Geçen":
-      backgroundColor = "#FFD2CB";
-      color = "#EF4444";
-      break;
-    default:
-      break;
-  }
-
+function StatisticCard({ label, amount, ...props }) {
   return (
     <Stack
       p={1}
       spacing={0.5}
       alignItems="center"
       style={{
-        color: color,
-        backgroundColor: backgroundColor,
+        color: props.color,
+        backgroundColor: props.backgroundColor,
         borderRadius: 7,
       }}
     >

@@ -7,9 +7,10 @@ import { Timeline, ProgressBar } from "primereact";
 import { PaymentDialog } from "components/Dialog";
 import { calcProgress } from "utils";
 import NotFoundText from "components/NotFoundText";
-import PaymentCard from "./PaymentCard";
+import PaymentStatistic from "./PaymentStatistic";
 import PaymentMarker from "./PaymentMarker";
-import StatisticCard from "./StatisticCard";
+import PaymentAmount from "./PaymentAmount";
+import PaymentDateTag from "./PaymentDateTag";
 
 // services
 import { PaymentService } from "services";
@@ -162,22 +163,17 @@ function PaymentsTab({
   };
 
   // TEMPLATES ----------------------------------------------------------------
-  const paymentTemplate = (payment) => {
-    if (!payment) {
-      return;
-    }
+  // Payment amount template
+  const paymentAmount = (payment) => {
+    return <PaymentAmount amount={payment.amount} type={payment.type} />;
+  };
 
-    // Set the direction of the payment card based on the index
-    const idx = payments.findIndex((_payment) => _payment.id === payment.id);
-    const direction = idx % 2 === 0 ? "row" : "row-reverse";
-
+  // Payment dates template
+  const paymentDate = (payment) => {
     return (
-      <PaymentCard
-        payment={payment}
-        onClickEdit={handleSelectPayment}
-        onSubmit={savePayment}
-        onDelete={payment && deletePayment}
-        direction={direction}
+      <PaymentDateTag
+        actual={payment.actualDate}
+        planned={payment.plannedDate}
       />
     );
   };
@@ -200,35 +196,11 @@ function PaymentsTab({
           pb={4}
         >
           {/* Statistics */}
-          <Grid
-            container
-            item
-            xs={12}
-            p={2}
-            spacing={3}
-            justifyContent="center"
-          >
-            <Grid item xs={2}>
-              <StatisticCard
-                label={"Ödenen"}
-                amount={completedAmount}
-              ></StatisticCard>
-            </Grid>
-            <Grid item xs={2}>
-              <StatisticCard
-                label={"Kalan"}
-                amount={waitingAmount}
-              ></StatisticCard>
-            </Grid>
-            {overdueAmount !== 0 && (
-              <Grid item xs={2}>
-                <StatisticCard
-                  label={"Vadesi Geçen"}
-                  amount={overdueAmount}
-                ></StatisticCard>
-              </Grid>
-            )}
-          </Grid>
+          <PaymentStatistic
+            completedAmount={completedAmount}
+            waitingAmount={waitingAmount}
+            overdueAmount={overdueAmount}
+          />
 
           {/* Progressbar */}
           <Grid item xs={8} pb={6}>
@@ -244,9 +216,9 @@ function PaymentsTab({
           <Grid item md={8} xs={12}>
             <Timeline
               value={payments}
-              align="alternate"
               marker={paymentMarker}
-              content={paymentTemplate}
+              content={paymentAmount}
+              opposite={paymentDate}
             />
           </Grid>
         </Grid>

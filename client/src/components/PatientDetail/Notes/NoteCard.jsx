@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
 import { Divider } from "primereact";
-import CardTitle from "components/cards/CardTitle";
+import { CardTitle } from "components/cards";
 
 function NoteCard({ note, onClick }) {
   // Set values as desired format
@@ -34,7 +34,7 @@ function NoteCard({ note, onClick }) {
       >
         {/* Title */}
         <Grid item>
-          <CardTitle title={title} />
+          <CardTitle>{title}</CardTitle>
         </Grid>
 
         {/* Date */}

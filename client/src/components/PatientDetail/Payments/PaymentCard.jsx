@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Button } from "primereact";
 import { Grid } from "@mui/material";
 import PaymentType from "./PaymentType";
-import CardAmount from "./CardAmount";
-import CardDateTag from "./CardDateTag";
+import PaymentAmount from "./PaymentAmount";
+import PaymentDateTag from "./PaymentDateTag";
 
 function PaymentCard({ payment, onClickEdit, onSubmit, direction }) {
   const [isHover, setIsHover] = useState(false);
@@ -67,19 +67,6 @@ function PaymentCard({ payment, onClickEdit, onSubmit, direction }) {
     />
   );
 
-  // Button for edit payment
-  const editButton = (
-    <Button
-      text
-      outlined
-      size="small"
-      icon="pi pi-pencil"
-      severity="secondary"
-      onClick={handleClickEdit}
-      tooltip="Düzenle"
-    />
-  );
-
   return (
     <>
       <Grid
@@ -93,22 +80,24 @@ function PaymentCard({ payment, onClickEdit, onSubmit, direction }) {
           item
           xs={9}
           p={3}
-          className="border-1 surface-border border-round"
+          onClick={handleClickEdit}
+          className="border-2 surface-border border-round"
+          style={{ backgroundColor: isHover && "#F3F4F5", cursor: "pointer" }}
         >
           <div className="flex flex-wrap justify-content-between pb-2">
-            <CardDateTag
+            <PaymentDateTag
               actual={payment.actualDate}
               planned={payment.plannedDate}
               isPlanned={true}
             />
-            <CardDateTag
+            <PaymentDateTag
               actual={payment.actualDate}
               planned={payment.plannedDate}
               isPlanned={false}
             />
           </div>
           <div className="flex flex-wrap align-item-center justify-content-center text-xl font-bold gap-1">
-            <CardAmount amount={payment.amount} />
+            <PaymentAmount amount={payment.amount} />
           </div>
           <div className="flex flex-wrap align-items-center justify-content-center text-xs font-light gap-1">
             <PaymentType type={payment.type} />
@@ -116,7 +105,6 @@ function PaymentCard({ payment, onClickEdit, onSubmit, direction }) {
         </Grid>
         {isHover && (
           <Grid item xs={2} px={1}>
-            {editButton}
             {payButton}
             {cancelButton}
           </Grid>

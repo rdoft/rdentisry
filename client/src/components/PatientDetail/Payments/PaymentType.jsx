@@ -34,7 +34,10 @@ function PaymentType({ type, onChange }) {
         label &&
         icon && (
           <>
-            <i className={icon} style={{ fontSize: "0.7rem" }}></i>
+            <i
+              className={icon}
+              style={{ fontSize: "0.7rem", paddingRight: "0.3rem" }}
+            ></i>
             <span>{label}</span>
           </>
         )
