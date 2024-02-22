@@ -139,7 +139,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
     onDelete &&
     (() => {
       confirmDialog({
-        message: "Ödemeyi silmek istediğinizden emin misiniz?",
+        message: "Ödemeyi silmek istediğinize emin misiniz?",
         header: "Ödemeyi Sil",
         footer: <DialogFooter onHide={handleHide} onDelete={handleDelete} />,
       });

@@ -4,13 +4,13 @@ import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { Timeline, ProgressBar } from "primereact";
-import { PaymentDialog } from "components/Dialog";
 import { calcProgress } from "utils";
+import { PaymentDialog } from "components/Dialog";
 import NotFoundText from "components/NotFoundText";
 import PaymentStatistic from "./PaymentStatistic";
 import PaymentMarker from "./PaymentMarker";
-import PaymentAmount from "./PaymentAmount";
 import PaymentDateTag from "./PaymentDateTag";
+import PaymentContent from "./PaymentContent";
 
 // services
 import { PaymentService } from "services";
@@ -163,9 +163,16 @@ function PaymentsTab({
   };
 
   // TEMPLATES ----------------------------------------------------------------
-  // Payment amount template
-  const paymentAmount = (payment) => {
-    return <PaymentAmount amount={payment.amount} type={payment.type} />;
+  // Payment content template
+  const paymentContent = (payment) => {
+    return (
+      <PaymentContent
+        payment={payment}
+        onClickEdit={handleSelectPayment}
+        onSubmit={savePayment}
+        onDelete={deletePayment}
+      />
+    );
   };
 
   // Payment dates template
@@ -217,7 +224,7 @@ function PaymentsTab({
             <Timeline
               value={payments}
               marker={paymentMarker}
-              content={paymentAmount}
+              content={paymentContent}
               opposite={paymentDate}
             />
           </Grid>
