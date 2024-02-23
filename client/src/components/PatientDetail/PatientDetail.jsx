@@ -122,9 +122,9 @@ function PatientDetail() {
           break;
         case 3:
           // Get the list of procedures of the patient and set procedures count
-          response = await PatientProcedureService.getPatientProcedures(
-            patient.id
-          );
+          response = await PatientProcedureService.getPatientProcedures({
+            patientId: patient.id,
+          });
           setCountProcedure(response.data.length || 0);
           break;
         // case 4:
@@ -139,9 +139,9 @@ function PatientDetail() {
           setCountPayment(response.data.length || 0);
           response = await NoteService.getNotes(patient.id);
           setCountNote(response.data.length || 0);
-          response = await PatientProcedureService.getPatientProcedures(
-            patient.id
-          );
+          response = await PatientProcedureService.getPatientProcedures({
+            patientId: patient.id,
+          });
           setCountProcedure(response.data.length || 0);
           break;
       }

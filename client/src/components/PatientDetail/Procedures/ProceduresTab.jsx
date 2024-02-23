@@ -20,40 +20,45 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
   const navigate = useNavigate();
 
   const [procedures, setProcedures] = useState([]);
-  const [groupedProcedures, setGroupedProcedures] = useState({});
-  const [selectedTooth, setSelectedTooth] = useState(null);
   const [procedure, setProcedure] = useState(null);
+  const [selectedTooth, setSelectedTooth] = useState(null);
 
   // Set the page on loading
   useEffect(() => {
-    getProcedures(patient.id, selectedTooth);
-  }, [patient, selectedTooth]);
+    const controller = new AbortController();
+    const signal = controller.signal;
 
-  // Set the counts when procedures change
-  useEffect(() => {
-    getCounts();
-  }, [procedures]);
+    PatientProcedureService.getPatientProcedures(
+      { patientId: patient.id, tooth: selectedTooth },
+      { signal }
+    )
+      .then((res) => {
+        setProcedures(res.data);
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
 
-  // FUNCTIONS ----------------------------------------------------------------
+    return () => {
+      controller.abort();
+    };
+  }, [navigate, patient, selectedTooth]);
+
   // Group procedures by tooth number
-  const groupProcedures = (procedures) => {
-    let groupedProcedures = {};
-    let tooth;
-
-    for (let procedure of procedures) {
-      tooth = procedure.toothNumber;
-
-      if (tooth || tooth == 0) {
-        if (groupedProcedures[tooth]) {
-          groupedProcedures[tooth].push(procedure);
-        } else {
-          groupedProcedures[tooth] = [procedure];
-        }
+  let groupedProcedures = {};
+  let tooth;
+  for (let procedure of procedures) {
+    tooth = procedure.toothNumber;
+    if (tooth || tooth == 0) {
+      if (groupedProcedures[tooth]) {
+        groupedProcedures[tooth].push(procedure);
+      } else {
+        groupedProcedures[tooth] = [procedure];
       }
     }
-
-    setGroupedProcedures(groupedProcedures);
-  };
+  }
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of the procedures of the patient and set procedures value
@@ -62,20 +67,14 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
     let procedures;
 
     try {
-      if (tooth) {
-        response = await PatientProcedureService.getPatientProcedures(
-          patientId,
-          tooth
-        );
-      } else {
-        response = await PatientProcedureService.getPatientProcedures(
-          patientId
-        );
-      }
+      response = await PatientProcedureService.getPatientProcedures({
+        patientId,
+        tooth,
+      });
 
       procedures = response.data;
-      groupProcedures(procedures);
       setProcedures(procedures);
+      getCounts();
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
