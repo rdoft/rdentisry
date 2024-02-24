@@ -3,12 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { errorHandler } from "utils";
 import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
-import { DataScroller, Fieldset } from "primereact";
-import NotFoundText from "components/NotFoundText";
-import ProcedureCard from "./ProcedureCard";
-import ProcedureToolbar from "./ProcedureToolbar";
 import { ProcedureDialog } from "components/Dialog";
+import NotFoundText from "components/NotFoundText";
+import ProcedureToolbar from "./ProcedureToolbar";
 import DentalChart from "./DentalChart";
+import ProcedureList from "./ProcedureList";
 
 // assets
 import "assets/styles/PatientDetail/ProceduresTab.css";
@@ -71,8 +70,8 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
         patientId,
         tooth,
       });
-
       procedures = response.data;
+
       setProcedures(procedures);
       getCounts();
     } catch (error) {
@@ -94,7 +93,6 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
 
       // Get and set the updated list of procedures
       getProcedures(patient.id, selectedTooth);
-      setProcedure(null);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -124,44 +122,6 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
     hideDialog();
   };
 
-  // TEMPLATES ----------------------------------------------------------------
-  const procedureTemplate = (procedure) => {
-    if (procedure) {
-      return (
-        <ProcedureCard
-          procedure={{ ...procedure, patient }}
-          onDelete={deleteProcedure}
-          onSubmit={saveProcedure}
-        />
-      );
-    }
-  };
-
-  // Template the procedures list of the selected tooth or all teeth
-  const proceduresTemplate = selectedTooth ? (
-    <DataScroller
-      value={procedures}
-      itemTemplate={procedureTemplate}
-      rows={10}
-    ></DataScroller>
-  ) : (
-    Object.entries(groupedProcedures).map(([tooth, items]) => (
-      <Fieldset
-        key={tooth}
-        className="mb-2"
-        legend={tooth == 0 ? `Genel` : `Diş ${tooth}`}
-        toggleable
-        style={{ fontSize: "smaller" }}
-      >
-        <DataScroller
-          value={items}
-          itemTemplate={procedureTemplate}
-          rows={10}
-        ></DataScroller>
-      </Fieldset>
-    ))
-  );
-
   return (
     <>
       <Grid
@@ -187,7 +147,7 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
           />
         </Grid>
 
-        {/* Procedure list */}
+        {/* Procedures */}
         <Grid
           item
           lg={6}
@@ -195,16 +155,25 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
           p={3}
           sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
         >
+          {/* Toolbar */}
           <Grid item pb={2}>
             <ProcedureToolbar
               selectedTooth={selectedTooth}
               onChangeTooth={setSelectedTooth}
             />
           </Grid>
+
+          {/* Procedure list */}
           {procedures.length === 0 ? (
             <NotFoundText text={"Tedavi yok"} p={3} />
           ) : (
-            <Grid item>{proceduresTemplate}</Grid>
+            <ProcedureList
+              patient={patient}
+              selectedTooth={selectedTooth}
+              procedures={groupedProcedures}
+              onSubmit={setProcedure}
+              onDelete={deleteProcedure}
+            />
           )}
         </Grid>
       </Grid>
