@@ -20,7 +20,7 @@ function PaymentAmount({ amount, type }) {
     >
       <Grid item xs={12}>
         <CardTitle variant="h4">
-          <Typography variant="caption">₺</Typography> {_amount}
+          <Typography variant="caption">₺</Typography>{_amount}
         </CardTitle>
       </Grid>
       <Grid item xs={12} fontSize={12}>

@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Tag, Divider, InputNumber, ConfirmDialog } from "primereact";
-import { Grid, Typography, ClickAwayListener } from "@mui/material";
+import { Divider, ConfirmDialog } from "primereact";
+import { Grid, Typography } from "@mui/material";
 import { ProcedureCategory } from "components/ProcedureCategory";
 import { DialogFooter } from "components/DialogFooter";
 import { Delete } from "components/Button";
+import PriceColumn from "./PriceColumn";
+import StatusColumn from "./StatusColumn";
 
 function ProcedureCard({ procedure, onDelete, onSubmit }) {
   const [isHover, setIsHover] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
-  const [editAmount, setEditAmount] = useState(false);
-  const [isComplete, setIsComplete] = useState(procedure.isComplete);
-  const [prevAmount, setPrevAmount] = useState(procedure.invoice.amount);
-
-  // Set isComplete on loading
-  useEffect(() => {
-    setIsComplete(procedure.isComplete);
-    setPrevAmount(procedure.invoice.amount);
-  }, [procedure]);
+  const [isEdit, setIsEdit] = useState(false);
 
   // HANDLERS -----------------------------------------------------------------
   // onMouseEnter handler for display buttons
@@ -45,114 +39,7 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
     setIsDelete(false);
   };
 
-  // onChangeStatus handler
-  const handleChangeStatus = () => {
-    procedure.isComplete = !isComplete;
-    onSubmit(procedure);
-  };
-
-  // onEditAmount handler
-  const handleEditAmount = () => {
-    setEditAmount(true);
-  };
-
-  // onChangeAmount handler
-  const handleChangeAmount = (event) => {
-    const value = event.value || 0;
-    procedure.invoice.amount = value;
-  };
-
-  // onSave handler, to save changes
-  const handleSaveAmount = () => {
-    setEditAmount(false);
-    onSubmit(procedure);
-  };
-
-  // onCancel handler, discard changes to amount
-  const handleCancelAmount = () => {
-    procedure.invoice.amount = prevAmount;
-    setEditAmount(false);
-  };
-
-  // onKeyDown handler, save the amount on Ctrl+Enter and discard changes on Escape
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
-      handleSaveAmount();
-    } else if (event.key === "Escape") {
-      handleCancelAmount();
-    }
-  };
-
-  // handleClickAway handler, save the amount
-  const handleClickAway = () => {
-    handleSaveAmount();
-  };
-
   // TEMPLATES -----------------------------------------------------------------
-  // Set category of the procedure
-  const category = (
-    <ProcedureCategory
-      category={procedure.procedure.procedureCategory.title}
-      isLabel={false}
-    />
-  );
-
-  // Set price of procedure
-  const price = editAmount ? (
-    <ClickAwayListener onClickAway={handleClickAway}>
-      <InputNumber
-        id="amount"
-        value={procedure.invoice.amount}
-        mode="currency"
-        min={0}
-        currency="TRY"
-        locale="tr-TR"
-        style={{ height: "2.5rem" }}
-        onValueChange={handleChangeAmount}
-      />
-    </ClickAwayListener>
-  ) : (
-    <Grid container onClick={handleEditAmount}>
-      <Typography variant="h6">₺</Typography>
-      <Typography variant="h5" fontWeight="light">
-        {procedure.invoice.amount.toLocaleString("tr-TR", {
-          style: "decimal",
-          maximumFractionDigits: 2,
-        })}
-      </Typography>
-    </Grid>
-  );
-
-  // Set code of procedure
-  // const code = (
-  //   <Typography variant="caption" fontWeight="bold">
-  //     {procedure.procedure.code}
-  //   </Typography>
-  // );
-
-  // Set name of procedure
-  const name = (
-    <Typography variant="h5" fontWeight="light">
-      {procedure.procedure.name}
-    </Typography>
-  );
-
-  // Set delete button
-  const deleteButton = procedure.id && <Delete onClick={handleDelete} />;
-
-  // Icon for completed procedure
-  const completed = !editAmount && (
-    <Tag
-      value={isComplete ? "Tamamlandı" : "Bekleniyor"}
-      style={
-        isComplete
-          ? { backgroundColor: "#DFFCF0", color: "#22A069", cursor: "pointer" }
-          : { backgroundColor: "#E8F0FF", color: "#1E7AFC", cursor: "pointer" }
-      }
-      onClick={handleChangeStatus}
-    />
-  );
-
   // Delete confirm dialog
   const deleteDialog = (
     <ConfirmDialog
@@ -181,38 +68,58 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
         container
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        onKeyDown={handleKeyDown}
-        sx={{ minHeight: "4rem", paddingY: "0.7em" }}
+        sx={{ minHeight: "4rem" }}
         alignItems="center"
       >
         {/* Name */}
-        <Grid item xs={7} lg={7} pr={3}>
-          {name}
+        <Grid item xs={7} lg={6} pr={3}>
+          <Typography variant="h5" fontWeight="light">
+            {procedure.procedure.name}
+          </Typography>
         </Grid>
+
         {/* Category */}
         <Grid item lg={1} display={{ xs: "none", lg: "block" }}>
-          {category}
+          <ProcedureCategory
+            category={procedure.procedure.procedureCategory.title}
+            isLabel={false}
+          />
         </Grid>
+
         {/* Price */}
-        <Grid item xs={2} lg={1}>
-          {price}
+        <Grid item xs={isEdit ? 4 : 2} lg={isEdit ? 4 : 2} m={isEdit ? 2 : 0}>
+          <PriceColumn
+            procedure={procedure}
+            onSubmit={onSubmit}
+            isEdit={isEdit}
+            setIsEdit={setIsEdit}
+          />
         </Grid>
-        {/* IsCompleted */}
-        <Grid container item xs={2} justifyContent="end">
-          {completed}
-        </Grid>
-        {(isHover || window.matchMedia("(hover: none)").matches) && (
-          <Grid container item xs={1} justifyContent="end">
-            {deleteButton}
-          </Grid>
+
+        {!isEdit && (
+          <>
+            {/* Status */}
+            <Grid container item xs={2} justifyContent="end">
+              <StatusColumn procedure={procedure} onSubmit={onSubmit} />
+            </Grid>
+
+            {/* Delete button */}
+            {(isHover || window.matchMedia("(hover: none)").matches) && (
+              <Grid container item xs={1} justifyContent="end">
+                <Delete onClick={handleDelete} />
+              </Grid>
+            )}
+          </>
         )}
       </Grid>
+
       {/* Divider */}
       <Grid container>
         <Grid item xs={12}>
           <Divider style={{ margin: 0 }} />
         </Grid>
       </Grid>
+
       {/* Confirm delete dialog */}
       {deleteDialog}
     </>

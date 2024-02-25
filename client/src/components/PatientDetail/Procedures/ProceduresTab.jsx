@@ -19,7 +19,6 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
   const navigate = useNavigate();
 
   const [procedures, setProcedures] = useState([]);
-  const [procedure, setProcedure] = useState(null);
   const [selectedTooth, setSelectedTooth] = useState(null);
 
   // Set the page on loading
@@ -115,13 +114,6 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
     }
   };
 
-  // HANDLERS -----------------------------------------------------------------
-  // onHide handler
-  const handleHide = () => {
-    setProcedure(null);
-    hideDialog();
-  };
-
   return (
     <>
       <Grid
@@ -171,7 +163,7 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
               patient={patient}
               selectedTooth={selectedTooth}
               procedures={groupedProcedures}
-              onSubmit={setProcedure}
+              onSubmit={saveProcedure}
               onDelete={deleteProcedure}
             />
           )}
@@ -181,10 +173,11 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
       {/* Dialog */}
       {procedureDialog && (
         <ProcedureDialog
-          initPatientProcedure={
-            procedure ? procedure : { patient, toothNumber: selectedTooth || 0 }
-          }
-          onHide={handleHide}
+          initPatientProcedure={{
+            patient,
+            toothNumber: selectedTooth || 0,
+          }}
+          onHide={hideDialog}
           onSubmit={saveProcedure}
         />
       )}

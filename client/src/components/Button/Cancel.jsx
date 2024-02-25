@@ -5,7 +5,8 @@ function Cancel({ label, onClick, ...props }) {
   return (
     <Button
       text
-      rounded
+      outlined
+      size="small"
       icon="pi pi-times"
       severity={props.severity || "secondary"}
       onClick={onClick}

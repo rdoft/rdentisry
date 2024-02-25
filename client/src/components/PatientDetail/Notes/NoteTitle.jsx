@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Grid, Typography, ClickAwayListener } from "@mui/material";
-import { InputText, Button } from "primereact";
+import { InputText } from "primereact";
+import { Cancel } from "components/Button";
 
 function NoteTitle({ note, onSubmit, onCancel, onEdit }) {
   const [title, setTitle] = useState(note.title);
@@ -70,13 +71,7 @@ function NoteTitle({ note, onSubmit, onCancel, onEdit }) {
             </ClickAwayListener>
           </Grid>
           <Grid item xs>
-            <Button
-              icon="pi pi-times"
-              size="small"
-              severity="secondary"
-              text
-              onClick={handleCancel}
-            />
+            <Cancel onClick={handleCancel} />
           </Grid>
         </>
       ) : (
