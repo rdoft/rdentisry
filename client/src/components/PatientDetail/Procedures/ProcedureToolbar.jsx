@@ -7,12 +7,23 @@ function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
   // Add keydown event listener
   // when component mounts and remove it when unmounts
   useEffect(() => {
+    // onKeyDown handler to cancel selected tooth
+    const handleKeyDown = (event) => {
+      switch (event.key) {
+        case "Escape":
+          onChangeTooth(null);
+          document.activeElement.blur();
+          break;
+        default:
+          break;
+      }
+    };
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [onChangeTooth]);
 
   // All theeth numbers
   const theeth = [
@@ -82,17 +93,10 @@ function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
     document.activeElement.blur();
   };
 
-  // onKeyDown handler to cancel selected tooth
-  const handleKeyDown = (event) => {
-    if (event.key === "Escape") {
-      handleCancelTooth();
-    }
-  };
-
   return (
     <Grid container item alignItems="center">
       {!selectedTooth ? (
-        <Grid item xs={8} m={1}>
+        <Grid item xs={8}>
           {/* All procedure */}
           <CardTitle variant="h3">Tüm Tedaviler</CardTitle>
         </Grid>

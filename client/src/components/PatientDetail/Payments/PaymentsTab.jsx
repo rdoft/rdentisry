@@ -193,7 +193,7 @@ function PaymentsTab({
   return (
     <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
       {payments.length === 0 ? (
-        <NotFoundText text="Ödeme yok" p={3} />
+        <NotFoundText text="Ödeme yok" p={3} m={3} />
       ) : (
         <Grid
           container

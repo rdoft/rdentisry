@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Divider, ConfirmDialog } from "primereact";
 import { Grid, Typography } from "@mui/material";
 import { ProcedureCategory } from "components/ProcedureCategory";

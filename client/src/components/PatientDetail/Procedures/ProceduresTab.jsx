@@ -4,7 +4,6 @@ import { errorHandler } from "utils";
 import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
 import { ProcedureDialog } from "components/Dialog";
-import NotFoundText from "components/NotFoundText";
 import ProcedureToolbar from "./ProcedureToolbar";
 import DentalChart from "./DentalChart";
 import ProcedureList from "./ProcedureList";
@@ -27,7 +26,7 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
     const signal = controller.signal;
 
     PatientProcedureService.getPatientProcedures(
-      { patientId: patient.id, tooth: selectedTooth },
+      { patientId: patient.id },
       { signal }
     )
       .then((res) => {
@@ -42,14 +41,14 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
     return () => {
       controller.abort();
     };
-  }, [navigate, patient, selectedTooth]);
+  }, [navigate, patient]);
 
   // Group procedures by tooth number
   let groupedProcedures = {};
   let tooth;
   for (let procedure of procedures) {
     tooth = procedure.toothNumber;
-    if (tooth || tooth == 0) {
+    if (tooth || tooth === 0) {
       if (groupedProcedures[tooth]) {
         groupedProcedures[tooth].push(procedure);
       } else {
@@ -60,14 +59,13 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of the procedures of the patient and set procedures value
-  const getProcedures = async (patientId, tooth) => {
+  const getProcedures = async (patientId) => {
     let response;
     let procedures;
 
     try {
       response = await PatientProcedureService.getPatientProcedures({
         patientId,
-        tooth,
       });
       procedures = response.data;
 
@@ -91,7 +89,7 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
       }
 
       // Get and set the updated list of procedures
-      getProcedures(patient.id, selectedTooth);
+      getProcedures(patient.id);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -107,7 +105,7 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
       );
 
       // Get and set the updated list of procedures
-      getProcedures(patient.id, selectedTooth);
+      getProcedures(patient.id);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -156,17 +154,13 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
           </Grid>
 
           {/* Procedure list */}
-          {procedures.length === 0 ? (
-            <NotFoundText text={"Tedavi yok"} p={3} />
-          ) : (
-            <ProcedureList
-              patient={patient}
-              selectedTooth={selectedTooth}
-              procedures={groupedProcedures}
-              onSubmit={saveProcedure}
-              onDelete={deleteProcedure}
-            />
-          )}
+          <ProcedureList
+            patient={patient}
+            selectedTooth={selectedTooth}
+            procedures={groupedProcedures}
+            onSubmit={saveProcedure}
+            onDelete={deleteProcedure}
+          />
         </Grid>
       </Grid>
 
