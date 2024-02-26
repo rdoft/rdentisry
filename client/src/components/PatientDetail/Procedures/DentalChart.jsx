@@ -1,15 +1,30 @@
-import React, { useEffect } from "react";
-import { Badge, Divider, Image } from "primereact";
-import { Grid, ButtonBase, ImageList, ImageListItem } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Badge, Divider, Skeleton } from "primereact";
+import { Grid, ImageList } from "@mui/material";
+import StatusBadge from "./StatusBadge";
 
 // assets
 import { upTeeth, downTeeth } from "assets/images/charts";
-import { CompletedIcon, InProgressIcon } from "assets/images/icons";
 
 function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
-  // useEffect(() => {
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // }, [procedures]);
+  // Load image on mount
+  useEffect(() => {
+    const loadImage = (src) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+
+        img.src = src;
+        img.onload = resolve();
+        img.onerror = reject();
+      });
+    };
+
+    Promise.all(upTeeth.map((img) => loadImage(img.src)))
+      .then(() => Promise.all(downTeeth.map((img) => loadImage(img.src))))
+      .then(() => setIsLoaded(true));
+  }, []);
 
   // HANDLERS -----------------------------------------------------------------
   // onClick tooth handler
@@ -19,17 +34,17 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
 
   // TEMPLATES ----------------------------------------------------------------
   // Tooth item template
-  const toothItem = (tooth) => (
-    <ImageListItem sx={{ alignItems: "center" }}>
-      {/* Image */}
+  const toothItem = (tooth) =>
+    isLoaded ? (
       <img
-        srcSet={tooth.img}
-        src={tooth.img}
+        srcSet={tooth.src}
+        src={tooth.src}
         alt={tooth.number}
         style={{ width: "85%" }}
       />
-    </ImageListItem>
-  );
+    ) : (
+      <Skeleton width="85%" height="8vw"></Skeleton>
+    );
 
   // Number item template
   const numberItem = (number) => (
@@ -46,46 +61,8 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
     ></Badge>
   );
 
-  // Status item template
-  const statusItem = (number) => {
-    let inProgress;
-    let completed;
-
-    if (procedures[number]) {
-      inProgress = procedures[number].find(
-        (procedure) => !procedure.isComplete
-      );
-      completed = procedures[number].find((procedure) => procedure.isComplete);
-    } else {
-      inProgress = false;
-      completed = false;
-    }
-
-    return (
-      <>
-        <Grid container item>
-          <Image
-            src={CompletedIcon}
-            width="20%"
-            style={{ visibility: completed ? "visible" : "hidden" }}
-          />
-        </Grid>
-        <Grid container item>
-          <Image
-            src={InProgressIcon}
-            width="20%"
-            style={{
-              visibility: inProgress ? "visible" : "hidden",
-            }}
-          />
-        </Grid>
-      </>
-    );
-  };
-
-  // Dental chart template
-  const chart = (
-    <>
+  return (
+    <Grid item xs={12} p={2}>
       {/* Up Teeth */}
       <ImageList cols={16} gap={0}>
         {upTeeth.map((tooth) => (
@@ -106,7 +83,7 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
 
             {/* Status */}
             <Grid container item xs={1} textAlign="center">
-              {statusItem(tooth.number)}
+              <StatusBadge procedures={procedures[tooth.number]} />
             </Grid>
 
             {/* Teeth */}
@@ -118,7 +95,7 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
       {/* Divider */}
       <Divider className="p-3" />
 
-      {/* Down */}
+      {/* Down Teeth */}
       <ImageList cols={16} gap={0}>
         {downTeeth.map((tooth) => (
           <Grid
@@ -142,7 +119,7 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
               direction="column-reverse"
               textAlign="center"
             >
-              {statusItem(tooth.number)}
+              <StatusBadge procedures={procedures[tooth.number]} />
             </Grid>
 
             {/* Numbers */}
@@ -152,12 +129,6 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
           </Grid>
         ))}
       </ImageList>
-    </>
-  );
-
-  return (
-    <Grid item xs={12} p={2}>
-      {chart}
     </Grid>
   );
 }
