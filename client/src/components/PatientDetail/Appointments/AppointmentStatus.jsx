@@ -1,6 +1,9 @@
 import React from "react";
 import { Tag, Dropdown } from "primereact";
 
+// assets
+import "assets/styles/PatientDetail/AppointmentStatus.css";
+
 function AppointmentStatus({ appointment, onSubmit }) {
   // Status items
   const statusItems = [

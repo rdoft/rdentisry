@@ -10,7 +10,6 @@ import {
   ScheduleOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
-import "assets/styles/PatientDetail/AppointmentCard.css";
 
 function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
   const [isHover, setIsHover] = useState(false);
