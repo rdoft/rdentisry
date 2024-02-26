@@ -15,7 +15,6 @@ import { PatientService } from "services";
 function PatientDetailToolbar({
   patient,
   patients,
-  setPatient,
   setPatients,
   startContent,
 }) {
@@ -69,7 +68,7 @@ function PatientDetailToolbar({
       // Set the patients and close the dialog
       getPatients();
       setPatientDialog(false);
-      setPatient(patient);
+      navigate(`/patients/${patient.id}`);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);

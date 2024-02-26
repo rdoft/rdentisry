@@ -36,10 +36,12 @@ function PatientDetail() {
     note: 0,
     procedure: 0,
   });
-  const [appointmentDialog, setAppointmentDialog] = useState(false);
-  const [paymentDialog, setPaymentDialog] = useState(false);
-  const [noteDialog, setNoteDialog] = useState(false);
-  const [procedureDialog, setProcedureDialog] = useState(false);
+  const [dialog, setDialog] = useState({
+    appointment: false,
+    payment: false,
+    note: false,
+    procedure: false,
+  });
 
   // Set the page on loading
   useEffect(() => {
@@ -66,42 +68,66 @@ function PatientDetail() {
   // HANDLERS -----------------------------------------------------------------
   // Show add appointment dialog
   const showAppointmentDialog = () => {
-    setAppointmentDialog(true);
+    setDialog({
+      ...dialog,
+      appointment: true,
+    });
   };
 
   // Hide add appointment dialog
   const hideAppointmentDialog = () => {
-    setAppointmentDialog(false);
+    setDialog({
+      ...dialog,
+      appointment: false,
+    });
   };
 
   // Show add appointment dialog
   const showPaymentDialog = () => {
-    setPaymentDialog(true);
+    setDialog({
+      ...dialog,
+      payment: true,
+    });
   };
 
   // Hide add appointment dialog
   const hidePaymentDialog = () => {
-    setPaymentDialog(false);
+    setDialog({
+      ...dialog,
+      payment: false,
+    });
   };
 
   // Show add note dialog
   const showNoteDialog = () => {
-    setNoteDialog(true);
+    setDialog({
+      ...dialog,
+      note: true,
+    });
   };
 
   // Hide note dialog
   const hideNoteDialog = () => {
-    setNoteDialog(false);
+    setDialog({
+      ...dialog,
+      note: false,
+    });
   };
 
   // Show add procedure dialog
   const showProcedureDialog = () => {
-    setProcedureDialog(true);
+    setDialog({
+      ...dialog,
+      procedure: true,
+    });
   };
 
   // Hide procedure dialog
   const hideProcedureDialog = () => {
-    setProcedureDialog(false);
+    setDialog({
+      ...dialog,
+      procedure: false,
+    });
   };
 
   // Handler for tab changes
@@ -117,7 +143,6 @@ function PatientDetail() {
           <PatientDetailToolbar
             patient={patient}
             patients={patients}
-            setPatient={setPatient}
             setPatients={setPatients}
             startContent={
               <PatientDetailToolbarAction
@@ -148,11 +173,10 @@ function PatientDetail() {
               )}
             >
               <AppointmentsTab
-                key={patient.id}
                 patient={patient}
                 patients={patients}
                 setPatients={setPatients}
-                appointmentDialog={appointmentDialog}
+                appointmentDialog={dialog.appointment}
                 showDialog={showAppointmentDialog}
                 hideDialog={hideAppointmentDialog}
                 counts={counts}
@@ -172,9 +196,8 @@ function PatientDetail() {
               )}
             >
               <PaymentsTab
-                key={patient.id}
                 patient={patient}
-                paymentDialog={paymentDialog}
+                paymentDialog={dialog.payment}
                 showDialog={showPaymentDialog}
                 hideDialog={hidePaymentDialog}
                 counts={counts}
@@ -194,9 +217,8 @@ function PatientDetail() {
               )}
             >
               <NotesTab
-                key={patient.id}
                 patient={patient}
-                noteDialog={noteDialog}
+                noteDialog={dialog.note}
                 hideDialog={hideNoteDialog}
                 counts={counts}
                 setCounts={setCounts}
@@ -215,9 +237,8 @@ function PatientDetail() {
               )}
             >
               <ProceduresTab
-                key={patient.id}
                 patient={patient}
-                procedureDialog={procedureDialog}
+                procedureDialog={dialog.procedure}
                 hideDialog={hideProcedureDialog}
                 counts={counts}
                 setCounts={setCounts}
