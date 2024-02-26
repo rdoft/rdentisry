@@ -1,5 +1,6 @@
 import React from "react";
 import { DataScroller, Fieldset, ScrollPanel } from "primereact";
+import { CardTitle } from "components/cards";
 import NotFoundText from "components/NotFoundText";
 import ProcedureCard from "./ProcedureCard";
 
@@ -39,19 +40,22 @@ function ProcedureList({
         )
       ) : Object.keys(procedures).length > 0 ? (
         Object.entries(procedures).map(([tooth, items]) => (
-          <Fieldset
-            key={tooth}
-            className="mb-2"
-            legend={tooth === "0" ? `Genel` : `Diş ${tooth}`}
-            toggleable
-            style={{ fontSize: "smaller" }}
-          >
-            <DataScroller
-              value={items}
-              itemTemplate={procedureTemplate}
-              rows={1000}
-            ></DataScroller>
-          </Fieldset>
+          <>
+            <CardTitle key={tooth}>
+              {tooth === "0" ? `Genel` : `Diş ${tooth}`}
+            </CardTitle>
+            <Fieldset
+              key={tooth}
+              className="mb-2"
+              style={{ fontSize: "smaller" }}
+            >
+              <DataScroller
+                value={items}
+                itemTemplate={procedureTemplate}
+                rows={1000}
+              ></DataScroller>
+            </Fieldset>
+          </>
         ))
       ) : (
         <NotFoundText text="Tedavi yok" p={3} />
