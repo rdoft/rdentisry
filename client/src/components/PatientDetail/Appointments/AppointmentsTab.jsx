@@ -22,7 +22,8 @@ function AppointmentsTab({
   setPatients,
   showDialog,
   hideDialog,
-  getCounts,
+  counts,
+  setCounts,
 }) {
   const navigate = useNavigate();
 
@@ -48,7 +49,7 @@ function AppointmentsTab({
     return () => {
       controller.abort();
     };
-  }, [navigate, patient, setAppointments]);
+  }, [navigate, patient]);
 
   // Divide the appointments based on its status
   let activeAppointments = [];
@@ -73,7 +74,10 @@ function AppointmentsTab({
       appointments = response.data;
 
       setAppointments(appointments);
-      getCounts();
+      setCounts({
+        ...counts,
+        appointment: appointments.length,
+      });
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);

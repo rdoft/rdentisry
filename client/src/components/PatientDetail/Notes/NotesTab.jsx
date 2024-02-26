@@ -14,7 +14,7 @@ import "assets/styles/PatientDetail/NotesTab.css";
 // services
 import { NoteService } from "services";
 
-function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
+function NotesTab({ patient, noteDialog, hideDialog, counts, setCounts }) {
   const navigate = useNavigate();
 
   const [isEdit, setEdit] = useState(false);
@@ -39,7 +39,7 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
     return () => {
       controller.abort();
     };
-  }, [navigate, patient, setNotes]);
+  }, [navigate, patient]);
 
   // Reset note when noteDialog becomes true
   useEffect(() => {
@@ -59,7 +59,10 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
       notes = response.data;
 
       setNotes(notes);
-      getCounts();
+      setCounts({
+        ...counts,
+        note: notes.length,
+      });
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);

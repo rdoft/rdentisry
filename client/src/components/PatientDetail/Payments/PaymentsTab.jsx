@@ -20,7 +20,8 @@ function PaymentsTab({
   paymentDialog,
   showDialog,
   hideDialog,
-  getCounts,
+  counts,
+  setCounts,
 }) {
   const navigate = useNavigate();
 
@@ -46,7 +47,7 @@ function PaymentsTab({
     return () => {
       controller.abort();
     };
-  }, [navigate, patient, setPayments]);
+  }, [navigate, patient]);
 
   // Calculate the payments percentage
   const { progress, completedAmount, waitingAmount, overdueAmount } =
@@ -63,7 +64,10 @@ function PaymentsTab({
       payments = response.data;
 
       setPayments(payments);
-      getCounts();
+      setCounts({
+        ...counts,
+        payment: payments.length,
+      });
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
+import { useNavigate } from "react-router-dom";
 import { Toolbar } from "primereact";
 import { DropdownPatient } from "components/Dropdown";
 import { PatientDialog } from "components/Dialog";
@@ -20,13 +20,25 @@ function PatientDetailToolbar({
   startContent,
 }) {
   const navigate = useNavigate();
+
   // Set the default values
   const [patientDialog, setPatientDialog] = useState(false);
 
   // Set the page on loading
   useEffect(() => {
-    getPatients();
-  }, []);
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    PatientService.getPatients(null, { signal })
+      .then((res) => {
+        setPatients(res.data);
+      })
+      .catch((error) => {});
+
+    return () => {
+      controller.abort();
+    };
+  }, [setPatients]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of patients and set patients value
@@ -67,7 +79,7 @@ function PatientDetailToolbar({
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
   const handleChange = (event) => {
-    let value = event.target && event.target.value;
+    const { value } = event.target;
     navigate(`/patients/${value.id}`);
   };
 

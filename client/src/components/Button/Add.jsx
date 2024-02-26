@@ -2,7 +2,15 @@ import React from "react";
 import { Button } from "primereact";
 
 function Add({ label, onClick, ...props }) {
-  return (
+  return props.default ? (
+    <Button
+      size="small"
+      icon="pi pi-plus"
+      label={label}
+      onClick={onClick}
+      style={props.style}
+    />
+  ) : (
     <Button
       text
       outlined

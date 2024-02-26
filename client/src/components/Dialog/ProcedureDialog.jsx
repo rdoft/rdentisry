@@ -61,7 +61,7 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
     return () => {
       controller.abort();
     };
-  }, [navigate, setPatients, setProcedures]);
+  }, [navigate]);
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler

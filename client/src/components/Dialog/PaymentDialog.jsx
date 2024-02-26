@@ -57,7 +57,11 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
         const { code, message } = errorHandler(error);
         code === 401 ? navigate(`/login`) : toast.error(message);
       });
-  }, [navigate, setPatients]);
+
+    return () => {
+      controller.abort();
+    };
+  }, [navigate]);
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler

@@ -13,8 +13,8 @@ patient.getPatients = (payments = null, options = {}) => {
 /**
  * Get patient by id
  */
-patient.getPatient = (id) => {
-  return API.get(`${API_URL}/${id}`);
+patient.getPatient = (id, options = {}) => {
+  return API.get(`${API_URL}/${id}`, options);
 };
 
 /**

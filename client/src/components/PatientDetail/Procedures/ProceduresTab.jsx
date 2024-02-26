@@ -14,7 +14,13 @@ import "assets/styles/PatientDetail/ProceduresTab.css";
 // services
 import { PatientProcedureService } from "services";
 
-function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
+function ProceduresTab({
+  patient,
+  procedureDialog,
+  hideDialog,
+  counts,
+  setCounts,
+}) {
   const navigate = useNavigate();
 
   const [procedures, setProcedures] = useState([]);
@@ -70,7 +76,10 @@ function ProceduresTab({ patient, procedureDialog, hideDialog, getCounts }) {
       procedures = response.data;
 
       setProcedures(procedures);
-      getCounts();
+      setCounts({
+        ...counts,
+        procedure: procedures.length,
+      });
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
