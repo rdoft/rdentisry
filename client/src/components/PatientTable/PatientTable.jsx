@@ -217,7 +217,7 @@ function PatientsTable() {
     ) {
       return;
     }
-    navigate(`/patients/${event.data.id}?tab=payments`);
+    navigate(`/patients/${event.data.id}`);
   };
 
   // onRowMouseEnter handler for display buttons

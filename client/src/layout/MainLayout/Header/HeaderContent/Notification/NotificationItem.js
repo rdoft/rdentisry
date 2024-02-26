@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils";
+import { errorHandler, getTabIndex } from "utils";
 import {
   Avatar,
   ListItemButton,
@@ -67,7 +67,8 @@ function NotificationItem({ notification, getNotifications, onClose }) {
   // onClick handler to go to the patient page
   const handleClickNotification = () => {
     onClose();
-    navigate(`/patients/${notification.patient.id}?tab=payments`);
+    localStorage.setItem("activeTabIndex", getTabIndex("payments"));
+    navigate(`/patients/${notification.patient.id}`);
     updateNotification("read");
   };
 

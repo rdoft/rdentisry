@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler, getTabIndex, getTabCounts } from "utils";
+import { errorHandler, getTabCounts } from "utils";
 import { TabView, TabPanel } from "primereact";
 import { Grid } from "@mui/material";
 import NotesTab from "./Notes/NotesTab";
@@ -22,14 +22,13 @@ function PatientDetail() {
   const navigate = useNavigate();
   // Get patient id
   const { id } = useParams();
-  const { search } = useLocation();
-  const tab = new URLSearchParams(search).get("tab");
-  const idx = getTabIndex(tab);
 
   // Set the default values
   const [patient, setPatient] = useState(null);
   const [patients, setPatients] = useState(null);
-  const [activeIndex, setActiveIndex] = useState(idx);
+  const [activeIndex, setActiveIndex] = useState(
+    parseInt(localStorage.getItem("activeTabIndex")) ?? 0
+  );
   const [counts, setCounts] = useState({
     appointment: 0,
     payment: 0,
@@ -64,6 +63,10 @@ function PatientDetail() {
       controller.abort();
     };
   }, [navigate, id]);
+
+  useEffect(() => {
+    setActiveIndex(parseInt(localStorage.getItem("activeTabIndex")) ?? 0);
+  }, [id]);
 
   // HANDLERS -----------------------------------------------------------------
   // Show add appointment dialog
@@ -133,6 +136,7 @@ function PatientDetail() {
   // Handler for tab changes
   const handleTabChange = (event) => {
     setActiveIndex(event.index);
+    localStorage.setItem("activeTabIndex", event.index);
   };
 
   return (
