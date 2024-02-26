@@ -80,7 +80,7 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
         </Grid>
 
         {/* Status */}
-        <Grid container item xs={2} justifyContent="flex-end">
+        <Grid container item xs={2} justifyContent="flex-start">
           <AppointmentStatus appointment={appointment} onSubmit={onSubmit} />
         </Grid>
 

@@ -7,5 +7,10 @@
 }
 
 .statusDropdown .p-dropdown-trigger {
-  display: none;
+  color: inherit;
+  width: 1.5rem;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  padding: 0.4rem 1rem !important;
 }

@@ -89,10 +89,8 @@ function AppointmentsTab({
     try {
       if (appointment.id) {
         await AppointmentService.updateAppointment(appointment.id, appointment);
-        toast.success("Randevu bilgileri başarıyla güncellendi!");
       } else {
         await AppointmentService.saveAppointment(appointment);
-        toast.success("Yeni randevu başarıyla kaydedildi!");
       }
 
       // Get and set the updated list of appointments

@@ -49,7 +49,11 @@ function AppointmentStatus({ appointment, onSubmit }) {
     return (
       <Tag
         value={option.label}
-        style={{ backgroundColor: option.bgColor, color: option.color }}
+        style={{
+          backgroundColor: option.bgColor,
+          color: option.color,
+          paddingY: 0,
+        }}
       />
     );
   };
@@ -64,6 +68,7 @@ function AppointmentStatus({ appointment, onSubmit }) {
       onChange={handleChange}
       onClick={(event) => event.stopPropagation()}
       className="statusDropdown"
+      style={{ backgroundColor: status.bgColor, color: status.color }}
     />
   );
 }
