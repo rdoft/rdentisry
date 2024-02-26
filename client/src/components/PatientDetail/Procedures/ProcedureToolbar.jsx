@@ -5,7 +5,7 @@ import { Next, Prev, Cancel } from "components/Button";
 
 function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
   // All theeth numbers
-  const theeth = useMemo(
+  const teeth = useMemo(
     () => [
       "18",
       "17",
@@ -48,7 +48,7 @@ function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
   useEffect(() => {
     // onKeyDown handler to cancel selected tooth
     const handleKeyDown = (event) => {
-      const index = theeth.indexOf(selectedTooth);
+      const index = teeth.indexOf(selectedTooth);
       let _tooth;
 
       switch (event.key) {
@@ -56,17 +56,17 @@ function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
           _tooth = null;
           break;
         case "ArrowRight":
-          if (index < theeth.length - 1) {
-            _tooth = theeth[index + 1];
+          if (index < teeth.length - 1) {
+            _tooth = teeth[index + 1];
           } else {
-            _tooth = theeth[0];
+            _tooth = teeth[0];
           }
           break;
         case "ArrowLeft":
           if (index > 0) {
-            _tooth = theeth[index - 1];
+            _tooth = teeth[index - 1];
           } else {
-            _tooth = theeth[theeth.length - 1];
+            _tooth = teeth[teeth.length - 1];
           }
           break;
         default:
@@ -81,16 +81,16 @@ function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [theeth, selectedTooth, onChangeTooth]);
+  }, [teeth, selectedTooth, onChangeTooth]);
 
   // HANDLERS -----------------------------------------------------------------
   // onClickNext handler to selct next tooth
   const handleNextTooth = () => {
-    const index = theeth.indexOf(selectedTooth);
-    if (index < theeth.length - 1) {
-      onChangeTooth(theeth[index + 1]);
+    const index = teeth.indexOf(selectedTooth);
+    if (index < teeth.length - 1) {
+      onChangeTooth(teeth[index + 1]);
     } else {
-      onChangeTooth(theeth[0]);
+      onChangeTooth(teeth[0]);
     }
     // loose focus
     document.activeElement.blur();
@@ -98,11 +98,11 @@ function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
 
   // onClickNext handler to selct prev tooth
   const handlePrevTooth = () => {
-    const index = theeth.indexOf(selectedTooth);
+    const index = teeth.indexOf(selectedTooth);
     if (index > 0) {
-      onChangeTooth(theeth[index - 1]);
+      onChangeTooth(teeth[index - 1]);
     } else {
-      onChangeTooth(theeth[theeth.length - 1]);
+      onChangeTooth(teeth[teeth.length - 1]);
     }
     // loose focus
     document.activeElement.blur();
