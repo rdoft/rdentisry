@@ -1,65 +1,87 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Grid } from "@mui/material";
 import { CardTitle } from "components/cards";
 import { Next, Prev, Cancel } from "components/Button";
 
 function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
+  // All theeth numbers
+  const theeth = useMemo(
+    () => [
+      "18",
+      "17",
+      "16",
+      "15",
+      "14",
+      "13",
+      "12",
+      "11",
+      "21",
+      "22",
+      "23",
+      "24",
+      "25",
+      "26",
+      "27",
+      "28",
+      "38",
+      "37",
+      "36",
+      "35",
+      "34",
+      "33",
+      "32",
+      "31",
+      "41",
+      "42",
+      "43",
+      "44",
+      "45",
+      "46",
+      "47",
+      "48",
+    ],
+    []
+  );
+
   // Add keydown event listener
   // when component mounts and remove it when unmounts
   useEffect(() => {
     // onKeyDown handler to cancel selected tooth
     const handleKeyDown = (event) => {
+      const index = theeth.indexOf(selectedTooth);
+      let _tooth;
+
       switch (event.key) {
         case "Escape":
-          onChangeTooth(null);
-          document.activeElement.blur();
+          _tooth = null;
+          break;
+        case "ArrowRight":
+          if (index < theeth.length - 1) {
+            _tooth = theeth[index + 1];
+          } else {
+            _tooth = theeth[0];
+          }
+          break;
+        case "ArrowLeft":
+          if (index > 0) {
+            _tooth = theeth[index - 1];
+          } else {
+            _tooth = theeth[theeth.length - 1];
+          }
           break;
         default:
           break;
       }
-    };
-    window.addEventListener("keydown", handleKeyDown);
 
+      onChangeTooth(_tooth);
+      document.activeElement.blur();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onChangeTooth]);
-
-  // All theeth numbers
-  const theeth = [
-    "18",
-    "17",
-    "16",
-    "15",
-    "14",
-    "13",
-    "12",
-    "11",
-    "21",
-    "22",
-    "23",
-    "24",
-    "25",
-    "26",
-    "27",
-    "28",
-    "38",
-    "37",
-    "36",
-    "35",
-    "34",
-    "33",
-    "32",
-    "31",
-    "41",
-    "42",
-    "43",
-    "44",
-    "45",
-    "46",
-    "47",
-    "48",
-  ];
+  }, [theeth, selectedTooth, onChangeTooth]);
 
   // HANDLERS -----------------------------------------------------------------
   // onClickNext handler to selct next tooth

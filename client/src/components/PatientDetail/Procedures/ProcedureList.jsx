@@ -40,12 +40,11 @@ function ProcedureList({
         )
       ) : Object.keys(procedures).length > 0 ? (
         Object.entries(procedures).map(([tooth, items]) => (
-          <>
-            <CardTitle key={tooth}>
+          <div key={tooth}>
+            <CardTitle>
               {tooth === "0" ? `Genel` : `Diş ${tooth}`}
             </CardTitle>
             <Fieldset
-              key={tooth}
               className="mb-2"
               style={{ fontSize: "smaller" }}
             >
@@ -55,7 +54,7 @@ function ProcedureList({
                 rows={1000}
               ></DataScroller>
             </Fieldset>
-          </>
+          </div>
         ))
       ) : (
         <NotFoundText text="Tedavi yok" p={3} />
