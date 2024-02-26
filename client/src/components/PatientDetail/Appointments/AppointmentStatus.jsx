@@ -39,7 +39,7 @@ function AppointmentStatus({ appointment, onSubmit }) {
   // HANDLERS -----------------------------------------------------------------
   // onChange handler and set the status of the appointment
   const handleChange = (event) => {
-    const value = event.target.value;
+    const { value } = event.target;
     onSubmit({
       ...appointment,
       status: value.status,
@@ -69,7 +69,6 @@ function AppointmentStatus({ appointment, onSubmit }) {
       valueTemplate={statusItemTemplate}
       itemTemplate={statusItemTemplate}
       onChange={handleChange}
-      onClick={(event) => event.stopPropagation()}
       className="statusDropdown"
       style={{ backgroundColor: status.bgColor, color: status.color }}
     />
