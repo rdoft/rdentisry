@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { Typography } from "@mui/material";
-import { Toolbar, Button, InputSwitch } from "primereact";
+import { Toolbar, InputSwitch } from "primereact";
 import { DropdownDoctor } from "components/Dropdown";
 import { DoctorDialog } from "components/Dialog";
+import { Add } from "components/Button";
 
 // services
 import { DoctorService } from "services";
@@ -153,15 +154,11 @@ function CalendarToolbar({
 
   // Get Add appointment buttons
   const startContent = () => (
-    <>
-      <Button
-        label="Randevu Ekle"
-        icon="pi pi-plus"
-        size="small"
-        className="p-button-info mr-2"
-        onClick={onClickAddAppointment}
-      />
-    </>
+    <Add
+      label={"Randevu Ekle"}
+      default={true}
+      onClick={onClickAddAppointment}
+    />
   );
 
   return (

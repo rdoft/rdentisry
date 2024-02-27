@@ -212,7 +212,7 @@ const AppointmentCalendar = () => {
 
   // Convert appointments format to events
   const events = filteredAppointments.map((appointment) =>
-    convert(appointment, step, handleClickEdit)
+    convert(appointment, step.current, handleClickEdit)
   );
 
   return (
@@ -241,7 +241,7 @@ const AppointmentCalendar = () => {
         startAccessor={"start"}
         endAccessor={"end"}
         timeslots={1}
-        step={step}
+        step={step.current}
         tooltipAccessor={(event) => event.tooltip}
         showAllEvents={true}
         length="7"

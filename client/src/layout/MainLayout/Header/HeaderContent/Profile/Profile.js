@@ -124,13 +124,13 @@ const Profile = () => {
       <ButtonBase
         sx={{
           p: 0.25,
-          bgcolor: open ? iconBackColorOpen : "transparent",
+          bgcolor: open.current ? iconBackColorOpen : "transparent",
           borderRadius: 1,
           "&:hover": { bgcolor: "secondary.lighter" },
         }}
         aria-label="open profile"
         ref={anchorRef}
-        aria-controls={open ? "profile-grow" : undefined}
+        aria-controls={open.current ? "profile-grow" : undefined}
         aria-haspopup="true"
         // onClick={handleToggle}
         onClick={handleLogout}
