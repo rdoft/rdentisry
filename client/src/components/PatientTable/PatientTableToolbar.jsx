@@ -1,38 +1,36 @@
 import React from "react";
-import { Toolbar, Button } from "primereact";
+import { Toolbar } from "primereact";
+import { Add, Delete } from "components/Button";
 import Search from "components/Search";
 
-function PatientTableToolbar({ visibleDelete, onClickAdd, onClickDelete, onInput }) {
+function PatientTableToolbar({
+  visibleDelete,
+  onClickAdd,
+  onClickDelete,
+  onInput,
+}) {
+  // TEMPLATES ------------------------------------------------------------------
   // Get Add/Delete patient buttons
-  const getActionButton = () => {
+  const actionButton = () => {
     return (
-      <React.Fragment>
-        <Button
-          label="Hasta Ekle"
-          icon="pi pi-plus"
-          size="small"
-          className="p-button-info mr-2"
-          onClick={onClickAdd}
-        />
-        <Button
+      <>
+        <Add label="Hasta Ekle" default={true} onClick={onClickAdd} />
+        <Delete
           label="Sil"
-          icon="pi pi-trash"
-          size="small"
-          className="p-button-text p-button-danger"
           onClick={onClickDelete}
-          visible={visibleDelete}
+          style={{ visibility: visibleDelete ? "visible" : "hidden" }}
         />
-      </React.Fragment>
+      </>
     );
   };
 
   // Get search Input
-  const getSearchInput = () => {
+  const searchInput = () => {
     return <Search onInput={onInput} />;
   };
 
   return (
-    <Toolbar className="mb-4 p-2" left={getActionButton} right={getSearchInput} />
+    <Toolbar className="mb-4 p-2" start={actionButton} end={searchInput} />
   );
 }
 

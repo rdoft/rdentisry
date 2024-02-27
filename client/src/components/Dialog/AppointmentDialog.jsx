@@ -24,10 +24,6 @@ import { PatientService, DoctorService } from "services";
 
 function AppointmentDialog({
   initAppointment = {},
-  doctors,
-  patients,
-  setDoctors,
-  setPatients,
   onHide,
   onSubmit,
   onDelete,
@@ -35,6 +31,8 @@ function AppointmentDialog({
   const navigate = useNavigate();
 
   // Set the default values
+  const [patients, setPatients] = useState([]);
+  const [doctors, setDoctors] = useState([]);
   const [doctorDialog, setDoctorDialog] = useState(false);
   const [patientDialog, setPatientDialog] = useState(false);
   const [appointment, setAppointment] = useState({
@@ -77,7 +75,7 @@ function AppointmentDialog({
     return () => {
       controller.abort();
     };
-  }, [navigate, setDoctors, setPatients]);
+  }, [navigate]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of doctors and set doctors value

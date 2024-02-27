@@ -8,7 +8,7 @@ function Add({ label, onClick, ...props }) {
       icon="pi pi-plus"
       label={label}
       onClick={onClick}
-      style={props.style}
+      style={{ marginRight: "0.5rem", ...props.style }}
     />
   ) : (
     <Button
@@ -19,7 +19,7 @@ function Add({ label, onClick, ...props }) {
       label={label}
       severity={props.severity || "secondary"}
       onClick={onClick}
-      style={props.style}
+      style={{ marginRight: "0.5rem", ...props.style }}
     />
   );
 }

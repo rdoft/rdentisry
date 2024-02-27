@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { Typography } from "@mui/material";
-import { DataTable, Column, Image, ConfirmDialog } from "primereact";
+import { DataTable, Column, Tag, ConfirmDialog } from "primereact";
 import { AppointmentDialog, PatientDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
 import { Add, Edit, Delete } from "components/Button";
@@ -11,7 +11,6 @@ import PatientTableToolbar from "./PatientTableToolbar";
 
 // assets
 import "assets/styles/PatientTable/PatientTable.css";
-import { LiraDangerIcon } from "assets/images/icons";
 
 // services
 import { PatientService, AppointmentService } from "services";
@@ -20,72 +19,37 @@ function PatientsTable() {
   const navigate = useNavigate();
 
   // Set the default values
+  const dt = useRef(null);
   const [patient, setPatient] = useState(null);
   const [patients, setPatients] = useState(null);
-  const [doctors, setDoctors] = useState(null);
-  const [patientDialog, setPatientDialog] = useState(false);
-  const [deletePatientDialog, setDeletePatientDialog] = useState(false);
-  const [deletePatientsDialog, setDeletePatientsDialog] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState(null);
-  const [appointmentDialog, setAppointmentDialog] = useState(false);
   const [rowIndex, setRowIndex] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
-  const dt = useRef(null);
+  const [dialogs, setDialogs] = useState({
+    patient: false,
+    appointment: false,
+    deletePatient: false,
+    deletePatients: false,
+  });
 
   // Set the page on loading
   useEffect(() => {
-    getPatients();
-  }, []);
+    const controller = new AbortController();
+    const signal = controller.signal;
 
-  // SHOW/HIDE OPTIONS --------------------------------------------------------
-  // Show add patient dialog
-  const showAddPatientDialog = () => {
-    setPatient(null);
-    setPatientDialog(true);
-  };
+    PatientService.getPatients(true, { signal })
+      .then((response) => {
+        setPatients(response.data);
+      })
+      .catch((error) => {
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
 
-  // Show edit patient dialog
-  const showEditPatientDialog = (patient) => {
-    setPatient({ ...patient });
-    setPatientDialog(true);
-  };
-
-  // Show confirm delete patient dialog
-  const showConfirmDeletePatientDialog = (patient) => {
-    setPatient(patient);
-    setDeletePatientDialog(true);
-  };
-
-  // Show confirm delete patients dialog
-  const showConfirmDeletePatientsDialog = () => {
-    setDeletePatientsDialog(true);
-  };
-
-  // Show add appointment dialog
-  const showAppointmentDialog = (patient) => {
-    setPatient({ ...patient });
-    setAppointmentDialog(true);
-  };
-
-  // Hide patient dialog
-  const hidePatientDialog = () => {
-    setPatientDialog(false);
-  };
-
-  // Hide delete patient dialog
-  const hideDeletePatientDialog = () => {
-    setDeletePatientDialog(false);
-  };
-
-  // Hide delete patients dialog
-  const hideDeletePatientsDialog = () => {
-    setDeletePatientsDialog(false);
-  };
-
-  // Hide add appointment dialog
-  const hideAppointmentDialog = () => {
-    setAppointmentDialog(false);
-  };
+    return () => {
+      controller.abort();
+    };
+  }, [navigate]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of patients and set patients value
@@ -120,7 +84,7 @@ function PatientsTable() {
 
       // Set the patients and close the dialog
       getPatients();
-      setPatientDialog(false);
+      hidePatientDialog();
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -131,7 +95,7 @@ function PatientsTable() {
   const saveAppointment = async (appointment) => {
     try {
       await AppointmentService.saveAppointment(appointment);
-      setAppointmentDialog(false);
+      hideAppointmentDialog();
       toast.success("Yeni randevu başarıyla eklendi");
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -161,7 +125,7 @@ function PatientsTable() {
     }
 
     // Close delete dialog and empty patient variable
-    setDeletePatientDialog(false);
+    hideDeletePatientDialog();
     setPatient(null);
   };
 
@@ -194,10 +158,53 @@ function PatientsTable() {
     }
 
     // Close the dialog and set selec
-    setDeletePatientsDialog(false);
+    hideDeletePatientsDialog();
   };
 
   // HANDLERS -----------------------------------------------------------------
+  // Show patient dialog
+  const showPatientDialog = (patient) => {
+    patient ? setPatient(patient) : setPatient(null);
+    setDialogs({ ...dialogs, patient: true });
+  };
+
+  // Hide patient dialog
+  const hidePatientDialog = () => {
+    setDialogs({ ...dialogs, patient: false });
+  };
+
+  // Show add appointment dialog
+  const showAppointmentDialog = (patient) => {
+    setPatient(patient);
+    setDialogs({ ...dialogs, appointment: true });
+  };
+
+  // Hide add appointment dialog
+  const hideAppointmentDialog = () => {
+    setDialogs({ ...dialogs, appointment: false });
+  };
+
+  // Show confirm delete patient dialog
+  const showConfirmDeletePatientDialog = (patient) => {
+    setPatient(patient);
+    setDialogs({ ...dialogs, deletePatient: true });
+  };
+
+  // Show confirm delete patients dialog
+  const showConfirmDeletePatientsDialog = () => {
+    setDialogs({ ...dialogs, deletePatients: true });
+  };
+
+  // Hide delete patient dialog
+  const hideDeletePatientDialog = () => {
+    setDialogs({ ...dialogs, deletePatient: false });
+  };
+
+  // Hide delete patients dialog
+  const hideDeletePatientsDialog = () => {
+    setDialogs({ ...dialogs, deletePatients: false });
+  };
+
   // onInput handler for search
   const handleInputSearch = (event) => {
     setTimeout(() => setGlobalFilter(event.target.value), 400);
@@ -231,21 +238,28 @@ function PatientsTable() {
   };
 
   // onClick handler for add new appointment
-  const handleClickAddAppointment = (event, patient) => {
+  const handleAddAppointment = (event, patient) => {
     event.stopPropagation();
     showAppointmentDialog(patient);
   };
 
   // TEMPLATES -----------------------------------------------------------------
-  // Payment status of the patient
+  // Payment status of the patient (overdue or not)
   const status = (patient) =>
-    // Control overdue status
-    patient.overdue ? <Image src={LiraDangerIcon} width="75%" /> : null;
+    patient.overdue ? (
+      <Tag
+        value="Eksik Ödeme"
+        style={{
+          backgroundColor: "#FFD2CB",
+          color: "#EF4444",
+        }}
+      />
+    ) : null;
 
   // Delete patient dialog template
-  const deletePatientDialogTemplate = (
+  const deletePatientDialog = (
     <ConfirmDialog
-      visible={deletePatientDialog}
+      visible={dialogs.deletePatient}
       onHide={hideDeletePatientDialog}
       message=<Typography variant="body1">
         <strong>
@@ -264,9 +278,9 @@ function PatientsTable() {
   );
 
   // Delete patients dialog template
-  const deletePatientsDialogTemplate = (
+  const deletePatientsDialog = (
     <ConfirmDialog
-      visible={deletePatientsDialog}
+      visible={dialogs.deletePatients}
       onHide={hideDeletePatientsDialog}
       message=<Typography variant="body1">
         <strong>{selectedPatients?.length || 0}</strong> adet hastayı silmek
@@ -289,7 +303,7 @@ function PatientsTable() {
         {/* Patient table toolbar */}
         <PatientTableToolbar
           visibleDelete={selectedPatients?.length ? true : false}
-          onClickAdd={showAddPatientDialog}
+          onClickAdd={showPatientDialog}
           onClickDelete={showConfirmDeletePatientsDialog}
           onInput={handleInputSearch}
         />
@@ -355,7 +369,7 @@ function PatientsTable() {
             field="overdue"
             body={status}
             sortable
-            style={{ width: "4rem", textAlign: "center" }}
+            style={{ width: "10rem" }}
           ></Column>
           {/* Action buttons */}
           {!window.matchMedia("(hover: none)").matches && (
@@ -364,7 +378,7 @@ function PatientsTable() {
                 patient.id === rowIndex ? (
                   <Add
                     label="Randevu"
-                    onClick={(e) => handleClickAddAppointment(e, patient)}
+                    onClick={(e) => handleAddAppointment(e, patient)}
                   />
                 ) : null
               }
@@ -375,7 +389,7 @@ function PatientsTable() {
             body={(patient) =>
               patient.id === rowIndex ? (
                 <>
-                  <Edit onClick={() => showEditPatientDialog(patient)} />
+                  <Edit onClick={() => showPatientDialog(patient)} />
                   <Delete
                     onClick={() => showConfirmDeletePatientDialog(patient)}
                   />
@@ -387,8 +401,8 @@ function PatientsTable() {
         </DataTable>
       </div>
 
-      {/* Patient information and confirmation dialogs  */}
-      {patientDialog && (
+      {/* Patient information  */}
+      {dialogs.patient && (
         <PatientDialog
           initPatient={patient}
           onHide={hidePatientDialog}
@@ -396,12 +410,8 @@ function PatientsTable() {
         />
       )}
 
-      {/* Confirm deletation dialog */}
-      {deletePatientDialogTemplate}
-      {deletePatientsDialogTemplate}
-
       {/* Appointment dialog */}
-      {appointmentDialog && (
+      {dialogs.appointment && (
         <AppointmentDialog
           initAppointment={{
             patient: {
@@ -413,14 +423,14 @@ function PatientsTable() {
               birthYear: patient.birthYear,
             },
           }}
-          doctors={doctors}
-          patients={patients}
-          setDoctors={setDoctors}
-          setPatients={setPatients}
           onHide={hideAppointmentDialog}
           onSubmit={saveAppointment}
         />
       )}
+
+      {/* Confirm delete dialog */}
+      {deletePatientDialog}
+      {deletePatientsDialog}
     </div>
   );
 }
