@@ -4,6 +4,9 @@ import { CardTitle } from "components/cards";
 import NotFoundText from "components/NotFoundText";
 import ProcedureCard from "./ProcedureCard";
 
+// assets
+import "assets/styles/PatientDetail/ProceduresTab.css";
+
 function ProcedureList({
   patient,
   selectedTooth,
@@ -41,13 +44,8 @@ function ProcedureList({
       ) : Object.keys(procedures).length > 0 ? (
         Object.entries(procedures).map(([tooth, items]) => (
           <div key={tooth}>
-            <CardTitle>
-              {tooth === "0" ? `Genel` : `Diş ${tooth}`}
-            </CardTitle>
-            <Fieldset
-              className="mb-2"
-              style={{ fontSize: "smaller" }}
-            >
+            <CardTitle>{tooth === "0" ? `Genel` : `Diş ${tooth}`}</CardTitle>
+            <Fieldset className="mb-2" style={{ fontSize: "smaller" }}>
               <DataScroller
                 value={items}
                 itemTemplate={procedureTemplate}

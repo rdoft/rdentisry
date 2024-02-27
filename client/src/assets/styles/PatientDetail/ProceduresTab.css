@@ -1,7 +1,11 @@
 .p-fieldset.p-fieldset-toggleable .p-fieldset-legend a {
-  padding: .8rem;
+  padding: 0.8rem;
 }
 
 .p-fieldset .p-fieldset-content {
   padding: 0;
+}
+
+.p-scrollpanel .p-scrollpanel-bar {
+  background: #c1c1c1;
 }

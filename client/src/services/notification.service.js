@@ -6,11 +6,11 @@ let notification = {};
 /**
  * Get notifications list
  */
-notification.getNotifications = (status) => {
+notification.getNotifications = (status, options = {}) => {
   if (status) {
-    return API.get(`${API_URL}?status=${status}`);
+    return API.get(`${API_URL}?status=${status}`, options);
   } else {
-    return API.get(`${API_URL}`);
+    return API.get(`${API_URL}`, options);
   }
 };
 

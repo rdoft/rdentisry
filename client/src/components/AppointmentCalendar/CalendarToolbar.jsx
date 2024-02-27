@@ -72,6 +72,7 @@ function CalendarToolbar({
       getDoctors();
       setDoctorDialog(false);
       setDoctor(doctor);
+      localStorage.setItem("doctor", JSON.stringify(doctor));
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -89,6 +90,7 @@ function CalendarToolbar({
       // Get and set the updated list of doctors
       getDoctors();
       setDoctor(null);
+      localStorage.removeItem("doctor");
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -98,6 +100,7 @@ function CalendarToolbar({
   // HANDLERS -----------------------------------------------------------------
   // onChange handler for showAll switch
   const handleChangeSwitch = (event) => {
+    localStorage.setItem("showAllAppointment", event.value);
     setShowAll(event.value);
   };
 
@@ -105,6 +108,9 @@ function CalendarToolbar({
   const handleChangeDropdown = (event) => {
     let value = event.target && event.target.value;
     setDoctor(value);
+    value
+      ? localStorage.setItem("doctor", JSON.stringify(value))
+      : localStorage.removeItem("doctor");
   };
 
   // Show add doctor dialog

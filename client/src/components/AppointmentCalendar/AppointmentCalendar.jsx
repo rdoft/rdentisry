@@ -27,13 +27,17 @@ const AppointmentCalendar = () => {
 
   // Set the default values
   const [step, setStep] = useState(30);
-  const [showAll, setShowAll] = useState(false);
+  const [showAll, setShowAll] = useState(
+    localStorage.getItem("showAllAppointment") === "true"
+  );
   const [appointment, setAppointment] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
-  const [doctor, setDoctor] = useState(null);
   const [doctors, setDoctors] = useState(null);
   const [patients, setPatients] = useState(null);
+  const [doctor, setDoctor] = useState(
+    JSON.parse(localStorage.getItem("doctor")) || null
+  );
 
   useEffect(() => {
     const controller = new AbortController();

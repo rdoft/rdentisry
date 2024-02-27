@@ -20,7 +20,7 @@ import { InputSwitch } from "primereact";
 import { Read } from "components/Button";
 
 // project import
-import MainCard from "components/MainCard";
+import { MainCard } from "components/cards";
 import Transitions from "components/@extended/Transitions";
 import NotificationItem from "./NotificationItem";
 
@@ -56,13 +56,26 @@ const Notification = () => {
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
-  const [checked, setChecked] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [checked, setChecked] = useState(
+    localStorage.getItem("showAllNotification") === "true"
+  );
 
   // Set the page on loading
   useEffect(() => {
-    getNotifications();
-  }, [checked]);
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    NotificationService.getNotifications(!checked ? "sent" : null, { signal })
+      .then((res) => {
+        setNotifications(res.data);
+      })
+      .catch((error) => {});
+
+    return () => {
+      controller.abort();
+    };
+  }, [checked, navigate]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of notifications and set notifications value
@@ -117,6 +130,12 @@ const Notification = () => {
   // onClick handler for mark all notifications as read
   const handleClickRead = () => {
     updateNotifications("read");
+  };
+
+  // onChange handler for show only unread notifications
+  const handleChecked = (event) => {
+    localStorage.setItem("showAllNotification", event.value);
+    setChecked(event.value);
   };
 
   // TEMPLATES ----------------------------------------------------------------
@@ -247,7 +266,7 @@ const Notification = () => {
                       <Grid container item xs="auto" justifyContent="end">
                         <InputSwitch
                           checked={checked}
-                          onChange={(e) => setChecked(e.value)}
+                          onChange={handleChecked}
                           style={{ transform: "scale(0.6)" }}
                         />
                       </Grid>
