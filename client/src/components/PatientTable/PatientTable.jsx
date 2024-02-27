@@ -185,13 +185,13 @@ function PatientsTable() {
   };
 
   // Show confirm delete patient dialog
-  const showConfirmDeletePatientDialog = (patient) => {
+  const showDeletePatientDialog = (patient) => {
     setPatient(patient);
     setDialogs({ ...dialogs, deletePatient: true });
   };
 
   // Show confirm delete patients dialog
-  const showConfirmDeletePatientsDialog = () => {
+  const showDeletePatientsDialog = () => {
     setDialogs({ ...dialogs, deletePatients: true });
   };
 
@@ -304,7 +304,7 @@ function PatientsTable() {
         <PatientTableToolbar
           visibleDelete={selectedPatients?.length ? true : false}
           onClickAdd={showPatientDialog}
-          onClickDelete={showConfirmDeletePatientsDialog}
+          onClickDelete={showDeletePatientsDialog}
           onInput={handleInputSearch}
         />
 
@@ -391,7 +391,7 @@ function PatientsTable() {
                 <>
                   <Edit onClick={() => showPatientDialog(patient)} />
                   <Delete
-                    onClick={() => showConfirmDeletePatientDialog(patient)}
+                    onClick={() => showDeletePatientDialog(patient)}
                   />
                 </>
               ) : null

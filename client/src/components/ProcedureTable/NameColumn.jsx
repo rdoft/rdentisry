@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
-import { Grid, Typography, ClickAwayListener } from "@mui/material";
-import { InputText, Button } from "primereact";
+import { Grid, Typography, Tooltip, ClickAwayListener } from "@mui/material";
+import { InputText } from "primereact";
+import { Cancel } from "components/Button";
 
 function NameColumn({ procedure, onSubmit }) {
   const prevName = useRef(procedure.name);
@@ -25,10 +26,11 @@ function NameColumn({ procedure, onSubmit }) {
       setName(prevName.current);
     } else {
       prevName.current = name;
-      procedure.name = name;
-      onSubmit(procedure);
+      onSubmit({
+        ...procedure,
+        name: name,
+      });
     }
-
     setIsEdit(false);
   };
 
@@ -69,21 +71,29 @@ function NameColumn({ procedure, onSubmit }) {
         </ClickAwayListener>
       </Grid>
       <Grid item xs>
-        <Button
-          icon="pi pi-times"
-          size="small"
-          severity="secondary"
-          text
-          onClick={handleCancel}
-        />
+        <Cancel onClick={handleCancel} />
       </Grid>
     </Grid>
   ) : (
-    <Grid container onClick={handleEdit}>
-      <Typography variant="h5" fontWeight="regular">
-        {name || "-"}
-      </Typography>
-    </Grid>
+    <Tooltip title="Adı düzenle" placement="bottom-start" enterDelay={500}>
+      <Grid
+        container
+        onClick={handleEdit}
+        xs={9}
+        p={1}
+        m={-1}
+        sx={{
+          borderRadius: "8px",
+          "&:hover": {
+            backgroundColor: "white",
+          },
+        }}
+      >
+        <Typography variant="h5" fontWeight="regular">
+          {name || "-"}
+        </Typography>
+      </Grid>
+    </Tooltip>
   );
 }
 

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
+import { Grid, Typography, Tooltip, ClickAwayListener } from "@mui/material";
 import { InputNumber } from "primereact";
-import { Grid, Typography, ClickAwayListener } from "@mui/material";
 import { CardTitle } from "components/cards";
 import { Cancel } from "components/Button";
 
@@ -80,15 +80,17 @@ function PriceColumn({ procedure, onSubmit, isEdit, setIsEdit }) {
       </Grid>
     </Grid>
   ) : (
-    <Grid container onClick={handleEdit}>
-      <CardTitle>
-        <Typography variant="caption">₺</Typography>
-        {price.toLocaleString("tr-TR", {
-          style: "decimal",
-          maximumFractionDigits: 2,
-        })}
-      </CardTitle>
-    </Grid>
+    <Tooltip title="Fiyatı düzenle" placement="bottom-start" enterDelay={500}>
+      <Grid container onClick={handleEdit}>
+        <CardTitle>
+          <Typography variant="caption">₺</Typography>
+          {price.toLocaleString("tr-TR", {
+            style: "decimal",
+            maximumFractionDigits: 2,
+          })}
+        </CardTitle>
+      </Grid>
+    </Tooltip>
   );
 }
 

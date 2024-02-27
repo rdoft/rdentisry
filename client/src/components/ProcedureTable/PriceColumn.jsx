@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
-import { InputNumber, Button } from "primereact";
-import { Grid, Typography, ClickAwayListener } from "@mui/material";
+import { Grid, Typography, Tooltip, ClickAwayListener } from "@mui/material";
+import { InputNumber } from "primereact";
+import { Cancel } from "components/Button";
 
 function PriceColumn({ procedure, onSubmit }) {
   const prevPrice = useRef(procedure.price);
@@ -22,9 +23,11 @@ function PriceColumn({ procedure, onSubmit }) {
   // onSave handler, to save changes
   const handleSave = () => {
     prevPrice.current = price;
-    procedure.price = price;
-    onSubmit(procedure);
     setIsEdit(false);
+    onSubmit({
+      ...procedure,
+      price: price,
+    });
   };
 
   // onCancel handler, discard changes to amount
@@ -68,25 +71,33 @@ function PriceColumn({ procedure, onSubmit }) {
         </ClickAwayListener>
       </Grid>
       <Grid item xs>
-        <Button
-          icon="pi pi-times"
-          size="small"
-          severity="secondary"
-          text
-          onClick={handleCancel}
-        />
+        <Cancel onClick={handleCancel} />
       </Grid>
     </Grid>
   ) : (
-    <Grid container onClick={handleEdit}>
-      <Typography variant="h6">₺</Typography>
-      <Typography variant="h5" fontWeight="bold">
-        {price.toLocaleString("tr-TR", {
-          style: "decimal",
-          maximumFractionDigits: 2,
-        })}
-      </Typography>
-    </Grid>
+    <Tooltip title="Fiyatı düzenle" placement="bottom-start" enterDelay={500}>
+      <Grid
+        container
+        onClick={handleEdit}
+        xs={9}
+        p={1}
+        m={-1}
+        sx={{
+          borderRadius: "8px",
+          "&:hover": {
+            backgroundColor: "white",
+          },
+        }}
+      >
+        <Typography variant="h6">₺</Typography>
+        <Typography variant="h5" fontWeight="bolder">
+          {price.toLocaleString("tr-TR", {
+            style: "decimal",
+            maximumFractionDigits: 2,
+          })}
+        </Typography>
+      </Grid>
+    </Tooltip>
   );
 }
 

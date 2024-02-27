@@ -4,7 +4,7 @@ import { Tooltip } from "@mui/material";
 
 function CancelPay({ label, onClick, ...props }) {
   return (
-    <Tooltip title="Ödeme iptal" placement="bottom" enterDelay={500}>
+    <Tooltip title="Ödemeyi iptal et" placement="bottom" enterDelay={500}>
       <Button
         text
         outlined

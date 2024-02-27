@@ -6,8 +6,8 @@ let procedureCategory = {};
 /**
  * Get the list of the procedure categories
  */
-procedureCategory.getProcedureCategories = () => {
-  return API.get(API_URL);
+procedureCategory.getProcedureCategories = (options = {}) => {
+  return API.get(API_URL, options);
 };
 
 /**

@@ -1,5 +1,6 @@
 import React from "react";
-import { Toolbar, Button } from "primereact";
+import { Toolbar } from "primereact";
+import { Add, Delete } from "components/Button";
 import Search from "components/Search";
 
 function ProcedureTableToolbar({
@@ -11,23 +12,14 @@ function ProcedureTableToolbar({
   // Get Add/Delete procedure buttons
   const getActionButton = () => {
     return (
-      <React.Fragment>
-        <Button
-          label="Tedavi Ekle"
-          icon="pi pi-plus"
-          size="small"
-          className="p-button-info mr-2"
-          onClick={onClickAdd}
-        />
-        <Button
+      <>
+        <Add label="Tedavi Ekle" default={true} onClick={onClickAdd} />
+        <Delete
           label="Sil"
-          icon="pi pi-trash"
-          size="small"
-          className="p-button-text p-button-danger"
           onClick={onClickDelete}
-          visible={visibleDelete}
+          style={{ visibility: visibleDelete ? "visible" : "hidden" }}
         />
-      </React.Fragment>
+      </>
     );
   };
 
@@ -39,8 +31,8 @@ function ProcedureTableToolbar({
   return (
     <Toolbar
       className="mb-4 p-2"
-      left={getActionButton}
-      right={getSearchInput}
+      start={getActionButton}
+      end={getSearchInput}
     />
   );
 }

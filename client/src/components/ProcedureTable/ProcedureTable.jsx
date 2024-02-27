@@ -2,37 +2,65 @@ import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
-import { DataTable, Column, ConfirmDialog } from "primereact";
 import { Typography } from "@mui/material";
+import { DataTable, Column, ConfirmDialog } from "primereact";
 import { BaseProcedureDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
 import { Delete } from "components/Button";
-import PriceColumn from "components/ProcedureTable/PriceColumn";
-import CategoryColumn from "components/ProcedureTable/CategoryColumn";
-import NameColumn from "components/ProcedureTable/NameColumn";
-import ProcedureTableToolbar from "components/ProcedureTable/ProcedureTableToolbar";
+import PriceColumn from "./PriceColumn";
+import CategoryColumn from "./CategoryColumn";
+import NameColumn from "./NameColumn";
+import ProcedureTableToolbar from "./ProcedureTableToolbar";
 
 // services
 import { ProcedureService, ProcedureCategoryService } from "services";
 
-function ProcedureTable({}) {
+function ProcedureTable() {
   const navigate = useNavigate();
+
+  // Set the default valeus
   const dt = useRef(null);
-  const [globalFilter, setGlobalFilter] = useState(null);
-  const [rowIndex, setRowIndex] = useState(null);
   const [categories, setCategories] = useState(null);
   const [procedure, setProcedure] = useState(null);
   const [procedures, setProcedures] = useState(null);
   const [selectedProcedures, setSelectedProcedures] = useState(null);
-  const [procedureDialog, setProcedureDialog] = useState(false);
-  const [deleteProcedureDialog, setDeleteProcedureDialog] = useState(false);
-  const [deleteProceduresDialog, setDeleteProceduresDialog] = useState(false);
+  const [rowIndex, setRowIndex] = useState(null);
+  const [globalFilter, setGlobalFilter] = useState(null);
+  const [dialogs, setDialogs] = useState({
+    procedure: false,
+    deleteProcedure: false,
+    deleteProcedures: false,
+  });
 
   // Set the page on loading
   useEffect(() => {
-    getProcedures();
-    getProcedureCategories();
-  }, []);
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    // Get the list of the procedures
+    ProcedureService.getProcedures(null, { signal })
+      .then((res) => {
+        setProcedures(res.data);
+      })
+      .catch((error) => {
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
+    // Get the list of the procedure categories
+    ProcedureCategoryService.getProcedureCategories({ signal })
+      .then((res) => {
+        setCategories([...res.data, { id: null, title: null }]);
+      })
+      .catch((error) => {
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [navigate]);
 
   // SERVICES ---------------------------------------------------------
   // Get the list of the procedures
@@ -63,24 +91,6 @@ function ProcedureTable({}) {
 
       // Get and set the updated list of procedures
       getProcedures();
-    } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
-    }
-  };
-
-  // Get the list of the procedure categories
-  const getProcedureCategories = async () => {
-    let response;
-    let categories;
-
-    try {
-      response = await ProcedureCategoryService.getProcedureCategories();
-      categories = response.data;
-
-      // Add the default category and set the list of categories
-      categories = [...categories, { id: null, title: null }];
-      setCategories(categories);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -136,22 +146,22 @@ function ProcedureTable({}) {
   // HANDLERS -----------------------------------------------------------------
   // Show add procedure dialog
   const showProcedureDialog = () => {
-    setProcedureDialog(true);
+    setDialogs({ ...dialogs, procedure: true });
   };
 
   // Hide add procedure dialog
   const hideProcedureDialog = () => {
-    setProcedureDialog(false);
+    setDialogs({ ...dialogs, procedure: false });
   };
 
   // Show confirm delete procedures dialog
   const showDeleteProceduresDialog = () => {
-    setDeleteProceduresDialog(true);
+    setDialogs({ ...dialogs, deleteProcedures: true });
   };
 
   // Hide confirm delete procedures dialog
   const hideDeleteProceduresDialog = () => {
-    setDeleteProceduresDialog(false);
+    setDialogs({ ...dialogs, deleteProcedures: false });
   };
 
   // onDelete handler for confirm delete procedures dialog
@@ -162,13 +172,13 @@ function ProcedureTable({}) {
 
   // Show confirm delete procedure dialog
   const showDeleteProcedureDialog = (procedure) => {
-    setProcedure({ ...procedure });
-    setDeleteProcedureDialog(true);
+    setProcedure(procedure);
+    setDialogs({ ...dialogs, deleteProcedure: true });
   };
 
   // Hide confirm delete procedure dialog
   const hideDeleteProcedureDialog = () => {
-    setDeleteProcedureDialog(false);
+    setDialogs({ ...dialogs, deleteProcedure: false });
   };
 
   // onDelete handler for confirm delete procedure dialog
@@ -198,9 +208,9 @@ function ProcedureTable({}) {
   };
 
   // TEMPLATES -----------------------------------------------------------------
-  const deleteProcedureDialogTemplate = (
+  const deleteProcedureDialog = (
     <ConfirmDialog
-      visible={deleteProcedureDialog}
+      visible={dialogs.deleteProcedure}
       onHide={hideDeleteProcedureDialog}
       message=<Typography variant="body1">
         <strong>{procedure?.name}</strong> tedavisini silmek istediğinize emin
@@ -214,9 +224,9 @@ function ProcedureTable({}) {
     />
   );
 
-  const deleteProceduresDialogTemplate = (
+  const deleteProceduresDialog = (
     <ConfirmDialog
-      visible={deleteProceduresDialog}
+      visible={dialogs.deleteProcedures}
       onHide={hideDeleteProceduresDialog}
       message=<Typography variant="body1">
         <strong>{selectedProcedures?.length || 0}</strong> adet tedaviyi silmek
@@ -313,9 +323,7 @@ function ProcedureTable({}) {
           <Column
             body={(procedure) =>
               procedure.id === rowIndex ? (
-                <Delete
-                  onClick={() => showDeleteProcedureDialog(procedure)}
-                />
+                <Delete onClick={() => showDeleteProcedureDialog(procedure)} />
               ) : null
             }
             style={{ width: "8rem" }}
@@ -324,7 +332,7 @@ function ProcedureTable({}) {
       </div>
 
       {/* Add procedure dialog */}
-      {procedureDialog && (
+      {dialogs.procedure && (
         <BaseProcedureDialog
           onHide={hideProcedureDialog}
           onSubmit={saveProcedure}
@@ -333,10 +341,10 @@ function ProcedureTable({}) {
       )}
 
       {/* Confirm delete procedure dialog */}
-      {deleteProcedureDialogTemplate}
+      {deleteProcedureDialog}
 
       {/* Confirm delete procedures dialog */}
-      {deleteProceduresDialogTemplate}
+      {deleteProceduresDialog}
     </div>
   );
 }
