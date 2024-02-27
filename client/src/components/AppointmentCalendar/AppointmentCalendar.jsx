@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +26,8 @@ const AppointmentCalendar = () => {
   const dispatch = useDispatch();
 
   // Set the default values
-  const [step, setStep] = useState(30);
+  const step = useRef(30);
+  // const [step, setStep] = useState(30);
   const [showAll, setShowAll] = useState(
     localStorage.getItem("showAllAppointment") === "true"
   );
