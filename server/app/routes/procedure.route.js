@@ -1,8 +1,10 @@
 const router = require("express").Router();
+const { validate } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
 
 // Procedure specific imports
 const controller = require("../controller/procedure.controller");
+const schema = require("../schemas/procedure.schema");
 
 // Constants
 const API_URL = "/api";
@@ -30,7 +32,13 @@ module.exports = function (app) {
      * Add a Procedure
      * @body Procedure information
      */
-    .post(controller.saveProcedure);
+    .post(validate(schema.procedure, "body"), controller.saveProcedure)
+    /**
+     * Delete procedures of the given Ids
+     * If ids not given then delete all procedures
+     * @query ids: Id list of procedures
+     */
+    .delete(validate(schema.ids, "query"), controller.deleteProcedures);
 
   router
     .route(`/procedures/:procedureId`)
@@ -38,18 +46,22 @@ module.exports = function (app) {
      * Get the procedure with given id
      * @param procedureId id of the procedure
      */
-    .get(controller.getProcedure)
+    .get(validate(schema.id, "params"), controller.getProcedure)
     /**
      * Update the procedure
      * @param procedureId: Id of the Procedure
      * @body Procedure informations
      */
-    .put(controller.updateProcedure)
+    .put(
+      validate(schema.id, "params"),
+      validate(schema.procedure, "body"),
+      controller.updateProcedure
+    )
     /**
      * Delete the procedure
      * @param procedureId: Id of the procedure
      */
-    .delete(controller.deleteProcedure);
+    .delete(validate(schema.id, "params"), controller.deleteProcedure);
 
   app.use(API_URL, router);
 };

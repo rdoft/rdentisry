@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Tag, Divider, Dropdown } from "primereact";
+import React, { useState } from "react";
+import { Divider } from "primereact";
 import { Grid, Typography } from "@mui/material";
-
-import ActionGroup from "components/ActionGroup/ActionGroup";
+import { Edit } from "components/Button";
+import AppointmentStatus from "./AppointmentStatus";
 
 // assets
 import {
@@ -10,30 +10,9 @@ import {
   ScheduleOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
-import "assets/styles/PatientDetail/AppointmentCard.css";
 
-function AppointmentCard({ appointment, onClickEdit, onChangeStatus }) {
+function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
   const [isHover, setIsHover] = useState(false);
-  const [status, setStatus] = useState(null);
-
-  // Set statuses on loading
-  useEffect(() => {
-    getStatus(appointment.status);
-  }, [appointment]);
-
-  // Status items
-  const statusItems = [
-    { status: "active", label: "Bekleniyor", bgColor: "#E8F0FF", color: "#1E7AFC" },
-    { status: "completed", label: "Tamamlandı", bgColor: "#DFFCF0", color: "#22A069" },
-    { status: "canceled", label: "İptal Edildi", bgColor: "#FFD2CB", color: "#EF4444" },
-    { status: "absent", label: "Gelmedi", bgColor: "#FFFADD", color: "#FFD200" },
-  ];
-
-  // Set status of the appointment
-  const getStatus = (status) => {
-    const status_ = statusItems.find((item) => item.status === status);
-    setStatus(status_);
-  };
 
   // Set values as desired format
   const description = appointment.description;
@@ -67,37 +46,27 @@ function AppointmentCard({ appointment, onClickEdit, onChangeStatus }) {
     onClickEdit(appointment);
   };
 
-  // onChange handler
-  const handleChangeStatus = (status) => {
-    appointment.status = status.status;
-    onChangeStatus(appointment);
-  };
-
-  // TEMPLATES ----------------------------------------------------------
-  // Dropdwon item template
-  const statusTemplate = (option) => {
-    return (
-      <Tag value={option.label} style={{ backgroundColor: option.bgColor, color: option.color }} />
-    );
-  };
-
   return (
     <>
       <Grid
         container
         alignItems="center"
         style={{ marginTop: "1em", marginBottom: "1em" }}
-        // onClick={handleClickEdit}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         <Grid item xs={9}>
+          {/* Date */}
           <Typography variant="h5" sx={{ fontWeight: "regular" }}>
             <ScheduleOutlined /> {`${date}`}
           </Typography>
+
+          {/* Time */}
           <Typography variant="h5" sx={{ fontWeight: "regular" }}>
             <ClockCircleOutlined /> {`${start} - ${end}`}
           </Typography>
+
+          {/* Description */}
           {description && (
             <Typography variant="h6" sx={{ fontWeight: "light" }}>
               <FileTextOutlined />{" "}
@@ -108,24 +77,16 @@ function AppointmentCard({ appointment, onClickEdit, onChangeStatus }) {
             </Typography>
           )}
         </Grid>
-        <Grid container item xs={2} justifyContent="flex-end">
-          {status && (
-            <Dropdown
-              value={status}
-              options={statusItems}
-              optionLabel="desc"
-              valueTemplate={statusTemplate}
-              itemTemplate={statusTemplate}
-              onChange={(event) => handleChangeStatus(event.value)}
-              onClick={(event) => event.stopPropagation()}
-              scrollHeight={null}
-              className="statusDropdown"
-            />
-          )}
+
+        {/* Status */}
+        <Grid container item xs={2} justifyContent="flex-start">
+          <AppointmentStatus appointment={appointment} onSubmit={onSubmit} />
         </Grid>
+
+        {/* Edit Button */}
         {isHover && (
           <Grid container item xs={1} justifyContent="flex-end">
-            <ActionGroup onClickEdit={handleClickEdit} />
+            <Edit onClick={handleClickEdit} />
           </Grid>
         )}
       </Grid>

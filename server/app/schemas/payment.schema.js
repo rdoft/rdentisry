@@ -20,10 +20,7 @@ const patientId = Joi.number().required();
 const type = Joi.string().empty("").allow(null);
 const amount = Joi.number().min(0).required();
 const plannedDate = Joi.date().empty(null).allow(null);
-const actualDate = Joi.date().when(".plannedDate", {
-  is: Joi.exist(),
-  then: Joi.allow(null),
-});
+const actualDate = Joi.date().empty(null).allow(null);
 
 module.exports = {
   payment,

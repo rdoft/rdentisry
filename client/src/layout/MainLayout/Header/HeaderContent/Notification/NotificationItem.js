@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler, getTabIndex } from "utils";
 import {
   Avatar,
   ListItemButton,
@@ -10,8 +10,7 @@ import {
   ListItemSecondaryAction,
   Typography,
 } from "@mui/material";
-import { Button } from "primereact";
-import ActionGroup from "components/ActionGroup/ActionGroup";
+import { Read } from "components/Button";
 
 // assets
 import { LiraDangerIcon } from "assets/images/icons";
@@ -68,7 +67,8 @@ function NotificationItem({ notification, getNotifications, onClose }) {
   // onClick handler to go to the patient page
   const handleClickNotification = () => {
     onClose();
-    navigate(`/patients/${notification.patient.id}?tab=payments`);
+    localStorage.setItem("activeTabIndex", getTabIndex("payments"));
+    navigate(`/patients/${notification.patient.id}`);
     updateNotification("read");
   };
 
@@ -77,18 +77,6 @@ function NotificationItem({ notification, getNotifications, onClose }) {
     event.stopPropagation();
     updateNotification("read");
   };
-
-  // Action button for mark as read
-  const readButton = (
-    <Button
-      text
-      outlined
-      size="sm"
-      icon="pi pi-check-circle"
-      severity="secondary"
-      onClick={handleClickRead}
-    />
-  );
 
   return (
     <ListItemButton
@@ -124,7 +112,7 @@ function NotificationItem({ notification, getNotifications, onClose }) {
       </ListItemSecondaryAction>
       {notification.status === "read" || (
         <ListItemSecondaryAction sx={{ alignSelf: "center !important" }}>
-          <ActionGroup custom={readButton} />
+          <Read onClickRead={handleClickRead} />
         </ListItemSecondaryAction>
       )}
     </ListItemButton>

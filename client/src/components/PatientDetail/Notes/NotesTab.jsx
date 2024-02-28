@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler } from "utils";
+import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
+import NotFoundText from "components/NotFoundText";
 import NoteCard from "./NoteCard";
 import Note from "./Note";
 
@@ -12,37 +13,40 @@ import "assets/styles/PatientDetail/NotesTab.css";
 
 // services
 import { NoteService } from "services";
-import NotFoundText from "components/NotFoundText";
 
-function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
+function NotesTab({ patient, noteDialog, hideDialog, counts, setCounts }) {
   const navigate = useNavigate();
-  
-  let emptyNote = {
-    patient: patient,
-    title: "",
-    detail: "",
-    date: new Date(),
-  };
 
-  const [note, setNote] = useState({ ...emptyNote });
-  const [notes, setNotes] = useState([]);
   const [isEdit, setEdit] = useState(false);
+  const [notes, setNotes] = useState([]);
+  const [note, setNote] = useState(null);
 
   // Set the page on loading
   useEffect(() => {
-    getNotes(patient.id);
-  }, [patient]);
+    const controller = new AbortController();
+    const signal = controller.signal;
 
-  // Set the empty not for add new note
-  useEffect(() => {
-    setNote({ ...emptyNote });
-    hideDialog();
-  }, [patient, noteDialog]);
+    NoteService.getNotes(patient.id, { signal })
+      .then((res) => {
+        setNotes(res.data);
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
 
-  // Set the counts for tab header
+    return () => {
+      controller.abort();
+    };
+  }, [navigate, patient]);
+
+  // Reset note when noteDialog becomes true
   useEffect(() => {
-    getCounts();
-  }, [notes]);
+    if (noteDialog) {
+      setNote(null);
+    }
+  }, [noteDialog, patient]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of the notes of the patient and set notes value
@@ -55,6 +59,10 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
       notes = response.data;
 
       setNotes(notes);
+      setCounts({
+        ...counts,
+        note: notes.length,
+      });
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -75,6 +83,7 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
       }
 
       getNotes(patient.id);
+      hideDialog();
       setNote(note);
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -89,7 +98,8 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
         await NoteService.deleteNote(note.id);
 
         getNotes(patient.id);
-        setNote({ ...emptyNote });
+        hideDialog();
+        setNote(null);
       }
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -100,7 +110,10 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
   // HANDLERS -----------------------------------------------------------------
   // onSelectNote handler to set the note value
   const handleSelectNote = (note) => {
-    !isEdit && setNote(note);
+    if (!isEdit) {
+      hideDialog();
+      setNote(note);
+    }
   };
 
   // TEMPLATES ----------------------------------------------------------------
@@ -108,6 +121,7 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
     if (!note) {
       return;
     }
+
     return <NoteCard note={note} onClick={handleSelectNote} />;
   };
 
@@ -132,8 +146,9 @@ function NotesTab({ patient, noteDialog, hideDialog, getCounts }) {
           sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
         >
           <Note
-            _note={note}
-            onSave={saveNote}
+            key={note?.id}
+            initNote={note ? note : { patient }}
+            onSubmit={saveNote}
             setEdit={setEdit}
             onDelete={deleteNote}
           />

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { errorHandler } from "utils";
+import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
-import { errorHandler } from "utils/errorHandler";
-import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
+import { AppointmentDialog } from "components/Dialog";
+import { CardTitle } from "components/cards";
 import NotFoundText from "components/NotFoundText";
-import CardTitle from "components/cards/CardTitle";
 import AppointmentCard from "./AppointmentCard";
 
 // assets
@@ -17,46 +17,50 @@ import { AppointmentService } from "services";
 
 function AppointmentsTab({
   patient,
+  patients,
   appointmentDialog,
+  setPatients,
   showDialog,
   hideDialog,
-  getCounts,
+  counts,
+  setCounts,
 }) {
   const navigate = useNavigate();
+
   // Set the default values
   const [appointments, setAppointments] = useState([]);
-  const [activeAppointments, setActiveAppointments] = useState([]);
-  const [otherAppointments, setOtherAppointments] = useState([]);
   const [appointment, setAppointment] = useState(null);
+  const [doctors, setDoctors] = useState(null);
 
-  // Set the page on loading
   useEffect(() => {
-    getAppointments(patient.id);
-  }, [patient]);
+    const controller = new AbortController();
+    const signal = controller.signal;
 
-  // Set the active-other appointments
-  useEffect(() => {
-    getCounts();
-    divideAppointments(appointments);
-  }, [appointments]);
+    AppointmentService.getAppointments({ patientId: patient.id }, { signal })
+      .then((res) => {
+        setAppointments(res.data);
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [navigate, patient]);
 
   // Divide the appointments based on its status
-  const divideAppointments = (appointments) => {
-    let activeList = [];
-    let otherList = [];
-
-    for (let appointment of appointments) {
-      if (appointment.status === "active") {
-        activeList.push(appointment);
-      } else {
-        otherList.push(appointment);
-      }
+  let activeAppointments = [];
+  let otherAppointments = [];
+  for (let appointment of appointments) {
+    if (appointment.status === "active") {
+      activeAppointments.push(appointment);
+    } else {
+      otherAppointments.push(appointment);
     }
-
-    // Set values
-    setActiveAppointments(activeList);
-    setOtherAppointments(otherList);
-  };
+  }
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of appointments of the patient and set appointmets value
@@ -65,11 +69,15 @@ function AppointmentsTab({
     let appointments;
 
     try {
-      response = await AppointmentService.getAppointments(patientId);
+      response = await AppointmentService.getAppointments({ patientId });
       // appointments = response.data.reverse();
       appointments = response.data;
 
       setAppointments(appointments);
+      setCounts({
+        ...counts,
+        appointment: appointments.length,
+      });
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -81,10 +89,8 @@ function AppointmentsTab({
     try {
       if (appointment.id) {
         await AppointmentService.updateAppointment(appointment.id, appointment);
-        toast.success("Randevu bilgileri başarıyla güncellendi!");
       } else {
         await AppointmentService.saveAppointment(appointment);
-        toast.success("Yeni randevu başarıyla kaydedildi!");
       }
 
       // Get and set the updated list of appointments
@@ -115,11 +121,11 @@ function AppointmentsTab({
   // HANDLERS -----------------------------------------------------------------
   // onSelectEvent, get appointment and show dialog
   const handleSelectAppointment = async (event) => {
-    const appointment_ = appointments.find(
+    const _appointment = appointments.find(
       (appointment) => appointment.id === event.id
     );
-    setAppointment(appointment_);
 
+    setAppointment(_appointment);
     setTimeout(showDialog, 100);
   };
 
@@ -134,61 +140,70 @@ function AppointmentsTab({
     if (!appointment) {
       return;
     }
+
     return (
       <AppointmentCard
         appointment={appointment}
         onClickEdit={handleSelectAppointment}
-        onChangeStatus={saveAppointment}
+        onSubmit={saveAppointment}
       />
     );
   };
 
   return (
     <>
-      <Grid container justifyContent="space-between" mt={2}>
-        <Grid container justifyContent="space-around">
+      <Grid container alignItems="start" justifyContent="space-between" mt={2}>
+        {/* Active appointments */}
+        <Grid container item md={6} xs={12} justifyContent="center" pr={2}>
           <Grid item xs={1}>
-            <CardTitle
-              title="Aktif"
-              style={{ textAlign: "center", marginY: 2 }}
-            />
+            <CardTitle style={{ textAlign: "center", marginY: 2 }}>
+              Aktif
+            </CardTitle>
           </Grid>
 
-          <Grid item xs={1}>
-            <CardTitle
-              title="Diğer"
-              style={{ textAlign: "center", marginY: 2 }}
-            />
+          <Grid item xs={12}>
+            {activeAppointments.length === 0 ? (
+              <NotFoundText text="Randevu yok" p={3} />
+            ) : (
+              <DataScroller
+                value={activeAppointments}
+                itemTemplate={appointmentTemplate}
+                rows={10}
+              ></DataScroller>
+            )}
           </Grid>
         </Grid>
-        <Grid item md={6} xs={12} pr={2}>
-          {activeAppointments.length === 0 ? (
-            <NotFoundText text="Randevu yok" p={3} />
-          ) : (
-            <DataScroller
-              value={activeAppointments}
-              itemTemplate={appointmentTemplate}
-              rows={10}
-            ></DataScroller>
-          )}
-        </Grid>
-        <Grid item md={6} xs={12} pl={2}>
-          {otherAppointments.length === 0 ? (
-            <NotFoundText text="Randevu yok" p={3} />
-          ) : (
-            <DataScroller
-              value={otherAppointments}
-              itemTemplate={appointmentTemplate}
-              rows={10}
-              emptyMessage={<NotFoundText text="Randevu yok" p={0} />}
-              style={{ textAlign: "center" }}
-            ></DataScroller>
-          )}
+
+        {/* Other appointments */}
+        <Grid container item md={6} xs={12} justifyContent="center" pl={2}>
+          <Grid item xs={1}>
+            <CardTitle style={{ textAlign: "center", marginY: 2 }}>
+              Diğer
+            </CardTitle>
+          </Grid>
+
+          <Grid item xs={12}>
+            {otherAppointments.length === 0 ? (
+              <NotFoundText text="Randevu yok" p={3} />
+            ) : (
+              <DataScroller
+                value={otherAppointments}
+                itemTemplate={appointmentTemplate}
+                rows={10}
+              ></DataScroller>
+            )}
+          </Grid>
         </Grid>
       </Grid>
+
+      {/* Appointment dialog */}
       {appointmentDialog && (
         <AppointmentDialog
-          _appointment={appointment ? appointment : { patient }}
+          initAppointment={appointment ? appointment : { patient }}
+          doctors={doctors}
+          patients={patients}
+          setDoctors={setDoctors}
+          setPatients={setPatients}
           onHide={handleHideDialog}
           onSubmit={saveAppointment}
           onDelete={appointment && deleteAppointment}

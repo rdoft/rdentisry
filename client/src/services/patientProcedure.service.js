@@ -9,11 +9,17 @@ let patientProcedure = {};
  * @query tooth: number of the tooth
  * @query completed: flag for completed/noncompleted
  */
-patientProcedure.getPatientProcedures = (patientId, tooth) => {
+patientProcedure.getPatientProcedures = (
+  { patientId, tooth },
+  options = {}
+) => {
   if (tooth) {
-    return API.get(`${API_URL}/${patientId}/procedures?tooth=${tooth}`);
+    return API.get(
+      `${API_URL}/${patientId}/procedures?tooth=${tooth}`,
+      options
+    );
   } else {
-    return API.get(`${API_URL}/${patientId}/procedures`);
+    return API.get(`${API_URL}/${patientId}/procedures`, options);
   }
 };
 

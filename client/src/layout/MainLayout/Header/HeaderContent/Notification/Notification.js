@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler } from "utils";
 import { useTheme } from "@mui/material/styles";
 import {
   Badge,
@@ -16,11 +16,11 @@ import {
   Grid,
   Divider,
 } from "@mui/material";
-import { Button, InputSwitch } from "primereact";
-import ActionGroup from "components/ActionGroup/ActionGroup";
+import { InputSwitch } from "primereact";
+import { Read } from "components/Button";
 
 // project import
-import MainCard from "components/MainCard";
+import { MainCard } from "components/cards";
 import Transitions from "components/@extended/Transitions";
 import NotificationItem from "./NotificationItem";
 
@@ -56,13 +56,26 @@ const Notification = () => {
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
-  const [checked, setChecked] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [checked, setChecked] = useState(
+    localStorage.getItem("showAllNotification") === "true"
+  );
 
   // Set the page on loading
   useEffect(() => {
-    getNotifications();
-  }, [checked]);
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    NotificationService.getNotifications(!checked ? "sent" : null, { signal })
+      .then((res) => {
+        setNotifications(res.data);
+      })
+      .catch((error) => {});
+
+    return () => {
+      controller.abort();
+    };
+  }, [checked, navigate]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of notifications and set notifications value
@@ -119,6 +132,12 @@ const Notification = () => {
     updateNotifications("read");
   };
 
+  // onChange handler for show only unread notifications
+  const handleChecked = (event) => {
+    localStorage.setItem("showAllNotification", event.value);
+    setChecked(event.value);
+  };
+
   // TEMPLATES ----------------------------------------------------------------
   const notificationList = (
     <List
@@ -154,19 +173,6 @@ const Notification = () => {
         </Typography>
       )}
     </List>
-  );
-
-  // Action button for mark all as read
-  const readButton = (
-    <Button
-      text
-      outlined
-      size="sm"
-      icon="pi pi-check-circle"
-      severity="secondary"
-      style={{ width: "2rem", padding: "0.4rem" }}
-      onClick={handleClickRead}
-    />
   );
 
   // Count of the sent notifications (unread)
@@ -244,7 +250,7 @@ const Notification = () => {
                     >
                       {/* Mark all as read */}
                       <Grid item xs="auto">
-                        <ActionGroup custom={readButton} />
+                        <Read onClick={handleClickRead} />
                       </Grid>
                       <Grid item xs={5}>
                         <Typography variant="caption">
@@ -260,7 +266,7 @@ const Notification = () => {
                       <Grid container item xs="auto" justifyContent="end">
                         <InputSwitch
                           checked={checked}
-                          onChange={(e) => setChecked(e.value)}
+                          onChange={handleChecked}
                           style={{ transform: "scale(0.6)" }}
                         />
                       </Grid>

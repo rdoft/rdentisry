@@ -1,9 +1,11 @@
 import React from "react";
 
-function NotFoundText({ text, p = 2 }) {
+function NotFoundText({ text, ...props }) {
   return (
     <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
-      <p className={`text-center p-${p}`}>{text}</p>
+      <p className={`text-center p-${props.p ?? 2} m-${props.m ?? 0}`}>
+        {text}
+      </p>
     </div>
   );
 }

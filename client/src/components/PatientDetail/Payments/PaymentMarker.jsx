@@ -3,7 +3,6 @@ import { React } from "react";
 function PaymentMarker({ payment }) {
   let color;
   let icon;
-
   if (payment.actualDate) {
     color = "#22A06A";
     icon = "pi pi-check";

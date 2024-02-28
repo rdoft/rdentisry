@@ -1,0 +1,173 @@
+"ProcedureId","ProcedureCategoryId","Code","Name","Price","UserId"
+1,1,"401010","Diş Hekimi Muayenesi",315,1
+2,1,"401030","Uzman Dişhekimi Muayenesi",335,1
+3,2,"401050","Diş Röntgen Filmi (Periapikal)",170,1
+4,2,"401060","Oklüzal Filmi",185,1
+5,2,"401070","Extra Oral Röntgen Filmi",220,1
+6,2,"401080","Panaromik Film",560,1
+7,2,"401090","Sefalometrik Film",565,1
+8,2,"401100","Antero-Posterior Sefalometrik Film",560,1
+9,2,"401110","El Bilek Filmi",560,1
+10,2,"401120","T.M.E. Filmi ve Tetkiki",840,1
+11,2,"401130","Siyalografi",590,1
+12,2,"401150","Bite - Wing Radyografi",170,1
+13,5,"402010","Amalgam Dolgu (Bir Yüzlü)",760,1
+14,5,"402020","Amalgam Dolgu (İki Yüzlü)",970,1
+15,5,"402030","Amalgam Dolgu (Üç Yüzlü)",1205,1
+16,5,"402040","İnley Dolgu (Bir Yüzlü)",1720,1
+17,5,"402050","İnley Dolgu (İki Yüzlü)",1755,1
+18,5,"402060","İnley Dolgu (Üç Yüzlü)",1800,1
+20,5,"402070","Öndiş Kompozit Dolgu",0,1
+21,5,"402080","Arkadiş Kompozit Dolgu",0,1
+22,5,"402090","Öndiş Işınlı Kompozit Dolgu",0,1
+23,5,"402100","Arkadiş Işınlı Kompozit Dolgu (Bir Yüzlü)",0,1
+24,5,"402110","Arkadiş Işınlı Kompozit Dolgu (İki Yüzlü)",0,1
+25,5,"402120","Arkadiş Işınlı Kompozit Dolgu (Üç Yüzlü)",0,1
+26,5,"402130","Kuafaj (Dolgu Hariç)",115,1
+27,5,"402140","Amputasyon (Dolgu Hariç)",0,1
+28,6,"402150","Kanal Tedavisi (Tek Kanal) (Üst Dolgu Hariç)",1170,1
+29,6,"402152","Kanal Tedavisi (İki Kanal) (Üst Dolgu Hariç)",1750,1
+30,6,"402153","Kanal Tedavisi (Üç Kanal) (Üst Dolgu Hariç)",2390,1
+31,6,"402154","Kanal Tedavisi (İlave Her Kanal İçin)",650,1
+32,5,"402160","Black 5 (Kole) Dolgusu (Amalgam)",0,1
+33,5,"402170","Black 5 (Kole) Dolgusu (Cam Ionomer)",500,1
+34,5,"402180","Black 5 (Kole) Dolgusu (Kompozit)",695,1
+35,5,"402190","Cam İonomer Dolgu",645,1
+36,5,"402200","Dentin Pinli Restorasyonu (Pin Başına) (Dolgu Hariç)",0,1
+37,6,"402240","Kanal İçi Post Uygulaması (Diş Başına) (Dolgu Hariç)",1600,1
+38,5,"402250","Aşırı Kole Hassasiyeti Tedavisi (Tek Çene)",0,1
+39,6,"402270","Periapikal Lezyon Tedavisi (Her Kanal İçin)",0,1
+40,6,"402271","Periapikal Lezyonlu Dişte Kanal Tedavisi (Tek Kanal) (Üst Dolgu Hariç)",1215,1
+41,6,"402272","Periapikal Lezyonlu Dişte Kanal Tedavisi (İki Kanal) (Üst Dolgu Hariç)",1795,1
+42,6,"402273","Periapikal Lezyonlu Dişte Kanal Tedavisi (Üç Kanal) (Üst Dolgu Hariç)",2475,1
+43,6,"402300","Ekstirpasyon (Her Kanal İçin)",460,1
+44,5,"402320","Onley (Labaratuar Ücreti Hariç)",2260,1
+45,8,"402340","Kompozit Venner",0,1
+46,4,"402350","Diş Beyazlatma (Vital Tek Diş En Çok 4 Adet) (Malzeme Ücreti Hariç)",505,1
+47,4,"402351","Diş Beyazlatma (Devital Tek Diş) (Seans Başına) (Dolgu Hariç)",635,1
+48,4,"402352","Diş Beyazlatma (Tek Çene) (Malzeme Ücreti Hariç)",3010,1
+49,,"403010","Fissür Örtülmesi (Sealant) (Tek Diş)",0,1
+50,,"403020","Yerel Flor Uygulaması (Çürük Proflaksisi) Tek Çene",0,1
+51,,"403030","Prefabrike Kron (Malzeme Ücreti Hariç)",0,1
+52,,"403040","Yer Tutucu (Sabit)",0,1
+53,,"403050","Yer Tutucu (Hareketli)",0,1
+54,9,"403060","Çocuk Protezi (Akrilik) (Bölümlü) (Tek Çene)",4625,1
+55,9,"403070","Çocuk Protezi (Tam) (Tek Çene)",5060,1
+56,,"403080","Strip Kron",985,1
+57,5,"403090","Kompomer Dolgu",910,1
+58,6,"403100","Açık Apeksli Dişte Kanal Tedavisi (Her Kanal İçin) (Dolgu Hariç)",3190,1
+59,9,"404010","Tam Protez (Akrilik) (Tek Çene)",7075,1
+60,9,"404020","Bölümlü Protez (Akrilik) (Tek Çene)",6875,1
+61,9,"404030","Tam Protez (Metal Kaideli) (Tek Çene)",9130,1
+62,9,"404040","Bölümlü Protez (Metal Kaideli) (Tek Çene)",8995,1
+63,9,"404050","Immediat Protez (Akrilik) (Tek Çene)",6090,1
+64,9,"404060","Rebezaj (Kaide Yenileme) (Tek Çene)",3070,1
+65,9,"404070","Proteze Yumuşak Akrilik Uygulaması",3905,1
+66,9,"404080","Besleme (Tek Çene)",2555,1
+67,9,"404090","Tamir (Akrilik Protezler, Kırık veya Çatlak)",1235,1
+68,9,"404100","Kroşe İlavesi",1290,1
+69,9,"404110","Metal İskelet Tamiri",1290,1
+70,9,"404120","Diş İlavesi (Tek Diş)",1115,1
+71,,"404140","Oklüzal Aşındırmalar",1540,1
+72,9,"404150","Gece Plağı (Bruksizm İçin)",4000,1
+73,9,"404160","Pinley ve Çeşitleri",2480,1
+74,7,"404170","Tek Parça Döküm Kron",2135,1
+75,8,"404180","Veneer Kron (Akrilik)",2580,1
+76,8,"404181","Veneer Kron (Seramik)",2880,1
+77,7,"404190","Pivo (Çivili Kron) veya Post-Core",1195,1
+78,7,"404200","Jaket Kron (Akrilik)",2105,1
+79,7,"404201","Tam Seramik Kron (Metal Desteksiz)",6440,1
+80,7,"404210","Teleskop Kron (Koping)",2880,1
+81,7,"404220","Adeziv(Maryland) Köprü",3020,1
+82,7,"404230","Roach Köprü",1840,1
+83,7,"404240","Geçici Kron (Her Diş İçin)",575,1
+84,,"404250","Kron Sökümü (Tek Sabit Üye İçin)",485,1
+85,7,"404260","Düşmüş Kron ve Köprü Simantasyonu (Her Sabit Üye İçin)",320,1
+86,7,"404270","Kron Köprü Tamiri (Her Üye İçin)",1440,1
+87,9,"404280","Damak Yarığı Protezi (Overdenture)",7020,1
+88,,"404290","Yeni Doğanda Preoperatif Aparey (Veren Ücreti Hariç)",0,1
+89,,"404300","Velum Uzantılı Konuşma Apareyi",7020,1
+90,9,"404310","Geçici Obturatörler",5200,1
+91,,"404320","Basit Çene Defektlerinde Protetik Tedavi",0,1
+92,,"404330","Komplike Çene Defektlerinde Protetik Tedavi",0,1
+93,9,"404340","Yüz Protezleri",20430,1
+94,8,"404390","Laminate Veneer Kompozit",2290,1
+95,10,"405010","Diş Çekimi",655,1
+96,10,"405020","Komplikasyonlu Diş Çekimi",1260,1
+97,12,"405030","Gömülü Diş Operasyonu",2280,1
+98,12,"405040","Gömülü Diş Operasyonu (Kemik Retansiyonlu)",2675,1
+99,12,"405060","Kök Ucu Rezeksiyonu (Tek Diş) (Dolgu Hariç)",2525,1
+100,12,"405070","Alveolit Cerrahi Tedavisi",1990,1
+101,12,"405080","Kanama Müdahalesi",695,1
+102,12,"405090","Alveol Plasti (Yarım Çene)",2465,1
+103,12,"405100","Alveol Düzeltilmesi (Tek Çene)",2465,1
+104,12,"405110","Kist Operasyonu (Küçük)",2715,1
+105,12,"405120","Kist Operasyonu (Büyük)",3535,1
+106,12,"405130","Osteomiyelit (Tek Çene)",5015,1
+107,12,"405140","Çene Lüksasyonu",705,1
+108,12,"405150","Vestibüloplasti (Yarım Çene)",5735,1
+109,12,"405160","Sinüs Plasti",2675,1
+110,12,"405170","Sert Doku Greftleme (Greft Ücreti Hariç)",3615,1
+111,,"405180","Biopsi",1945,1
+112,12,"405190","Apse Drenajı ve Tedavisi (Extraoral)",1895,1
+113,,"405200","Fizik Tedavi (İnfraruj Seansı)",530,1
+114,,"405210","Reimplantasyon",2925,1
+115,,"405220","Ototransplantasyon",4330,1
+116,11,"405260","Kemik İçi İmplant (Tek Ünite)",7125,1
+117,12,"405270","Torus Operasyonu (Yarım Çene)",2625,1
+118,12,"405280","Odontogenik Tümör Operasyonu (Küçük)",3425,1
+119,12,"405290","Odontogenik Tümör Operasyonu (Büyük)",3990,1
+120,12,"405300","Cerrahi Nevralgi Tedavisi",2845,1
+121,12,"405380","Ortodontik Tedavi Amaçlı Gömük Dişlerin Üzerinin Açılması",2535,1
+122,,"405390","T.M.E. Mekonoterapi",950,1
+123,,"405400","T.M.E. İçi Enjeksiyon (Tek Taraflı)",780,1
+124,,"405410","Artrosentez (Tek Taraflı)",1140,1
+125,,"405420","Lokal Anestezi (İnfiltrasyon)",750,1
+126,,"405430","Lokal Anestezi (Rejyonal)",750,1
+127,3,"406020","Detartraj (Diş Taşı Temizliği) (Tek Çene)",875,1
+128,3,"406030","Subgingival Küretaj (Tek Diş)",510,1
+129,12,"406040","Gingivektomi (Tek Diş)",940,1
+130,12,"406050","Flep Operasyonu (Yarım Çene)",1405,1
+131,12,"406060","Hemiseksiyon (Kök Amputasyonu) (Kanal Tedavisi Hariç)",1110,1
+132,12,"406070","Serbest Diş Eti Grefti (Yarım Çene)",1120,1
+133,12,"406080","Koronale Kaydırma veya Sliding Flep (Yarım Çene)",1150,1
+134,,"406090","Periodontal Şine (Splint) (Geçici)",2820,1
+135,,"406100","Periodontal Şine (Splint) (Daimi)",2410,1
+136,12,"406120","Frenektomi",1780,1
+137,12,"406130","Gingivoplasti (Yarım Çene)",835,1
+138,,"406140","Biyomateryal Uygulaması (Tek Diş)",300,1
+139,12,"406150","Tunnel Operasyonu (Tek Diş)",1170,1
+140,,"406160","Membran Uygulaması",300,1
+141,12,"406170","Subepitelyal Bağ Dokusu Grefti",1695,1
+142,4,"407010","Lateral Sefalometrik Film Analizi",325,1
+143,4,"407020","Antero Posterior Sefalometrik Film Analizi",325,1
+144,4,"407060","Kemik Yaşı Tayini",180,1
+145,4,"407070","Ortodontik Fotoğraf",180,1
+146,4,"407080","Ortodontik Fotoğraf Analizi",145,1
+147,4,"407090","Ortodontik Model Yapımı",325,1
+148,4,"407100","Ortodontik Model Analizi",210,1
+149,,"407110","Angle Sınıf I Anomalilerinin Ortodontik Tedavisi",0,1
+150,,"407120","Angle Sınıf II Anomalilerinin Ortodontik Tedavisi",0,1
+151,,"407130","Angle Sınıf III Anomalilerinin Ortodontik Tedavisi",0,1
+152,,"407140","Kısa Süreli Ortodontik Tedavi",0,1
+153,,"407150","Önleyici Ortodontik Tedavi",0,1
+154,,"407160","Pekiştirme Tedavisi",0,1
+155,,"407170","Pekiştirme Aygıtı (Hawley Aygıtı vb.)",0,1
+156,,"407180","Sabit Pekiştirme Aygıtı (Lingual Retainer)",0,1
+157,,"407190","Tek Çeneyi İlgilendiren Aparey Yapımı",0,1
+158,,"407200","Çift Çeneyi İlgilendiren Aparey Yapımı (Aktivatör)",0,1
+159,,"407210","Ağız Dışı Aparey Tatbiki (Headgear)",0,1
+160,,"407220","Ağız Dışı Aparey Tatbiki (Chincap)",0,1
+161,,"407230","Kayıp Apareyin Yeniden Yapımı (Tek Çene)",0,1
+162,,"407240","Aparey Tamiri",0,1
+163,,"407250","Hızlı Maksiller Genişletme Apareyi",0,1
+164,,"407260","Düz Ark Teli Tatbiki (Tek Çene)",0,1
+165,,"407270","Bant (Braket) Tatbiki (Tek Diş)",0,1
+166,,"407280","Sefalometrik Cerrahi Planı",0,1
+167,,"407290","Oklüzal Cerrahi Splint (Tek Çene)",0,1
+168,,"407300","Ortodontik Ameliyat Arkı (Tek Çene)",0,1
+169,,"407310","Düşen Bant Tatbiki (Tek Diş)",0,1
+170,,"407320","Açık Kapanışın Ortodontik Tedavisi",0,1
+171,,"407330","Şeffaf Plaklar ile Ortodontik Tedavi (Hafif) (Plak Ücreti Hariç)",0,1
+172,,"407340","Şeffaf Plaklar ile Ortodontik Tedavi (Orta) (Plak Ücreti Hariç)",0,1
+173,,"407350","Şeffaf Plaklar ile Ortodontik Tedavi (Ağır) (Plak Ücreti Hariç)",0,1

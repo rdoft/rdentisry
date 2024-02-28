@@ -1,4 +1,4 @@
-export const errorHandler = (error) => {
+const errorHandler = (error) => {
   let code = 500;
   let message = "";
 
@@ -33,3 +33,5 @@ export const errorHandler = (error) => {
 
   return { code, message };
 };
+
+export default errorHandler;

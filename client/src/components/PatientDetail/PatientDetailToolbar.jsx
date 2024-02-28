@@ -1,24 +1,43 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
-import { Dropdown, Toolbar } from "primereact";
-import DropdownItem from "components/DropdownItem/DropdownPersonItem";
+import { Toolbar } from "primereact";
+import { DropdownPatient } from "components/Dropdown";
+import { PatientDialog } from "components/Dialog";
 
 // assets
-import avatarPatient from "assets/images/avatars/patient-avatar.png";
 import "assets/styles/PatientDetail/PatientDetailToolbar.css";
 
 // services
-import { PatientService } from "services/index";
+import { PatientService } from "services";
 
-function PatientDetailToolbar({ patient, actionTemplate }) {
+function PatientDetailToolbar({
+  patient,
+  patients,
+  setPatients,
+  startContent,
+}) {
   const navigate = useNavigate();
+
   // Set the default values
-  const [patients, setPatients] = useState(null);
+  const [patientDialog, setPatientDialog] = useState(false);
 
   // Set the page on loading
   useEffect(() => {
-    getPatients();
-  }, []);
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    PatientService.getPatients(null, { signal })
+      .then((res) => {
+        setPatients(res.data);
+      })
+      .catch((error) => {});
+
+    return () => {
+      controller.abort();
+    };
+  }, [setPatients]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of patients and set patients value
@@ -37,54 +56,60 @@ function PatientDetailToolbar({ patient, actionTemplate }) {
     }
   };
 
+  // Save patient (create)
+  const savePatient = async (patient) => {
+    let response;
+
+    try {
+      // Create a new patient
+      response = await PatientService.savePatient(patient);
+      patient = response.data;
+
+      // Set the patients and close the dialog
+      getPatients();
+      setPatientDialog(false);
+      navigate(`/patients/${patient.id}`);
+    } catch (error) {
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
+    }
+  };
+
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
   const handleChange = (event) => {
-    let value = event.target && event.target.value;
+    const { value } = event.target;
     navigate(`/patients/${value.id}`);
   };
 
-  // TEMPLATES ----------------------------------------------------------------
-  // Dropdwon item template
-  const patientDropdownTemplate = (option, props) => {
-    return (
-      <DropdownItem
-        option={option}
-        placeholder={props?.placeholder}
-        avatar={avatarPatient}
-      />
-    );
+  // Show add patient dialog
+  const showPatientDialog = () => {
+    setPatientDialog(true);
   };
 
+  // Hide add patient dialog
+  const hidePatientDialog = () => {
+    setPatientDialog(false);
+  };
+
+  // TEMPLATES ----------------------------------------------------------------
   // Toolbar content thats are on left
-  const rightContent = (
-    <React.Fragment>
-      {/* Get patient information */}
-      <Dropdown
-        value={patient}
-        options={patients}
-        optionLabel="name"
-        filter
-        filterBy="name,surname,phone"
-        placeholder="Hasta seçiniz..."
-        valueTemplate={patientDropdownTemplate}
-        itemTemplate={patientDropdownTemplate}
-        onChange={(event) => handleChange(event)}
-        className="w-full"
-      />
-    </React.Fragment>
+  const endContent = (
+    <DropdownPatient
+      value={patient}
+      options={patients}
+      onChange={handleChange}
+      onClickAdd={showPatientDialog}
+    />
   );
 
-  // Toolbar content thats are on left
-  const leftContent = (
-    <React.Fragment>
-      {/* Get action button */}
-      {actionTemplate()}
-    </React.Fragment>
-  );
-  
   return (
-    <Toolbar className="mb-4 p-2" left={leftContent} right={rightContent} />
+    <>
+      <Toolbar className="mb-4 p-2" start={startContent} end={endContent} />
+      {patientDialog && (
+        <PatientDialog onHide={hidePatientDialog} onSubmit={savePatient} />
+      )}
+    </>
   );
 }
 

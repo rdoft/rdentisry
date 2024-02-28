@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Button } from "primereact";
 import { Grid, Typography } from "@mui/material";
+import { Edit } from "components/Button";
 
 // assets
 import {
@@ -77,16 +77,7 @@ function EventTitle({ event, step, onClickEdit }) {
 
       {isHover && (
         <Grid item xs={2} m={0.5}>
-          <Button
-            text
-            outlined
-            style={{
-              padding: 6,
-            }}
-            onClick={handleClickEdit}
-          >
-            <i className="pi pi-pencil" style={{ color: "#3b5dbf" }}></i>
-          </Button>
+          <Edit severity="info" onClick={handleClickEdit} style={{ color: "#3B5DBF" }}/>
         </Grid>
       )}
     </Grid>

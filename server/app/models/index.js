@@ -1,4 +1,6 @@
 const config = require("../config/db.config");
+const fs = require("fs");
+const { parse } = require("csv-parse");
 
 const Sequelize = require("sequelize");
 const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
@@ -201,9 +203,33 @@ db.patient.beforeDestroy(async (patient) => {
   }
 });
 
+// Control If patient has any appointments before bulk destroy
+db.patient.beforeBulkDestroy(async (options) => {
+  const paymentCount = await db.payment.count({
+    where: {
+      PatientId: options.where.PatientId,
+    },
+  });
+  if (paymentCount > 0) {
+    throw new Sequelize.ForeignKeyConstraintError();
+  }
+});
+
 // Control If procedure has any patients before destroy
 db.procedure.beforeDestroy(async (procedure) => {
   const patientCount = await procedure.countPatientProcedures();
+  if (patientCount > 0) {
+    throw new Sequelize.ForeignKeyConstraintError();
+  }
+});
+
+// Control If procedure has any patients before bulk destroy
+db.procedure.beforeBulkDestroy(async (options) => {
+  const patientCount = await db.patientProcedure.count({
+    where: {
+      ProcedureId: options.where.ProcedureId,
+    },
+  });
   if (patientCount > 0) {
     throw new Sequelize.ForeignKeyConstraintError();
   }
@@ -217,5 +243,60 @@ db.user.beforeDestroy(async (user) => {
     throw new Sequelize.ForeignKeyConstraintError();
   }
 });
+
+// Create procedure when new user added
+db.user.afterCreate(async (user) => {
+  await createCategories();
+  await createProcedures(user);
+});
+
+// If procedure categories don't exist, then create new records from csv
+const createCategories = async () => {
+  const PATH_CATEGORY_CSV = `${__dirname}/../data/ProcedureCategory.csv`;
+
+  try {
+    const parser = fs
+      .createReadStream(PATH_CATEGORY_CSV)
+      .pipe(parse({ delimiter: ",", from_line: 2 }));
+
+    for await (const row of parser) {
+      await db.procedureCategory.findOrCreate({
+        where: {
+          ProcedureCategoryId: row[0],
+          Title: row[1],
+        }
+      });
+    }
+  } catch (error) {
+    throw new Error(
+      "Bir problem oluştu, uygulama yöneticisi ile iletişime geçin"
+    );
+  }
+};
+
+// Create new procedure records for currently added user
+const createProcedures = async (user) => {
+  const PATH_PROCEDURE_CSV = `${__dirname}/../data/Procedure.csv`;
+
+  try {
+    const parser = fs
+      .createReadStream(PATH_PROCEDURE_CSV)
+      .pipe(parse({ delimiter: ",", from_line: 2 }));
+
+    for await (const row of parser) {
+      await db.procedure.create({
+        UserId: user.UserId,
+        ProcedureCategoryId: row[1] || null,
+        Code: row[2],
+        Name: row[3],
+        Price: row[4],
+      });
+    }
+  } catch (error) {
+    throw new Error(
+      "Bir problem oluştu, uygulama yöneticisi ile iletişime geçin"
+    );
+  }
+};
 
 module.exports = db;

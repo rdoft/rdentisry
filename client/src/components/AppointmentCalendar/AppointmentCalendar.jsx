@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import moment from "moment";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import { activeItem } from "store/reducers/menu";
-import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
-import CalendarToolbar from "components/AppointmentCalendar/CalendarToolbar";
-import convert from "components/AppointmentCalendar/CalendarEvent";
+import { AppointmentDialog } from "components/Dialog";
+import moment from "moment";
+import DayHeader from "./DayHeader";
+import convert from "./CalendarEvent";
+import CalendarToolbar from "./CalendarToolbar";
 
 // assets
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
@@ -23,24 +24,48 @@ const today = new Date();
 const AppointmentCalendar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const PAGE_PATIENTS = "patients";
 
   // Set the default values
-  const [step, setStep] = useState(30);
-  const [events, setEvents] = useState([]);
+  const step = useRef(30);
+  // const [step, setStep] = useState(30);
+  const [showAll, setShowAll] = useState(
+    localStorage.getItem("showAllAppointment") === "true"
+  );
   const [appointment, setAppointment] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
-  const [showAll, setShowAll] = useState(false);
+  const [doctors, setDoctors] = useState(null);
+  const [patients, setPatients] = useState(null);
+  const [doctor, setDoctor] = useState(
+    JSON.parse(localStorage.getItem("doctor")) || null
+  );
 
-  // Set the page on loading
   useEffect(() => {
-    getAppointments();
-  }, []);
+    const controller = new AbortController();
+    const signal = controller.signal;
 
-  useEffect(() => {
-    getEvents();
-  }, [appointments, step, showAll]);
+    AppointmentService.getAppointments({}, { signal })
+      .then((res) => {
+        setAppointments(res.data);
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [navigate]);
+
+  // And filter only active appointments if "show all" not selected
+  // And filter by doctor if doctor selected
+  const filteredAppointments = appointments.filter(
+    (appointment) =>
+      (!doctor || appointment.doctor.id === doctor?.id) &&
+      (showAll || appointment.status === "active")
+  );
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of appointments and set appointmets value
@@ -49,9 +74,8 @@ const AppointmentCalendar = () => {
     let appointments;
 
     try {
-      response = await AppointmentService.getAppointments();
+      response = await AppointmentService.getAppointments({});
       appointments = response.data;
-
       setAppointments(appointments);
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -92,11 +116,11 @@ const AppointmentCalendar = () => {
     } catch (error) {
       // Set error status and show error toast message
       const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message)
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
-  // SHOW/HIDE OPTIONS --------------------------------------------------------
+  // HANDLERS -----------------------------------------------------------------
   // Show add appointment dialog
   const showAppointmentDialog = () => {
     setAppointmentDialog(true);
@@ -108,7 +132,6 @@ const AppointmentCalendar = () => {
     setAppointmentDialog(false);
   };
 
-  // HANDLERS -----------------------------------------------------------------
   // onEditClick, get appointment and show dialog
   const handleClickEdit = async (id) => {
     const appointment_ = appointments.find(
@@ -120,37 +143,11 @@ const AppointmentCalendar = () => {
 
   // onSelectEvent handler for goto patient page
   const handleSelectEvent = async (event) => {
-    navigate(`/${PAGE_PATIENTS}/${event.patient.id}`);
-    dispatch(activeItem({ openItem: [PAGE_PATIENTS] }));
+    navigate(`/patients/${event.patient.id}`);
+    dispatch(activeItem({ openItem: ["patients"] }));
   };
 
   // TEMPLATES -----------------------------------------------------------------
-  // Convert appointment format to events
-  // And filter only active appointments if "show all" not selected
-  const getEvents = () => {
-    let events;
-    let appointments_;
-
-    appointments_ = showAll
-      ? appointments
-      : appointments.filter((appointment) => appointment.status === "active");
-    events = appointments_.map((appointment) =>
-      convert(appointment, step, handleClickEdit)
-    );
-    setEvents(events);
-  };
-
-  // header of the calendar
-  const header = ({ label }) => (
-    <div style={{ textAlign: "center" }}>
-      <div style={{ position: "relative" }}>
-        <div>
-          <p>{label}</p>
-        </div>
-      </div>
-    </div>
-  );
-
   // Style the today background
   const dayPropGetter = (date) => ({
     ...(today.toLocaleDateString() === date.toLocaleDateString() && {
@@ -160,6 +157,11 @@ const AppointmentCalendar = () => {
     }),
   });
 
+  // custom components
+  const components = {
+    header: ({ date, label }) => <DayHeader date={date} label={label} />,
+  };
+
   // Set the date formatting
   const formats = {
     agendaDateFormat: (date, culture, localizer) =>
@@ -168,8 +170,21 @@ const AppointmentCalendar = () => {
         month: "long",
         day: "numeric",
       }),
+    dayFormat: (date, culture, localizer) =>
+      localizer.format(date, `DD dddd`, culture),
+    weekdayFormat: (date, culture, localizer) =>
+      localizer.format(date, "dddd", culture),
+    dayRangeHeaderFormat: ({ start, end }, culture, localizer) =>
+      end.getMonth() !== start.getMonth()
+        ? `${localizer.format(start, "MMMM", culture)} - ${localizer.format(
+            end,
+            "MMMM",
+            culture
+          )}`
+        : localizer.format(start, "MMMM", culture),
   };
 
+  // Set the messages
   const messages = {
     today: "Bugün",
     previous: <LeftOutlined />,
@@ -195,12 +210,21 @@ const AppointmentCalendar = () => {
     yearFormat: "YYYY",
   };
 
+  // Convert appointments format to events
+  const events = filteredAppointments.map((appointment) =>
+    convert(appointment, step.current, handleClickEdit)
+  );
+
   return (
-    <div>
+    <>
       <CalendarToolbar
-        onClickAdd={showAppointmentDialog}
-        checked={showAll}
-        setChecked={setShowAll}
+        showAll={showAll}
+        doctor={doctor}
+        doctors={doctors}
+        setDoctor={setDoctor}
+        setDoctors={setDoctors}
+        setShowAll={setShowAll}
+        onClickAddAppointment={showAppointmentDialog}
       />
       <Calendar
         style={{
@@ -211,15 +235,13 @@ const AppointmentCalendar = () => {
         localizer={localizer}
         events={events}
         dayPropGetter={dayPropGetter}
-        components={{
-          header: header,
-        }}
+        components={components}
         views={["month", "week"]}
         defaultView={"week"}
         startAccessor={"start"}
         endAccessor={"end"}
         timeslots={1}
-        step={step}
+        step={step.current}
         tooltipAccessor={(event) => event.tooltip}
         showAllEvents={true}
         length="7"
@@ -235,13 +257,17 @@ const AppointmentCalendar = () => {
       />
       {appointmentDialog && (
         <AppointmentDialog
-          _appointment={appointment}
+          initAppointment={{ doctor, ...appointment }}
+          doctors={doctors}
+          patients={patients}
+          setDoctors={setDoctors}
+          setPatients={setPatients}
           onHide={hideAppointmentDialog}
           onSubmit={saveAppointment}
           onDelete={appointment && deleteAppointment}
         />
       )}
-    </div>
+    </>
   );
 };
 

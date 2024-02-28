@@ -1,20 +1,20 @@
 import React from "react";
 import { Typography } from "@mui/material";
 
-function CardTitle({ title, style }) {
+function CardTitle({ children, ...props }) {
   return (
     <Typography
-      variant="h5"
+      variant={props.variant || "h5"}
       sx={{
         padding: 1,
         borderRadius: "8px",
         fontWeight: "bolder",
         color: "#182A4D",
         backgroundColor: "#F5F5F5",
-        ...style,
+        ...props.style,
       }}
     >
-      {`${title}`}
+      {children}
     </Typography>
   );
 }

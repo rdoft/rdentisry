@@ -1,35 +1,35 @@
 import PropTypes from "prop-types";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler } from "utils";
 
 // material-ui
-import { useTheme } from "@mui/material/styles";
+// import { useTheme } from "@mui/material/styles";
 import {
   Avatar,
   Box,
   ButtonBase,
-  CardContent,
-  ClickAwayListener,
-  Grid,
-  Paper,
-  Popper,
+  // CardContent,
+  // ClickAwayListener,
+  // Grid,
+  // Paper,
+  // Popper,
+  // Tab,
+  // Tabs,
   Stack,
-  Tab,
-  Tabs,
   Typography,
 } from "@mui/material";
 
 // project import
-import MainCard from "components/MainCard";
-import Transitions from "components/@extended/Transitions";
-import ProfileTab from "./ProfileTab";
-import SettingTab from "./SettingTab";
+// import { MainCard } from "components/cards";
+// import Transitions from "components/@extended/Transitions";
+// import ProfileTab from "./ProfileTab";
+// import SettingTab from "./SettingTab";
 
 // assets
 import logoutAvatar from "assets/images/avatars/logout.png";
-import { SettingOutlined, UserOutlined } from "@ant-design/icons";
+// import { SettingOutlined, UserOutlined } from "@ant-design/icons";
 
 // services
 import { AuthService } from "services";
@@ -55,37 +55,38 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-function a11yProps(index) {
-  return {
-    id: `profile-tab-${index}`,
-    "aria-controls": `profile-tabpanel-${index}`,
-  };
-}
+// function a11yProps(index) {
+//   return {
+//     id: `profile-tab-${index}`,
+//     "aria-controls": `profile-tabpanel-${index}`,
+//   };
+// }
 
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
 const Profile = () => {
   const navigate = useNavigate();
-  const theme = useTheme();
+  // const theme = useTheme();
 
   const anchorRef = useRef(null);
-  const [open, setOpen] = useState(false);
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
-  };
+  const open = useRef(false);
+  // const [open, setOpen] = useState(false);
+  // const handleToggle = () => {
+  //   setOpen((prevOpen) => !prevOpen);
+  // };
 
-  const handleClose = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
-    }
-    setOpen(false);
-  };
+  // const handleClose = (event) => {
+  //   if (anchorRef.current && anchorRef.current.contains(event.target)) {
+  //     return;
+  //   }
+  //   setOpen(false);
+  // };
 
-  const [value, setValue] = useState(0);
+  // const [value, setValue] = useState(0);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  // const handleChange = (event, newValue) => {
+  //   setValue(newValue);
+  // };
 
   const iconBackColorOpen = "grey.300";
 
@@ -97,7 +98,7 @@ const Profile = () => {
       await AuthService.logout();
       navigate(`/login`);
     } catch (error) {
-      const { code, message } = errorHandler(error);
+      const { message } = errorHandler(error);
       toast.error(message);
     }
   };
@@ -123,13 +124,13 @@ const Profile = () => {
       <ButtonBase
         sx={{
           p: 0.25,
-          bgcolor: open ? iconBackColorOpen : "transparent",
+          bgcolor: open.current ? iconBackColorOpen : "transparent",
           borderRadius: 1,
           "&:hover": { bgcolor: "secondary.lighter" },
         }}
         aria-label="open profile"
         ref={anchorRef}
-        aria-controls={open ? "profile-grow" : undefined}
+        aria-controls={open.current ? "profile-grow" : undefined}
         aria-haspopup="true"
         // onClick={handleToggle}
         onClick={handleLogout}

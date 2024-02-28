@@ -101,7 +101,7 @@ exports.saveProcedure = async (req, res) => {
   const { UserId: userId } = req.user;
   const { code, name, price, procedureCategory } = req.body;
   let values = {
-    ProcedureCategoryId: procedureCategory.id,
+    ProcedureCategoryId: procedureCategory?.id ?? null,
     Code: code,
     Name: name,
     Price: price,
@@ -174,8 +174,51 @@ exports.updateProcedure = async (req, res) => {
       error.name === "SequelizeUniqueConstraintError"
     ) {
       res.status(400).send({
-        message: "Tedavi zaten mevcut, aynı işlem koduna sahip yeni bir tedavi oluşturulamaz",
+        message:
+          "Tedavi zaten mevcut, aynı işlem koduna sahip yeni bir tedavi oluşturulamaz",
       });
+    } else {
+      res.status(500).send(error);
+    }
+  }
+};
+
+/**
+ * Delete procedures of the given Ids
+ * If ids not given then delete all procedures
+ * @query ids: Id list of procedures
+ */
+exports.deleteProcedures = async (req, res) => {
+  const { UserId: userId } = req.user;
+  const { procedureId } = req.query;
+  let procedureIds = procedureId ? procedureId.split(",") : [];
+  let count = 0;
+
+  try {
+    // Delete procedures
+    count = await Procedure.destroy({
+      where:
+        procedureIds.length > 0
+          ? {
+              UserId: userId,
+              ProcedureId: {
+                [Sequelize.Op.in]: procedureIds,
+              },
+            }
+          : {
+              UserId: userId,
+            },
+    });
+
+    res.status(200).send({ coun: count });
+  } catch (error) {
+    if (error instanceof Sequelize.ForeignKeyConstraintError) {
+      res
+        .status(400)
+        .send({
+          message:
+            "Silmek istediğiniz tedaviler bazı hastalarınızda kullanılmış olduğundan işlem tamamlanamadı",
+        });
     } else {
       res.status(500).send(error);
     }
@@ -212,7 +255,10 @@ exports.deleteProcedure = async (req, res) => {
     if (error instanceof Sequelize.ForeignKeyConstraintError) {
       res
         .status(400)
-        .send({ message: "Silmek istediğiniz tedavi bazı hastalarınızda kullanılmış olduğundan işlem tamamlanamadı" });
+        .send({
+          message:
+            "Silmek istediğiniz tedavi bazı hastalarınızda kullanılmış olduğundan işlem tamamlanamadı",
+        });
     } else {
       res.status(500).send(error);
     }

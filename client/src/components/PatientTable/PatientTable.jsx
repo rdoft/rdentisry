@@ -1,18 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils/errorHandler";
-import { DataTable, Column, Image } from "primereact";
-import PatientDialog from "./PatientDialog";
-import DeletePatientDialog from "./DeletePatientDialog";
-import DeletePatientsDialog from "./DeletePatientsDialog";
+import { errorHandler } from "utils";
+import { Typography } from "@mui/material";
+import { DataTable, Column, Tag, ConfirmDialog } from "primereact";
+import { AppointmentDialog, PatientDialog } from "components/Dialog";
+import { DialogFooter } from "components/DialogFooter";
+import { Add, Edit, Delete } from "components/Button";
 import PatientTableToolbar from "./PatientTableToolbar";
-import ActionGroup from "components/ActionGroup/ActionGroup";
-import AppointmentDialog from "components/AppointmentDialog/AppointmentDialog";
 
 // assets
 import "assets/styles/PatientTable/PatientTable.css";
-import { LiraDangerIcon } from "assets/images/icons";
 
 // services
 import { PatientService, AppointmentService } from "services";
@@ -20,83 +18,38 @@ import { PatientService, AppointmentService } from "services";
 function PatientsTable() {
   const navigate = useNavigate();
 
-  // Set default empty Patient
-  let emptyPatient = {
-    id: null,
-    idNumber: "",
-    name: "",
-    surname: "",
-    phone: "",
-    birthYear: "",
-  };
-
   // Set the default values
-  const [patient, setPatient] = useState(emptyPatient);
+  const dt = useRef(null);
+  const [patient, setPatient] = useState(null);
   const [patients, setPatients] = useState(null);
-  const [patientDialog, setPatientDialog] = useState(false);
-  const [deletePatientDialog, setDeletePatientDialog] = useState(false);
-  const [deletePatientsDialog, setDeletePatientsDialog] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState(null);
-  const [appointmentDialog, setAppointmentDialog] = useState(false);
   const [rowIndex, setRowIndex] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
-  const dt = useRef(null);
+  const [dialogs, setDialogs] = useState({
+    patient: false,
+    appointment: false,
+    deletePatient: false,
+    deletePatients: false,
+  });
 
   // Set the page on loading
   useEffect(() => {
-    getPatients();
-  }, [patientDialog]);
+    const controller = new AbortController();
+    const signal = controller.signal;
 
-  // SHOW/HIDE OPTIONS --------------------------------------------------------
-  // Show add patient dialog
-  const showAddPatientDialog = () => {
-    setPatient(emptyPatient);
-    setPatientDialog(true);
-  };
+    PatientService.getPatients(true, { signal })
+      .then((response) => {
+        setPatients(response.data);
+      })
+      .catch((error) => {
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
 
-  // Show edit patient dialog
-  const showEditPatientDialog = (patient) => {
-    setPatient({ ...patient });
-    setPatientDialog(true);
-  };
-
-  // Show confirm delete patient dialog
-  const showConfirmDeletePatientDialog = (patient) => {
-    setPatient(patient);
-    setDeletePatientDialog(true);
-  };
-
-  // Show confirm delete patients dialog
-  const showConfirmDeletePatientsDialog = () => {
-    setDeletePatientsDialog(true);
-  };
-
-  // Show add appointment dialog
-  const showAppointmentDialog = (patient) => {
-    setPatient({ ...patient });
-    // setAppointment({ ...appointment, patientId: patient.id });
-    setAppointmentDialog(true);
-  };
-
-  // Hide patient dialog
-  const hidePatientDialog = () => {
-    setPatientDialog(false);
-  };
-
-  // Hide delete patient dialog
-  const hideDeletePatientDialog = () => {
-    setDeletePatientDialog(false);
-  };
-
-  // Hide delete patients dialog
-  const hideDeletePatientsDialog = () => {
-    setDeletePatientsDialog(false);
-  };
-
-  // Hide add appointment dialog
-  const hideAppointmentDialog = () => {
-    setAppointmentDialog(false);
-  };
+    return () => {
+      controller.abort();
+    };
+  }, [navigate]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of patients and set patients value
@@ -118,35 +71,20 @@ function PatientsTable() {
 
   // Save patient (create/update)
   const savePatient = async (patient) => {
-    let response;
-    let index;
-    let _patients;
-
     try {
-      // Copy patients into new variable
-      _patients = [...patients];
-
       if (patient.id) {
         // Update the patient
-        // PUT /patients/:patientId
         await PatientService.updatePatient(patient);
-        // Find the index of the patinet in the patients array
-        index = patients.findIndex((item) => item.id === patient.id);
-        _patients[index] = patient;
         toast.success("Hasta bilgileri başarıyla güncellendi");
       } else {
         // Create a new patient
-        // POST /patients
-        response = await PatientService.savePatient(patient);
-        // Set created patient's id, and add into patients
-        patient.id = response.data.id;
-        _patients.push(patient);
+        await PatientService.savePatient(patient);
         toast.success("Yeni hasta başarıyla eklendi");
       }
 
       // Set the patients and close the dialog
-      setPatients(_patients);
-      setPatientDialog(false);
+      getPatients();
+      hidePatientDialog();
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -157,7 +95,7 @@ function PatientsTable() {
   const saveAppointment = async (appointment) => {
     try {
       await AppointmentService.saveAppointment(appointment);
-      setAppointmentDialog(false);
+      hideAppointmentDialog();
       toast.success("Yeni randevu başarıyla eklendi");
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -171,7 +109,6 @@ function PatientsTable() {
     let _selectedPatients;
 
     try {
-      // DELETE /patients/:patientId
       await PatientService.deletePatient(patient.id);
 
       // Remove deleted patient from patients and selectedPatients
@@ -188,8 +125,8 @@ function PatientsTable() {
     }
 
     // Close delete dialog and empty patient variable
-    setDeletePatientDialog(false);
-    setPatient(emptyPatient);
+    hideDeletePatientDialog();
+    setPatient(null);
   };
 
   // Delete selected patients
@@ -221,13 +158,51 @@ function PatientsTable() {
     }
 
     // Close the dialog and set selec
-    setDeletePatientsDialog(false);
+    hideDeletePatientsDialog();
   };
 
   // HANDLERS -----------------------------------------------------------------
-  // onChange patient inside children handler
-  const handleChangePatient = (patient) => {
+  // Show patient dialog
+  const showPatientDialog = (patient) => {
+    patient ? setPatient(patient) : setPatient(null);
+    setDialogs({ ...dialogs, patient: true });
+  };
+
+  // Hide patient dialog
+  const hidePatientDialog = () => {
+    setDialogs({ ...dialogs, patient: false });
+  };
+
+  // Show add appointment dialog
+  const showAppointmentDialog = (patient) => {
     setPatient(patient);
+    setDialogs({ ...dialogs, appointment: true });
+  };
+
+  // Hide add appointment dialog
+  const hideAppointmentDialog = () => {
+    setDialogs({ ...dialogs, appointment: false });
+  };
+
+  // Show confirm delete patient dialog
+  const showDeletePatientDialog = (patient) => {
+    setPatient(patient);
+    setDialogs({ ...dialogs, deletePatient: true });
+  };
+
+  // Show confirm delete patients dialog
+  const showDeletePatientsDialog = () => {
+    setDialogs({ ...dialogs, deletePatients: true });
+  };
+
+  // Hide delete patient dialog
+  const hideDeletePatientDialog = () => {
+    setDialogs({ ...dialogs, deletePatient: false });
+  };
+
+  // Hide delete patients dialog
+  const hideDeletePatientsDialog = () => {
+    setDialogs({ ...dialogs, deletePatients: false });
   };
 
   // onInput handler for search
@@ -242,7 +217,14 @@ function PatientsTable() {
 
   // onRowClick handler for goto patient page
   const handleRowClick = (event) => {
-    navigate(`/patients/${event.data.id}?tab=payments`);
+    // Check if the click target is the checkbox
+    if (
+      event.originalEvent.target.classList.contains("p-selection-column") ||
+      event.originalEvent.target.classList.contains("p-checkbox-icon")
+    ) {
+      return;
+    }
+    navigate(`/patients/${event.data.id}`);
   };
 
   // onRowMouseEnter handler for display buttons
@@ -256,16 +238,63 @@ function PatientsTable() {
   };
 
   // onClick handler for add new appointment
-  const handleClickAddAppointment = (event, patient) => {
+  const handleAddAppointment = (event, patient) => {
     event.stopPropagation();
     showAppointmentDialog(patient);
   };
 
   // TEMPLATES -----------------------------------------------------------------
-  // Payment status of the patient
+  // Payment status of the patient (overdue or not)
   const status = (patient) =>
-    // Control overdue status
-    patient.overdue ? <Image src={LiraDangerIcon} width="75%" /> : null;
+    patient.overdue ? (
+      <Tag
+        value="Eksik Ödeme"
+        style={{
+          backgroundColor: "#FFD2CB",
+          color: "#EF4444",
+        }}
+      />
+    ) : null;
+
+  // Delete patient dialog template
+  const deletePatientDialog = (
+    <ConfirmDialog
+      visible={dialogs.deletePatient}
+      onHide={hideDeletePatientDialog}
+      message=<Typography variant="body1">
+        <strong>
+          {patient?.name} {patient?.surname}
+        </strong>{" "}
+        isimli hastayı silmek istediğinizden emin misiniz?
+      </Typography>
+      header="Hastayı Sil"
+      footer={
+        <DialogFooter
+          onHide={hideDeletePatientDialog}
+          onDelete={deletePatient}
+        />
+      }
+    />
+  );
+
+  // Delete patients dialog template
+  const deletePatientsDialog = (
+    <ConfirmDialog
+      visible={dialogs.deletePatients}
+      onHide={hideDeletePatientsDialog}
+      message=<Typography variant="body1">
+        <strong>{selectedPatients?.length || 0}</strong> adet hastayı silmek
+        istediğinizden emin misiniz?
+      </Typography>
+      header="Hastaları Sil"
+      footer={
+        <DialogFooter
+          onHide={hideDeletePatientsDialog}
+          onDelete={deletePatients}
+        />
+      }
+    />
+  );
 
   // Return the PatientTable
   return (
@@ -274,8 +303,8 @@ function PatientsTable() {
         {/* Patient table toolbar */}
         <PatientTableToolbar
           visibleDelete={selectedPatients?.length ? true : false}
-          onClickAdd={showAddPatientDialog}
-          onClickDelete={showConfirmDeletePatientsDialog}
+          onClickAdd={showPatientDialog}
+          onClickDelete={showDeletePatientsDialog}
           onInput={handleInputSearch}
         />
 
@@ -294,15 +323,18 @@ function PatientsTable() {
           dataKey="id"
           paginator
           rows={10}
-          currentPageReportTemplate="({totalRecords} hasta)"
           rowHover={true}
           sortField="overdue"
           sortOrder={-1}
+          dragSelection={true}
+          currentPageReportTemplate="({totalRecords} hasta)"
+          emptyMessage="Hiçbir sonuç bulunamadı"
         >
           {/* Checkbox */}
           <Column
             selectionMode="multiple"
             headerStyle={{ width: "3rem" }}
+            bodyStyle={{ height: "4.5rem" }}
             exportable={false}
           ></Column>
           {/* TC */}
@@ -337,18 +369,16 @@ function PatientsTable() {
             field="overdue"
             body={status}
             sortable
-            style={{ width: "4rem", textAlign: "center" }}
+            style={{ width: "10rem" }}
           ></Column>
           {/* Action buttons */}
           {!window.matchMedia("(hover: none)").matches && (
             <Column
               body={(patient) =>
                 patient.id === rowIndex ? (
-                  <ActionGroup
+                  <Add
                     label="Randevu"
-                    onClickAdd={(event) =>
-                      handleClickAddAppointment(event, patient)
-                    }
+                    onClick={(e) => handleAddAppointment(e, patient)}
                   />
                 ) : null
               }
@@ -356,47 +386,34 @@ function PatientsTable() {
           )}
           {/* Patient action buttons */}
           <Column
-            body={(patient) => (
-              <ActionGroup
-                onClickEdit={() => showEditPatientDialog(patient)}
-                onClickDelete={() => showConfirmDeletePatientDialog(patient)}
-              />
-            )}
+            body={(patient) =>
+              patient.id === rowIndex ? (
+                <>
+                  <Edit onClick={() => showPatientDialog(patient)} />
+                  <Delete
+                    onClick={() => showDeletePatientDialog(patient)}
+                  />
+                </>
+              ) : null
+            }
             style={{ width: "8rem" }}
           ></Column>
         </DataTable>
       </div>
 
-      {/* Patient information and confirmation dialogs  */}
-      {patientDialog && (
+      {/* Patient information  */}
+      {dialogs.patient && (
         <PatientDialog
-          patient={patient}
-          onChange={handleChangePatient}
+          initPatient={patient}
           onHide={hidePatientDialog}
           onSubmit={savePatient}
         />
       )}
 
-      {deletePatientDialog && (
-        <DeletePatientDialog
-          patient={patient}
-          onHide={hideDeletePatientDialog}
-          onDelete={deletePatient}
-        />
-      )}
-
-      {deletePatientsDialog && (
-        <DeletePatientsDialog
-          selectedPatients={selectedPatients}
-          onHide={hideDeletePatientsDialog}
-          onDelete={deletePatients}
-        />
-      )}
-
       {/* Appointment dialog */}
-      {appointmentDialog && (
+      {dialogs.appointment && (
         <AppointmentDialog
-          _appointment={{
+          initAppointment={{
             patient: {
               id: patient.id,
               idNumber: patient.idNumber,
@@ -410,6 +427,10 @@ function PatientsTable() {
           onSubmit={saveAppointment}
         />
       )}
+
+      {/* Confirm delete dialog */}
+      {deletePatientDialog}
+      {deletePatientsDialog}
     </div>
   );
 }

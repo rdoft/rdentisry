@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
-import { errorHandler } from "utils/errorHandler";
+import { errorHandler } from "utils";
 import { Grid, Typography } from "@mui/material";
-import { InputText, Button, Password, Divider, Card } from "primereact";
+import { InputText, Button, Password, Divider } from "primereact";
 
 // assets
 import svgGoogle from "assets/svg/google.svg";
 import { ReactComponent as Logo } from "assets/svg/dishekime/dishekime.svg";
-import { ReactComponent as Rdoft } from "assets/svg/rdoft/rdoft.svg";
 
 // services
 import { AuthService } from "services";
@@ -21,42 +19,47 @@ export default function Login() {
     ? `${process.env.REACT_APP_AUTH_URL}google`
     : "https://localhost:8080/auth/google";
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  // Validation of form fields
+  const [auth, setAuth] = useState({
+    email: document.getElementById("email")?.value || "",
+    password: document.getElementById("password")?.value || "",
+  });
   const [isValid, setIsValid] = useState(false);
-
-  useEffect(() => {
-    const _isValid = !schema.login.validate({ email, password }).error;
-
-    setIsValid(_isValid);
-  }, [email, password]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // SERVICES ---------------------------------------------------------
   const login = async (auth) => {
+    setLoading(true);
+    setError(null);
+
     try {
       await AuthService.login(auth);
       navigate("/");
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401
-        ? toast.error("Kullanıcı adı veya parola hatalı")
-        : toast.error(message);
+        ? setError("Kullanıcı adı veya parola hatalı")
+        : setError(message);
+    } finally {
+      setLoading(false);
     }
   };
 
   // HANDLERS ---------------------------------------------------------
   // onChange handler
-  const handleChange = (event, attr) => {
-    const value = (event.target && event.target.value) || "";
+  const handleChange = (event) => {
+    // auth
+    const _auth = {
+      ...auth,
+      [event.target.name]: event.target.value,
+    };
 
-    if (attr === "email") {
-      // Set email
-      setEmail(value);
-    } else {
-      // Set password
-      setPassword(value);
-    }
+    // validation
+    const _isValid = schema.login.validate(_auth).error ? false : true;
+
+    setAuth(_auth);
+    setIsValid(_isValid);
+    setError(null);
   };
 
   // Login with google
@@ -66,7 +69,7 @@ export default function Login() {
 
   // Login handler
   const handleLogin = () => {
-    login({ email, password });
+    login(auth);
   };
 
   // handle to navigate register page
@@ -92,14 +95,23 @@ export default function Login() {
           <Typography variant="h2">Oturum aç</Typography>
         </div>
 
+        {error && (
+          <div className="field mb-2">
+            <Typography variant="body2" color="error">
+              {error}
+            </Typography>
+          </div>
+        )}
+
         <div className="field mb-3">
           <InputText
             id="email"
+            name="email"
             type="email"
             placeholder="Email"
             keyfilter="email"
-            value={email}
-            onChange={(e) => handleChange(e, "email")}
+            value={auth.email}
+            onChange={handleChange}
             onKeyDown={handleKeyDown}
             required
           />
@@ -108,11 +120,12 @@ export default function Login() {
         <div className="field mb-4">
           <Password
             id="password"
+            name="password"
             placeholder="Parola"
-            value={password}
+            value={auth.password}
             toggleMask
             feedback={false}
-            onChange={(e) => handleChange(e, "password")}
+            onChange={handleChange}
             onKeyDown={handleKeyDown}
             required
           />
@@ -129,7 +142,11 @@ export default function Login() {
           </div> */}
 
         <div className="field mb-3">
-          <Button label="Devam" onClick={handleLogin} disabled={!isValid} />
+          {loading ? (
+            <Button label=<i className="pi pi-spin pi-spinner" /> disabled />
+          ) : (
+            <Button label="Devam" onClick={handleLogin} disabled={!isValid} />
+          )}
         </div>
 
         <div className="field mb-3" align="center">
