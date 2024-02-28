@@ -7,7 +7,7 @@ import StatusBadge from "./StatusBadge";
 import { upTeeth, downTeeth } from "assets/images/charts";
 
 function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Load image on mount
   useEffect(() => {
@@ -23,7 +23,7 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
 
     Promise.all(upTeeth.map((img) => loadImage(img.src)))
       .then(() => Promise.all(downTeeth.map((img) => loadImage(img.src))))
-      .then(() => setIsLoaded(true));
+      .then(() => setLoading(false));
   }, []);
 
   // HANDLERS -----------------------------------------------------------------
@@ -35,15 +35,15 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
   // TEMPLATES ----------------------------------------------------------------
   // Tooth item template
   const toothItem = (tooth) =>
-    isLoaded ? (
+    loading ? (
+      <Skeleton width="85%" height="8vw"></Skeleton>
+    ) : (
       <img
         srcSet={tooth.src}
         src={tooth.src}
         alt={tooth.number}
         style={{ width: "85%" }}
       />
-    ) : (
-      <Skeleton width="85%" height="8vw"></Skeleton>
     );
 
   // Number item template
