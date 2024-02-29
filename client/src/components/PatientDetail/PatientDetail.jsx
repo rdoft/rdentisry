@@ -27,7 +27,9 @@ function PatientDetail() {
   const [patient, setPatient] = useState(null);
   const [patients, setPatients] = useState(null);
   const [activeIndex, setActiveIndex] = useState(
-    parseInt(localStorage.getItem("activeTabIndex")) ?? 0
+    localStorage.getItem("activeTabIndex")
+      ? parseInt(localStorage.getItem("activeTabIndex"))
+      : 0
   );
   const [counts, setCounts] = useState({
     appointment: 0,
@@ -65,7 +67,9 @@ function PatientDetail() {
   }, [navigate, id]);
 
   useEffect(() => {
-    setActiveIndex(parseInt(localStorage.getItem("activeTabIndex")) ?? 0);
+    localStorage.getItem("activeTabIndex")
+      ? setActiveIndex(parseInt(localStorage.getItem("activeTabIndex")))
+      : setActiveIndex(0);
   }, [id]);
 
   // HANDLERS -----------------------------------------------------------------

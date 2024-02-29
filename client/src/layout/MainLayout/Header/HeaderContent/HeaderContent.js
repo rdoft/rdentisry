@@ -1,5 +1,5 @@
 // material-ui
-import { Box, useMediaQuery } from "@mui/material";
+import { Box } from "@mui/material";
 
 // project import
 // import Search from "./Search";
@@ -10,7 +10,7 @@ import Notification from "./Notification/Notification";
 // ==============================|| HEADER - CONTENT ||============================== //
 
 const HeaderContent = () => {
-  const matchesXs = useMediaQuery((theme) => theme.breakpoints.down("md"));
+  // const matchesXs = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
   return (
     <>
