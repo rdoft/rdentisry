@@ -305,7 +305,7 @@ function PatientsTable() {
         {/* Patient table toolbar */}
         <PatientTableToolbar
           visibleDelete={selectedPatients?.length ? true : false}
-          onClickAdd={showPatientDialog}
+          onClickAdd={() => showPatientDialog()}
           onClickDelete={showDeletePatientsDialog}
           onInput={handleInputSearch}
         />
