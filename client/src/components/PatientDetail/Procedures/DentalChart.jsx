@@ -38,7 +38,7 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
     <>
       {loading && <Skeleton width="85%" height="8vw"></Skeleton>}
       <img
-        visible={!loading}
+        visiblity={loading ? "hidden" : "visible"}
         srcSet={tooth.src}
         src={tooth.src}
         alt={tooth.number}

@@ -66,12 +66,6 @@ function PatientDetail() {
     };
   }, [navigate, id]);
 
-  useEffect(() => {
-    localStorage.getItem("activeTabIndex")
-      ? setActiveIndex(parseInt(localStorage.getItem("activeTabIndex")))
-      : setActiveIndex(0);
-  }, [id]);
-
   // HANDLERS -----------------------------------------------------------------
   // Show add appointment dialog
   const showAppointmentDialog = () => {
