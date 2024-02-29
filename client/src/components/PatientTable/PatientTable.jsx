@@ -224,6 +224,8 @@ function PatientsTable() {
     ) {
       return;
     }
+    // Navigate to the patient page
+    localStorage.setItem("activeTabIndex", 1);
     navigate(`/patients/${event.data.id}`);
   };
 
@@ -390,9 +392,7 @@ function PatientsTable() {
               patient.id === rowIndex ? (
                 <>
                   <Edit onClick={() => showPatientDialog(patient)} />
-                  <Delete
-                    onClick={() => showDeletePatientDialog(patient)}
-                  />
+                  <Delete onClick={() => showDeletePatientDialog(patient)} />
                 </>
               ) : null
             }
