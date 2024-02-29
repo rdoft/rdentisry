@@ -22,6 +22,7 @@ function ProcedureList({
 
     return (
       <ProcedureCard
+        key={procedure.id}
         procedure={{ ...procedure, patient }}
         onSubmit={onSubmit}
         onDelete={onDelete}

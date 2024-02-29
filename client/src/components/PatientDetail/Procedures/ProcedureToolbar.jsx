@@ -45,43 +45,45 @@ function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
 
   // Add keydown event listener
   // when component mounts and remove it when unmounts
-  // useEffect(() => {
-  //   // onKeyDown handler to cancel selected tooth
-  //   const handleKeyDown = (event) => {
-  //     const index = teeth.indexOf(selectedTooth);
-  //     let _tooth;
+  useEffect(() => {
+    // onKeyDown handler to cancel selected tooth
+    const handleKeyDown = (event) => {
+      // If an input element is focused, do not execute the rest of the handler
+      if (document.activeElement.tagName.toLowerCase() === "input") {
+        return;
+      }
 
-  //     switch (event.key) {
-  //       case "Escape":
-  //         _tooth = null;
-  //         break;
-  //       case "ArrowRight":
-  //         if (index < teeth.length - 1) {
-  //           _tooth = teeth[index + 1];
-  //         } else {
-  //           _tooth = teeth[0];
-  //         }
-  //         break;
-  //       case "ArrowLeft":
-  //         if (index > 0) {
-  //           _tooth = teeth[index - 1];
-  //         } else {
-  //           _tooth = teeth[teeth.length - 1];
-  //         }
-  //         break;
-  //       default:
-  //         break;
-  //     }
+      const index = teeth.indexOf(selectedTooth);
 
-  //     onChangeTooth(_tooth);
-  //     document.activeElement.blur();
-  //   };
+      switch (event.key) {
+        case "Escape":
+          onChangeTooth(null);
+          break;
+        case "ArrowRight":
+          if (index < teeth.length - 1) {
+            onChangeTooth(teeth[index + 1]);
+          } else {
+            onChangeTooth(teeth[0]);
+          }
+          break;
+        case "ArrowLeft":
+          if (index > 0) {
+            onChangeTooth(teeth[index - 1]);
+          } else {
+            onChangeTooth(teeth[teeth.length - 1]);
+          }
+          break;
+        default:
+          break;
+      }
+    };
 
-  //   window.addEventListener("keydown", handleKeyDown);
-  //   return () => {
-  //     window.removeEventListener("keydown", handleKeyDown);
-  //   };
-  // }, [teeth, selectedTooth, onChangeTooth]);
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [teeth, selectedTooth, onChangeTooth]);
 
   // HANDLERS -----------------------------------------------------------------
   // onClickNext handler to selct next tooth
