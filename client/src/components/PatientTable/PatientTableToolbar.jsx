@@ -9,12 +9,18 @@ function PatientTableToolbar({
   onClickDelete,
   onInput,
 }) {
+  // HANDLERS ------------------------------------------------------------------
+  // onClickAdd handler
+  const handleClickAdd = () => {
+    onClickAdd();
+  };
+
   // TEMPLATES ------------------------------------------------------------------
   // Get Add/Delete patient buttons
   const actionButton = () => {
     return (
       <>
-        <Add label="Hasta Ekle" default={true} onClick={onClickAdd} />
+        <Add label="Hasta Ekle" default={true} onClick={handleClickAdd} />
         <Delete
           label="Sil"
           onClick={onClickDelete}

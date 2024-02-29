@@ -47,6 +47,7 @@ function PriceColumn({ procedure, onSubmit, isEdit, setIsEdit }) {
     } else if (event.key === "Escape") {
       handleCancel();
     }
+    event.stopPropagation();
   };
 
   // handleClickAway handler, save the amount
