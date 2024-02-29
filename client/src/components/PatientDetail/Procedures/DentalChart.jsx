@@ -34,17 +34,18 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
 
   // TEMPLATES ----------------------------------------------------------------
   // Tooth item template
-  const toothItem = (tooth) =>
-    loading ? (
-      <Skeleton width="85%" height="8vw"></Skeleton>
-    ) : (
+  const toothItem = (tooth) => (
+    <>
+      {loading && <Skeleton width="85%" height="8vw"></Skeleton>}
       <img
+        visible={!loading}
         srcSet={tooth.src}
         src={tooth.src}
         alt={tooth.number}
         style={{ width: "85%" }}
       />
-    );
+    </>
+  );
 
   // Number item template
   const numberItem = (number) => (
