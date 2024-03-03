@@ -8,8 +8,13 @@ const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 // Get env variables
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, HOSTNAME, HOST_SERVER, PORT_SERVER } =
-  process.env;
+const {
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  HOSTNAME,
+  HOST_SERVER,
+  PORT_SERVER,
+} = process.env;
 const HOST = HOSTNAME || HOST_SERVER || "localhost";
 const PORT = PORT_SERVER || 8080;
 
@@ -41,7 +46,7 @@ passport.use(
             message: "Kullanıcı adı veya şifre yanlış",
           });
         }
-        
+
         const isValid = await bcrypt.compare(password, user.Password);
         if (!isValid) {
           return cb(null, false, {
@@ -66,11 +71,19 @@ passport.use(
     },
     async function (accessToken, refreshToken, profile, cb) {
       try {
-        const [user, created] = await User.findOrCreate({
+        // Control and create user
+        let user = await User.findOne({
           where: {
             Email: profile.emails[0].value,
           },
         });
+
+        if (!user) {
+          user = await User.create({
+            Email: profile.emails[0].value,
+          });
+        }
+
         return cb(null, user);
       } catch (err) {
         return cb(err);
