@@ -16,6 +16,8 @@ const Procedures = Loadable(
 );
 const Login = Loadable(lazy(() => import("pages/Auth/LoginPage")));
 const Register = Loadable(lazy(() => import("pages/Auth/RegisterPage")));
+const Forgot = Loadable(lazy(() => import("pages/Auth/ForgotPage")));
+const ResetPassword = Loadable(lazy(() => import("pages/Auth/ResetPasswordPage")));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -27,6 +29,14 @@ const MainRoutes = [
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/forgot",
+    element: <Forgot />,
+  },
+  {
+    path: "/reset/:token",
+    element: <ResetPassword />,
   },
   {
     path: "/",

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { errorHandler } from "utils";
+import { useNavigate, Link } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider } from "primereact";
 
@@ -13,7 +13,7 @@ import { AuthService } from "services";
 
 import schema from "schemas/user.schema";
 
-export default function Login() {
+function Login() {
   const navigate = useNavigate();
   const GOOGLE_AUTH = process.env.REACT_APP_AUTH_URL
     ? `${process.env.REACT_APP_AUTH_URL}google`
@@ -91,8 +91,10 @@ export default function Login() {
           <Logo style={{ width: "40%" }} />
         </div>
 
-        <div className="field mb-4">
-          <Typography variant="h2">Oturum aç</Typography>
+        <div className="flex mb-4">
+          <Typography variant="h2" fontWeight="light">
+            Oturum aç
+          </Typography>
         </div>
 
         {error && (
@@ -117,7 +119,7 @@ export default function Login() {
           />
         </div>
 
-        <div className="field mb-4">
+        <div className="field mb-2">
           <Password
             id="password"
             name="password"
@@ -131,15 +133,19 @@ export default function Login() {
           />
         </div>
 
-        {/* <div className="field mb-3">
-            <label htmlFor="reset-password">
-              <Link to="/reset-password" style={{ textDecoration: "none" }}>
-                <Typography variant="body1">
-                  Parolanızı mı unuttunuz?
-                </Typography>
-              </Link>
-            </label>
-          </div> */}
+        <div className="flex mb-4" style={{ justifyContent: "end" }}>
+          <label htmlFor="reset-password">
+            <Link
+              to="/forgot"
+              style={{
+                textDecoration: "none",
+                cursor: "pointer",
+              }}
+            >
+              <Typography variant="body1">Şifrenizi mi unuttunuz?</Typography>
+            </Link>
+          </label>
+        </div>
 
         <div className="field mb-3">
           {loading ? (
@@ -185,3 +191,5 @@ export default function Login() {
     </Grid>
   );
 }
+
+export default Login;
