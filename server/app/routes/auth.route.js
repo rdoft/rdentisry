@@ -58,5 +58,25 @@ module.exports = function (app) {
      */
     .get(passport.authenticate("google"), controller.google);
 
+  router
+    .route(`/forgot`)
+    /**
+     * Forgot password
+     * @body User email
+     */
+    .post(validate(schema.forgot, "body"), controller.forgot);
+
+  router
+    .route(`/reset/:token`)
+    /**
+     * Reset password token verify
+     */
+    .get(controller.resetVerify)
+    /**
+     * Reset password
+     * @body User password
+     */
+    .post(validate(schema.reset, "body"), controller.reset);
+
   app.use(API_URL, router);
 };

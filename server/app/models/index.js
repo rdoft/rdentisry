@@ -38,6 +38,7 @@ db.notificationEvent = require("./notificationEvent.model")(
   Sequelize
 );
 db.notification = require("./notification.model")(sequelize, Sequelize);
+db.token = require("./token.model")(sequelize, Sequelize);
 
 // Relationships
 // patient - appointment (one to many)
@@ -186,6 +187,16 @@ db.notification.belongsTo(db.user, {
   foreignKey: "UserId",
 });
 
+// User - Token
+db.user.hasOne(db.token, {
+  as: "token",
+  foreignKey: "UserId",
+});
+db.token.belongsTo(db.user, {
+  as: "user",
+  foreignKey: "UserId",
+});
+
 // HOOKS
 // Control If doctor has any appointments before destroy
 db.doctor.beforeDestroy(async (doctor) => {
@@ -264,7 +275,7 @@ const createCategories = async () => {
         where: {
           ProcedureCategoryId: row[0],
           Title: row[1],
-        }
+        },
       });
     }
   } catch (error) {
