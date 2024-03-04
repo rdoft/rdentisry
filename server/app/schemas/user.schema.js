@@ -11,6 +11,10 @@ const login = Joi.object({
   password: Joi.string().trim().empty("").required(),
 });
 
+const forgot = Joi.object({
+  email: Joi.string().trim().empty("").email({ tlds: false }).required(),
+});
+
 const id = Joi.object({
   userId: Joi.number().empty(null).id(),
 });
@@ -21,6 +25,7 @@ const password = Joi.string().trim().empty("").min(8).required();
 module.exports = {
   login,
   register,
+  forgot,
   id,
   email,
   password,

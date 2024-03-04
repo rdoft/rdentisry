@@ -1,8 +1,10 @@
-const e = require("express");
 const { Sequelize } = require("../models");
 const db = require("../models");
 const User = db.user;
+const Token = db.token;
 
+const { sendResetPassword } = require("../utils/mail.util");
+const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 
 const { HOSTNAME, HOST_SERVER, PORT } = process.env;
@@ -70,6 +72,44 @@ exports.register = async (req, res) => {
       }
       res.status(200).send();
     });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+/**
+ * Forgot password
+ * @body User email
+ */
+exports.forgot = async (req, res) => {
+  const { email } = req.body;
+  let token;
+  let user;
+
+  try {
+    token = crypto.randomBytes(32).toString("hex");
+    user = await User.findOne({
+      where: {
+        Email: email,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).send({ message: "Mail adresi geçersizdir" });
+    }
+
+    await Token.upsert({
+      UserId: user.UserId,
+      Token: token,
+      Expiration: Date.now() + 3600000,
+    });
+
+    await sendResetPassword(
+      email,
+      `https://${HOST}:${PORT_CLIENT}/reset/${token}`
+    );
+
+    res.status(200).send();
   } catch (error) {
     res.status(500).send(error);
   }
