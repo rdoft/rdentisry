@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { errorHandler } from "utils";
-import { Grid, Typography } from "@mui/material";
-import { InputText, Button, Password, Divider } from "primereact";
+import { toast } from "react-hot-toast";
+import { useNavigate, useParams } from "react-router-dom";
+import { Typography, Grid } from "@mui/material";
+import { Password, Button } from "primereact";
 
 // assets
 import { ReactComponent as Logo } from "assets/svg/dishekime/dishekime.svg";
@@ -12,32 +13,45 @@ import { AuthService } from "services";
 
 import schema from "schemas/user.schema";
 
-function Register() {
+function ResetPassword() {
   const navigate = useNavigate();
+  const { token } = useParams();
 
   const [user, setUser] = useState({
-    name: "",
-    email: "",
     password: "",
     confirmPassword: "",
+    token: token,
   });
+
   const [isValid, setIsValid] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isError, setIsError] = useState({
-    email: false,
     password: false,
     confirmPassword: false,
   });
 
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    AuthService.control(token, { signal }).catch(() => {
+      navigate("/login");
+    });
+
+    return () => {
+      controller.abort();
+    };
+  }, [token, navigate]);
+
   // SERVICES ---------------------------------------------------------
-  const register = async (auth) => {
+  const reset = async (auth) => {
     setLoading(true);
-    setError(null);
 
     try {
-      await AuthService.register(auth);
-      navigate("/");
+      await AuthService.reset(token, auth);
+      toast.success("Şifreniz başarıyla yenilendi");
+      navigate("/login");
     } catch (error) {
       const { message } = errorHandler(error);
       setError(message);
@@ -47,22 +61,26 @@ function Register() {
   };
 
   // HANDLERS ---------------------------------------------------------
+  // onReset handler
+  const handleReset = () => {
+    reset({
+      password: user.password,
+    });
+  };
+
   // onChange handler
   const handleChange = (event) => {
+    const { name, value } = event.target;
+
     // user
     const _user = {
       ...user,
-      [event.target.name]: event.target.value,
+      [name]: value,
     };
 
     // error
     const _isError = { ...isError };
-    switch (event.target.name) {
-      case "email":
-        schema.email.validate(_user.email).error
-          ? (_isError.email = true)
-          : (_isError.email = false);
-        break;
+    switch (name) {
       case "password":
         schema.password.validate(_user.password).error
           ? (_isError.password = true)
@@ -81,11 +99,8 @@ function Register() {
 
     // validation
     const _isValid =
-      !schema.register.validate({
-        name: _user.name,
-        email: _user.email,
-        password: _user.password,
-      }).error && _user.password === _user.confirmPassword
+      !schema.password.validate(_user.password).error &&
+      _user.password === _user.confirmPassword
         ? true
         : false;
 
@@ -95,19 +110,10 @@ function Register() {
     setError(null);
   };
 
-  // Register handler
-  const handleRegister = () => {
-    register({
-      name: user.name,
-      email: user.email,
-      password: user.password,
-    });
-  };
-
   // onKeyDown handler
   const handleKeyDown = (event) => {
     if (isValid && event.key === "Enter") {
-      handleRegister();
+      handleReset();
     }
   };
 
@@ -120,10 +126,11 @@ function Register() {
 
         <div className="field mb-4">
           <Typography variant="h2" fontWeight="light">
-            Hesap oluştur
+            Şifre yenileme
           </Typography>
         </div>
 
+        {/* Error message */}
         {error && (
           <div className="field mb-2">
             <Typography variant="body2" color="error">
@@ -131,37 +138,6 @@ function Register() {
             </Typography>
           </div>
         )}
-
-        <div className="field mb-3">
-          <InputText
-            id="name"
-            name="name"
-            type="text"
-            placeholder="Kullanıcı adı"
-            value={user.name}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-          />
-        </div>
-
-        <div className="field mb-3">
-          <InputText
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Email *"
-            keyfilter="email"
-            value={user.email}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            required
-          />
-          {isError.email && (
-            <small id="email-help" className="p-error">
-              Geçersiz email adresi
-            </small>
-          )}
-        </div>
 
         <div className="field mb-3">
           <Password
@@ -206,34 +182,12 @@ function Register() {
           {loading ? (
             <Button label=<i className="pi pi-spin pi-spinner" /> disabled />
           ) : (
-            <Button
-              label="Kayıt Ol"
-              onClick={handleRegister}
-              disabled={!isValid}
-            />
+            <Button label="Devam" onClick={handleReset} disabled={!isValid} />
           )}
-        </div>
-
-        <Divider className="field mt-5" />
-
-        <div
-          className="flex mb-4"
-          style={{ justifyContent: "center", alignItems: "center" }}
-        >
-          <div className="mr-3">
-            <Typography variant="body1">Zaten bir hesabınız var mı?</Typography>
-          </div>
-          <div>
-            <Button
-              label="Oturum aç"
-              onClick={() => navigate("/login")}
-              className="p-button-text p-button-secondary"
-            />
-          </div>
         </div>
       </Grid>
     </Grid>
   );
 }
 
-export default Register;
+export default ResetPassword;

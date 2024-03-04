@@ -22,12 +22,12 @@ function Forgot() {
   const [success, setSuccess] = useState(false);
 
   // SERVICES ---------------------------------------------------------
-  const sendMail = async () => {
+  const sendMail = async (auth) => {
     setLoading(true);
     setError(null);
 
     try {
-      await AuthService.forgot({ email });
+      await AuthService.forgot(auth);
       setSuccess(true);
     } catch (error) {
       const { message } = errorHandler(error);
@@ -38,6 +38,13 @@ function Forgot() {
   };
 
   // HANDLERS ---------------------------------------------------------
+  // onForgot handler
+  const handleForgot = () => {
+    sendMail({
+      email,
+    });
+  };
+
   // onChange handler
   const handleChange = (event) => {
     setEmail(event.target.value);
@@ -88,7 +95,7 @@ function Forgot() {
               </div>
             ) : (
               <div className="field mb-2">
-                <Typography variant="body2" fontWeight="bold">
+                <Typography variant="body2">
                   Hesabınızın e-posta adresini girin, size şifre sıfırlamak için
                   bir bağlantı göndereceğiz.
                 </Typography>
@@ -117,7 +124,11 @@ function Forgot() {
                   disabled
                 />
               ) : (
-                <Button label="Gönder" onClick={sendMail} disabled={!isValid} />
+                <Button
+                  label="Gönder"
+                  onClick={handleForgot}
+                  disabled={!isValid}
+                />
               )}
             </div>
           </>

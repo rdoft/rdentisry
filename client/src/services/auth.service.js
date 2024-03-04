@@ -32,4 +32,20 @@ auth.forgot = (email) => {
   return API.post(`/forgot`, email);
 };
 
+/**
+ * Reset password
+ * @body User informations
+ */
+auth.reset = (token, auth) => {
+  return API.post(`/reset/${token}`, auth);
+};
+
+/**
+ * Control reset token
+ * @param token
+ */
+auth.control = (token, options = {}) => {
+  return API.get(`/reset/${token}`, options);
+};
+
 export default auth;

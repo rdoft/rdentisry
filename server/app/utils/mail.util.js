@@ -111,11 +111,9 @@ const sendResetPassword = async (to, url) => {
             </div>
             <div class="email-body">
                 <p>Merhaba,</p>
-                <p>Bir şifre sıfırlama isteği aldık. Bu isteği siz yapmadıysanız, bu e-postayı görmezden gelin. Aksi takdirde, aşağıdaki bağlantıyı kullanarak şifrenizi sıfırlayabilirsiniz.</p>
+                <p>Bir şifre sıfırlama isteği aldık. Aşağıdaki butonu kullanarak şifrenizi sıfırlayabilirsiniz. Bu isteği siz yapmadıysanız, bu e-postayı görmezden gelin.</p>
                 <a href="${url}" class="reset-link">Şifremi Sıfırla</a>
-                <p>Eğer "Şifremi Sıfırla" düğmesine tıklamakla ilgili sorun yaşıyorsanız, aşağıdaki URL'yi web tarayıcınıza kopyalayıp yapıştırın:</p>
-                <p>${url}</p>
-                <p>Bu bağlantı 1 saat içinde geçerliliğini yitirecektir.</p>
+                <p>Eğer bu bağlantı kullanılmazsa 1 saat içinde geçerliliğini yitirecektir.</p>
             </div>
             <div class="email-footer">
                 <p>&copy; 2024 dishekime Tüm hakları saklıdır.</p>

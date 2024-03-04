@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
 import { errorHandler } from "utils";
+import { useNavigate, Link } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider } from "primereact";
 
@@ -13,7 +13,7 @@ import { AuthService } from "services";
 
 import schema from "schemas/user.schema";
 
-export default function Login() {
+function Login() {
   const navigate = useNavigate();
   const GOOGLE_AUTH = process.env.REACT_APP_AUTH_URL
     ? `${process.env.REACT_APP_AUTH_URL}google`
@@ -191,3 +191,5 @@ export default function Login() {
     </Grid>
   );
 }
+
+export default Login;
