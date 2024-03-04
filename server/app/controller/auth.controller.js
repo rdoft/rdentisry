@@ -95,7 +95,7 @@ exports.forgot = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).send({ message: "Mail adresi geçersizdir" });
+      return res.status(404).send({ message: "Geçersiz mail adresi" });
     }
 
     await Token.upsert({

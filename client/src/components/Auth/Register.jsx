@@ -119,7 +119,9 @@ export default function Register() {
         </div>
 
         <div className="field mb-4">
-          <Typography variant="h2">Hesap oluştur</Typography>
+          <Typography variant="h2" fontWeight="light">
+            Hesap oluştur
+          </Typography>
         </div>
 
         {error && (
