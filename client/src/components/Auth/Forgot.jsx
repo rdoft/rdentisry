@@ -65,10 +65,10 @@ function Forgot() {
         </div>
 
         {success ? (
-          <div className="field mb-2">
-            <Typography variant="h3" fontWeight="light">
-              Şifre sıfırlama bağlantısı email adresinize gönderildi.
-              Lütfen emailinizi kontrol ediniz.
+          <div className="flex mb-2" style={{ justifyContent: "center" }}>
+            <Typography variant="h4" fontWeight="light">
+              Şifre sıfırlama bağlantısı email adresinize gönderildi. Lütfen
+              emailinizi kontrol ediniz.
             </Typography>
           </div>
         ) : (
@@ -117,26 +117,22 @@ function Forgot() {
                   disabled
                 />
               ) : (
-                <Button
-                  label="Şifre yenileme emaili gönder"
-                  onClick={sendMail}
-                  disabled={!isValid}
-                />
+                <Button label="Gönder" onClick={sendMail} disabled={!isValid} />
               )}
-            </div>
-
-            <div
-              className="flex"
-              style={{ justifyContent: "center", alignItems: "center" }}
-            >
-              <Button
-                label="Oturum aç"
-                onClick={() => navigate("/login")}
-                className="p-button-text p-button-secondary"
-              />
             </div>
           </>
         )}
+
+        <div
+          className="flex"
+          style={{ justifyContent: "center", alignItems: "center" }}
+        >
+          <Button
+            label="Oturum aç"
+            onClick={() => navigate("/login")}
+            className="p-button-text p-button-secondary"
+          />
+        </div>
       </Grid>
     </Grid>
   );
