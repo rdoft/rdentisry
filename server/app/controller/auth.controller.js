@@ -115,6 +115,50 @@ exports.forgot = async (req, res) => {
   }
 };
 
+/**
+ * Reset password token verify
+ */
+exports.resetVerify = async (req, res) => {
+  const { token } = req.params;
+  let user;
+
+  try {
+    user = await User.findOne({
+      include: [
+        {
+          model: Token,
+          as: "token",
+          where: {
+            Token: token,
+            Expiration: {
+              [Sequelize.Op.gt]: Date.now(),
+            },
+          },
+        },
+      ],
+    });
+
+    if (!user) {
+      return res.status(400).send({
+        message: "Şifre sıfırlama linki geçersiz veya süresi dolmuştur",
+      });
+    }
+
+    // Time safe comparison for more security
+    if (
+      !crypto.timingSafeEqual(Buffer.from(token), Buffer.from(user.token.Token))
+    ) {
+      return res.status(400).send({
+        message: "Şifre sıfırlama linki geçersiz veya süresi dolmuştur",
+      });
+    }
+
+    res.status(200).send();
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
 exports.google = async (req, res) => {
   if (req.user) {
     res.redirect(`https://${HOST}:${PORT_CLIENT}/`);
