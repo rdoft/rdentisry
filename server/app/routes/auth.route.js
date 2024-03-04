@@ -72,6 +72,11 @@ module.exports = function (app) {
      * Reset password token verify
      */
     .get(controller.resetVerify)
+    /**
+     * Reset password
+     * @body User password
+     */
+    .post(validate(schema.reset, "body"), controller.reset);
 
   app.use(API_URL, router);
 };
