@@ -221,6 +221,7 @@ function PatientDetail() {
               <NotesTab
                 patient={patient}
                 noteDialog={dialog.note}
+                showDialog={showNoteDialog}
                 hideDialog={hideNoteDialog}
                 counts={counts}
                 setCounts={setCounts}
@@ -241,6 +242,7 @@ function PatientDetail() {
               <ProceduresTab
                 patient={patient}
                 procedureDialog={dialog.procedure}
+                showDialog={showProcedureDialog}
                 hideDialog={hideProcedureDialog}
                 counts={counts}
                 setCounts={setCounts}

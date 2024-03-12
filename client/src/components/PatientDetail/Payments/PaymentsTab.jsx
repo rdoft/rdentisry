@@ -3,9 +3,10 @@ import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
-import { Timeline, ProgressBar } from "primereact";
+import { Timeline, ProgressBar, Divider } from "primereact";
 import { calcProgress } from "utils";
 import { PaymentDialog } from "components/Dialog";
+import { Add } from "components/Button";
 import NotFoundText from "components/NotFoundText";
 import PaymentStatistic from "./PaymentStatistic";
 import PaymentMarker from "./PaymentMarker";
@@ -195,45 +196,50 @@ function PaymentsTab({
   };
 
   return (
-    <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
-      {payments.length === 0 ? (
-        <NotFoundText text="Ödeme yok" p={3} m={3} />
-      ) : (
-        <Grid
-          container
-          alignItems="center"
-          justifyContent="center"
-          mt={2}
-          pb={4}
-        >
-          {/* Statistics */}
-          <PaymentStatistic
-            completedAmount={completedAmount}
-            waitingAmount={waitingAmount}
-            overdueAmount={overdueAmount}
-          />
-
-          {/* Progressbar */}
-          <Grid item xs={8} pb={6}>
-            <ProgressBar
-              value={progress}
-              color="#22A06A"
-              className="border-round-2xl"
-              showValue={false}
-            ></ProgressBar>
-          </Grid>
-
-          {/* Timeline */}
-          <Grid item md={8} xs={12}>
-            <Timeline
-              value={payments}
-              marker={paymentMarker}
-              content={paymentContent}
-              opposite={paymentDate}
+    <>
+      <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
+        {payments.length === 0 ? (
+          <NotFoundText text="Ödeme yok" p={3} m={3} />
+        ) : (
+          <Grid container alignItems="center" justifyContent="center" mt={2}>
+            {/* Statistics */}
+            <PaymentStatistic
+              completedAmount={completedAmount}
+              waitingAmount={waitingAmount}
+              overdueAmount={overdueAmount}
             />
+
+            {/* Progressbar */}
+            <Grid item xs={8} pb={6}>
+              <ProgressBar
+                value={progress}
+                color="#22A06A"
+                className="border-round-2xl"
+                showValue={false}
+              ></ProgressBar>
+            </Grid>
+
+            {/* Timeline */}
+            <Grid item md={8} xs={12}>
+              <Timeline
+                value={payments}
+                marker={paymentMarker}
+                content={paymentContent}
+                opposite={paymentDate}
+              />
+            </Grid>
           </Grid>
-        </Grid>
-      )}
+        )}
+      </div>
+
+      {/* Add payment button */}
+      <Grid item xs={12} mt={2} style={{ textAlign: "center" }}>
+        <Add
+          label="Ödeme Ekle"
+          onClick={showDialog}
+          style={{ color: "#182A4D" }}
+        />
+      </Grid>
 
       {/* Payment dialog */}
       {paymentDialog && (
@@ -244,7 +250,7 @@ function PaymentsTab({
           onDelete={payment && deletePayment}
         />
       )}
-    </div>
+    </>
   );
 }
 

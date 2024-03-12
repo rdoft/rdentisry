@@ -4,6 +4,7 @@ import { errorHandler } from "utils";
 import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
 import { ProcedureDialog } from "components/Dialog";
+import { Add } from "components/Button";
 import ProcedureToolbar from "./ProcedureToolbar";
 import DentalChart from "./DentalChart";
 import ProcedureList from "./ProcedureList";
@@ -17,6 +18,7 @@ import { PatientProcedureService } from "services";
 function ProceduresTab({
   patient,
   procedureDialog,
+  showDialog,
   hideDialog,
   counts,
   setCounts,
@@ -170,6 +172,15 @@ function ProceduresTab({
             onSubmit={saveProcedure}
             onDelete={deleteProcedure}
           />
+
+          {/* Add procedure */}
+          <Grid item xs={12} mt={2} style={{ textAlign: "center" }}>
+            <Add
+              label="Tedavi Ekle"
+              onClick={showDialog}
+              style={{ color: "#182A4D" }}
+            />
+          </Grid>
         </Grid>
       </Grid>
 

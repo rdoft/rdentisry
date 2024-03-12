@@ -4,6 +4,7 @@ import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
+import { Add } from "components/Button";
 import NotFoundText from "components/NotFoundText";
 import NoteCard from "./NoteCard";
 import Note from "./Note";
@@ -14,7 +15,14 @@ import "assets/styles/PatientDetail/NotesTab.css";
 // services
 import { NoteService } from "services";
 
-function NotesTab({ patient, noteDialog, hideDialog, counts, setCounts }) {
+function NotesTab({
+  patient,
+  noteDialog,
+  showDialog,
+  hideDialog,
+  counts,
+  setCounts,
+}) {
   const navigate = useNavigate();
 
   const [isEdit, setEdit] = useState(false);
@@ -128,6 +136,7 @@ function NotesTab({ patient, noteDialog, hideDialog, counts, setCounts }) {
   return (
     <>
       <Grid container justifyContent="space-between" mt={2}>
+        {/* Note list */}
         <Grid item xs={4} pr={3}>
           {notes.length === 0 ? (
             <NotFoundText text="Not yok" p={3} />
@@ -138,7 +147,17 @@ function NotesTab({ patient, noteDialog, hideDialog, counts, setCounts }) {
               rows={10}
             ></DataScroller>
           )}
+
+          <Grid item xs={12} mt={2} style={{ textAlign: "center" }}>
+            <Add
+              label="Not Ekle"
+              onClick={showDialog}
+              style={{ color: "#182A4D" }}
+            />
+          </Grid>
         </Grid>
+
+        {/* Note detail */}
         <Grid
           item
           xs={8}
