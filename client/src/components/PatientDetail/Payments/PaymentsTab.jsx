@@ -3,10 +3,10 @@ import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
-import { Timeline, ProgressBar, Divider } from "primereact";
+import { Timeline, ProgressBar } from "primereact";
 import { calcProgress } from "utils";
 import { PaymentDialog } from "components/Dialog";
-import { Add } from "components/Button";
+import { NewItem } from "components/Button";
 import NotFoundText from "components/NotFoundText";
 import PaymentStatistic from "./PaymentStatistic";
 import PaymentMarker from "./PaymentMarker";
@@ -233,13 +233,7 @@ function PaymentsTab({
       </div>
 
       {/* Add payment button */}
-      <Grid item xs={12} mt={2} style={{ textAlign: "center" }}>
-        <Add
-          label="Ödeme Ekle"
-          onClick={showDialog}
-          style={{ color: "#182A4D" }}
-        />
-      </Grid>
+      <NewItem label="Ödeme Ekle" onClick={showDialog} />
 
       {/* Payment dialog */}
       {paymentDialog && (

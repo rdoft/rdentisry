@@ -4,7 +4,7 @@ import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
-import { Add } from "components/Button";
+import { NewItem } from "components/Button";
 import NotFoundText from "components/NotFoundText";
 import NoteCard from "./NoteCard";
 import Note from "./Note";
@@ -151,13 +151,8 @@ function NotesTab({
             ></DataScroller>
           )}
 
-          <Grid item xs={12} mt={2} style={{ textAlign: "center" }}>
-            <Add
-              label="Not Ekle"
-              onClick={showDialog}
-              style={{ color: "#182A4D" }}
-            />
-          </Grid>
+          {/* Add note */}
+          <NewItem label="Not Ekle" onClick={showDialog} />
         </Grid>
 
         {/* Note detail */}

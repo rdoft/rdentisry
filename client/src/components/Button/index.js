@@ -8,5 +8,18 @@ import CancelPay from "./CancelPay";
 import Next from "./Next";
 import Prev from "./Prev";
 import Cancel from "./Cancel";
+import NewItem from "./NewItem";
 
-export { Add, Edit, More, Delete, Read, Pay, CancelPay, Next, Prev, Cancel };
+export {
+  Add,
+  Edit,
+  More,
+  Delete,
+  Read,
+  Pay,
+  CancelPay,
+  Next,
+  Prev,
+  Cancel,
+  NewItem,
+};

@@ -4,7 +4,7 @@ import { errorHandler } from "utils";
 import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
 import { ProcedureDialog } from "components/Dialog";
-import { Add } from "components/Button";
+import { NewItem } from "components/Button";
 import ProcedureToolbar from "./ProcedureToolbar";
 import DentalChart from "./DentalChart";
 import ProcedureList from "./ProcedureList";
@@ -174,13 +174,7 @@ function ProceduresTab({
           />
 
           {/* Add procedure */}
-          <Grid item xs={12} mt={2} style={{ textAlign: "center" }}>
-            <Add
-              label="Tedavi Ekle"
-              onClick={showDialog}
-              style={{ color: "#182A4D" }}
-            />
-          </Grid>
+          <NewItem label="Tedavi Ekle" onClick={showDialog} />
         </Grid>
       </Grid>
 
