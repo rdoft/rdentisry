@@ -1,13 +1,11 @@
 import React from "react";
 import EventTitle from "./EventTitle";
 
-function convert(event, step, onClickEdit) {
+function convert(event, step) {
   const { date, startTime, endTime, id, patient } = event;
-  const { name, surname } = event.patient;
 
   const startDate = new Date(startTime);
   const endDate = new Date(endTime);
-
   const year = date.slice(0, 4);
   const month = date.slice(5, 7);
   const day = date.slice(8, 10);
@@ -21,10 +19,9 @@ function convert(event, step, onClickEdit) {
   endDate.setDate(day);
 
   return {
-    title: <EventTitle event={event} step={step} onClickEdit={onClickEdit} />,
+    title: <EventTitle event={event} step={step} />,
     start: startDate,
     end: endDate,
-    tooltip: `${name} ${surname}`,
     patient,
     id,
   };

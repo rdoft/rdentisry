@@ -9,6 +9,7 @@ import Next from "./Next";
 import Prev from "./Prev";
 import Cancel from "./Cancel";
 import NewItem from "./NewItem";
+import Goto from "./Goto";
 
 export {
   Add,
@@ -22,4 +23,5 @@ export {
   Prev,
   Cancel,
   NewItem,
+  Goto,
 };

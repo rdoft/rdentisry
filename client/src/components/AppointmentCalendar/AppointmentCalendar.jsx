@@ -2,9 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { Calendar, momentLocalizer } from "react-big-calendar";
-import { activeItem } from "store/reducers/menu";
 import { AppointmentDialog } from "components/Dialog";
 import moment from "moment";
 import DayHeader from "./DayHeader";
@@ -23,7 +21,6 @@ const today = new Date();
 
 const AppointmentCalendar = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   // Set the default values
   const step = useRef(30);
@@ -143,8 +140,7 @@ const AppointmentCalendar = () => {
 
   // onSelectEvent handler for goto patient page
   const handleSelectEvent = async (event) => {
-    navigate(`/patients/${event.patient.id}`);
-    dispatch(activeItem({ openItem: ["patients"] }));
+    handleClickEdit(event.id);
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -212,7 +208,7 @@ const AppointmentCalendar = () => {
 
   // Convert appointments format to events
   const events = filteredAppointments.map((appointment) =>
-    convert(appointment, step.current, handleClickEdit)
+    convert(appointment, step.current)
   );
 
   return (
@@ -236,13 +232,13 @@ const AppointmentCalendar = () => {
         events={events}
         dayPropGetter={dayPropGetter}
         components={components}
+        tooltipAccessor={null}
         views={["month", "week"]}
         defaultView={"week"}
         startAccessor={"start"}
         endAccessor={"end"}
         timeslots={1}
         step={step.current}
-        tooltipAccessor={(event) => event.tooltip}
         showAllEvents={true}
         length="7"
         allDayAccessor={null}

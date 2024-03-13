@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { activeItem } from "store/reducers/menu";
 import { Grid, Typography } from "@mui/material";
-import { Edit } from "components/Button";
+import { Goto } from "components/Button";
 
 // assets
 import {
@@ -10,11 +13,14 @@ import {
 } from "@ant-design/icons";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-function EventTitle({ event, step, onClickEdit }) {
+function EventTitle({ event, step }) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [isHover, setIsHover] = useState(false);
 
-  const { description, startTime, endTime, id } = event;
-  const { name, surname } = event.patient;
+  const { description, startTime, endTime } = event;
+  const { id, name, surname } = event.patient;
 
   const startDate = new Date(startTime);
   const endDate = new Date(endTime);
@@ -27,8 +33,7 @@ function EventTitle({ event, step, onClickEdit }) {
     minute: "2-digit",
   });
 
-  const showName = event.duration >= step;
-  const showDescription = description && event.duration >= (step / 3) * 4;
+  const showDescription = description && event.duration >= (step / 6) * 7;
 
   // HANDLERS -----------------------------------------------------------------
   // onMouseEnter handler for display buttons
@@ -44,7 +49,8 @@ function EventTitle({ event, step, onClickEdit }) {
   // onClickEdit handler
   const handleClickEdit = (event) => {
     event.stopPropagation();
-    onClickEdit(id);
+    navigate(`/patients/${id}`);
+    dispatch(activeItem({ openItem: ["patients"] }));
   };
 
   return (
@@ -54,30 +60,42 @@ function EventTitle({ event, step, onClickEdit }) {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <Grid item xs={9}>
-        <Typography variant="h6">
-          <ClockCircleOutlined /> {`${startHours}-${endHours}`}
-        </Typography>
-        {showName && (
-          <Typography variant="h5" noWrap>
+      <Grid item xs={8}>
+        {/* Time */}
+        <Grid item xs={12}>
+          <Typography variant="caption">
+            <ClockCircleOutlined /> {`${startHours}-${endHours}`}
+          </Typography>
+        </Grid>
+
+        {/* Patient */}
+        <Grid item xs={12}>
+          <Typography variant="caption" fontWeight="bolder" noWrap>
             <UserOutlined /> {`${name} ${surname}`}
           </Typography>
-        )}
+        </Grid>
 
         {showDescription && (
-          <Typography variant="h6">
-            <FileTextOutlined />{" "}
-            {description.includes("\n") ||
-            description.split(/\n/)[0].length > 24
-              ? description.split(/\n/)[0].slice(0, 24) + " ..."
-              : description.split(/\n/)[0]}
-          </Typography>
+          <Grid item xs={12}>
+            <Typography variant="caption">
+              <FileTextOutlined />{" "}
+              {description.includes("\n") ||
+              description.split(/\n/)[0].length > 24
+                ? description.split(/\n/)[0].slice(0, 24) + " ..."
+                : description.split(/\n/)[0]}
+            </Typography>
+          </Grid>
         )}
       </Grid>
 
       {isHover && (
-        <Grid item xs={2} m={0.5}>
-          <Edit severity="info" onClick={handleClickEdit} style={{ color: "#3B5DBF" }}/>
+        <Grid item xs="auto" m={0.5}>
+          <Goto
+            severity="info"
+            onClick={handleClickEdit}
+            style={{ color: "#3B5DBF", padding: "0.3rem", width: "auto" }}
+            tooltip="Hasta sayfasına git"
+          />
         </Grid>
       )}
     </Grid>
