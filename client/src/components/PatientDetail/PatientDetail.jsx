@@ -219,6 +219,7 @@ function PatientDetail() {
               )}
             >
               <NotesTab
+                key={patient.id}
                 patient={patient}
                 noteDialog={dialog.note}
                 showDialog={showNoteDialog}

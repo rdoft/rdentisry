@@ -53,6 +53,9 @@ function NotesTab({
   useEffect(() => {
     if (noteDialog) {
       setNote(null);
+      setTimeout(() => {
+        hideDialog();
+      }, 1000);
     }
   }, [noteDialog, patient]);
 
@@ -162,7 +165,12 @@ function NotesTab({
           item
           xs={8}
           px={3}
-          sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
+          sx={{
+            borderRadius: 2,
+            backgroundColor: "#f5f5f5",
+            border: "1px solid",
+            borderColor: noteDialog ? "#333C5E" : "transparent",
+          }}
         >
           <Note
             key={note?.id}
