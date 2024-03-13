@@ -57,7 +57,7 @@ function NotesTab({
         hideDialog();
       }, 1000);
     }
-  }, [noteDialog, patient]);
+  }, [noteDialog, hideDialog]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of the notes of the patient and set notes value
