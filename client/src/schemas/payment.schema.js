@@ -6,11 +6,8 @@ const payment = Joi.object({
   type: Joi.string().empty("").allow(null),
   amount: Joi.number().min(0).required(),
   plannedDate: Joi.date().empty(null).allow(null),
-  actualDate: Joi.date().when("plannedDate", {
-    is: Joi.exist(),
-    then: Joi.allow(null),
-  }),
-});
+  actualDate: Joi.date().empty(null).allow(null),
+}).xor('plannedDate', 'actualDate');
 
 const id = Joi.object({
   paymentId: Joi.number().empty(null).id(),

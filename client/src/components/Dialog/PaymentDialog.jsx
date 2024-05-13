@@ -2,14 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
-import {
-  Tag,
-  Divider,
-  Checkbox,
-  InputNumber,
-  ConfirmDialog,
-  confirmDialog,
-} from "primereact";
+import { Divider, InputNumber, ConfirmDialog, confirmDialog } from "primereact";
 import { DropdownPatient } from "components/Dropdown";
 import { DialogTemp } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
@@ -24,14 +17,13 @@ import { PatientService } from "services";
 function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
   const navigate = useNavigate();
 
-  const [reduce, setReduce] = useState(false);
   const [patients, setPatients] = useState(null);
   const [payment, setPayment] = useState({
     patient: null,
     type: "",
     amount: 0,
     plannedDate: null,
-    actualDate: null,
+    actualDate: new Date(),
     ...initPayment,
   });
   // Validation of payment object & properties
@@ -70,18 +62,6 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
     let _isError = { ...isError };
 
     switch (name) {
-      case "plannedDate":
-        value = value
-          ? new Date(
-              Date.UTC(value.getFullYear(), value.getMonth(), value.getDate())
-            )
-          : null;
-
-        _isError["date"] =
-          schema[name].validate(value).error || (!payment.actualDate && !value)
-            ? true
-            : false;
-        break;
       case "actualDate":
         value = value
           ? new Date(
@@ -90,11 +70,11 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
           : null;
 
         _isError["date"] =
-          schema[name].validate(value).error || (!payment.plannedDate && !value)
-            ? true
-            : false;
+          schema[name].validate(value).error || !value ? true : false;
         break;
       case "amount":
+        _isError[name] = schema[name].validate(value).error ? true : false;
+        break;
       case "type":
         _isError[name] = schema[name].validate(value).error ? true : false;
         break;
@@ -130,7 +110,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
 
   // onSubmit handler
   const handleSubmit = () => {
-    onSubmit(payment, reduce);
+    onSubmit(payment);
   };
 
   // onDelete handler
@@ -158,7 +138,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
         onSubmit={handleSubmit}
         onDelete={handleDeleteConfim}
         header={!payment.id ? "Yeni Ödeme" : "Ödeme Bilgileri"}
-        style={{ width: "700px" }}
+        style={{ width: "500px" }}
       >
         {/* Divider */}
         <Divider type="solid" className="mt-0" />
@@ -175,23 +155,23 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
 
         {/* Type */}
         <div className="flex grid align-items-center mb-3">
-          <label htmlFor="type" className="col-12 md:col-6 font-bold">
+          <label htmlFor="type" className="col-12 md:col-4 font-bold">
             Ödeme Türü
           </label>
-          <div className="col-6 md:col-6 card flex flex-row align-items-center gap-2">
+          <div className="col-6 md:col-8 card flex flex-row align-items-center gap-2">
             <PaymentType type={payment.type} onChange={handleChange} />
           </div>
         </div>
 
         {/* Amount */}
         <div className="flex grid align-items-center mb-5">
-          <label htmlFor="amount" className="col-12 md:col-6 font-bold">
+          <label htmlFor="amount" className="col-12 md:col-4 font-bold">
             Tutar <small className="p-error">*</small>
             {isError.amount && (
-              <small className="ml-3 p-error font-light">Zorunlu</small>
+              <small className="ml-3 p-error font-light">Geçersiz</small>
             )}
           </label>
-          <div className="col-12 md:col-6 p-0">
+          <div className="col-12 md:col-8">
             <InputNumber
               id="amount"
               value={payment.amount}
@@ -209,78 +189,25 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
         </div>
 
         {/* Date */}
-        <div className="flex grid justify-content-center mb-3">
-          <label htmlFor="date" className="col-12 font-bold">
+        <div className="flex grid mb-3">
+          <label htmlFor="date" className="col-12 md:col-4 font-bold">
             Tarih <small className="p-error">*</small>
             {isError.date && (
-              <small className="ml-3 p-error font-light">
-                Tarihlerden en az biri seçilmelidir
-              </small>
+              <small className="ml-3 p-error font-light">Zorunlu</small>
             )}
           </label>
 
-          {/* PlannedDate */}
-          <div className="flex grid col-12 md:col-5 justify-content-center">
-            <Tag
-              value="Planlanan"
-              style={{
-                backgroundColor: "#E8F0FF",
-                color: "#1E7AFC",
-              }}
-            />
-            <DatePicker
-              id="plannedDate"
-              className="mt-4"
-              value={payment.plannedDate && new Date(payment.plannedDate)}
-              onChange={(event) =>
-                handleChange({ target: { name: "plannedDate", value: event } })
-              }
-              minDate={new Date(new Date().setUTCHours(0, 0, 0, 0))}
-            />
-          </div>
-
-          {/* Divider */}
-          <div className="flex grid w-full md:w-2 justify-content-center py-8">
-            <Divider layout="vertical" className="hidden md:flex col-1" />
-            <Divider layout="horizontal" className="flex md:hidden col-6" />
-          </div>
-
           {/* ActualDate */}
-          <div className="flex grid col-12 md:col-5 justify-content-center">
-            <Tag
-              value="Gerçekleşen"
-              style={{
-                backgroundColor: "#DFFCF0",
-                color: "#22A069",
-              }}
-            />
+          <div className="col-12 md:col-8">
             <DatePicker
               id="actualDate"
-              className="m-4"
+              className="m-0"
               value={payment.actualDate && new Date(payment.actualDate)}
               onChange={(event) =>
                 handleChange({ target: { name: "actualDate", value: event } })
               }
             />
           </div>
-        </div>
-
-        {/* Reduce from next payment */}
-
-        <div
-          className="flex align-items-center justify-content-end"
-          style={{
-            visibility:
-              !payment.id && !payment.plannedDate && payment.actualDate
-                ? "visible"
-                : "hidden",
-          }}
-        >
-          <small className=" mr-2">Planlanan ödemeden düşülsün</small>
-          <Checkbox
-            onChange={(event) => setReduce(event.checked)}
-            checked={reduce}
-          />
         </div>
       </DialogTemp>
     </>
