@@ -16,8 +16,9 @@ function PaymentPlanDialog({ patient, onHide, onSubmit }) {
   const navigate = useNavigate();
 
   const [patients, setPatients] = useState(null);
+  const [instalment, setInstalment] = useState(1);
   const [amount, setAmount] = useState(0);
-  const [dates, setDates] = useState([new Date()]);
+  const [dates, setDates] = useState([]);
 
   // Validation of payments object & properties
   const [isValid, setIsValid] = useState(false);
@@ -51,6 +52,10 @@ function PaymentPlanDialog({ patient, onHide, onSubmit }) {
   const handleChange = (event) => {
     let { name, value } = event.target;
     let _isError = { ...isError };
+    let _dates = [...dates];
+    let _amount = amount;
+    let _instalment = instalment;
+    let latestDate;
 
     switch (name) {
       case "plannedDate":
@@ -58,22 +63,62 @@ function PaymentPlanDialog({ patient, onHide, onSubmit }) {
           (date) =>
             new Date(date.getFullYear(), date.getMonth(), date.getDate())
         );
-        _isError["date"] = value.length === 0;
-        _isError["amount"] = value.length > amount ? true : false;
+        _dates = value;
 
-        setDates(value);
+        latestDate = new Date(Math.max.apply(null, _dates));
+        if (dates.length === 0 && _dates.length === 1) {
+          for (let i = 0; i < instalment - 1; i++) {
+            _dates.push(
+              new Date(latestDate.setMonth(latestDate.getMonth() + 1))
+            );
+          }
+        }
+
+        _isError["date"] = _dates.length === 0;
+        _isError["amount"] = _dates.length > amount ? true : false;
+        _isError["instalment"] = _dates.length !== instalment ? true : false;
+        setDates(_dates);
         break;
       case "amount":
-        _isError["amount"] = schema[name].validate(value).error ? true : false;
-        _isError["amount"] = dates.length > value ? true : false;
-        setAmount(value);
+        _amount = value;
+
+        _isError["amount"] = schema[name].validate(_amount).error
+          ? true
+          : false;
+        _isError["amount"] = dates.length > _amount ? true : false;
+        setAmount(_amount);
         break;
+      case "instalment":
+        _instalment = value < 1 ? 1 : value; // min value
+
+        if (dates.length !== 0) {
+          if (_instalment > dates.length) {
+            latestDate = new Date(Math.max.apply(null, _dates));
+            for (let i = 0; i < _instalment - dates.length; i++) {
+              _dates.push(
+                new Date(latestDate.setMonth(latestDate.getMonth() + 1))
+              );
+            }
+          } else {
+            _dates = _dates.slice(0, _instalment);
+          }
+
+          _isError["date"] = _dates.length === 0;
+          _isError["amount"] = _dates.length > amount ? true : false;
+          _isError["instalment"] = _dates.length !== _instalment ? true : false;
+          setDates(_dates);
+        }
+
+        setInstalment(_instalment);
       default:
         break;
     }
 
     // validation
-    const _isValid = Object.values(_isError).every((e) => !e);
+    const _isValid =
+      _dates.length !== 0 &&
+      _dates.length === _instalment &&
+      _amount >= _instalment;
     setIsValid(_isValid);
     setIsError(_isError);
   };
@@ -133,7 +178,7 @@ function PaymentPlanDialog({ patient, onHide, onSubmit }) {
       </div>
 
       {/* Amount */}
-      <div className="flex grid align-items-center mb-5">
+      <div className="flex grid align-items-center mb-3">
         <label htmlFor="amount" className="col-12 md:col-4 font-bold">
           Tutar <small className="p-error">*</small>
           {isError.amount && (
@@ -157,6 +202,32 @@ function PaymentPlanDialog({ patient, onHide, onSubmit }) {
         </div>
       </div>
 
+      {/* Instalment */}
+      <div className="flex grid mb-5">
+        <label htmlFor="instalment" className="col-12 md:col-4 font-bold">
+          Taksit <small className="p-error">*</small>
+          {isError.instalment && (
+            <small className="grid m-1 p-error font-light">
+              Tarihler ve taksit sayısı eşleşmiyor
+            </small>
+          )}
+        </label>
+        <div className="col-12 md:col-8">
+          <InputNumber
+            id="instalment"
+            name="instalment"
+            value={instalment}
+            onChange={(e) =>
+              handleChange({
+                target: { value: e.value, name: "instalment" },
+              })
+            }
+            min={1}
+            max={36}
+          />
+        </div>
+      </div>
+
       {/* Date */}
       <div className="flex grid mb-3">
         <label htmlFor="date" className="col-12 md:col-4 font-bold">
@@ -164,7 +235,16 @@ function PaymentPlanDialog({ patient, onHide, onSubmit }) {
           {isError.date && (
             <small className="ml-3 p-error font-light">Zorunlu</small>
           )}
-          <small className="grid m-1 font-light">Ödeme tarihlerini seçin</small>
+          {dates.length === 0 ? (
+            <small className="grid m-1 font-light">
+              Taksit başlangıç tarihini seçin.
+            </small>
+          ) : (
+            <small className="grid m-1 font-light">
+              Taksitler otomatik belirlendi. Düzenlemek için yandaki takvimi
+              kullanın.
+            </small>
+          )}
         </label>
 
         {/* plannedDate */}
