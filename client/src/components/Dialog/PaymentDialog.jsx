@@ -206,6 +206,8 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
               onChange={(event) =>
                 handleChange({ target: { name: "actualDate", value: event } })
               }
+              required
+              defaultMonth={payment.actualDate && new Date(payment.actualDate)}
             />
           </div>
         </div>
