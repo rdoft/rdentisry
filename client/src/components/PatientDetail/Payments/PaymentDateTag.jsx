@@ -7,16 +7,16 @@ function PaymentDateTag({ payment }) {
   let label;
 
   if (payment.actualDate) {
-    color = "#A44800";
-    bgColor = "#FFFADD";
+    color = "#22A06A";
+    bgColor = "#DFF6EC";
     label = new Date(payment.actualDate).toLocaleDateString("tr-TR", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
   } else if (payment.amount === payment.paid) {
-    color = "#22A06A";
-    bgColor = "#DFF6EC";
+    color = "#172B4D";
+    bgColor = "#F3F4F5";
     label = new Date(payment.plannedDate).toLocaleDateString("tr-TR", {
       year: "numeric",
       month: "long",

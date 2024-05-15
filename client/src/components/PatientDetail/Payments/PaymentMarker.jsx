@@ -5,10 +5,10 @@ function PaymentMarker({ payment }) {
   let icon;
 
   if (payment.actualDate) {
-    color = "#A44800";
+    color = "#22A06A";
     icon = "pi pi-circle-fill";
   } else if (payment.amount === payment.paid) {
-    color = "#22A06A";
+    color = "#172B4D";
     icon = "pi pi-check";
   } else if (new Date(payment.plannedDate).getTime() < new Date().getTime()) {
     color = "#EF4444";

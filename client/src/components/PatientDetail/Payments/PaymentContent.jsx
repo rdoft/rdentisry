@@ -2,10 +2,15 @@ import React, { useState } from "react";
 import { Grid, Typography } from "@mui/material";
 import { ConfirmDialog } from "primereact";
 import { DialogFooter } from "components/DialogFooter";
-import { Edit, Delete, Pay, CancelPay } from "components/Button";
+import { Edit, Delete, Pay } from "components/Button";
 import PaymentAmount from "./PaymentAmount";
 
-function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
+function PaymentContent({
+  payment,
+  onClickEdit,
+  onSubmit,
+  onDelete,
+}) {
   const [isHover, setIsHover] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
 
@@ -28,16 +33,9 @@ function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
   // onClickPay handler
   const handlePay = () => {
     onSubmit({
-      ...payment,
+      patient: payment.patient,
+      amount: payment.amount - payment.paid,
       actualDate: new Date(),
-    });
-  };
-
-  // onClickCancel handler
-  const handleCancel = () => {
-    onSubmit({
-      ...payment,
-      actualDate: null,
     });
   };
 
@@ -80,27 +78,31 @@ function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
         container
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        paddingBottom={4}
       >
-        <Grid item xs={2}>
-          <PaymentAmount amount={payment.amount} type={payment.type} />
+        <Grid item xs={12}>
+          {payment.plannedDate ? (
+            <PaymentAmount amount={payment.amount} paid={payment.paid} />
+          ) : (
+            <PaymentAmount amount={payment.amount} type={payment.type} />
+          )}
         </Grid>
-        {isHover && (
-          <Grid item>
-            {/* Edit button */}
-            <Edit onClick={handleEdit} />
+        <Grid
+          item
+          xs={12}
+          style={{ visibility: isHover ? "visible" : "hidden" }}
+        >
+          {/* Edit button */}
+          <Edit onClick={handleEdit} />
 
-            {/* Delete button */}
-            <Delete onClick={handleDelete} />
+          {/* Delete button */}
+          <Delete onClick={handleDelete} />
 
-            {/* Pay button */}
-            {!payment.actualDate && <Pay onClick={handlePay} />}
-
-            {/* Cancel payment button */}
-            {payment.plannedDate && payment.actualDate && (
-              <CancelPay onClick={handleCancel} />
-            )}
-          </Grid>
-        )}
+          {/* Pay button */}
+          {payment.plannedDate && payment.amount > payment.paid && (
+            <Pay onClick={handlePay} />
+          )}
+        </Grid>
       </Grid>
       {/* Confirm delete dialog */}
       {deleteDialog}

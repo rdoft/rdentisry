@@ -4,7 +4,7 @@ import { Tooltip } from "@mui/material";
 
 function Pay({ label, onClick, ...props }) {
   return (
-    <Tooltip title="Öde" placement="bottom" enterDelay={500}>
+    <Tooltip title="Kalanı Öde" placement="bottom" enterDelay={500}>
       <Button
         text
         outlined
