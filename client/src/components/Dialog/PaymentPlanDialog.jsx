@@ -110,6 +110,7 @@ function PaymentPlanDialog({ patient, onHide, onSubmit }) {
         }
 
         setInstalment(_instalment);
+        break;
       default:
         break;
     }

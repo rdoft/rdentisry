@@ -72,6 +72,16 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
         _isError["date"] =
           schema[name].validate(value).error || !value ? true : false;
         break;
+      case "plannedDate":
+        value = value
+          ? new Date(
+              Date.UTC(value.getFullYear(), value.getMonth(), value.getDate())
+            )
+          : null;
+
+        _isError["date"] =
+          schema[name].validate(value).error || !value ? true : false;
+        break;
       case "amount":
         _isError[name] = schema[name].validate(value).error ? true : false;
         break;
@@ -154,14 +164,16 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
         </div>
 
         {/* Type */}
-        <div className="flex grid align-items-center mb-3">
-          <label htmlFor="type" className="col-12 md:col-4 font-bold">
-            Ödeme Türü
-          </label>
-          <div className="col-6 md:col-8 card flex flex-row align-items-center gap-2">
-            <PaymentType type={payment.type} onChange={handleChange} />
+        {!payment.plannedDate && (
+          <div className="flex grid align-items-center mb-3">
+            <label htmlFor="type" className="col-12 md:col-4 font-bold">
+              Ödeme Türü
+            </label>
+            <div className="col-6 md:col-8 card flex flex-row align-items-center gap-2">
+              <PaymentType type={payment.type} onChange={handleChange} />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Amount */}
         <div className="flex grid align-items-center mb-5">
@@ -197,19 +209,38 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
             )}
           </label>
 
-          {/* ActualDate */}
-          <div className="col-12 md:col-8">
-            <DatePicker
-              id="actualDate"
-              className="m-0"
-              value={payment.actualDate && new Date(payment.actualDate)}
-              onChange={(event) =>
-                handleChange({ target: { name: "actualDate", value: event } })
-              }
-              required
-              defaultMonth={payment.actualDate && new Date(payment.actualDate)}
-            />
-          </div>
+          {/* Planned or Actual */}
+          {payment.plannedDate ? (
+            <div className="col-12 md:col-8">
+              <DatePicker
+                id="plannedDate"
+                className="m-0"
+                value={new Date(payment.plannedDate)}
+                onChange={(event) =>
+                  handleChange({
+                    target: { name: "plannedDate", value: event },
+                  })
+                }
+                required
+                defaultMonth={new Date(payment.plannedDate)}
+              />
+            </div>
+          ) : (
+            <div className="col-12 md:col-8">
+              <DatePicker
+                id="actualDate"
+                className="m-0"
+                value={payment.actualDate && new Date(payment.actualDate)}
+                onChange={(event) =>
+                  handleChange({ target: { name: "actualDate", value: event } })
+                }
+                required
+                defaultMonth={
+                  payment.actualDate && new Date(payment.actualDate)
+                }
+              />
+            </div>
+          )}
         </div>
       </DialogTemp>
     </>

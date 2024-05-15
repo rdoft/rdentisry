@@ -7,7 +7,9 @@ const payment = Joi.object({
   amount: Joi.number().min(0).required(),
   plannedDate: Joi.date().empty(null).allow(null),
   actualDate: Joi.date().empty(null).allow(null),
-}).xor('plannedDate', 'actualDate');
+})
+  .xor("plannedDate", "actualDate")
+  .unknown();
 
 const id = Joi.object({
   paymentId: Joi.number().empty(null).id(),
