@@ -5,7 +5,7 @@ function PaymentMarker({ payment }) {
   let icon;
 
   if (payment.actualDate) {
-    color = "#FFD200";
+    color = "#A44800";
     icon = "pi pi-circle-fill";
   } else if (payment.amount === payment.paid) {
     color = "#22A06A";
