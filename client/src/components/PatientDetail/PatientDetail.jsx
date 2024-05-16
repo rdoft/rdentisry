@@ -39,7 +39,7 @@ function PatientDetail() {
   });
   const [dialog, setDialog] = useState({
     appointment: false,
-    payment: false,
+    payment: null,
     note: false,
     procedure: false,
   });
@@ -84,10 +84,10 @@ function PatientDetail() {
   };
 
   // Show add appointment dialog
-  const showPaymentDialog = () => {
+  const showPaymentDialog = (type) => {
     setDialog({
       ...dialog,
-      payment: true,
+      payment: type,
     });
   };
 
@@ -95,7 +95,7 @@ function PatientDetail() {
   const hidePaymentDialog = () => {
     setDialog({
       ...dialog,
-      payment: false,
+      payment: null,
     });
   };
 
