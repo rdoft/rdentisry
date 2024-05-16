@@ -41,11 +41,14 @@ exports.getPatientProcedures = async (req, res) => {
           attributes: [
             ["PatientProcedureId", "id"],
             ["ToothNumber", "toothNumber"],
-            ["IsComplete", "isComplete"],
+            ["CompletedDate", "completedDate"],
           ],
           where: {
             ...(tooth && { ToothNumber: tooth }),
-            ...(completed && { IsComplete: completed }),
+            ...(completed === false && { CompletedDate: null }),
+            ...(completed === true && {
+              CompletedDate: { [Sequelize.Op.ne]: null },
+            }),
           },
           include: [
             {
@@ -140,7 +143,7 @@ exports.savePatientProcedure = async (req, res) => {
       PatientId: patientId,
       ProcedureId: procedure.id,
       ToothNumber: toothNumber,
-      IsComplete: false,
+      CompletedDate: null,
     });
 
     // Create invoice record
@@ -157,7 +160,7 @@ exports.savePatientProcedure = async (req, res) => {
       patientId: patientProcedure.PatientId,
       procedureId: patientProcedure.ProcedureId,
       toothNumber: patientProcedure.ToothNumber,
-      isComplete: patientProcedure.IsComplete,
+      completedDate: patientProcedure.CompletedDate,
       invoice: {
         id: invoice_.InvoiceId,
         amount: invoice_.Amount,
@@ -180,7 +183,7 @@ exports.savePatientProcedure = async (req, res) => {
 exports.updatePatientProcedure = async (req, res) => {
   const { UserId: userId } = req.user;
   const { patientProcedureId } = req.params;
-  const { toothNumber, isComplete, invoice } = req.body;
+  const { toothNumber, completedDate, invoice } = req.body;
   let patientProcedure;
 
   try {
@@ -205,15 +208,15 @@ exports.updatePatientProcedure = async (req, res) => {
           where: {
             UserId: userId,
           },
-        }
+        },
       ],
     });
-    
+
     if (patientProcedure) {
       // Update patient procedure record
       await patientProcedure.update({
         ToothNumber: toothNumber,
-        IsComplete: isComplete || false,
+        CompletedDate: completedDate ?? null,
       });
 
       // Update invoice record
@@ -270,7 +273,7 @@ exports.deletePatientProcedure = async (req, res) => {
           where: {
             UserId: userId,
           },
-        }
+        },
       ],
     });
 

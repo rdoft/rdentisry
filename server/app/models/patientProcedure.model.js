@@ -19,8 +19,8 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      IsComplete: {
-        type: Sequelize.BOOLEAN,
+      CompletedDate: {
+        type: Sequelize.DATEONLY,
       },
     },
     {

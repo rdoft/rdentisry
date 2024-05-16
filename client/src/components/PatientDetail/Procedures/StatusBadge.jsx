@@ -10,8 +10,8 @@ function StatusBadge({ procedures }) {
   let completed;
 
   if (procedures) {
-    inProgress = procedures.find((procedure) => !procedure.isComplete);
-    completed = procedures.find((procedure) => procedure.isComplete);
+    inProgress = procedures.find((procedure) => !procedure.completedDate);
+    completed = procedures.find((procedure) => procedure.completedDate);
   } else {
     inProgress = false;
     completed = false;
