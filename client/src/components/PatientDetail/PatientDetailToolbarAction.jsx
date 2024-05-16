@@ -22,7 +22,18 @@ function PatientDetailToolbarAction({
       );
     case 1:
       return (
-        <Add label="Ödeme Ekle" default={true} onClick={showPaymentDialog} />
+        <>
+          <Add
+            label="Ödeme Planı Ekle"
+            default={true}
+            onClick={() => showPaymentDialog("plan")}
+          />
+          <Add
+            label="Ödeme Ekle"
+            default={true}
+            onClick={() => showPaymentDialog("payment")}
+          />
+        </>
       );
     case 2:
       return <Add label="Not Ekle" default={true} onClick={showNoteDialog} />;
