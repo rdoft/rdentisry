@@ -4,12 +4,12 @@ import { Tooltip } from "@mui/material";
 
 function Pay({ label, onClick, ...props }) {
   return (
-    <Tooltip title="Kalanı Öde" placement="bottom" enterDelay={500}>
+    <Tooltip title="Öde" placement="bottom" enterDelay={500}>
       <Button
         text
         outlined
         size="small"
-        icon="pi pi-check-circle"
+        // icon="pi pi-check-circle"
         label={label}
         severity={props.severity || "success"}
         onClick={onClick}

@@ -149,7 +149,7 @@ function PaymentsTab({
       plannedPayments.find((payment) => payment.id === event.id);
 
     setPayment(_payment);
-    setTimeout(showDialog, 100);
+    setTimeout(handlePaymentDialog, 100);
   };
 
   // onHide handler

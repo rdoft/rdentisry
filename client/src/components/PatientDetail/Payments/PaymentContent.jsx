@@ -5,12 +5,7 @@ import { DialogFooter } from "components/DialogFooter";
 import { Edit, Delete, Pay } from "components/Button";
 import PaymentAmount from "./PaymentAmount";
 
-function PaymentContent({
-  payment,
-  onClickEdit,
-  onSubmit,
-  onDelete,
-}) {
+function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
   const [isHover, setIsHover] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
 
@@ -100,7 +95,10 @@ function PaymentContent({
 
           {/* Pay button */}
           {payment.plannedDate && payment.amount > payment.paid && (
-            <Pay onClick={handlePay} />
+            <Pay
+              label={"₺" + (payment.amount - payment.paid)}
+              onClick={handlePay}
+            />
           )}
         </Grid>
       </Grid>
