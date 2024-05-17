@@ -68,12 +68,12 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
         container
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        sx={{ minHeight: "4rem" }}
+        sx={{ minHeight: "2rem" }}
         alignItems="center"
       >
         {/* Name */}
         <Grid item xs={7} lg={6} pr={3}>
-          <Typography variant="h5" fontWeight="light">
+          <Typography variant="h6">
             {procedure.procedure.name}
           </Typography>
         </Grid>
@@ -112,14 +112,7 @@ function ProcedureCard({ procedure, onDelete, onSubmit }) {
           </>
         )}
       </Grid>
-
-      {/* Divider */}
-      <Grid container>
-        <Grid item xs={12}>
-          <Divider style={{ margin: 0 }} />
-        </Grid>
-      </Grid>
-
+      
       {/* Confirm delete dialog */}
       {deleteDialog}
     </>

@@ -9,3 +9,7 @@
 .p-scrollpanel .p-scrollpanel-bar {
   background: #c1c1c1;
 }
+
+.procedure-list .p-datascroller-content {
+  padding: 0 !important;
+}

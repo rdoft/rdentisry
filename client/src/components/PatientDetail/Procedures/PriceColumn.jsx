@@ -70,7 +70,7 @@ function PriceColumn({ procedure, onSubmit, isEdit, setIsEdit }) {
             variant="outlined"
             autoFocus={true}
             className="w-full"
-            inputStyle={{ padding: "8px" }}
+            inputStyle={{ padding: "4px" }}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
@@ -83,7 +83,7 @@ function PriceColumn({ procedure, onSubmit, isEdit, setIsEdit }) {
   ) : (
     <Tooltip title="Fiyatı düzenle" placement="bottom-start" enterDelay={500}>
       <Grid container onClick={handleEdit}>
-        <CardTitle>
+        <CardTitle variant="h6" style={{ padding: 0.8 }}>
           <Typography variant="caption">₺</Typography>
           {price.toLocaleString("tr-TR", {
             style: "decimal",

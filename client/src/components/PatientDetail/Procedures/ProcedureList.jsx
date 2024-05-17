@@ -46,8 +46,9 @@ function ProcedureList({
         Object.entries(procedures).map(([tooth, items]) => (
           <div key={tooth}>
             <CardTitle>{tooth === "0" ? `Genel` : `Diş ${tooth}`}</CardTitle>
-            <Fieldset className="mb-2" style={{ fontSize: "smaller" }}>
+            <Fieldset style={{ padding: "0.5rem 0.5rem", fontSize: "smaller" }}>
               <DataScroller
+                className="procedure-list"
                 value={items}
                 itemTemplate={procedureTemplate}
                 rows={1000}
