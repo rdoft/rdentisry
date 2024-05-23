@@ -19,8 +19,24 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      InvoiceId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       CompletedDate: {
         type: Sequelize.DATEONLY,
+      },
+      Price: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+        defaultValue: 0,
+        validate: {
+          min: (price) => {
+            if (price < 0) {
+              throw new Error("Price must be positive");
+            }
+          },
+        },
       },
     },
     {

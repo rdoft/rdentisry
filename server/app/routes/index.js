@@ -9,4 +9,5 @@ module.exports = (app) => {
   procedure = require("./procedure.route")(app);
   notification = require("./notification.route")(app);
   patientProcedure = require("./patientProcedure.route")(app);
+  invoice = require("./invoice.route")(app);
 };

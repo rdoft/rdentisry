@@ -42,6 +42,7 @@ exports.getPatientProcedures = async (req, res) => {
             ["PatientProcedureId", "id"],
             ["ToothNumber", "toothNumber"],
             ["CompletedDate", "completedDate"],
+            ["Price", "price"],
           ],
           where: {
             ...(tooth && { ToothNumber: tooth }),
@@ -76,9 +77,10 @@ exports.getPatientProcedures = async (req, res) => {
               as: "invoice",
               attributes: [
                 ["InvoiceId", "id"],
-                ["Amount", "amount"],
+                ["Title", "title"],
                 ["Description", "description"],
                 ["Discount", "discount"],
+                ["Date", "date"],
               ],
             },
           ],
@@ -110,7 +112,7 @@ exports.getPatientProcedures = async (req, res) => {
 exports.savePatientProcedure = async (req, res) => {
   const { UserId: userId } = req.user;
   const { patientId } = req.params;
-  const { toothNumber, procedure, invoice } = req.body;
+  const { toothNumber, procedure, invoice, price } = req.body;
   let patient;
   let procedure_;
   let patientProcedure;
@@ -139,19 +141,19 @@ exports.savePatientProcedure = async (req, res) => {
     }
 
     // Create patient procedure record
+    // Invoice record will be created if it does not exist
     patientProcedure = await PatientProcedure.create({
       PatientId: patientId,
       ProcedureId: procedure.id,
       ToothNumber: toothNumber,
+      InvoiceId: invoice?.id ?? null,
       CompletedDate: null,
+      Price: price,
     });
 
-    // Create invoice record
-    invoice_ = await Invoice.create({
-      PatientProcedureId: patientProcedure.PatientProcedureId,
-      Amount: invoice.amount,
-      Description: invoice.description,
-      Discount: invoice.discount,
+    // Fetch the invoice
+    invoice_ = await Invoice.findOne({
+      where: { InvoiceId: patientProcedure.InvoiceId },
     });
 
     // Return the created patient procedure
@@ -161,11 +163,13 @@ exports.savePatientProcedure = async (req, res) => {
       procedureId: patientProcedure.ProcedureId,
       toothNumber: patientProcedure.ToothNumber,
       completedDate: patientProcedure.CompletedDate,
+      price: patientProcedure.Price,
       invoice: {
         id: invoice_.InvoiceId,
-        amount: invoice_.Amount,
+        title: invoice_.Title,
         description: invoice_.Description,
         Discount: invoice_.Discount,
+        date: invoice_.Date,
       },
     };
     res.status(201).send(patientProcedure);
@@ -183,7 +187,7 @@ exports.savePatientProcedure = async (req, res) => {
 exports.updatePatientProcedure = async (req, res) => {
   const { UserId: userId } = req.user;
   const { patientProcedureId } = req.params;
-  const { toothNumber, completedDate, invoice } = req.body;
+  const { toothNumber, completedDate, invoice, price } = req.body;
   let patientProcedure;
 
   try {
@@ -216,22 +220,10 @@ exports.updatePatientProcedure = async (req, res) => {
       // Update patient procedure record
       await patientProcedure.update({
         ToothNumber: toothNumber,
+        InvoiceId: invoice?.id ?? null,
         CompletedDate: completedDate ?? null,
+        Price: price,
       });
-
-      // Update invoice record
-      await Invoice.update(
-        {
-          Amount: invoice.amount,
-          Description: invoice.description,
-          Discount: invoice.discount,
-        },
-        {
-          where: {
-            PatientProcedureId: patientProcedureId,
-          },
-        }
-      );
 
       res.status(200).send({ id: patientProcedureId });
     } else {

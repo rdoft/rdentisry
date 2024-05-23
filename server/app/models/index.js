@@ -117,14 +117,16 @@ db.patientProcedure.belongsTo(db.procedure, {
   foreignKey: "ProcedureId",
 });
 
-// patientProcedure - invoice (one to one)
-db.patientProcedure.hasOne(db.invoice, {
-  as: "invoice",
-  foreignKey: "PatientProcedureId",
+// invoice - patientProcedure (one to many)
+db.invoice.hasMany(db.patientProcedure, {
+  as: "patientProcedures",
+  foreignKey: "InvoiceId",
+  onDelete: "cascade",
+  hooks: true,
 });
-db.invoice.belongsTo(db.patientProcedure, {
-  as: "procedure",
-  foreignKey: "PatientProcedureId",
+db.patientProcedure.belongsTo(db.invoice, {
+  as: "invoice",
+  foreignKey: "InvoiceId",
 });
 
 // notificationEvent - notification (one to many)
@@ -243,6 +245,84 @@ db.procedure.beforeBulkDestroy(async (options) => {
   });
   if (patientCount > 0) {
     throw new Sequelize.ForeignKeyConstraintError();
+  }
+});
+
+// Check if the invoice is created before patientProcedure
+db.patientProcedure.beforeCreate(async (patientProcedure) => {
+  let invoice =
+    patientProcedure.InvoiceId &&
+    (await db.invoice.findByPk(patientProcedure.InvoiceId));
+  if (!invoice) {
+    invoice = await db.invoice.create({
+      Title: "Aşama",
+      Description: null,
+      Date: new Date(),
+      Discount: null,
+    });
+  }
+
+  patientProcedure.InvoiceId = invoice.InvoiceId;
+});
+
+// Hook to control if there is an empty invoice when updating patientProcedure
+db.patientProcedure.beforeUpdate(async (patientProcedure) => {
+  // Store the previous invoice ID
+  const previousInvoiceId = patientProcedure._previousDataValues.InvoiceId;
+
+  if (patientProcedure.InvoiceId != previousInvoiceId) {
+    if (!patientProcedure.InvoiceId) {
+      let invoice = await db.invoice.create({
+        Title: "Aşama",
+        Description: null,
+        Date: new Date(),
+        Discount: null,
+      });
+      patientProcedure.InvoiceId = invoice.InvoiceId;
+      patientProcedure._previousDataValues.InvoiceId = previousInvoiceId;
+    }
+  }
+});
+
+// Hook to delete invoices after patientProcedure update
+db.patientProcedure.afterUpdate(async (patientProcedure) => {
+  // Get the previous invoice ID
+  const previousInvoiceId = patientProcedure._previousDataValues.InvoiceId;
+
+  if (previousInvoiceId && previousInvoiceId !== patientProcedure.InvoiceId) {
+    const oldInvoice = await db.invoice.findOne({
+      where: { InvoiceId: previousInvoiceId },
+      include: [
+        {
+          model: db.patientProcedure,
+          as: "patientProcedures",
+        },
+      ],
+    });
+
+    if (oldInvoice && oldInvoice.patientProcedures.length === 0) {
+      oldInvoice.destroy();
+    }
+  }
+});
+
+// Control if there is empty invoice when delete patientProcedure,
+// if empty then destroy invoice
+db.patientProcedure.afterDestroy(async (patientProcedure) => {
+  const invoice = await db.invoice.findOne({
+    where: {
+      InvoiceId: patientProcedure.InvoiceId,
+    },
+    include: [
+      {
+        model: db.patientProcedure,
+        as: "patientProcedures",
+      },
+    ],
+  });
+
+  if (invoice && invoice.patientProcedures.length === 0) {
+    invoice.destroy();
   }
 });
 
