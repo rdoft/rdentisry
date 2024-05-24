@@ -255,7 +255,11 @@ db.patientProcedure.beforeCreate(async (patientProcedure) => {
     (await db.invoice.findByPk(patientProcedure.InvoiceId));
   if (!invoice) {
     invoice = await db.invoice.create({
-      Title: "Aşama",
+      Title: new Date().toLocaleDateString("tr-TR", {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+      }),
       Description: null,
       Date: new Date(),
       Discount: null,
@@ -273,7 +277,11 @@ db.patientProcedure.beforeUpdate(async (patientProcedure) => {
   if (patientProcedure.InvoiceId != previousInvoiceId) {
     if (!patientProcedure.InvoiceId) {
       let invoice = await db.invoice.create({
-        Title: "Aşama",
+        Title: new Date().toLocaleDateString("tr-TR", {
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+        }),
         Description: null,
         Date: new Date(),
         Discount: null,

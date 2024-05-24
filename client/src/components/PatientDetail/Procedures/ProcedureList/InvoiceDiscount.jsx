@@ -1,12 +1,18 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Grid, Typography, Tooltip, ClickAwayListener } from "@mui/material";
 import { InputNumber } from "primereact";
 import { Cancel } from "components/Button";
 
-function PriceColumn({ procedure, onSubmit }) {
-  const prevPrice = useRef(procedure.price);
+function InvoiceDiscount({ invoice, onSubmit }) {
+  const prevDiscount = useRef(invoice.discount);
+  const [discount, setDiscount] = useState(invoice.discount);
   const [isEdit, setIsEdit] = useState(false);
-  const [price, setPrice] = useState(procedure.price);
+
+  // Update component state when invoice prop changes
+  useEffect(() => {
+    setDiscount(invoice.discount);
+    prevDiscount.current = invoice.discount;
+  }, [invoice]);
 
   // HANDLERS -----------------------------------------------------------------
   // onEdit handler
@@ -16,35 +22,26 @@ function PriceColumn({ procedure, onSubmit }) {
 
   // onChange handler
   const handleChange = (event) => {
-    const value = event.value || 0;
-    setPrice(value);
+    setDiscount(event.value || 0);
   };
 
   // onSave handler, to save changes
   const handleSave = () => {
-    prevPrice.current = price;
+    prevDiscount.current = discount;
     setIsEdit(false);
-    onSubmit({
-      ...procedure,
-      price: price,
-    });
+    onSubmit(discount);
   };
 
   // onCancel handler, discard changes to amount
   const handleCancel = () => {
-    setPrice(prevPrice.current);
+    setDiscount(prevDiscount.current);
     setIsEdit(false);
   };
 
-  // onKeyDown handler,
-  // save the amount on Ctrl+Enter and discard changes on Escape
+  // onKeyDown handler, save the amount on Ctrl+Enter and discard changes on Escape
   const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
-      handleSave();
-    } else if (event.key === "Escape") {
-      handleCancel();
-    }
-    event.stopPropagation();
+    if (event.key === "Enter") handleSave();
+    else if (event.key === "Escape") handleCancel();
   };
 
   // handleClickAway handler, save the amount
@@ -54,55 +51,61 @@ function PriceColumn({ procedure, onSubmit }) {
 
   return isEdit ? (
     <Grid container alignItems="center" m={"-16px"}>
-      <Grid item xs="auto">
+      <Grid item xs={8} m={1}>
         <ClickAwayListener onClickAway={handleClickAway}>
           <InputNumber
-            id="price"
-            value={price}
-            mode="currency"
-            size="10"
+            id="discount"
+            value={discount}
+            mode="decimal"
             min={0}
-            currency="TRY"
-            locale="tr-TR"
+            max={100}
             variant="outlined"
             autoFocus={true}
             className="w-full"
-            inputStyle={{ padding: "4px" }}
+            inputStyle={{
+              padding: "8px",
+              textAlign: "right",
+              fontSize: "0.875rem",
+            }}
+            style={{ padding: "1px" }}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
         </ClickAwayListener>
       </Grid>
-      <Grid item xs>
+      <Grid item xs={2}>
         <Cancel onClick={handleCancel} />
       </Grid>
     </Grid>
   ) : (
-    <Tooltip title="Fiyatı düzenle" placement="bottom-start" enterDelay={500}>
+    <Tooltip title="Oranı düzenle" placement="bottom-start" enterDelay={500}>
       <Grid
         container
         item
         onClick={handleEdit}
-        xs={9}
+        justifyContent="end"
+        xs={8}
         p={1}
         m={-1}
         sx={{
           borderRadius: "8px",
           "&:hover": {
-            backgroundColor: "white",
+            backgroundColor: "#f5f5f5",
           },
         }}
       >
-        <Typography variant="h6">₺</Typography>
-        <Typography variant="h5">
-          {price.toLocaleString("tr-TR", {
-            style: "decimal",
-            maximumFractionDigits: 2,
-          })}
+        <Typography variant="caption">
+          İndirim: %{" "}
+          {discount
+            ? discount.toLocaleString("tr-TR", {
+                style: "decimal",
+                maximumFractionDigits: 2,
+              })
+            : 0}
         </Typography>
       </Grid>
     </Tooltip>
   );
 }
 
-export default PriceColumn;
+export default InvoiceDiscount;

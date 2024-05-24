@@ -13,3 +13,11 @@
 .procedure-list .p-datascroller-content {
   padding: 0 !important;
 }
+
+.procedure-list-item .p-datascroller-content {
+  padding: 0.5rem 0.5rem !important;
+}
+
+.p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+  padding: 0.0rem 0.5rem;
+}

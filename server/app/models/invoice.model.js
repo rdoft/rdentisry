@@ -10,7 +10,11 @@ module.exports = (sequelize, Sequelize) => {
       Title: {
         type: Sequelize.STRING(255),
         allowNull: false,
-        defaultValue: "Aşama",
+        defaultValue: new Date().toLocaleDateString("tr-TR", {
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+        }),
       },
       Description: {
         type: Sequelize.STRING(511),
@@ -18,7 +22,8 @@ module.exports = (sequelize, Sequelize) => {
       },
       Discount: {
         type: Sequelize.FLOAT,
-        allowNull: true,
+        allowNull: false,
+        defaultValue: 0,
       },
       Date: {
         type: Sequelize.DATEONLY,

@@ -63,7 +63,7 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
   );
 
   return (
-    <Grid item xs={12} p={2}>
+    <>
       {/* Up Teeth */}
       <ImageList cols={16} gap={0}>
         {upTeeth.map((tooth) => (
@@ -94,7 +94,7 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
       </ImageList>
 
       {/* Divider */}
-      <Divider className="p-3" />
+      <Divider />
 
       {/* Down Teeth */}
       <ImageList cols={16} gap={0}>
@@ -130,7 +130,7 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
           </Grid>
         ))}
       </ImageList>
-    </Grid>
+    </>
   );
 }
 

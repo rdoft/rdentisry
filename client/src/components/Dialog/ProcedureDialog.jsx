@@ -21,9 +21,7 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
   const [patientProcedure, setPatientProcedure] = useState({
     patient: null,
     procedure: null,
-    invoice: {
-      amount: 0,
-    },
+    invoice: null,
     toothNumber: 0,
     ...initPatientProcedure,
   });
@@ -79,16 +77,12 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
       _patientProcedure = {
         ...patientProcedure,
         procedure: value,
-        invoice: {
-          amount: value.price,
-        },
+        price: value.price,
       };
     } else if (name === "amount") {
       _patientProcedure = {
         ...patientProcedure,
-        invoice: {
-          amount: value,
-        },
+        price: value,
       };
       _isError.amount = schema.price.validate(value).error ? true : false;
     } else if (name === "quantity") {
@@ -167,7 +161,7 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
         <div className="col-5 md:col-3 p-0">
           <InputNumber
             id="amount"
-            value={patientProcedure.invoice?.amount}
+            value={patientProcedure.price}
             name="amount"
             onChange={(e) =>
               handleChange({

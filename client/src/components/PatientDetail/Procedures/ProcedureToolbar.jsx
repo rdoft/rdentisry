@@ -122,7 +122,9 @@ function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
       {!selectedTooth ? (
         <Grid item xs={8}>
           {/* All procedure */}
-          <CardTitle variant="h3">Tüm Tedaviler</CardTitle>
+          <CardTitle variant="h3" style={{ backgroundColor: "transparent" }}>
+            Tüm Tedaviler
+          </CardTitle>
         </Grid>
       ) : (
         <>
@@ -138,7 +140,10 @@ function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
 
           {/* Tooth number */}
           <Grid item xs={8}>
-            <CardTitle variant="h3">{`Diş ${selectedTooth}`}</CardTitle>
+            <CardTitle
+              variant="h3"
+              style={{ backgroundColor: "transparent" }}
+            >{`Diş ${selectedTooth}`}</CardTitle>
           </Grid>
 
           {/* Cancel button */}

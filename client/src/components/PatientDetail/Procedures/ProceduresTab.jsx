@@ -2,15 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { errorHandler } from "utils";
 import { toast } from "react-hot-toast";
-import { Grid } from "@mui/material";
+import { Grid, Tabs, Tab, Avatar } from "@mui/material";
 import { ProcedureDialog } from "components/Dialog";
 import { NewItem } from "components/Button";
 import ProcedureToolbar from "./ProcedureToolbar";
 import DentalChart from "./DentalChart";
-import ProcedureList from "./ProcedureList";
+import ProcedureList from "./ProcedureList/ProcedureList";
 
 // assets
 import "assets/styles/PatientDetail/ProceduresTab.css";
+// assets
+import { ListIcon, TeethIcon } from "assets/images/icons";
 
 // services
 import { PatientProcedureService } from "services";
@@ -24,9 +26,10 @@ function ProceduresTab({
   setCounts,
 }) {
   const navigate = useNavigate();
-
+  
   const [procedures, setProcedures] = useState([]);
   const [selectedTooth, setSelectedTooth] = useState(null);
+  const [tabIndex, setTabIndex] = useState(0);
 
   // Set the page on loading
   useEffect(() => {
@@ -123,58 +126,64 @@ function ProceduresTab({
     }
   };
 
+  // HANDLERS -----------------------------------------------------------------
+  const handleTabChange = (event, newValue) => {
+    setTabIndex(newValue);
+  };
+
+  // TODO: Fix the issue about tabIndex
   return (
     <>
       <Grid
         container
-        justifyContent="space-between"
         mt={2}
-        p={3}
+        pb={3}
+        justifyContent="center"
+        spacing={2}
         sx={{ borderRadius: 2, backgroundColor: "#FFFFFF" }}
       >
-        {/* Dental chart */}
-        <Grid
-          container
-          item
-          lg={6}
-          xs={12}
-          pr={{ lg: 3 }}
-          pb={{ xs: 3, lg: 0 }}
-        >
-          <DentalChart
-            procedures={groupedProcedures}
-            selectedTooth={selectedTooth}
-            onChangeTooth={setSelectedTooth}
-          />
-        </Grid>
-
-        {/* Procedures */}
-        <Grid
-          item
-          lg={6}
-          xs={12}
-          p={3}
-          sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
-        >
-          {/* Toolbar */}
-          <Grid item pb={2}>
-            <ProcedureToolbar
+        <Grid container item lg={10} md={10} xs={10}>
+          {tabIndex === 0 && (
+            <DentalChart
+              procedures={groupedProcedures}
               selectedTooth={selectedTooth}
               onChangeTooth={setSelectedTooth}
             />
-          </Grid>
-
-          {/* Procedure list */}
-          <ProcedureList
-            patient={patient}
-            selectedTooth={selectedTooth}
-            procedures={groupedProcedures}
-            onSubmit={saveProcedure}
-            onDelete={deleteProcedure}
-          />
-
-          {/* Add procedure */}
-          <NewItem label="Tedavi Ekle" onClick={showDialog} />
+          )}
+          {tabIndex === 1 && (
+            <Grid container item>
+              <Grid item xs pb={3}>
+                <ProcedureToolbar
+                  selectedTooth={selectedTooth}
+                  onChangeTooth={setSelectedTooth}
+                />
+              </Grid>
+              <ProcedureList
+                patient={patient}
+                selectedTooth={selectedTooth}
+                procedures={procedures}
+                onSubmit={saveProcedure}
+                onDelete={deleteProcedure}
+              />
+              <NewItem label="Tedavi Ekle" onClick={showDialog} />
+            </Grid>
+          )}
+        </Grid>
+        <Grid item lg={1} md={1} xs={1}>
+          <Tabs
+            value={tabIndex}
+            onChange={handleTabChange}
+            centered
+            orientation="vertical"
+            TabIndicatorProps={{ style: { display: "none" } }}
+          >
+            {tabIndex !== 0 && (
+              <Tab value={0} icon={<Avatar src={TeethIcon} />} />
+            )}
+            {tabIndex !== 1 && (
+              <Tab value={1} icon={<Avatar src={ListIcon} />} />
+            )}
+          </Tabs>
         </Grid>
       </Grid>
 

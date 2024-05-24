@@ -33,7 +33,7 @@ exports.updateInvoice = async (req, res) => {
     invoice = await Invoice.findByPk(invoiceId);
     if (invoice) {
       await invoice.update({
-        Title: title ?? "Aşama",
+        Title: title,
         Description: description,
         Discount: discount ?? 0,
         Date: date ?? new Date(),
