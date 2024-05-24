@@ -21,3 +21,7 @@
 .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
   padding: 0.0rem 0.5rem;
 }
+
+.p-datatable .p-column-header-content {
+  justify-content: center;
+}

@@ -53,8 +53,8 @@ function PriceColumn({ procedure, onSubmit }) {
   };
 
   return isEdit ? (
-    <Grid container alignItems="center" m={"-16px"}>
-      <Grid item xs="auto">
+    <Grid container justifyContent="end" alignItems="center" m={"-16px"}>
+      <Grid item xs={10}>
         <ClickAwayListener onClickAway={handleClickAway}>
           <InputNumber
             id="price"
@@ -67,29 +67,31 @@ function PriceColumn({ procedure, onSubmit }) {
             variant="outlined"
             autoFocus={true}
             className="w-full"
-            inputStyle={{ padding: "4px" }}
+            inputStyle={{ padding: "4px", textAlign: "right" }}
+            style={{ padding: "2px" }}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
         </ClickAwayListener>
       </Grid>
-      <Grid item xs>
+      <Grid item xs={2}>
         <Cancel onClick={handleCancel} />
       </Grid>
     </Grid>
   ) : (
-    <Tooltip title="Fiyatı düzenle" placement="bottom-start" enterDelay={500}>
+    <Tooltip title="Tutarı düzenle" placement="bottom-start" enterDelay={500}>
       <Grid
         container
         item
         onClick={handleEdit}
-        xs={9}
+        justifyContent="end"
+        xs={10}
         p={1}
         m={-1}
         sx={{
           borderRadius: "8px",
           "&:hover": {
-            backgroundColor: "white",
+            backgroundColor: "#f5f5f5",
           },
         }}
       >

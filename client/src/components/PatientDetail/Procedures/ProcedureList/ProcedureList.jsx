@@ -182,6 +182,7 @@ function ProcedureList({
         <Column
           field="price"
           header="Ücret"
+          style={{ minWidth: "10rem" }}
           body={(procedure) => (
             <PriceColumn procedure={procedure} onSubmit={handleSubmit} />
           )}
