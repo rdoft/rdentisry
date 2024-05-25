@@ -26,7 +26,7 @@ function ProceduresTab({
   setCounts,
 }) {
   const navigate = useNavigate();
-  
+
   const [procedures, setProcedures] = useState([]);
   const [selectedTooth, setSelectedTooth] = useState(null);
   const [tabIndex, setTabIndex] = useState(0);
@@ -131,7 +131,6 @@ function ProceduresTab({
     setTabIndex(newValue);
   };
 
-  // TODO: Fix the issue about tabIndex
   return (
     <>
       <Grid
@@ -175,14 +174,9 @@ function ProceduresTab({
             onChange={handleTabChange}
             centered
             orientation="vertical"
-            TabIndicatorProps={{ style: { display: "none" } }}
           >
-            {tabIndex !== 0 && (
-              <Tab value={0} icon={<Avatar src={TeethIcon} />} />
-            )}
-            {tabIndex !== 1 && (
-              <Tab value={1} icon={<Avatar src={ListIcon} />} />
-            )}
+            <Tab value={0} icon={<Avatar src={TeethIcon} />} disableRipple />
+            <Tab value={1} icon={<Avatar src={ListIcon} />} disableRipple />
           </Tabs>
         </Grid>
       </Grid>
