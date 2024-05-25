@@ -86,7 +86,8 @@ function PriceColumn({ procedure, onSubmit }) {
         onClick={handleEdit}
         justifyContent="end"
         xs={10}
-        p={1}
+        py={0.5}
+        pr={1}
         m={-1}
         sx={{
           borderRadius: "8px",

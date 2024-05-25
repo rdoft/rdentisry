@@ -10,8 +10,6 @@ import ProcedureListHeader from "./ProcedureListHeader";
 
 // assets
 import "assets/styles/PatientDetail/ProceduresTab.css";
-// TODO: Add submit handler
-// TODO: Edit max value of the invoice price
 function ProcedureList({
   patient,
   selectedTooth,

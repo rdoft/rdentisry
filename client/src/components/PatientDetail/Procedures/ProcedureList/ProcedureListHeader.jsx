@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { errorHandler } from "utils";
 import { toast } from "react-hot-toast";
@@ -18,6 +18,14 @@ function ProcedureListHeader({ initInvoice, total, patient }) {
     ...initInvoice,
     price: total * ((100 - initInvoice.discount) / 100),
   });
+
+  useEffect(() => {
+    price.current = total;
+    setInvoice({
+      ...initInvoice,
+      price: total * ((100 - initInvoice.discount) / 100),
+    });
+  }, [total]);
 
   // SERVICES -----------------------------------------------------------------
   // Save the invoice
