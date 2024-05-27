@@ -262,7 +262,7 @@ db.patientProcedure.beforeCreate(async (patientProcedure) => {
       }),
       Description: null,
       Date: new Date(),
-      Discount: null,
+      Discount: 0,
     });
   }
 
@@ -284,7 +284,7 @@ db.patientProcedure.beforeUpdate(async (patientProcedure) => {
         }),
         Description: null,
         Date: new Date(),
-        Discount: null,
+        Discount: 0,
       });
       patientProcedure.InvoiceId = invoice.InvoiceId;
       patientProcedure._previousDataValues.InvoiceId = previousInvoiceId;

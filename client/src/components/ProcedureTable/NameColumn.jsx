@@ -78,6 +78,7 @@ function NameColumn({ procedure, onSubmit }) {
     <Tooltip title="Adı düzenle" placement="bottom-start" enterDelay={500}>
       <Grid
         container
+        item
         onClick={handleEdit}
         xs={9}
         p={1}

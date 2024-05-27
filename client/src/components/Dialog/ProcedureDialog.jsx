@@ -109,9 +109,11 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
 
   // onSubmit handler
   const handleSubmit = () => {
+    let patientProcedures = [];
     for (let i = 0; i < quantity; i++) {
-      onSubmit(patientProcedure);
+      patientProcedures.push(patientProcedure);
     }
+    onSubmit(patientProcedures);
 
     // Close the dialog unless isAnother selected
     !isAnother && onHide();

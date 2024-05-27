@@ -26,6 +26,7 @@ function ProcedureList({
   const [isDelete, setIsDelete] = useState(false);
 
   // FUNCTIONS ----------------------------------------------------------------
+  // Calculate the total price of the invoice
   const calcInvoiceTotal = (invoiceId) => {
     let total = 0;
 

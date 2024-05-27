@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import { Grid, Tabs, Tab, Avatar } from "@mui/material";
 import { ProcedureDialog } from "components/Dialog";
 import { NewItem } from "components/Button";
+import NotFoundText from "components/NotFoundText";
 import ProcedureToolbar from "./ProcedureToolbar";
 import DentalChart from "./DentalChart";
 import ProcedureList from "./ProcedureList/ProcedureList";
@@ -91,15 +92,19 @@ function ProceduresTab({
     }
   };
 
-  // Save the procedure
+  // Save the procedure (update or create)
   const saveProcedure = async (procedure) => {
     try {
-      // Update
-      if (procedure.id) {
-        await PatientProcedureService.updatePatientProcedure(procedure);
+      if (Array.isArray(procedure)) {
+        for (let p of procedure) {
+          p.id
+            ? await PatientProcedureService.updatePatientProcedure(p)
+            : await PatientProcedureService.savePatientProcedure(p);
+        }
       } else {
-        // Create
-        await PatientProcedureService.savePatientProcedure(procedure);
+        procedure.id
+          ? await PatientProcedureService.updatePatientProcedure(procedure)
+          : await PatientProcedureService.savePatientProcedure(procedure);
       }
 
       // Get and set the updated list of procedures
@@ -140,7 +145,7 @@ function ProceduresTab({
         justifyContent="center"
         sx={{ borderRadius: 2, backgroundColor: "#FFFFFF" }}
       >
-        <Grid container item xs={10} py={3} justifyContent="center">
+        <Grid container item xl={11} xs={10} py={3} justifyContent="center">
           {tabIndex === 0 && (
             <DentalChart
               procedures={groupedProcedures}
@@ -148,26 +153,29 @@ function ProceduresTab({
               onChangeTooth={setSelectedTooth}
             />
           )}
-          {tabIndex === 1 && (
-            <Grid container item>
-              <Grid item xs={12} pb={3}>
-                <ProcedureToolbar
-                  selectedTooth={selectedTooth}
-                  onChangeTooth={setSelectedTooth}
-                />
+          {tabIndex === 1 &&
+            (procedures.length === 0 ? (
+              <NotFoundText text="Tedavi yok" />
+            ) : (
+              <Grid container item>
+                <Grid item xs={12} pb={3}>
+                  <ProcedureToolbar
+                    selectedTooth={selectedTooth}
+                    onChangeTooth={setSelectedTooth}
+                  />
+                </Grid>
+                <Grid item xs>
+                  <ProcedureList
+                    patient={patient}
+                    selectedTooth={selectedTooth}
+                    procedures={procedures}
+                    onSubmit={saveProcedure}
+                    onDelete={deleteProcedure}
+                    onUpdate={getProcedures}
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs>
-                <ProcedureList
-                  patient={patient}
-                  selectedTooth={selectedTooth}
-                  procedures={procedures}
-                  onSubmit={saveProcedure}
-                  onDelete={deleteProcedure}
-                  onUpdate={getProcedures}
-                />
-              </Grid>
-            </Grid>
-          )}
+            ))}
         </Grid>
 
         {/* Tabs */}
@@ -194,8 +202,8 @@ function ProceduresTab({
             patient,
             toothNumber: selectedTooth || 0,
             invoice: procedures.sort(
-              (a, b) => new Date(b.invoice.id) - new Date(a.invoice.id)
-            )[0].invoice,
+              (a, b) => new Date(b?.invoice.id) - new Date(a?.invoice.id)
+            )[0]?.invoice,
           }}
           onHide={hideDialog}
           onSubmit={saveProcedure}
