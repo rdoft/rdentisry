@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { DataTable, ScrollPanel, Column, ConfirmDialog } from "primereact";
+import { DataTable, Column, ConfirmDialog } from "primereact";
 import { Grid, Typography } from "@mui/material";
 import { Delete } from "components/Button";
 import { DialogFooter } from "components/DialogFooter";
@@ -10,12 +10,14 @@ import ProcedureListHeader from "./ProcedureListHeader";
 
 // assets
 import "assets/styles/PatientDetail/ProceduresTab.css";
+
 function ProcedureList({
   patient,
   selectedTooth,
   procedures,
   onSubmit,
   onDelete,
+  onUpdate,
 }) {
   const dt = useRef(null);
   const [procedure, setProcedure] = useState(null);
@@ -113,6 +115,7 @@ function ProcedureList({
           }}
           total={calcInvoiceTotal(procedure.invoice.id)}
           patient={patient}
+          onUpdate={onUpdate}
         />
       </Grid>
     );

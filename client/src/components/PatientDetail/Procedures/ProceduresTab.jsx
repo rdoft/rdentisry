@@ -163,6 +163,7 @@ function ProceduresTab({
                   procedures={procedures}
                   onSubmit={saveProcedure}
                   onDelete={deleteProcedure}
+                  onUpdate={getProcedures}
                 />
               </Grid>
             </Grid>

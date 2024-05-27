@@ -57,6 +57,8 @@ function InvoiceDiscount({ invoice, onSubmit }) {
             id="discount"
             value={discount}
             mode="decimal"
+            prefix="%"
+            maxFractionDigits={2}
             min={0}
             max={100}
             variant="outlined"

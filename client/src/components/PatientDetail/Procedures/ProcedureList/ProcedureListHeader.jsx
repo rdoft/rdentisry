@@ -10,7 +10,7 @@ import InvoicePrice from "./InvoicePrice";
 // services
 import { InvoiceService } from "services";
 
-function ProcedureListHeader({ initInvoice, total, patient }) {
+function ProcedureListHeader({ initInvoice, total, patient, onUpdate }) {
   const navigate = useNavigate();
 
   const price = useRef(total);
@@ -25,7 +25,7 @@ function ProcedureListHeader({ initInvoice, total, patient }) {
       ...initInvoice,
       price: total * ((100 - initInvoice.discount) / 100),
     });
-  }, [total]);
+  }, [total, initInvoice]);
 
   // SERVICES -----------------------------------------------------------------
   // Save the invoice
@@ -38,6 +38,7 @@ function ProcedureListHeader({ initInvoice, total, patient }) {
 
       // Set the updated invoice
       setInvoice(invoice);
+      onUpdate(patient.id);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -67,7 +68,7 @@ function ProcedureListHeader({ initInvoice, total, patient }) {
       discount = 0;
       value = price.current;
     } else {
-      discount = Math.floor((1 - value / price.current) * 100);
+      discount = (1 - value / price.current) * 100;
     }
 
     updateInvoice({
@@ -90,7 +91,7 @@ function ProcedureListHeader({ initInvoice, total, patient }) {
         {/* Tİtle */}
         <InvoiceTitle invoice={invoice} onSubmit={handleTitleSubmit} />
       </Grid>
-      <Grid item xl={2} xs={3} >
+      <Grid item xl={2} xs={3}>
         {/* Discount */}
         <InvoiceDiscount invoice={invoice} onSubmit={handleDiscountSubmit} />
         {/* Total */}
