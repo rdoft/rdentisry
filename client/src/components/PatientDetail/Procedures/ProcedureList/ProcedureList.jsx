@@ -131,7 +131,7 @@ function ProcedureList({
   };
 
   return (
-    <ScrollPanel style={{ width: "100%" }}>
+    <>
       <DataTable
         ref={dt}
         value={procedures}
@@ -146,10 +146,10 @@ function ProcedureList({
         groupRowsBy="invoice.id"
         sortField="invoice.id"
         sortMode="single"
-        sortOrder={1}
+        sortOrder={-1}
         scrollable
         size="small"
-        scrollHeight="55vh"
+        // scrollHeight="50vh"
         rowGroupHeaderTemplate={header}
         emptyMessage="Hiçbir işlem bulunamadı"
       >
@@ -158,14 +158,14 @@ function ProcedureList({
         {/* Tooth Number */}
         <Column
           field="toothNumber"
-          header="Diş No."
+          header="Dişler"
           style={{ width: "8rem" }}
         ></Column>
         {/* Status */}
         <Column
           field="status"
           header="Durum"
-          style={{ width: "8rem" }}
+          style={{ width: "10rem" }}
           body={(procedure) => (
             <StatusColumn procedure={procedure} onSubmit={handleSubmit} />
           )}
@@ -174,13 +174,14 @@ function ProcedureList({
         <Column
           field="procedure.name"
           header="İşlem"
+          style={{ minWidth: "25rem" }}
           body={(procedure) => name(procedure)}
         ></Column>
         {/* Price */}
         <Column
           field="price"
           header="Ücret"
-          style={{ minWidth: "10rem" }}
+          style={{ width: "15rem", minWidth: "15rem" }}
           body={(procedure) => (
             <PriceColumn procedure={procedure} onSubmit={handleSubmit} />
           )}
@@ -198,7 +199,7 @@ function ProcedureList({
 
       {/* Confirm delete procedure dialog */}
       {deleteDialog}
-    </ScrollPanel>
+    </>
   );
 }
 

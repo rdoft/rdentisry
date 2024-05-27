@@ -138,10 +138,9 @@ function ProceduresTab({
         mt={2}
         pb={3}
         justifyContent="center"
-        spacing={2}
         sx={{ borderRadius: 2, backgroundColor: "#FFFFFF" }}
       >
-        <Grid container item lg={10} md={10} xs={10}>
+        <Grid container item xs={10} py={3} justifyContent="center">
           {tabIndex === 0 && (
             <DentalChart
               procedures={groupedProcedures}
@@ -151,24 +150,27 @@ function ProceduresTab({
           )}
           {tabIndex === 1 && (
             <Grid container item>
-              <Grid item xs pb={3}>
+              <Grid item xs={12} pb={3}>
                 <ProcedureToolbar
                   selectedTooth={selectedTooth}
                   onChangeTooth={setSelectedTooth}
                 />
               </Grid>
-              <ProcedureList
-                patient={patient}
-                selectedTooth={selectedTooth}
-                procedures={procedures}
-                onSubmit={saveProcedure}
-                onDelete={deleteProcedure}
-              />
-              <NewItem label="Tedavi Ekle" onClick={showDialog} />
+              <Grid item xs>
+                <ProcedureList
+                  patient={patient}
+                  selectedTooth={selectedTooth}
+                  procedures={procedures}
+                  onSubmit={saveProcedure}
+                  onDelete={deleteProcedure}
+                />
+              </Grid>
             </Grid>
           )}
         </Grid>
-        <Grid item lg={1} md={1} xs={1}>
+
+        {/* Tabs */}
+        <Grid item xs="auto" py={3}>
           <Tabs
             value={tabIndex}
             onChange={handleTabChange}
@@ -181,12 +183,18 @@ function ProceduresTab({
         </Grid>
       </Grid>
 
+      {/* New Item Button */}
+      <NewItem label="Tedavi Ekle" onClick={showDialog} />
+
       {/* Dialog */}
       {procedureDialog && (
         <ProcedureDialog
           initPatientProcedure={{
             patient,
             toothNumber: selectedTooth || 0,
+            invoice: procedures.sort(
+              (a, b) => new Date(b.invoice.id) - new Date(a.invoice.id)
+            )[0].invoice,
           }}
           onHide={hideDialog}
           onSubmit={saveProcedure}

@@ -51,7 +51,7 @@ function InvoicePrice({ invoice, onSubmit }) {
 
   return isEdit ? (
     <Grid container alignItems="center" m={"-16px"}>
-      <Grid item xs={8} m={1}>
+      <Grid item xs={10} my={1}>
         <ClickAwayListener onClickAway={handleClickAway}>
           <InputNumber
             id="price"
@@ -81,7 +81,7 @@ function InvoicePrice({ invoice, onSubmit }) {
         item
         onClick={handleEdit}
         justifyContent="end"
-        xs={8}
+        xs={10}
         p={1}
         m={-1}
         sx={{
@@ -92,7 +92,7 @@ function InvoicePrice({ invoice, onSubmit }) {
         }}
       >
         <Typography variant="h5" fontWeight="bolder">
-          Toplam: ₺{" "}
+          Toplam: ₺
           {price.toLocaleString("tr-TR", {
             style: "decimal",
             maximumFractionDigits: 2,

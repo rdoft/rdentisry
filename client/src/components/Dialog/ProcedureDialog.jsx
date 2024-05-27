@@ -112,6 +112,8 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
     for (let i = 0; i < quantity; i++) {
       onSubmit(patientProcedure);
     }
+
+    // Close the dialog unless isAnother selected
     !isAnother && onHide();
   };
 

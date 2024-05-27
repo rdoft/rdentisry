@@ -51,7 +51,7 @@ function InvoiceDiscount({ invoice, onSubmit }) {
 
   return isEdit ? (
     <Grid container alignItems="center" m={"-16px"}>
-      <Grid item xs={8} m={1}>
+      <Grid item xs={10} my={1}>
         <ClickAwayListener onClickAway={handleClickAway}>
           <InputNumber
             id="discount"
@@ -84,7 +84,7 @@ function InvoiceDiscount({ invoice, onSubmit }) {
         item
         onClick={handleEdit}
         justifyContent="end"
-        xs={8}
+        xs={10}
         p={1}
         m={-1}
         sx={{

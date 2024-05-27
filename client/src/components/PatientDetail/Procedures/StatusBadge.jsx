@@ -19,17 +19,17 @@ function StatusBadge({ procedures }) {
 
   return (
     <>
-      <Grid container item>
+      <Grid container item justifyContent="center">
         <Image
           src={CompletedIcon}
-          width="20%"
+          width="15px"
           style={{ visibility: completed ? "visible" : "hidden" }}
         />
       </Grid>
-      <Grid container item>
+      <Grid container item justifyContent="center">
         <Image
           src={InProgressIcon}
-          width="20%"
+          width="15px"
           style={{
             visibility: inProgress ? "visible" : "hidden",
           }}

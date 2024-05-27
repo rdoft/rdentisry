@@ -36,13 +36,13 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
   // Tooth item template
   const toothItem = (tooth) => (
     <>
-      {loading && <Skeleton width="85%" height="8vw"></Skeleton>}
+      {loading && <Skeleton width="65%" height="8vw"></Skeleton>}
       <img
         visiblity={loading ? "hidden" : "visible"}
         srcSet={tooth.src}
         src={tooth.src}
         alt={tooth.number}
-        style={{ width: "85%" }}
+        style={{ width: "65%", minWidth: 45 }}
       />
     </>
   );
@@ -72,6 +72,7 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
             container
             direction="column"
             onClick={() => handleChangeTooth(tooth.number)}
+            pt={3}
             sx={{
               opacity:
                 selectedTooth && tooth.number !== selectedTooth ? 0.3 : 1,
@@ -83,12 +84,14 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
             </Grid>
 
             {/* Status */}
-            <Grid container item xs={1} textAlign="center">
+            <Grid container item xs={1}>
               <StatusBadge procedures={procedures[tooth.number]} />
             </Grid>
 
             {/* Teeth */}
-            <Grid item>{toothItem(tooth)}</Grid>
+            <Grid item xs={5} textAlign="center">
+              {toothItem(tooth)}
+            </Grid>
           </Grid>
         ))}
       </ImageList>
@@ -110,16 +113,12 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
             }}
           >
             {/* Teeth */}
-            <Grid item>{toothItem(tooth)}</Grid>
+            <Grid item xs={5} textAlign="center">
+              {toothItem(tooth)}
+            </Grid>
 
             {/* Status */}
-            <Grid
-              container
-              item
-              xs={1}
-              direction="column-reverse"
-              textAlign="center"
-            >
+            <Grid container item xs={1} direction="column-reverse">
               <StatusBadge procedures={procedures[tooth.number]} />
             </Grid>
 

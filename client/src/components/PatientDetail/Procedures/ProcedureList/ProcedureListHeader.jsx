@@ -80,6 +80,7 @@ function ProcedureListHeader({ initInvoice, total, patient }) {
   return (
     <Grid
       container
+      justifyContent="space-between"
       className="invoice-header"
       style={{
         padding: "0 0.2rem",
@@ -89,7 +90,7 @@ function ProcedureListHeader({ initInvoice, total, patient }) {
         {/* Tİtle */}
         <InvoiceTitle invoice={invoice} onSubmit={handleTitleSubmit} />
       </Grid>
-      <Grid item xs={3} style={{ textAlign: "right" }}>
+      <Grid item xl={2} xs={3} >
         {/* Discount */}
         <InvoiceDiscount invoice={invoice} onSubmit={handleDiscountSubmit} />
         {/* Total */}

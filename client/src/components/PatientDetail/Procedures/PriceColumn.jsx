@@ -53,7 +53,7 @@ function PriceColumn({ procedure, onSubmit }) {
   };
 
   return isEdit ? (
-    <Grid container justifyContent="end" alignItems="center" m={"-16px"}>
+    <Grid container alignItems="center" m={"-16px"}>
       <Grid item xs={10}>
         <ClickAwayListener onClickAway={handleClickAway}>
           <InputNumber
@@ -67,8 +67,7 @@ function PriceColumn({ procedure, onSubmit }) {
             variant="outlined"
             autoFocus={true}
             className="w-full"
-            inputStyle={{ padding: "4px", textAlign: "right" }}
-            style={{ padding: "2px" }}
+            inputStyle={{ padding: "4px 8px" }}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
@@ -84,10 +83,9 @@ function PriceColumn({ procedure, onSubmit }) {
         container
         item
         onClick={handleEdit}
-        justifyContent="end"
         xs={10}
         py={0.5}
-        pr={1}
+        pl={1}
         m={-1}
         sx={{
           borderRadius: "8px",
