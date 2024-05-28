@@ -26,6 +26,37 @@ function ProcedureList({
   const [isDelete, setIsDelete] = useState(false);
 
   // FUNCTIONS ----------------------------------------------------------------
+  // Combine duplicate rows
+  const combinedProcedures = procedures.reduce((acc, curr) => {
+    const existingProcedure = acc.find(
+      (item) =>
+        item.procedure.id === curr.procedure.id &&
+        item.invoice.id === curr.invoice.id &&
+        item.price === curr.price &&
+        ((item.completedDate && curr.completedDate) ||
+          (!item.completedDate && !curr.completedDate))
+      // && !item.toothNumber.includes(curr.toothNumber) // This line is for unique tooth numbers
+    );
+    if (existingProcedure) {
+      if (Array.isArray(existingProcedure.toothNumber)) {
+        existingProcedure.toothNumber = [
+          ...existingProcedure.toothNumber,
+          curr.toothNumber,
+        ];
+        existingProcedure.ids = [...existingProcedure.ids, curr.id];
+      } else {
+        existingProcedure.toothNumber = [
+          existingProcedure.toothNumber,
+          curr.toothNumber,
+        ];
+        existingProcedure.ids = [existingProcedure.id, curr.id];
+      }
+    } else {
+      acc.push({ ...curr, toothNumber: [curr.toothNumber], ids: [curr.id] });
+    }
+    return acc;
+  }, []);
+
   // Calculate the total price of the invoice
   const calcInvoiceTotal = (invoiceId) => {
     let total = 0;
@@ -39,12 +70,21 @@ function ProcedureList({
   };
 
   // HANDLERS -----------------------------------------------------------------
-  // onSubmit handler
+  // onSubmit handler for each procedure
   const handleSubmit = (procedure) => {
-    onSubmit({
-      ...procedure,
-      patient: patient,
-    });
+    const updatedProcedures = [];
+    // Find the procedures that will be updated and update them
+    for (let i = 0; i < procedure.ids.length; i++) {
+      const found = procedures.find((item) => item.id === procedure.ids[i]);
+      updatedProcedures.push({
+        ...found,
+        price: procedure.price,
+        completedDate: procedure.completedDate,
+        patient: patient,
+      });
+    }
+
+    onSubmit(updatedProcedures);
   };
 
   // onDelete handler
@@ -138,7 +178,7 @@ function ProcedureList({
     <>
       <DataTable
         ref={dt}
-        value={procedures}
+        value={combinedProcedures}
         selection={selectedProcedures}
         onSelectionChange={handleChangeSelection}
         onRowMouseEnter={handleRowMouseEnter}
@@ -164,6 +204,7 @@ function ProcedureList({
           field="toothNumber"
           header="Dişler"
           style={{ width: "8rem" }}
+          body={(procedure) => procedure.toothNumber.join(", ")}
         ></Column>
         {/* Status */}
         <Column
