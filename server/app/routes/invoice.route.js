@@ -23,6 +23,11 @@ module.exports = function (app) {
   router
     .route(`/patients/:patientId/invoices`)
     /**
+     * Get invoices for a given patientId
+     * @param patientId id of the patient
+     */
+    .get(controller.getInvoices)
+    /**
      * Add a new invoice
      * @body Invoice informations along with patientProcedures
      */

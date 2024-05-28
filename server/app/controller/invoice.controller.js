@@ -5,6 +5,59 @@ const Patient = db.patient;
 const PatientProcedure = db.patientProcedure;
 
 /**
+ * Get invoices for a given patientId
+ * @param patientId id of the patient
+ */
+exports.getInvoices = async (req, res) => {
+  const { UserId: userId } = req.user;
+  const { patientId } = req.params;
+  let patient;
+  let patientProcedures;
+  let invoiceSet;
+  let invoices;
+
+  try {
+    // Validation
+    patient = await Patient.findOne({
+      where: {
+        PatientId: patientId,
+        UserId: userId,
+      },
+    });
+    if (!patient) {
+      res.status(404).send({ message: "Bu kullanıcıya ait hasta bulunamadı" });
+      return;
+    }
+
+    invoices = await Invoice.findAll({
+      attributes: [
+        ["InvoiceId", "id"],
+        ["Title", "title"],
+        ["Description", "description"],
+        ["Discount", "discount"],
+        ["Date", "date"],
+      ],
+      include: [
+        {
+          model: PatientProcedure,
+          as: "patientProcedures",
+          attributes: [],
+          where: {
+            PatientId: patientId,
+          },
+          required: true,
+        },
+      ],
+      order: [["id", "DESC"]],
+    });
+
+    res.status(200).send(invoices);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+/**
  * Add a new invoice
  * @body Invoice informations along with patientProcedures
  */
