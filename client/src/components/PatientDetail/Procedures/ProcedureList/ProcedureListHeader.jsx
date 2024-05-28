@@ -10,7 +10,7 @@ import InvoicePrice from "./InvoicePrice";
 // services
 import { InvoiceService } from "services";
 
-function ProcedureListHeader({ initInvoice, total, patient, onUpdate }) {
+function ProcedureListHeader({ initInvoice, total, patient, onUpdated }) {
   const navigate = useNavigate();
 
   const price = useRef(total);
@@ -38,7 +38,7 @@ function ProcedureListHeader({ initInvoice, total, patient, onUpdate }) {
 
       // Set the updated invoice
       setInvoice(invoice);
-      onUpdate(patient.id);
+      onUpdated(patient.id);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);

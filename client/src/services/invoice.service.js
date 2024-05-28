@@ -4,6 +4,14 @@ const API_URL = "";
 let invoice = {};
 
 /**
+ * Get invoices for a given patientId
+ * @param patientId id of the patient
+ */
+invoice.getInvoices = ({ patientId }, options) => {
+  return API.get(`${API_URL}/patients/${patientId}/invoices`);
+};
+
+/**
  * Save the invoice to the patient
  * @param patientId id of the patient
  * @body patientProcedures list of patient procedures

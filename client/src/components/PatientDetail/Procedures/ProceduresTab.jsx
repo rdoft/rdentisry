@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { errorHandler } from "utils";
 import { toast } from "react-hot-toast";
+import { SplitButton } from "primereact";
 import { Grid, Tabs, Tab, Avatar } from "@mui/material";
 import { ProcedureDialog } from "components/Dialog";
 import { NewItem } from "components/Button";
@@ -12,7 +13,6 @@ import ProcedureList from "./ProcedureList/ProcedureList";
 
 // assets
 import "assets/styles/PatientDetail/ProceduresTab.css";
-// assets
 import { ListIcon, TeethIcon } from "assets/images/icons";
 
 // services
@@ -32,6 +32,7 @@ function ProceduresTab({
   const [procedures, setProcedures] = useState([]);
   const [selectedTooth, setSelectedTooth] = useState(null);
   const [selectedProcedures, setSelectedProcedures] = useState(null);
+  const [invoices, setInvoices] = useState([]);
 
   // Set the page on loading
   useEffect(() => {
@@ -44,6 +45,16 @@ function ProceduresTab({
     )
       .then((res) => {
         setProcedures(res.data);
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
+    InvoiceService.getInvoices({ patientId: patient.id }, { signal })
+      .then((res) => {
+        setInvoices(res.data);
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
@@ -110,6 +121,7 @@ function ProceduresTab({
 
       // Get and set the updated list of procedures
       getProcedures(patient.id);
+      getInvoices(patient.id);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -126,6 +138,7 @@ function ProceduresTab({
 
       // Get and set the updated list of procedures
       getProcedures(patient.id);
+      getInvoices(patient.id);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -139,6 +152,23 @@ function ProceduresTab({
 
       // Get and set the updated list of procedures
       getProcedures(patient.id);
+      getInvoices(patient.id);
+    } catch (error) {
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
+    }
+  };
+
+  // Get invoices for a given patientId
+  const getInvoices = async (patientId) => {
+    let response;
+    let invoices;
+
+    try {
+      response = await InvoiceService.getInvoices({ patientId });
+      invoices = response.data;
+
+      setInvoices(invoices);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -146,13 +176,37 @@ function ProceduresTab({
   };
 
   // HANDLERS -----------------------------------------------------------------
+  // onUpdated handler
+  const handleUpdated = (patientId) => {
+    getProcedures(patientId);
+    getInvoices(patientId);
+  };
+
   // onChange handler for the tabs
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
   };
 
-  // onClick handler for add invoice
-  const handleClickInvoice = () => {
+  // onSelect handler for the invoice of patientProcedure
+  const handleSelectInvoice = (invoice) => {
+    const updatedProcedures = [];
+    for (let procedure of selectedProcedures) {
+      for (let i = 0; i < procedure.ids.length; i++) {
+        const found = procedures.find((item) => item.id === procedure.ids[i]);
+        updatedProcedures.push({
+          ...found,
+          invoice: invoice,
+          patient: patient,
+        });
+      }
+    }
+
+    setSelectedProcedures(null);
+    saveProcedure(updatedProcedures);
+  };
+
+  // onSelect handler for creating new invoice of patientProcedure
+  const handleCreateInvoice = () => {
     const updatedProcedures = [];
     for (let procedure of selectedProcedures) {
       for (let i = 0; i < procedure.ids.length; i++) {
@@ -168,6 +222,11 @@ function ProceduresTab({
     setSelectedProcedures(null);
     createInvoice(updatedProcedures);
   };
+
+  const invoiceOptions = invoices.map((invoice) => ({
+    label: `🦷 ${invoice.title}`,
+    command: () => handleSelectInvoice(invoice),
+  }));
 
   return (
     <>
@@ -206,7 +265,7 @@ function ProceduresTab({
                     setSelectedProcedures={setSelectedProcedures}
                     onSubmit={saveProcedure}
                     onDelete={deleteProcedure}
-                    onUpdate={getProcedures}
+                    onUpdated={handleUpdated}
                   />
                 </Grid>
               </Grid>
@@ -228,10 +287,19 @@ function ProceduresTab({
       </Grid>
 
       <Grid container justifyContent="center" mt={3}>
-        {/* Add Invoice */}
+        {/* Select Invoice */}
         {selectedProcedures?.length > 0 && (
-          <Grid item xs={6} md={4}>
-            <NewItem label="Plan Oluştur" onClick={handleClickInvoice} />
+          <Grid item xs={6} md={4} mt={2} style={{ textAlign: "center" }}>
+            <SplitButton
+              text
+              outlined
+              size="small"
+              icon="pi pi-plus"
+              label="Plan Oluştur"
+              menuStyle={{ borderRadius: "0.5rem", color: "#182A4D" }}
+              model={invoiceOptions}
+              onClick={handleCreateInvoice}
+            />
           </Grid>
         )}
         {/* Add Procedure */}

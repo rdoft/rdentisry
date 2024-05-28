@@ -19,7 +19,7 @@ function ProcedureList({
   setSelectedProcedures,
   onSubmit,
   onDelete,
-  onUpdate,
+  onUpdated,
 }) {
   const dt = useRef(null);
   const [procedure, setProcedure] = useState(null);
@@ -157,7 +157,7 @@ function ProcedureList({
           }}
           total={calcInvoiceTotal(procedure.invoice.id)}
           patient={patient}
-          onUpdate={onUpdate}
+          onUpdated={onUpdated}
         />
       </Grid>
     );
