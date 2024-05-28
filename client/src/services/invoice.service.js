@@ -4,6 +4,17 @@ const API_URL = "";
 let invoice = {};
 
 /**
+ * Save the invoice to the patient
+ * @param patientId id of the patient
+ * @body patientProcedures list of patient procedures
+ */
+invoice.saveInvoice = (patientId, patientProcedures) => {
+  return API.post(`${API_URL}/patients/${patientId}/invoices`, {
+    patientProcedures,
+  });
+};
+
+/**
  * Update the invoice to the patient
  * @param patientId id of the patient
  * @param invoiceId id of the invoice

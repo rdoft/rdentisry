@@ -21,6 +21,14 @@ module.exports = function (app) {
   router.use(isAuthenticated);
 
   router
+    .route(`/patients/:patientId/invoices`)
+    /**
+     * Add a new invoice
+     * @body Invoice informations along with patientProcedures
+     */
+    .post(controller.saveInvoice);
+
+  router
     .route(`/patients/:patientId/invoices/:invoiceId`)
     /**
      * Update the invoice

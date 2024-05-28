@@ -13,15 +13,16 @@ import "assets/styles/PatientDetail/ProceduresTab.css";
 
 function ProcedureList({
   patient,
-  selectedTooth,
   procedures,
+  selectedTooth,
+  selectedProcedures,
+  setSelectedProcedures,
   onSubmit,
   onDelete,
   onUpdate,
 }) {
   const dt = useRef(null);
   const [procedure, setProcedure] = useState(null);
-  const [selectedProcedures, setSelectedProcedures] = useState(null);
   const [rowIndex, setRowIndex] = useState(null);
   const [isDelete, setIsDelete] = useState(false);
 

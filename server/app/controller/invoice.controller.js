@@ -2,6 +2,61 @@ const { Sequelize } = require("../models");
 const db = require("../models");
 const Invoice = db.invoice;
 const Patient = db.patient;
+const PatientProcedure = db.patientProcedure;
+
+/**
+ * Add a new invoice
+ * @body Invoice informations along with patientProcedures
+ */
+exports.saveInvoice = async (req, res) => {
+  const { UserId: userId } = req.user;
+  const { patientId } = req.params;
+  const { patientProcedures } = req.body;
+  let patient;
+  let invoice;
+  let pp;
+
+  try {
+    // Validation
+    patient = await Patient.findOne({
+      where: {
+        PatientId: patientId,
+        UserId: userId,
+      },
+    });
+    if (!patient) {
+      res.status(404).send({ message: "Bu kullanıcıya ait hasta bulunamadı" });
+      return;
+    }
+
+    if (!patientProcedures || patientProcedures.length === 0) {
+      res.status(400).send({ message: "Plan oluşturmak için bir işlem seçin" });
+      return;
+    }
+
+    // Create the invoice
+    invoice = await Invoice.create({});
+
+    // Add patient procedures to the invoice
+    for (const patientProcedure of patientProcedures) {
+      pp = await PatientProcedure.findOne({
+        where: {
+          PatientProcedureId: patientProcedure.id,
+        },
+      });
+
+      if (pp) {
+        await pp.update({
+          InvoiceId: invoice.InvoiceId,
+        });
+      }
+    }
+
+    res.status(201).send({ id: invoice.InvoiceId });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
 
 /**
  * Update the invoice
@@ -25,7 +80,7 @@ exports.updateInvoice = async (req, res) => {
       },
     });
     if (!patient) {
-      res.status(404).send({ message: "Bu kullanıcıya ait aşama bulunamadı" });
+      res.status(404).send({ message: "Bu kullanıcıya ait hasta bulunamadı" });
       return;
     }
 
@@ -68,7 +123,7 @@ exports.deleteInvoice = async (req, res) => {
       },
     });
     if (!patient) {
-      res.status(404).send({ message: "Bu kullanıcıya ait aşama bulunamadı" });
+      res.status(404).send({ message: "Bu kullanıcıya ait hasta bulunamadı" });
       return;
     }
 

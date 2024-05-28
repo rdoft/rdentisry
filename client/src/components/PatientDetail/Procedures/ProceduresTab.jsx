@@ -16,7 +16,7 @@ import "assets/styles/PatientDetail/ProceduresTab.css";
 import { ListIcon, TeethIcon } from "assets/images/icons";
 
 // services
-import { PatientProcedureService } from "services";
+import { PatientProcedureService, InvoiceService } from "services";
 
 function ProceduresTab({
   patient,
@@ -28,9 +28,10 @@ function ProceduresTab({
 }) {
   const navigate = useNavigate();
 
+  const [tabIndex, setTabIndex] = useState(0);
   const [procedures, setProcedures] = useState([]);
   const [selectedTooth, setSelectedTooth] = useState(null);
-  const [tabIndex, setTabIndex] = useState(0);
+  const [selectedProcedures, setSelectedProcedures] = useState(null);
 
   // Set the page on loading
   useEffect(() => {
@@ -131,9 +132,41 @@ function ProceduresTab({
     }
   };
 
+  // Create the default invoice for the patient procedures
+  const createInvoice = async (procedures) => {
+    try {
+      await InvoiceService.saveInvoice(patient.id, procedures);
+
+      // Get and set the updated list of procedures
+      getProcedures(patient.id);
+    } catch (error) {
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
+    }
+  };
+
   // HANDLERS -----------------------------------------------------------------
+  // onChange handler for the tabs
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
+  };
+
+  // onClick handler for add invoice
+  const handleClickInvoice = () => {
+    const updatedProcedures = [];
+    for (let procedure of selectedProcedures) {
+      for (let i = 0; i < procedure.ids.length; i++) {
+        const found = procedures.find((item) => item.id === procedure.ids[i]);
+        updatedProcedures.push({
+          ...found,
+          invoice: null,
+          patient: patient,
+        });
+      }
+    }
+
+    setSelectedProcedures(null);
+    createInvoice(updatedProcedures);
   };
 
   return (
@@ -167,8 +200,10 @@ function ProceduresTab({
                 <Grid item xs>
                   <ProcedureList
                     patient={patient}
-                    selectedTooth={selectedTooth}
                     procedures={procedures}
+                    selectedTooth={selectedTooth}
+                    selectedProcedures={selectedProcedures}
+                    setSelectedProcedures={setSelectedProcedures}
                     onSubmit={saveProcedure}
                     onDelete={deleteProcedure}
                     onUpdate={getProcedures}
@@ -192,8 +227,18 @@ function ProceduresTab({
         </Grid>
       </Grid>
 
-      {/* New Item Button */}
-      <NewItem label="Tedavi Ekle" onClick={showDialog} />
+      <Grid container justifyContent="center" mt={3}>
+        {/* Add Invoice */}
+        {selectedProcedures?.length > 0 && (
+          <Grid item xs={6} md={4}>
+            <NewItem label="Plan Oluştur" onClick={handleClickInvoice} />
+          </Grid>
+        )}
+        {/* Add Procedure */}
+        <Grid item xs={6} md={4}>
+          <NewItem label="Tedavi Ekle" onClick={showDialog} />
+        </Grid>
+      </Grid>
 
       {/* Dialog */}
       {procedureDialog && (
