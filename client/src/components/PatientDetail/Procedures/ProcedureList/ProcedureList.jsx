@@ -4,6 +4,7 @@ import { Grid, Typography } from "@mui/material";
 import { Delete } from "components/Button";
 import { DialogFooter } from "components/DialogFooter";
 import { ProcedureCategory } from "components/ProcedureCategory";
+import NotFoundText from "components/Text/NotFoundText";
 import PriceColumn from "../PriceColumn";
 import StatusColumn from "../StatusColumn";
 import ProcedureListHeader from "./ProcedureListHeader";
@@ -14,7 +15,6 @@ import "assets/styles/PatientDetail/ProceduresTab.css";
 function ProcedureList({
   patient,
   procedures,
-  selectedTeeth,
   selectedProcedures,
   setSelectedProcedures,
   onSubmit,
@@ -183,7 +183,7 @@ function ProcedureList({
     );
   };
 
-  return (
+  return procedures?.length > 0 ? (
     <>
       <DataTable
         ref={dt}
@@ -258,6 +258,8 @@ function ProcedureList({
       {/* Confirm delete procedure dialog */}
       {deleteDialog}
     </>
+  ) : (
+    <NotFoundText text="Tedavi yok" style={{ backgroundColor: "#F5F5F5" }} />
   );
 }
 

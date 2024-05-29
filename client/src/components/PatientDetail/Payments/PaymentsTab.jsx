@@ -8,7 +8,7 @@ import { calcProgress, calcCompletedPayment } from "utils";
 import { CardTitle } from "components/cards";
 import { PaymentDialog, PaymentPlanDialog } from "components/Dialog";
 import { NewItem } from "components/Button";
-import NotFoundText from "components/NotFoundText";
+import NotFoundText from "components/Text/NotFoundText";
 import PaymentStatistic from "./PaymentStatistic";
 import PaymentMarker from "./PaymentMarker";
 import PaymentDateTag from "./PaymentDateTag";

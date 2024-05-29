@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import { NewItem } from "components/Button";
-import NotFoundText from "components/NotFoundText";
+import NotFoundText from "components/Text/NotFoundText";
 import NoteCard from "./NoteCard";
 import Note from "./Note";
 

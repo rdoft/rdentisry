@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Badge, Divider, Skeleton } from "primereact";
 import { Grid, ImageList } from "@mui/material";
+import { PressKeyText } from "components/Text";
 import StatusBadge from "./StatusBadge";
 
 // assets
@@ -25,6 +26,20 @@ function DentalChart({ procedures, selectedTeeth, onChangeTeeth }) {
       .then(() => Promise.all(downTeeth.map((img) => loadImage(img.src))))
       .then(() => setLoading(false));
   }, []);
+
+  //FUNCTIONS -----------------------------------------------------------------
+  // Group procedures by tooth number
+  const groupedProcedures = {};
+  for (let procedure of procedures) {
+    const tooth = procedure.toothNumber;
+    if (tooth || tooth === 0) {
+      if (groupedProcedures[tooth]) {
+        groupedProcedures[tooth].push(procedure);
+      } else {
+        groupedProcedures[tooth] = [procedure];
+      }
+    }
+  }
 
   // HANDLERS -----------------------------------------------------------------
   // onClick tooth handler
@@ -65,7 +80,19 @@ function DentalChart({ procedures, selectedTeeth, onChangeTeeth }) {
   );
 
   return (
-    <>
+    <Grid container justifyContent="center">
+      <Grid item xs={12} textAlign="center">
+        {/* Information note */}
+        {selectedTeeth && !selectedTeeth.includes(0) ? (
+          <PressKeyText
+            text="Tüm seçimleri kaldırmak için ESC tıklayın"
+            keypad={"ESC"}
+          />
+        ) : (
+          <PressKeyText text="Dişleri seçmek için üzerine tıklayın" />
+        )}
+      </Grid>
+
       {/* Up Teeth */}
       <ImageList cols={16} gap={0}>
         {upTeeth.map((tooth) => (
@@ -90,7 +117,7 @@ function DentalChart({ procedures, selectedTeeth, onChangeTeeth }) {
 
             {/* Status */}
             <Grid container item xs={1}>
-              <StatusBadge procedures={procedures[tooth.number]} />
+              <StatusBadge procedures={groupedProcedures[tooth.number]} />
             </Grid>
 
             {/* Teeth */}
@@ -127,7 +154,7 @@ function DentalChart({ procedures, selectedTeeth, onChangeTeeth }) {
 
             {/* Status */}
             <Grid container item xs={1} direction="column-reverse">
-              <StatusBadge procedures={procedures[tooth.number]} />
+              <StatusBadge procedures={groupedProcedures[tooth.number]} />
             </Grid>
 
             {/* Numbers */}
@@ -137,7 +164,7 @@ function DentalChart({ procedures, selectedTeeth, onChangeTeeth }) {
           </Grid>
         ))}
       </ImageList>
-    </>
+    </Grid>
   );
 }
 

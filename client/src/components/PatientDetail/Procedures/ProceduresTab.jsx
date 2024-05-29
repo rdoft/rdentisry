@@ -6,7 +6,6 @@ import { SplitButton } from "primereact";
 import { Grid, Tabs, Tab, Avatar } from "@mui/material";
 import { ProcedureDialog } from "components/Dialog";
 import { NewItem } from "components/Button";
-import NotFoundText from "components/NotFoundText";
 import ProcedureToolbar from "./ProcedureToolbar";
 import DentalChart from "./DentalChart";
 import ProcedureList from "./ProcedureList/ProcedureList";
@@ -86,19 +85,11 @@ function ProceduresTab({
     };
   }, [navigate, patient]);
 
-  // Group procedures by tooth number
-  let groupedProcedures = {};
-  let tooth;
-  for (let procedure of procedures) {
-    tooth = procedure.toothNumber;
-    if (tooth || tooth === 0) {
-      if (groupedProcedures[tooth]) {
-        groupedProcedures[tooth].push(procedure);
-      } else {
-        groupedProcedures[tooth] = [procedure];
-      }
-    }
-  }
+  // Filter procedures based on selectedTeeth
+  const filteredProcedures = procedures.filter(
+    (procedure) =>
+      selectedTeeth.includes(0) || selectedTeeth.includes(procedure.toothNumber)
+  );
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of the procedures of the patient and set procedures value
@@ -291,36 +282,32 @@ function ProceduresTab({
         <Grid container item xl={11} xs={10} py={3} justifyContent="center">
           {tabIndex === 0 && (
             <DentalChart
-              procedures={groupedProcedures}
+              procedures={procedures}
               selectedTeeth={selectedTeeth}
               onChangeTeeth={handleChangeTeeth}
             />
           )}
-          {tabIndex === 1 &&
-            (procedures.length === 0 ? (
-              <NotFoundText text="Tedavi yok" />
-            ) : (
-              <Grid container item>
-                <Grid item xs={12} pb={3}>
-                  <ProcedureToolbar
-                    selectedTeeth={selectedTeeth}
-                    onChangeTeeth={handleChangeTeeth}
-                  />
-                </Grid>
-                <Grid item xs>
-                  <ProcedureList
-                    patient={patient}
-                    procedures={procedures}
-                    selectedTooth={selectedTeeth}
-                    selectedProcedures={selectedProcedures}
-                    setSelectedProcedures={setSelectedProcedures}
-                    onSubmit={saveProcedure}
-                    onDelete={deleteProcedure}
-                    onUpdated={handleUpdated}
-                  />
-                </Grid>
+          {tabIndex === 1 && (
+            <Grid container item>
+              <Grid item xs={12} pb={3}>
+                <ProcedureToolbar
+                  selectedTeeth={selectedTeeth}
+                  onChangeTeeth={handleChangeTeeth}
+                />
               </Grid>
-            ))}
+              <Grid item xs>
+                <ProcedureList
+                  patient={patient}
+                  procedures={filteredProcedures}
+                  selectedProcedures={selectedProcedures}
+                  setSelectedProcedures={setSelectedProcedures}
+                  onSubmit={saveProcedure}
+                  onDelete={deleteProcedure}
+                  onUpdated={handleUpdated}
+                />
+              </Grid>
+            </Grid>
+          )}
         </Grid>
 
         {/* Tabs */}

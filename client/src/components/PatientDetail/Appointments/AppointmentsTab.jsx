@@ -7,7 +7,7 @@ import { DataScroller } from "primereact";
 import { AppointmentDialog } from "components/Dialog";
 import { CardTitle } from "components/cards";
 import { NewItem } from "components/Button";
-import NotFoundText from "components/NotFoundText";
+import NotFoundText from "components/Text/NotFoundText";
 import AppointmentCard from "./AppointmentCard";
 
 // assets

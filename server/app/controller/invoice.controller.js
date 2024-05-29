@@ -12,8 +12,6 @@ exports.getInvoices = async (req, res) => {
   const { UserId: userId } = req.user;
   const { patientId } = req.params;
   let patient;
-  let patientProcedures;
-  let invoiceSet;
   let invoices;
 
   try {

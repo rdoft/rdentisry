@@ -2,17 +2,10 @@ import React from "react";
 import { Chip } from "primereact";
 import { Grid } from "@mui/material";
 import { CardTitle } from "components/cards";
-import { Cancel } from "components/Button";
+import { PressKeyText } from "components/Text";
 
 function ProcedureToolbar({ selectedTeeth, onChangeTeeth }) {
   // HANDLERS -----------------------------------------------------------------
-  // onClickCancel handler to cancel selected tooth
-  const handleCancelTooth = () => {
-    onChangeTeeth(null);
-    // loose focus
-    document.activeElement.blur();
-  };
-
   // onClickRemove handler to remove selected tooth
   const handleRemoveTooth = (tooth) => {
     onChangeTeeth(selectedTeeth.filter((number) => number !== tooth));
@@ -29,7 +22,15 @@ function ProcedureToolbar({ selectedTeeth, onChangeTeeth }) {
         </Grid>
       ) : (
         <>
-          <Grid item xs={8}>
+          {/* Information note */}
+          <Grid item xs={12} textAlign="center">
+            <PressKeyText
+              text="Tüm seçimleri kaldırmak için ESC tıklayın"
+              keypad="ESC"
+            />
+          </Grid>
+
+          <Grid item xs={12}>
             {/* Tooth number */}
             {selectedTeeth.map((tooth) => (
               <Chip
@@ -44,11 +45,6 @@ function ProcedureToolbar({ selectedTeeth, onChangeTeeth }) {
                 }}
               />
             ))}
-          </Grid>
-
-          {/* Cancel button */}
-          <Grid container item xs={2} justifyContent="end">
-            <Cancel onClick={handleCancelTooth} />
           </Grid>
         </>
       )}
