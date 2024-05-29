@@ -6,7 +6,7 @@ import StatusBadge from "./StatusBadge";
 // assets
 import { upTeeth, downTeeth } from "assets/images/charts";
 
-function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
+function DentalChart({ procedures, selectedTeeth, onChangeTeeth }) {
   const [loading, setLoading] = useState(true);
 
   // Load image on mount
@@ -28,8 +28,10 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
 
   // HANDLERS -----------------------------------------------------------------
   // onClick tooth handler
-  const handleChangeTooth = (tooth) => {
-    tooth === selectedTooth ? onChangeTooth(null) : onChangeTooth(tooth);
+  const handleSelectTooth = (tooth) => {
+    selectedTeeth.includes(tooth)
+      ? onChangeTeeth(selectedTeeth.filter((number) => number !== tooth))
+      : onChangeTeeth([...selectedTeeth, tooth]);
   };
 
   // TEMPLATES ----------------------------------------------------------------
@@ -71,11 +73,14 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
             key={tooth.number}
             container
             direction="column"
-            onClick={() => handleChangeTooth(tooth.number)}
+            onClick={() => handleSelectTooth(tooth.number)}
             pt={3}
             sx={{
               opacity:
-                selectedTooth && tooth.number !== selectedTooth ? 0.3 : 1,
+                selectedTeeth.includes(0) ||
+                selectedTeeth.includes(tooth.number)
+                  ? 1
+                  : 0.3,
             }}
           >
             {/* Numbers */}
@@ -106,10 +111,13 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
             key={tooth.number}
             container
             direction="column"
-            onClick={() => handleChangeTooth(tooth.number)}
+            onClick={() => handleSelectTooth(tooth.number)}
             sx={{
               opacity:
-                selectedTooth && tooth.number !== selectedTooth ? 0.3 : 1,
+                selectedTeeth.includes(0) ||
+                selectedTeeth.includes(tooth.number)
+                  ? 1
+                  : 0.3,
             }}
           >
             {/* Teeth */}

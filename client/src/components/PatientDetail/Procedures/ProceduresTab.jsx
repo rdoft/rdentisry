@@ -34,6 +34,25 @@ function ProceduresTab({
   const [selectedProcedures, setSelectedProcedures] = useState(null);
   const [invoices, setInvoices] = useState([]);
 
+  // Add keydown event listener
+  // when component mounts and remove it when unmounts
+  useEffect(() => {
+    // onKeyDown handler to cancel selected tooth
+    const handleKeyDown = (event) => {
+      // If an input element is focused, do not execute the rest of the handler
+      if (document.activeElement.tagName.toLowerCase() === "input") {
+        return;
+      }
+
+      event.key === "Escape" && setSelectedTeeth([0]);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [setSelectedTeeth]);
+
   // Set the page on loading
   useEffect(() => {
     const controller = new AbortController();
@@ -178,7 +197,13 @@ function ProceduresTab({
   // HANDLERS -----------------------------------------------------------------
   // onSelectTooth handler
   const handleChangeTeeth = (teeth) => {
-    teeth?.length > 0 ? setSelectedTeeth(teeth) : setSelectedTeeth([0]);
+    teeth = teeth?.filter((tooth) => tooth !== 0);
+
+    if (teeth && teeth.length > 0) {
+      setSelectedTeeth(teeth);
+    } else {
+      setSelectedTeeth([0]);
+    }
   };
 
   // onUpdated handler
@@ -246,8 +271,8 @@ function ProceduresTab({
           {tabIndex === 0 && (
             <DentalChart
               procedures={groupedProcedures}
-              selectedTooth={selectedTeeth}
-              onChangeTooth={setSelectedTeeth}
+              selectedTeeth={selectedTeeth}
+              onChangeTeeth={handleChangeTeeth}
             />
           )}
           {tabIndex === 1 &&
@@ -257,8 +282,8 @@ function ProceduresTab({
               <Grid container item>
                 <Grid item xs={12} pb={3}>
                   <ProcedureToolbar
-                    selectedTooth={selectedTeeth}
-                    onChangeTooth={setSelectedTeeth}
+                    selectedTeeth={selectedTeeth}
+                    onChangeTeeth={handleChangeTeeth}
                   />
                 </Grid>
                 <Grid item xs>
