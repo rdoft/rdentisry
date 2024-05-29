@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo } from "react";
+import React from "react";
+import { Chip } from "primereact";
 import { Grid } from "@mui/material";
 import { CardTitle } from "components/cards";
-import { Next, Prev, Cancel } from "components/Button";
+import { Cancel } from "components/Button";
 
 function ProcedureToolbar({ selectedTeeth, onChangeTeeth }) {
   // HANDLERS -----------------------------------------------------------------
@@ -10,6 +11,11 @@ function ProcedureToolbar({ selectedTeeth, onChangeTeeth }) {
     onChangeTeeth(null);
     // loose focus
     document.activeElement.blur();
+  };
+
+  // onClickRemove handler to remove selected tooth
+  const handleRemoveTooth = (tooth) => {
+    onChangeTeeth(selectedTeeth.filter((number) => number !== tooth));
   };
 
   return (
@@ -23,13 +29,20 @@ function ProcedureToolbar({ selectedTeeth, onChangeTeeth }) {
         </Grid>
       ) : (
         <>
-          {/* Tooth number */}
           <Grid item xs={8}>
+            {/* Tooth number */}
             {selectedTeeth.map((tooth) => (
-              <CardTitle
-                variant="h3"
-                style={{ backgroundColor: "transparent" }}
-              >{`🦷 ${tooth}`}</CardTitle>
+              <Chip
+                key={tooth}
+                label={tooth ? "🦷 " + tooth : "Genel"}
+                removable
+                onRemove={() => handleRemoveTooth(tooth)}
+                style={{
+                  backgroundColor: "transparent",
+                  border: "1px solid #CED4D9",
+                  margin: "0.3rem",
+                }}
+              />
             ))}
           </Grid>
 
