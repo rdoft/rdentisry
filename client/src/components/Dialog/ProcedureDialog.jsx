@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
-import { Chip, Divider, InputNumber, Checkbox } from "primereact";
+import { Chip, Divider, InputNumber, Checkbox, Dropdown } from "primereact";
 import { DialogTemp } from "components/Dialog";
 import { DropdownPatient, DropdownProcedure } from "components/Dropdown";
 
@@ -11,7 +11,13 @@ import schema from "schemas/procedure.schema";
 // services
 import { PatientService, ProcedureService } from "services";
 
-function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
+function ProcedureDialog({
+  initPatientProcedure = {},
+  onHide,
+  onSubmit,
+  selectedTooth,
+  onChangeTooth,
+}) {
   const navigate = useNavigate();
 
   const [patients, setPatients] = useState([]);
@@ -22,14 +28,24 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
     patient: null,
     procedure: null,
     invoice: null,
-    toothNumber: 0,
     ...initPatientProcedure,
   });
+  // Validations
   const [isValid, setIsValid] = useState(false);
   const [isError, setIsError] = useState({
     quantity: false,
     amount: false,
   });
+
+  const tooth = [
+    0, 11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 27, 28, 31, 32,
+    33, 34, 35, 36, 37, 38, 41, 42, 43, 44, 45, 46, 47, 48,
+  ]
+    .filter((teeth) => !selectedTooth.includes(teeth))
+    .map((teeth) => ({
+      label: teeth ? teeth : "Genel",
+      value: teeth,
+    }));
 
   // Set the doctors from dropdown on loading
   useEffect(() => {
@@ -102,6 +118,17 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
     setIsValid(_isValid);
   };
 
+  // onAddTeeth handler
+  const handleAddTeeth = (teeth) => {
+    if (!selectedTooth.includes(teeth)) {
+      onChangeTooth([...selectedTooth, teeth]);
+    }
+  };
+
+  const handleRemoveTeeth = (teeth) => {
+    onChangeTooth(selectedTooth.filter((number) => number !== teeth));
+  };
+
   // onHide handler
   const handleHide = () => {
     onHide();
@@ -111,10 +138,15 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
   const handleSubmit = () => {
     let patientProcedures = [];
     for (let i = 0; i < quantity; i++) {
-      patientProcedures.push(patientProcedure);
+      for (let teeth of selectedTooth) {
+        patientProcedures.push({
+          ...patientProcedure,
+          toothNumber: teeth,
+        });
+      }
     }
-    onSubmit(patientProcedures);
 
+    onSubmit(patientProcedures);
     // Close the dialog unless isAnother selected
     !isAnother && onHide();
   };
@@ -206,12 +238,35 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
       {/* Tooth */}
       <div className="flex grid align-items-center mb-4">
         <label className="col-12 md:col-3 font-bold">Diş Numarası</label>
-        <Chip
-          label={patientProcedure.toothNumber || "Genel"}
+        {selectedTooth.map((teeth) => (
+          <Chip
+            key={teeth}
+            label={teeth ? "🦷 " + teeth : "Genel"}
+            removable={selectedTooth.length > 1}
+            onRemove={() => handleRemoveTeeth(teeth)}
+            style={{
+              backgroundColor: "transparent",
+              border: "1px solid #CED4D9",
+              margin: "0.3rem",
+            }}
+          />
+        ))}
+        <Dropdown
+          name="teeth"
+          options={tooth}
+          filter
+          filterBy="label"
+          placeholder="Seç"
+          onChange={(e) => handleAddTeeth(e.value)}
           style={{
-            backgroundColor: "transparent",
-            border: "1px solid #CED4D9",
+            alignItems: "center",
+            width: "7rem",
+            height: "40px",
+            margin: "0.3rem",
+            borderRadius: "18px",
           }}
+          emptyMessage="Sonuç bulunamadı"
+          emptyFilterMessage="Sonuç bulunamadı"
         />
       </div>
 

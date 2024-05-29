@@ -205,7 +205,11 @@ function ProcedureList({
           field="toothNumber"
           header="Dişler"
           style={{ width: "8rem" }}
-          body={(procedure) => procedure.toothNumber.join(", ")}
+          body={(procedure) =>
+            procedure.toothNumber
+              .map((num) => (num === 0 ? "Genel" : num))
+              .join(", ")
+          }
         ></Column>
         {/* Status */}
         <Column

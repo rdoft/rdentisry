@@ -30,7 +30,7 @@ function ProceduresTab({
 
   const [tabIndex, setTabIndex] = useState(0);
   const [procedures, setProcedures] = useState([]);
-  const [selectedTooth, setSelectedTooth] = useState(null);
+  const [selectedTooth, setSelectedTooth] = useState([0]);
   const [selectedProcedures, setSelectedProcedures] = useState(null);
   const [invoices, setInvoices] = useState([]);
 
@@ -176,6 +176,11 @@ function ProceduresTab({
   };
 
   // HANDLERS -----------------------------------------------------------------
+  // onSelectTooth handler
+  const handleChangeTooth = (tooth) => {
+    tooth?.length > 0 ? setSelectedTooth(tooth) : setSelectedTooth([0]);
+  };
+
   // onUpdated handler
   const handleUpdated = (patientId) => {
     getProcedures(patientId);
@@ -224,7 +229,7 @@ function ProceduresTab({
   };
 
   const invoiceOptions = invoices.map((invoice) => ({
-    label: `🦷 ${invoice.title}`,
+    label: `📌 ${invoice.title}`,
     command: () => handleSelectInvoice(invoice),
   }));
 
@@ -242,7 +247,7 @@ function ProceduresTab({
             <DentalChart
               procedures={groupedProcedures}
               selectedTooth={selectedTooth}
-              onChangeTooth={setSelectedTooth}
+              // onChangeTooth={setSelectedTooth}
             />
           )}
           {tabIndex === 1 &&
@@ -253,7 +258,7 @@ function ProceduresTab({
                 <Grid item xs={12} pb={3}>
                   <ProcedureToolbar
                     selectedTooth={selectedTooth}
-                    onChangeTooth={setSelectedTooth}
+                    // onChangeTooth={setSelectedTooth}
                   />
                 </Grid>
                 <Grid item xs>
@@ -313,11 +318,12 @@ function ProceduresTab({
         <ProcedureDialog
           initPatientProcedure={{
             patient,
-            toothNumber: selectedTooth || 0,
             invoice: procedures.sort(
               (a, b) => new Date(b?.invoice.id) - new Date(a?.invoice.id)
             )[0]?.invoice,
           }}
+          selectedTooth={selectedTooth}
+          onChangeTooth={handleChangeTooth}
           onHide={hideDialog}
           onSubmit={saveProcedure}
         />
