@@ -15,8 +15,8 @@ function ProcedureDialog({
   initPatientProcedure = {},
   onHide,
   onSubmit,
-  selectedTooth,
-  onChangeTooth,
+  selectedTeeth,
+  onChangeTeeth,
 }) {
   const navigate = useNavigate();
 
@@ -37,14 +37,14 @@ function ProcedureDialog({
     amount: false,
   });
 
-  const tooth = [
+  const teeth = [
     0, 11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 27, 28, 31, 32,
     33, 34, 35, 36, 37, 38, 41, 42, 43, 44, 45, 46, 47, 48,
   ]
-    .filter((teeth) => !selectedTooth.includes(teeth))
-    .map((teeth) => ({
-      label: teeth ? teeth : "Genel",
-      value: teeth,
+    .filter((tooth) => !selectedTeeth.includes(tooth))
+    .map((tooth) => ({
+      label: tooth ? tooth : "Genel",
+      value: tooth,
     }));
 
   // Set the doctors from dropdown on loading
@@ -119,14 +119,14 @@ function ProcedureDialog({
   };
 
   // onAddTeeth handler
-  const handleAddTeeth = (teeth) => {
-    if (!selectedTooth.includes(teeth)) {
-      onChangeTooth([...selectedTooth, teeth]);
+  const handleAddTooth = (tooth) => {
+    if (!selectedTeeth.includes(tooth)) {
+      onChangeTeeth([...selectedTeeth, tooth]);
     }
   };
 
-  const handleRemoveTeeth = (teeth) => {
-    onChangeTooth(selectedTooth.filter((number) => number !== teeth));
+  const handleRemoveTooth = (tooth) => {
+    onChangeTeeth(selectedTeeth.filter((number) => number !== tooth));
   };
 
   // onHide handler
@@ -138,10 +138,10 @@ function ProcedureDialog({
   const handleSubmit = () => {
     let patientProcedures = [];
     for (let i = 0; i < quantity; i++) {
-      for (let teeth of selectedTooth) {
+      for (let tooth of selectedTeeth) {
         patientProcedures.push({
           ...patientProcedure,
-          toothNumber: teeth,
+          toothNumber: tooth,
         });
       }
     }
@@ -238,12 +238,12 @@ function ProcedureDialog({
       {/* Tooth */}
       <div className="flex grid align-items-center mb-4">
         <label className="col-12 md:col-3 font-bold">Diş Numarası</label>
-        {selectedTooth.map((teeth) => (
+        {selectedTeeth.map((tooth) => (
           <Chip
-            key={teeth}
-            label={teeth ? "🦷 " + teeth : "Genel"}
-            removable={selectedTooth.length > 1}
-            onRemove={() => handleRemoveTeeth(teeth)}
+            key={tooth}
+            label={tooth ? "🦷 " + tooth : "Genel"}
+            removable={selectedTeeth.length > 1}
+            onRemove={() => handleRemoveTooth(tooth)}
             style={{
               backgroundColor: "transparent",
               border: "1px solid #CED4D9",
@@ -253,11 +253,11 @@ function ProcedureDialog({
         ))}
         <Dropdown
           name="teeth"
-          options={tooth}
+          options={teeth}
           filter
           filterBy="label"
           placeholder="Seç"
-          onChange={(e) => handleAddTeeth(e.value)}
+          onChange={(e) => handleAddTooth(e.value)}
           style={{
             alignItems: "center",
             width: "7rem",

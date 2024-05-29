@@ -30,7 +30,7 @@ function ProceduresTab({
 
   const [tabIndex, setTabIndex] = useState(0);
   const [procedures, setProcedures] = useState([]);
-  const [selectedTooth, setSelectedTooth] = useState([0]);
+  const [selectedTeeth, setSelectedTeeth] = useState([0]);
   const [selectedProcedures, setSelectedProcedures] = useState(null);
   const [invoices, setInvoices] = useState([]);
 
@@ -177,8 +177,8 @@ function ProceduresTab({
 
   // HANDLERS -----------------------------------------------------------------
   // onSelectTooth handler
-  const handleChangeTooth = (tooth) => {
-    tooth?.length > 0 ? setSelectedTooth(tooth) : setSelectedTooth([0]);
+  const handleChangeTeeth = (teeth) => {
+    teeth?.length > 0 ? setSelectedTeeth(teeth) : setSelectedTeeth([0]);
   };
 
   // onUpdated handler
@@ -246,8 +246,8 @@ function ProceduresTab({
           {tabIndex === 0 && (
             <DentalChart
               procedures={groupedProcedures}
-              selectedTooth={selectedTooth}
-              // onChangeTooth={setSelectedTooth}
+              selectedTooth={selectedTeeth}
+              onChangeTooth={setSelectedTeeth}
             />
           )}
           {tabIndex === 1 &&
@@ -257,15 +257,15 @@ function ProceduresTab({
               <Grid container item>
                 <Grid item xs={12} pb={3}>
                   <ProcedureToolbar
-                    selectedTooth={selectedTooth}
-                    // onChangeTooth={setSelectedTooth}
+                    selectedTooth={selectedTeeth}
+                    onChangeTooth={setSelectedTeeth}
                   />
                 </Grid>
                 <Grid item xs>
                   <ProcedureList
                     patient={patient}
                     procedures={procedures}
-                    selectedTooth={selectedTooth}
+                    selectedTooth={selectedTeeth}
                     selectedProcedures={selectedProcedures}
                     setSelectedProcedures={setSelectedProcedures}
                     onSubmit={saveProcedure}
@@ -322,8 +322,8 @@ function ProceduresTab({
               (a, b) => new Date(b?.invoice.id) - new Date(a?.invoice.id)
             )[0]?.invoice,
           }}
-          selectedTooth={selectedTooth}
-          onChangeTooth={handleChangeTooth}
+          selectedTeeth={selectedTeeth}
+          onChangeTeeth={handleChangeTeeth}
           onHide={hideDialog}
           onSubmit={saveProcedure}
         />
