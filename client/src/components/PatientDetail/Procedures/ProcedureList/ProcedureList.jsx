@@ -14,7 +14,7 @@ import "assets/styles/PatientDetail/ProceduresTab.css";
 function ProcedureList({
   patient,
   procedures,
-  selectedTooth,
+  selectedTeeth,
   selectedProcedures,
   setSelectedProcedures,
   onSubmit,
@@ -81,7 +81,6 @@ function ProcedureList({
         ...found,
         price: procedure.price,
         completedDate: procedure.completedDate,
-        patient: patient,
       });
     }
 
@@ -96,7 +95,16 @@ function ProcedureList({
 
   // onConfirmDelete handler
   const handleDeleteConfirm = () => {
-    onDelete(procedure);
+    const deletedProcedures = [];
+    // Find the procedures that will be deleted and delete them
+    for (let i = 0; i < procedure.ids.length; i++) {
+      const found = procedures.find((item) => item.id === procedure.ids[i]);
+      deletedProcedures.push({
+        ...found,
+      });
+    }
+
+    onDelete(deletedProcedures);
     setIsDelete(false);
   };
 

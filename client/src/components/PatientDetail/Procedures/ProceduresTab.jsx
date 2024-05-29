@@ -129,13 +129,25 @@ function ProceduresTab({
       if (Array.isArray(procedure)) {
         for (let p of procedure) {
           p.id
-            ? await PatientProcedureService.updatePatientProcedure(p)
-            : await PatientProcedureService.savePatientProcedure(p);
+            ? await PatientProcedureService.updatePatientProcedure({
+                ...p,
+                patient: patient,
+              })
+            : await PatientProcedureService.savePatientProcedure({
+                ...p,
+                patient: patient,
+              });
         }
       } else {
         procedure.id
-          ? await PatientProcedureService.updatePatientProcedure(procedure)
-          : await PatientProcedureService.savePatientProcedure(procedure);
+          ? await PatientProcedureService.updatePatientProcedure({
+              ...procedure,
+              patient,
+            })
+          : await PatientProcedureService.savePatientProcedure({
+              ...procedure,
+              patient,
+            });
       }
 
       // Get and set the updated list of procedures
@@ -150,10 +162,19 @@ function ProceduresTab({
   // Delete the procedure
   const deleteProcedure = async (procedure) => {
     try {
-      await PatientProcedureService.deletePatientProcedure(
-        patient.id,
-        procedure.id
-      );
+      if (Array.isArray(procedure)) {
+        for (let p of procedure) {
+          await PatientProcedureService.deletePatientProcedure(
+            patient.id,
+            p.id
+          );
+        }
+      } else {
+        await PatientProcedureService.deletePatientProcedure(
+          patient.id,
+          procedure.id
+        );
+      }
 
       // Get and set the updated list of procedures
       getProcedures(patient.id);
