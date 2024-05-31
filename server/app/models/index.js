@@ -26,6 +26,7 @@ db.doctor = require("./doctor.model")(sequelize, Sequelize);
 db.appointment = require("./appointment.model")(sequelize, Sequelize);
 db.note = require("./note.model")(sequelize, Sequelize);
 db.payment = require("./payment.model")(sequelize, Sequelize);
+db.paymentPlan = require("./paymentPlan.model")(sequelize, Sequelize);
 db.invoice = require("./invoice.model")(sequelize, Sequelize);
 db.procedure = require("./procedure.model")(sequelize, Sequelize);
 db.procedureCategory = require("./procedureCategory.model")(
@@ -71,6 +72,16 @@ db.patient.hasMany(db.payment, {
   foreignKey: "PatientId",
 });
 db.payment.belongsTo(db.patient, {
+  as: "patient",
+  foreignKey: "PatientId",
+});
+
+// patient - paymentPlan (one to many)
+db.patient.hasMany(db.paymentPlan, {
+  as: "paymentPlans",
+  foreignKey: "PatientId",
+});
+db.paymentPlan.belongsTo(db.patient, {
   as: "patient",
   foreignKey: "PatientId",
 });

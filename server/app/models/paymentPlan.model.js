@@ -1,8 +1,8 @@
 module.exports = (sequelize, Sequelize) => {
-  const Payment = sequelize.define(
-    "Payment",
+  const PaymentPlan = sequelize.define(
+    "PaymentPlan",
     {
-      PaymentId: {
+      PaymentPlanId: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
@@ -10,10 +10,6 @@ module.exports = (sequelize, Sequelize) => {
       PatientId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-      },
-      Type: {
-        type: Sequelize.STRING,
-        allowNull: true,
       },
       Amount: {
         type: Sequelize.FLOAT,
@@ -26,22 +22,16 @@ module.exports = (sequelize, Sequelize) => {
           },
         },
       },
-      ActualDate: {
+      PlannedDate: {
         type: Sequelize.DATEONLY,
         allowNull: false,
-        defaultValue: new Date(),
-      },
-      IsPlanned: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
       },
     },
     {
       timestamps: false,
-      tableName: "Payment",
+      tableName: "PaymentPlan",
     }
   );
 
-  return Payment;
+  return PaymentPlan;
 };
