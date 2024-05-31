@@ -5,11 +5,16 @@ const payment = Joi.object({
   patient: Joi.object().required(),
   type: Joi.string().empty("").allow(null),
   amount: Joi.number().min(0).required(),
-  plannedDate: Joi.date().empty(null).allow(null),
-  actualDate: Joi.date().empty(null).allow(null),
-})
-  .xor("plannedDate", "actualDate")
-  .unknown();
+  actualDate: Joi.date().empty(null).default(new Date()),
+  isPlanned: Joi.boolean().default(false).required(),
+}).unknown();
+
+const paymentPlan = Joi.object({
+  id: Joi.number().empty(null).id(),
+  patient: Joi.object().required(),
+  amount: Joi.number().min(0).required(),
+  plannedDate: Joi.date().empty(null).required(),
+}).unknown();
 
 const id = Joi.object({
   paymentId: Joi.number().empty(null).id(),
@@ -18,15 +23,18 @@ const id = Joi.object({
 const patientId = Joi.number().required();
 const type = Joi.string().empty("").allow(null);
 const amount = Joi.number().min(0).required();
-const plannedDate = Joi.date().empty(null).allow(null);
 const actualDate = Joi.date().empty(null).allow(null);
+const plannedDate = Joi.date().empty(null).allow(null);
+const isPlanned = Joi.boolean().default(false);
 
 module.exports = {
   payment,
+  paymentPlan,
   id,
   patientId,
   type,
   amount,
-  plannedDate,
   actualDate,
+  plannedDate,
+  isPlanned,
 };

@@ -34,7 +34,7 @@ module.exports = (sequelize, Sequelize) => {
       IsPlanned: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: true,
+        defaultValue: false,
       },
     },
     {
