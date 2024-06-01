@@ -1,9 +1,10 @@
 const { Sequelize } = require("../models");
 const db = require("../models");
-const { isPlanned } = require("../schemas/payment.schema");
 const Patient = db.patient;
 const Payment = db.payment;
 const PaymentPlan = db.paymentPlan;
+
+const { processPayments } = require("../utils/payment.util");
 
 /**
  * Get patient list
@@ -30,20 +31,6 @@ exports.getPatients = async (req, res) => {
         },
         include: [
           {
-            model: Payment,
-            as: "payments",
-            attributes: [
-              ["PaymentId", "id"],
-              ["Amount", "amount"],
-              ["ActualDate", "actualDate"],
-              ["PlannedDate", "plannedDate"],
-              ["IsPlanned", "isPlanned"],
-            ],
-            where: {
-              isPlanned: true,
-            },
-          },
-          {
             model: PaymentPlan,
             as: "paymentPlans",
             attributes: [
@@ -56,31 +43,36 @@ exports.getPatients = async (req, res) => {
         order: [
           ["Name", "ASC"],
           ["Surname", "ASC"],
+          [{ model: PaymentPlan, as: "paymentPlans" }, "PlannedDate", "ASC"],
         ],
       });
       patients = patients.map((patient) => patient.toJSON());
 
-      // Calculate overdue status
-      for (let patient of patients) {
-        let totalPayments = 0;
-        patient.payments.map((payment) => {
-          totalPayments += payment.amount;
-        });
+      // Find total amount payments per patient
+      const payments = await Payment.findAll({
+        attributes: [
+          ["PatientId", , "patientId"],
+          [Sequelize.fn("SUM", Sequelize.col("Amount")), "total"],
+        ],
+        where: {
+          IsPlanned: true,
+        },
+        include: [
+          {
+            model: Patient,
+            as: "patient",
+            attributes: [],
+            where: {
+              UserId: userId,
+            },
+          },
+        ],
+        group: ["PatientId"],
+        raw: true,
+      });
 
-        for (const plan of patient.paymentPlans) {
-          if (plan.amount <= totalPayments) {
-            totalPayments -= plan.amount;
-            plan.amount = 0;
-          } else {
-            plan.amount -= totalPayments;
-            totalPayments = 0;
-          }
-        }
-        // Set overdue status
-        patient.overdue = patient.paymentPlans.some(
-          (plan) => plan.amount > 0 && new Date(plan.plannedDate) < new Date()
-        );
-      }
+      // Calculate overdue status
+      patients = processPayments(patients, payments);
     } else {
       patients = await Patient.findAll({
         attributes: [
