@@ -51,7 +51,7 @@ exports.getPatients = async (req, res) => {
       // Find total amount payments per patient
       const payments = await Payment.findAll({
         attributes: [
-          ["PatientId", , "patientId"],
+          ["PatientId", "patientId"],
           [Sequelize.fn("SUM", Sequelize.col("Amount")), "total"],
         ],
         where: {
@@ -67,7 +67,7 @@ exports.getPatients = async (req, res) => {
             },
           },
         ],
-        group: ["PatientId"],
+        group: [Sequelize.col("Payment.PatientId")],
         raw: true,
       });
 

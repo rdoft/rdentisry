@@ -5,8 +5,8 @@ const processPayments = (patients, payments, all = true) => {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + UPCOMMING);
   const paymentMap = {};
-  let paymentPlans;
   let totalPaid;
+  let paymentPlan;
 
   // Create a map of patientId to total planned payment amount
   for (const payment of payments) {
@@ -14,45 +14,48 @@ const processPayments = (patients, payments, all = true) => {
   }
 
   for (const patient of patients) {
-    paymentPlans = patient.paymentPlans;
-    totalPaid = paymentMap[patient.patientId] || 0;
+    totalPaid = paymentMap[patient.id] || 0;
 
     // Reduce the paymentPlans as much as payments amount
-    for (let i = 0; i < paymentPlans.length && totalPaid > 0; i++) {
-      if (paymentPlans[i].amount <= totalPaid) {
-        totalPaid -= paymentPlans[i].amount;
-        paymentPlans[i].amount = 0; // Fully reduced
+    for (let plan of patient.paymentPlans) {
+      if (plan.amount <= totalPaid) {
+        totalPaid -= plan.amount;
+        plan.paid = plan.amount;
       } else {
-        paymentPlans[i].amount -= totalPaid;
+        plan.paid = totalPaid;
         totalPaid = 0; // Fully reduced
       }
     }
 
     // Set overdue status and upcoming status
     if (all) {
-      patient.overdue = paymentPlans.some(
+      patient.overdue = patient.paymentPlans.some(
         (plan) =>
-          plan.amount > 0 &&
+          plan.amount - plan.paid > 0 &&
           new Date(plan.plannedDate).setHours(0, 0, 0, 0) <
             today.setHours(0, 0, 0, 0)
       );
-      patient.upcoming = paymentPlans.some(
+      patient.upcoming = patient.paymentPlans.some(
         (plan) =>
-          plan.Amount > 0 &&
-          new Date(plan.PlannedDate).setHours(0, 0, 0, 0) <
+          plan.amount - plan.paid > 0 &&
+          today.setHours(0, 0, 0, 0) <=
+            new Date(plan.plannedDate).setHours(0, 0, 0, 0) &&
+          new Date(plan.plannedDate).setHours(0, 0, 0, 0) <
             tomorrow.setHours(0, 0, 0, 0)
       );
     } else {
-      patient.overdue = paymentPlans.some(
+      patient.overdue = patient.paymentPlans.some(
         (plan) =>
-          plan.amount > 0 &&
+          plan.amount - plan.paid > 0 &&
           new Date(plan.plannedDate).setHours(0, 0, 0, 0) ===
             today.setHours(0, 0, 0, 0)
       );
-      patient.upcoming = paymentPlans.some(
+      patient.upcoming = patient.paymentPlans.some(
         (plan) =>
-          plan.amount > 0 &&
-          new Date(plan.plannedDate).setHours(0, 0, 0, 0) ===
+          plan.amount - plan.paid > 0 &&
+          today.setHours(0, 0, 0, 0) <=
+            new Date(plan.plannedDate).setHours(0, 0, 0, 0) &&
+          new Date(plan.plannedDate).setHours(0, 0, 0, 0) <
             tomorrow.setHours(0, 0, 0, 0)
       );
     }
