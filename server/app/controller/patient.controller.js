@@ -1,7 +1,9 @@
 const { Sequelize } = require("../models");
 const db = require("../models");
+const { isPlanned } = require("../schemas/payment.schema");
 const Patient = db.patient;
 const Payment = db.payment;
+const PaymentPlan = db.paymentPlan;
 
 /**
  * Get patient list
@@ -35,6 +37,19 @@ exports.getPatients = async (req, res) => {
               ["Amount", "amount"],
               ["ActualDate", "actualDate"],
               ["PlannedDate", "plannedDate"],
+              ["IsPlanned", "isPlanned"],
+            ],
+            where: {
+              isPlanned: true,
+            },
+          },
+          {
+            model: PaymentPlan,
+            as: "paymentPlans",
+            attributes: [
+              ["PaymentPlanId", "id"],
+              ["Amount", "amount"],
+              ["PlannedDate", "plannedDate"],
             ],
           },
         ],
@@ -43,16 +58,28 @@ exports.getPatients = async (req, res) => {
           ["Surname", "ASC"],
         ],
       });
-      patients = JSON.parse(JSON.stringify(patients));
+      patients = patients.map((patient) => patient.toJSON());
 
-      // Control overdue status
+      // Calculate overdue status
       for (let patient of patients) {
-        patient.payments.find(
-          (payment) =>
-            !payment.actualDate && new Date(payment.plannedDate) < new Date()
-        )
-          ? (patient.overdue = true)
-          : (patient.overdue = false);
+        let totalPayments = 0;
+        patient.payments.map((payment) => {
+          totalPayments += payment.amount;
+        });
+
+        for (const plan of patient.paymentPlans) {
+          if (plan.amount <= totalPayments) {
+            totalPayments -= plan.amount;
+            plan.amount = 0;
+          } else {
+            plan.amount -= totalPayments;
+            totalPayments = 0;
+          }
+        }
+        // Set overdue status
+        patient.overdue = patient.paymentPlans.some(
+          (plan) => plan.amount > 0 && new Date(plan.plannedDate) < new Date()
+        );
       }
     } else {
       patients = await Patient.findAll({

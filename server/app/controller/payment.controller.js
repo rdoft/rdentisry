@@ -16,7 +16,7 @@ exports.getPayments = async (req, res) => {
   let payments;
 
   try {
-    if (plan) {
+    if (plan === "true") {
       // Find payment plans of the patient
       payments = await PaymentPlan.findAll({
         attributes: [
@@ -110,7 +110,7 @@ exports.savePayment = async (req, res) => {
       return res.status(404).send({ message: "Hasta bulunamadı" });
     }
 
-    if (plan) {
+    if (plan === "true") {
       // Create payment plan record
       payment = await PaymentPlan.create({
         PatientId: patient.id,
@@ -168,7 +168,7 @@ exports.updatePayment = async (req, res) => {
   let payment;
 
   try {
-    if (plan) {
+    if (plan === "true") {
       // Find the payment plan
       payment = await PaymentPlan.findOne({
         where: {
@@ -248,7 +248,7 @@ exports.deletePayment = async (req, res) => {
   let payment;
 
   try {
-    if (plan) {
+    if (plan === "true") {
       // Find payment plan
       payment = await PaymentPlan.findOne({
         where: {
