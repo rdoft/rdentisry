@@ -4,6 +4,8 @@ const Patient = db.patient;
 const Payment = db.payment;
 const PaymentPlan = db.paymentPlan;
 
+const { processPatientPayments } = require("../utils/payment.util");
+
 /**
  * Get payment list of the given patientId
  * @param {string} patientId id of the patient
@@ -46,6 +48,29 @@ exports.getPayments = async (req, res) => {
         raw: true,
         nest: true,
       });
+
+      // Find total paid amount
+      paid = await Payment.findOne({
+        attributes: [[Sequelize.fn("SUM", Sequelize.col("Amount")), "total"]],
+        where: {
+          IsPlanned: true,
+        },
+        include: [
+          {
+            model: Patient,
+            as: "patient",
+            attributes: [],
+            where: {
+              UserId: userId,
+            },
+          },
+        ],
+        group: [Sequelize.col("Payment.PatientId")],
+        raw: true,
+      });
+
+      // Process the payment plans of the patient
+      payments = processPatientPayments(payments, paid?.total);
     } else {
       // Find actual payments of the patient
       payments = await Payment.findAll({
@@ -163,8 +188,7 @@ exports.updatePayment = async (req, res) => {
   const { UserId: userId } = req.user;
   const { paymentId } = req.params;
   const { plan } = req.query;
-  const { patient, type, amount, plannedDate, actualDate, isPlanned } =
-    req.body;
+  const { type, amount, plannedDate, actualDate, isPlanned } = req.body;
   let payment;
 
   try {
@@ -191,7 +215,6 @@ exports.updatePayment = async (req, res) => {
 
       // Update the payment plan
       await payment.update({
-        PatientId: patient.id,
         Amount: amount,
         PlannedDate: plannedDate,
       });
@@ -218,7 +241,6 @@ exports.updatePayment = async (req, res) => {
 
       // Update the payment
       await payment.update({
-        PatientId: patient.id,
         Type: type ?? null,
         Amount: amount,
         ActualDate: actualDate ?? new Date(),
@@ -237,6 +259,7 @@ exports.updatePayment = async (req, res) => {
     }
   }
 };
+
 /**
  * Delete the Payment or Payment Plan
  * @param paymentId: Id of the Payment or Payment Plan

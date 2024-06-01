@@ -1,12 +1,12 @@
 const UPCOMMING = 2; // Days of upcoming payment
 
-const processPayments = (patients, payments, all = true) => {
+// Process the payments of the patients
+const processPatientsPayments = (patients, payments, all = true) => {
   const today = new Date();
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + UPCOMMING);
   const paymentMap = {};
   let totalPaid;
-  let paymentPlan;
 
   // Create a map of patientId to total planned payment amount
   for (const payment of payments) {
@@ -64,6 +64,23 @@ const processPayments = (patients, payments, all = true) => {
   return patients;
 };
 
+// Process the payment plans of the patient
+const processPatientPayments = (paymentPlans, totalPaid = 0) => {
+  // Reduce the paymentPlans as much as payments amount
+  for (let plan of paymentPlans) {
+    if (plan.amount <= totalPaid) {
+      totalPaid -= plan.amount;
+      plan.paid = plan.amount;
+    } else {
+      plan.paid = totalPaid;
+      totalPaid = 0; // Fully reduced
+    }
+  }
+
+  return paymentPlans;
+};
+
 module.exports = {
-  processPayments,
+  processPatientPayments,
+  processPatientsPayments,
 };
