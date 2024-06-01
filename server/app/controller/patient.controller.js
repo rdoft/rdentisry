@@ -4,7 +4,7 @@ const Patient = db.patient;
 const Payment = db.payment;
 const PaymentPlan = db.paymentPlan;
 
-const { processPayments } = require("../utils/payment.util");
+const { processPatientsPayments } = require("../utils/payment.util");
 
 /**
  * Get patient list
@@ -72,7 +72,7 @@ exports.getPatients = async (req, res) => {
       });
 
       // Calculate overdue status
-      patients = processPayments(patients, payments);
+      patients = processPatientsPayments(patients, payments);
     } else {
       patients = await Patient.findAll({
         attributes: [

@@ -6,7 +6,7 @@ const Patient = db.patient;
 const Notification = db.notification;
 const NotificationEvent = db.notificationEvent;
 
-const { processPayments } = require("../utils/payment.util");
+const { processPatientsPayments } = require("../utils/payment.util");
 
 /**
  * Add notifications for upcoming and overdue payments of the patients
@@ -63,12 +63,12 @@ exports.run = async () => {
       where: {
         IsPlanned: true,
       },
-      group: ["PatientId"],
+      group: [Sequelize.col("Payment.PatientId")],
       raw: true,
     });
 
     // Calculate overdue & upcoming status
-    patients = processPayments(patients, payments, false);
+    patients = processPatientsPayments(patients, payments, false);
 
     // Create notification for overdue payments
     for (let patient of patients) {
