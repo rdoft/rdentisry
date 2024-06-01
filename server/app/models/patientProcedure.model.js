@@ -7,7 +7,7 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      PatientId: {
+      VisitId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -18,10 +18,6 @@ module.exports = (sequelize, Sequelize) => {
       ToothNumber: {
         type: Sequelize.INTEGER,
         allowNull: false,
-      },
-      InvoiceId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
       },
       CompletedDate: {
         type: Sequelize.DATEONLY,

@@ -1,11 +1,15 @@
 module.exports = (sequelize, Sequelize) => {
-  const Invoice = sequelize.define(
-    "Invoice",
+  const Visit = sequelize.define(
+    "Visit",
     {
-      InvoiceId: {
+      VisitId: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+      },
+      PatinetId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
       },
       Title: {
         type: Sequelize.STRING(255),
@@ -25,17 +29,16 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false,
         defaultValue: 0,
       },
-      Date: {
+      ApprovedDate: {
         type: Sequelize.DATEONLY,
-        allowNull: false,
-        defaultValue: new Date(),
+        allowNull: true,
       },
     },
     {
       timestamps: false,
-      tableName: "Invoice",
+      tableName: "Visit",
     }
   );
 
-  return Invoice;
+  return Visit;
 };

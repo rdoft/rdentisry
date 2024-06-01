@@ -27,7 +27,7 @@ db.appointment = require("./appointment.model")(sequelize, Sequelize);
 db.note = require("./note.model")(sequelize, Sequelize);
 db.payment = require("./payment.model")(sequelize, Sequelize);
 db.paymentPlan = require("./paymentPlan.model")(sequelize, Sequelize);
-db.invoice = require("./invoice.model")(sequelize, Sequelize);
+db.visit = require("./visit.model")(sequelize, Sequelize);
 db.procedure = require("./procedure.model")(sequelize, Sequelize);
 db.procedureCategory = require("./procedureCategory.model")(
   sequelize,
@@ -86,6 +86,16 @@ db.paymentPlan.belongsTo(db.patient, {
   foreignKey: "PatientId",
 });
 
+// patient - visit (one to many)
+db.patient.hasMany(db.visit, {
+  as: "visits",
+  foreignKey: "PatientId",
+});
+db.visit.belongsTo(db.patient, {
+  as: "patient",
+  foreignKey: "PatientId",
+});
+
 // doctor - appointment (one to many)
 db.doctor.hasMany(db.appointment, {
   as: "appointments",
@@ -128,16 +138,16 @@ db.patientProcedure.belongsTo(db.procedure, {
   foreignKey: "ProcedureId",
 });
 
-// invoice - patientProcedure (one to many)
-db.invoice.hasMany(db.patientProcedure, {
+// visit - patientProcedure (one to many)
+db.visit.hasMany(db.patientProcedure, {
   as: "patientProcedures",
-  foreignKey: "InvoiceId",
+  foreignKey: "VisitId",
   onDelete: "cascade",
   hooks: true,
 });
-db.patientProcedure.belongsTo(db.invoice, {
-  as: "invoice",
-  foreignKey: "InvoiceId",
+db.patientProcedure.belongsTo(db.visit, {
+  as: "visit",
+  foreignKey: "VisitId",
 });
 
 // notificationEvent - notification (one to many)
@@ -222,7 +232,8 @@ db.doctor.beforeDestroy(async (doctor) => {
 // Control If patient has any payments before destroy
 db.patient.beforeDestroy(async (patient) => {
   const paymentCount = await patient.countPayments();
-  if (paymentCount > 0) {
+  const visitCount = await patient.countVisits();
+  if (paymentCount > 0 || visitCount > 0) {
     throw new Sequelize.ForeignKeyConstraintError();
   }
 });
@@ -234,7 +245,12 @@ db.patient.beforeBulkDestroy(async (options) => {
       PatientId: options.where.PatientId,
     },
   });
-  if (paymentCount > 0) {
+  const visitCount = await db.visit.count({
+    where: {
+      PatientId: options.where.PatientId,
+    },
+  });
+  if (paymentCount > 0 || visitCount > 0) {
     throw new Sequelize.ForeignKeyConstraintError();
   }
 });
@@ -259,58 +275,14 @@ db.procedure.beforeBulkDestroy(async (options) => {
   }
 });
 
-// Check if the invoice is created before patientProcedure
-db.patientProcedure.beforeCreate(async (patientProcedure) => {
-  let invoice =
-    patientProcedure.InvoiceId &&
-    (await db.invoice.findByPk(patientProcedure.InvoiceId));
-  if (!invoice) {
-    invoice = await db.invoice.create({
-      Title: new Date().toLocaleDateString("tr-TR", {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-      }),
-      Description: null,
-      Date: new Date(),
-      Discount: 0,
-    });
-  }
-
-  patientProcedure.InvoiceId = invoice.InvoiceId;
-});
-
-// Hook to control if there is an empty invoice when updating patientProcedure
-db.patientProcedure.beforeUpdate(async (patientProcedure) => {
-  // Store the previous invoice ID
-  const previousInvoiceId = patientProcedure._previousDataValues.InvoiceId;
-
-  if (patientProcedure.InvoiceId != previousInvoiceId) {
-    if (!patientProcedure.InvoiceId) {
-      let invoice = await db.invoice.create({
-        Title: new Date().toLocaleDateString("tr-TR", {
-          year: "numeric",
-          month: "numeric",
-          day: "numeric",
-        }),
-        Description: null,
-        Date: new Date(),
-        Discount: 0,
-      });
-      patientProcedure.InvoiceId = invoice.InvoiceId;
-      patientProcedure._previousDataValues.InvoiceId = previousInvoiceId;
-    }
-  }
-});
-
 // Hook to delete invoices after patientProcedure update
 db.patientProcedure.afterUpdate(async (patientProcedure) => {
   // Get the previous invoice ID
-  const previousInvoiceId = patientProcedure._previousDataValues.InvoiceId;
+  const previousVisitId = patientProcedure._previousDataValues.VisitId;
 
-  if (previousInvoiceId && previousInvoiceId !== patientProcedure.InvoiceId) {
-    const oldInvoice = await db.invoice.findOne({
-      where: { InvoiceId: previousInvoiceId },
+  if (previousVisitId) {
+    const oldVisit = await db.visit.findOne({
+      where: { VisitId: previousVisitId },
       include: [
         {
           model: db.patientProcedure,
@@ -319,8 +291,8 @@ db.patientProcedure.afterUpdate(async (patientProcedure) => {
       ],
     });
 
-    if (oldInvoice && oldInvoice.patientProcedures.length === 0) {
-      oldInvoice.destroy();
+    if (oldVisit && oldVisit.patientProcedures.length === 0) {
+      oldVisit.destroy();
     }
   }
 });
@@ -328,9 +300,9 @@ db.patientProcedure.afterUpdate(async (patientProcedure) => {
 // Control if there is empty invoice when delete patientProcedure,
 // if empty then destroy invoice
 db.patientProcedure.afterDestroy(async (patientProcedure) => {
-  const invoice = await db.invoice.findOne({
+  const visit = await db.visit.findOne({
     where: {
-      InvoiceId: patientProcedure.InvoiceId,
+      VisitId: patientProcedure.VisitId,
     },
     include: [
       {
@@ -340,8 +312,8 @@ db.patientProcedure.afterDestroy(async (patientProcedure) => {
     ],
   });
 
-  if (invoice && invoice.patientProcedures.length === 0) {
-    invoice.destroy();
+  if (visit && visit.patientProcedures.length === 0) {
+    visit.destroy();
   }
 });
 
