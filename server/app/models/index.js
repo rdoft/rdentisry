@@ -116,18 +116,6 @@ db.procedure.belongsTo(db.procedureCategory, {
   foreignKey: "ProcedureCategoryId",
 });
 
-// patient - patientProcedure (one to many)
-db.patient.hasMany(db.patientProcedure, {
-  as: "patientProcedures",
-  foreignKey: "PatientId",
-  onDelete: "cascade",
-  hooks: true,
-});
-db.patientProcedure.belongsTo(db.patient, {
-  as: "patient",
-  foreignKey: "PatientId",
-});
-
 // procedure - patientProcedure (one to many)
 db.procedure.hasMany(db.patientProcedure, {
   as: "patientProcedures",

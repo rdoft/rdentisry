@@ -7,7 +7,7 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      PatinetId: {
+      PatientId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },

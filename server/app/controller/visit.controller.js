@@ -11,6 +11,8 @@ const PatientProcedure = db.patientProcedure;
 exports.getVisits = async (req, res) => {
   const { UserId: userId } = req.user;
   const { patientId } = req.params;
+  let { approved } = req.query;
+  approved = approved === "true" ? true : approved === "false" ? false : null;
   let visits;
 
   try {
@@ -23,6 +25,10 @@ exports.getVisits = async (req, res) => {
         ["Discount", "discount"],
         ["ApprovedDate", "approvedDate"],
       ],
+      where: {
+        ...(approved === false && { ApprovedDate: null }),
+        ...(approved === true && { ApprovedDate: { [Sequelize.Op.ne]: null } }),
+      },
       include: [
         {
           model: Patient,
@@ -136,16 +142,15 @@ exports.updateVisit = async (req, res) => {
       ],
     });
     if (!visit) {
-      res.status(404).send({ message: "Aşama bulunamadı" });
+      res.status(404).send({ message: "Ziyaret bulunamadı" });
       return;
     }
 
     // Update the visit
-
     await visit.update({
       Title: title,
       Description: description,
-      Discount: discount ?? 0,
+      Discount: visit.ApprovedDate ? visit.Discount : discount ?? 0,
       ApprovedDate: approvedDate ?? null,
     });
 
@@ -183,7 +188,11 @@ exports.deleteVisit = async (req, res) => {
       ],
     });
     if (!visit) {
-      res.status(404).send({ message: "Aşama bulunamadı" });
+      res.status(404).send({ message: "Ziyaret bulunamadı" });
+      return;
+    }
+    if (visit.ApprovedDate) {
+      res.status(400).send({ message: "Onaylanmış ziyaret silinemez" });
       return;
     }
 

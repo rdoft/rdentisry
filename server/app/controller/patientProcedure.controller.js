@@ -21,59 +21,61 @@ exports.getPatientProcedures = async (req, res) => {
   let visits;
 
   try {
-    visits = await Visit.findAll({
+    visits = await PatientProcedure.findAll({
       attributes: [
-        ["VisitId", "id"],
-        ["Title", "title"],
-        ["Description", "description"],
-        ["Discount", "discount"],
-        ["ApprovedDate", "approvedDate"],
+        ["PatientProcedureId", "id"],
+        ["VisitId", "visitId"],
+        ["ToothNumber", "toothNumber"],
+        ["CompletedDate", "completedDate"],
+        ["Price", "price"],
       ],
+      where: {
+        ...(tooth && { ToothNumber: tooth }),
+        ...(completed === false && { CompletedDate: null }),
+        ...(completed === true && {
+          CompletedDate: { [Sequelize.Op.ne]: null },
+        }),
+      },
       include: [
         {
-          model: Patient,
-          as: "patient",
-          attributes: [],
-          where: {
-            UserId: userId,
-            ...(patientId && { PatientId: patientId }),
-          },
-        },
-        {
-          model: PatientProcedure,
-          as: "patientProcedures",
+          model: Visit,
+          as: "visit",
           attributes: [
-            ["PatientProcedureId", "id"],
-            ["ToothNumber", "toothNumber"],
-            ["CompletedDate", "completedDate"],
-            ["Price", "price"],
+            ["VisitId", "id"],
+            ["Title", "title"],
+            ["Description", "description"],
+            ["Discount", "discount"],
+            ["ApprovedDate", "approvedDate"],
           ],
-          where: {
-            ...(tooth && { ToothNumber: tooth }),
-            ...(completed === false && { CompletedDate: null }),
-            ...(completed === true && {
-              CompletedDate: { [Sequelize.Op.ne]: null },
-            }),
-          },
           include: [
             {
-              model: Procedure,
-              as: "procedure",
+              model: Patient,
+              as: "patient",
+              attributes: [],
+              where: {
+                UserId: userId,
+                ...(patientId && { PatientId: patientId }),
+              },
+            },
+          ],
+          required: true,
+        },
+        {
+          model: Procedure,
+          as: "procedure",
+          attributes: [
+            ["ProcedureId", "id"],
+            ["Code", "code"],
+            ["Name", "name"],
+            ["Price", "price"],
+          ],
+          include: [
+            {
+              model: ProcedureCategory,
+              as: "procedureCategory",
               attributes: [
-                ["ProcedureId", "id"],
-                ["Code", "code"],
-                ["Name", "name"],
-                ["Price", "price"],
-              ],
-              include: [
-                {
-                  model: ProcedureCategory,
-                  as: "procedureCategory",
-                  attributes: [
-                    ["ProcedureCategoryId", "id"],
-                    ["Title", "title"],
-                  ],
-                },
+                ["ProcedureCategoryId", "id"],
+                ["Title", "title"],
               ],
             },
           ],
@@ -81,11 +83,7 @@ exports.getPatientProcedures = async (req, res) => {
       ],
       order: [
         ["VisitId", "ASC"],
-        [
-          { model: PatientProcedure, as: "patientProcedures" },
-          "PatientProcedureId",
-          "ASC",
-        ],
+        ["PatientProcedureId", "ASC"],
       ],
     });
 
@@ -131,14 +129,19 @@ exports.savePatientProcedure = async (req, res) => {
     }
 
     // Visit record will be created if it does not exist
-    visit_ = await Visit.findOrCreate({
+    [visit_] = await Visit.findOrCreate({
       where: {
-        VisitId: visit?.id,
+        VisitId: visit?.id ?? null,
       },
       defaults: {
         PatientId: patientId,
       },
     });
+    if (visit_.ApprovedDate) {
+      return res
+        .status(400)
+        .send({ message: "Onaylanmış bir ziyaret için değişiklik yapılamaz" });
+    }
 
     // Create patient procedure record
     patientProcedure = await PatientProcedure.create({
@@ -167,7 +170,7 @@ exports.savePatientProcedure = async (req, res) => {
     };
     res.status(201).send(patientProcedure);
   } catch (error) {
-    res.status500.send(error);
+    res.status(500).send(error);
   }
 };
 
@@ -178,7 +181,7 @@ exports.savePatientProcedure = async (req, res) => {
  */
 exports.updatePatientProcedure = async (req, res) => {
   const { UserId: userId } = req.user;
-  const { patientProcedureId } = req.params;
+  const { patientProcedureId, patientId } = req.params;
   const { toothNumber, completedDate, visit, price } = req.body;
   let patientProcedure;
   let visit_;
@@ -218,14 +221,19 @@ exports.updatePatientProcedure = async (req, res) => {
 
     if (patientProcedure) {
       // Visit record will be created if it does not exist
-      visit_ = await Visit.findOrCreate({
+      [visit_] = await Visit.findOrCreate({
         where: {
-          VisitId: visit?.id,
+          VisitId: visit?.id ?? null,
         },
         defaults: {
-          PatientId: patientProcedure.visit.patient.PatientId,
+          PatientId: patientId,
         },
       });
+      if (visit_.ApprovedDate) {
+        return res.status(400).send({
+          message: "Onaylanmış bir ziyaret için değişiklik yapılamaz",
+        });
+      }
 
       // Update patient procedure record
       await patientProcedure.update({
@@ -286,14 +294,18 @@ exports.deletePatientProcedure = async (req, res) => {
       ],
     });
 
-    // Delete the patientProcedure if it exists
-    if (patientProcedure) {
-      await patientProcedure.destroy();
-
-      res.status(200).send({ id: patientProcedureId });
-    } else {
-      res.status(404).send({ message: "Tedavi mevcut değil" });
+    // Delete the patientProcedure if it exists and visit is not approved
+    if (!patientProcedure) {
+      return res.status(404).send({ message: "Tedavi mevcut değil" });
     }
+    if (patientProcedure.visit.ApprovedDate) {
+      return res.status(400).send({
+        message: "Onaylanmış bir ziyaret için değişiklik yapılamaz",
+      });
+    }
+    await patientProcedure.destroy();
+
+    res.status(200).send({ id: patientProcedureId });
   } catch (error) {
     res.status(500).send(error);
   }
