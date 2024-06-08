@@ -263,9 +263,9 @@ db.procedure.beforeBulkDestroy(async (options) => {
   }
 });
 
-// Hook to delete invoices after patientProcedure update
+// Hook to delete visits after patientProcedure update
 db.patientProcedure.afterUpdate(async (patientProcedure) => {
-  // Get the previous invoice ID
+  // Get the previous visit ID
   const previousVisitId = patientProcedure._previousDataValues.VisitId;
 
   if (previousVisitId) {
@@ -285,8 +285,8 @@ db.patientProcedure.afterUpdate(async (patientProcedure) => {
   }
 });
 
-// Control if there is empty invoice when delete patientProcedure,
-// if empty then destroy invoice
+// Control if there is empty visit when delete patientProcedure,
+// if empty then destroy visit
 db.patientProcedure.afterDestroy(async (patientProcedure) => {
   const visit = await db.visit.findOne({
     where: {
