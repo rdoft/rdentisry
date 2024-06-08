@@ -32,7 +32,7 @@ function ProcedureList({
     const existingProcedure = acc.find(
       (item) =>
         item.procedure.id === curr.procedure.id &&
-        item.invoice.id === curr.invoice.id &&
+        item.visit.id === curr.visit.id &&
         item.price === curr.price &&
         ((item.completedDate && curr.completedDate) ||
           (!item.completedDate && !curr.completedDate))
@@ -58,12 +58,12 @@ function ProcedureList({
     return acc;
   }, []);
 
-  // Calculate the total price of the invoice
-  const calcInvoiceTotal = (invoiceId) => {
+  // Calculate the total price of the visit
+  const calcVisitTotal = (visitId) => {
     let total = 0;
 
     for (let procedure of procedures) {
-      if (procedure.invoice.id === invoiceId) {
+      if (procedure.visit.id === visitId) {
         total += procedure.price;
       }
     }
@@ -154,16 +154,15 @@ function ProcedureList({
     return (
       <Grid
         container
-        className="invoice-header"
         style={{
           padding: "0.75rem 0.2rem",
         }}
       >
         <ProcedureListHeader
-          initInvoice={{
-            ...procedure.invoice,
+          initVisit={{
+            ...procedure.visit,
           }}
-          total={calcInvoiceTotal(procedure.invoice.id)}
+          total={calcVisitTotal(procedure.visit.id)}
           patient={patient}
           onUpdated={onUpdated}
         />
@@ -196,8 +195,8 @@ function ProcedureList({
         responsiveLayout="scroll"
         dataKey="id"
         rowGroupMode="subheader"
-        groupRowsBy="invoice.id"
-        sortField="invoice.id"
+        groupRowsBy="visit.id"
+        sortField="visit.id"
         sortMode="single"
         sortOrder={-1}
         scrollable

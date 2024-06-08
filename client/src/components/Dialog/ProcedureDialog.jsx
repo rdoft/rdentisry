@@ -27,7 +27,7 @@ function ProcedureDialog({
   const [patientProcedure, setPatientProcedure] = useState({
     patient: null,
     procedure: null,
-    invoice: null,
+    visit: null,
     ...initPatientProcedure,
   });
   // Validations

@@ -3,41 +3,41 @@ import { useNavigate } from "react-router-dom";
 import { errorHandler } from "utils";
 import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
-import InvoiceTitle from "./InvoiceTitle";
-import InvoiceDiscount from "./InvoiceDiscount";
-import InvoicePrice from "./InvoicePrice";
+import VisitTitle from "./VisitTitle";
+import VisitDiscount from "./VisitDiscount";
+import VisitPrice from "./VisitPrice";
 
 // services
-import { InvoiceService } from "services";
+import { VisitService } from "services";
 
-function ProcedureListHeader({ initInvoice, total, patient, onUpdated }) {
+function ProcedureListHeader({ initVisit, total, patient, onUpdated }) {
   const navigate = useNavigate();
 
   const price = useRef(total);
-  const [invoice, setInvoice] = useState({
-    ...initInvoice,
-    price: total * ((100 - initInvoice.discount) / 100),
+  const [visit, setVisit] = useState({
+    ...initVisit,
+    price: total * ((100 - initVisit.discount) / 100),
   });
 
   useEffect(() => {
     price.current = total;
-    setInvoice({
-      ...initInvoice,
-      price: total * ((100 - initInvoice.discount) / 100),
+    setVisit({
+      ...initVisit,
+      price: total * ((100 - initVisit.discount) / 100),
     });
-  }, [total, initInvoice]);
+  }, [total, initVisit]);
 
   // SERVICES -----------------------------------------------------------------
-  // Save the invoice
-  const updateInvoice = async (invoice) => {
+  // Save the visit
+  const updateVisit = async (visit) => {
     try {
-      await InvoiceService.updateInvoice({
-        ...invoice,
+      await VisitService.updateVisit({
+        ...visit,
         patient: patient,
       });
 
-      // Set the updated invoice
-      setInvoice(invoice);
+      // Set the updated visit
+      setVisit(visit);
       onUpdated(patient.id);
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -48,13 +48,13 @@ function ProcedureListHeader({ initInvoice, total, patient, onUpdated }) {
   // HANDLERS -----------------------------------------------------------------
   // onTitleSubmit handler
   const handleTitleSubmit = (value) => {
-    updateInvoice({ ...invoice, title: value });
+    updateVisit({ ...visit, title: value });
   };
 
   // onDiscountSubmit handler
   const handleDiscountSubmit = (value) => {
-    updateInvoice({
-      ...invoice,
+    updateVisit({
+      ...visit,
       discount: value,
       price: price.current * ((100 - value) / 100),
     });
@@ -71,8 +71,8 @@ function ProcedureListHeader({ initInvoice, total, patient, onUpdated }) {
       discount = (1 - value / price.current) * 100;
     }
 
-    updateInvoice({
-      ...invoice,
+    updateVisit({
+      ...visit,
       discount: discount,
       price: value,
     });
@@ -82,20 +82,19 @@ function ProcedureListHeader({ initInvoice, total, patient, onUpdated }) {
     <Grid
       container
       justifyContent="space-between"
-      className="invoice-header"
       style={{
         padding: "0 0.2rem",
       }}
     >
       <Grid item xs={9}>
-        {/* Tİtle */}
-        <InvoiceTitle invoice={invoice} onSubmit={handleTitleSubmit} />
+        {/* Title */}
+        <VisitTitle visit={visit} onSubmit={handleTitleSubmit} />
       </Grid>
       <Grid item xl={2} xs={3}>
         {/* Discount */}
-        <InvoiceDiscount invoice={invoice} onSubmit={handleDiscountSubmit} />
+        <VisitDiscount visit={visit} onSubmit={handleDiscountSubmit} />
         {/* Total */}
-        <InvoicePrice invoice={invoice} onSubmit={handlePriceSubmit} />
+        <VisitPrice visit={visit} onSubmit={handlePriceSubmit} />
       </Grid>
     </Grid>
   );

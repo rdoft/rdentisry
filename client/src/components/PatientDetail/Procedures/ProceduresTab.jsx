@@ -15,7 +15,7 @@ import "assets/styles/PatientDetail/ProceduresTab.css";
 import { ListIcon, TeethIcon } from "assets/images/icons";
 
 // services
-import { PatientProcedureService, InvoiceService } from "services";
+import { PatientProcedureService, VisitService } from "services";
 
 function ProceduresTab({
   patient,
@@ -31,7 +31,7 @@ function ProceduresTab({
   const [procedures, setProcedures] = useState([]);
   const [selectedTeeth, setSelectedTeeth] = useState([0]);
   const [selectedProcedures, setSelectedProcedures] = useState(null);
-  const [invoices, setInvoices] = useState([]);
+  const [visits, setVisits] = useState([]);
 
   // Add keydown event listener
   // when component mounts and remove it when unmounts
@@ -70,9 +70,9 @@ function ProceduresTab({
         code === 401 ? navigate(`/login`) : toast.error(message);
       });
 
-    InvoiceService.getInvoices({ patientId: patient.id }, { signal })
+    VisitService.getVisits({ patientId: patient.id }, { signal })
       .then((res) => {
-        setInvoices(res.data);
+        setVisits(res.data);
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
@@ -143,7 +143,7 @@ function ProceduresTab({
 
       // Get and set the updated list of procedures
       getProcedures(patient.id);
-      getInvoices(patient.id);
+      getVisits(patient.id);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -169,37 +169,37 @@ function ProceduresTab({
 
       // Get and set the updated list of procedures
       getProcedures(patient.id);
-      getInvoices(patient.id);
+      getVisits(patient.id);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
-  // Create the default invoice for the patient procedures
-  const createInvoice = async (procedures) => {
+  // Create the default visit for the patient procedures
+  const createVisit = async (procedures) => {
     try {
-      await InvoiceService.saveInvoice(patient.id, procedures);
+      await VisitService.saveVisit(patient.id, procedures);
 
       // Get and set the updated list of procedures
       getProcedures(patient.id);
-      getInvoices(patient.id);
+      getVisits(patient.id);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
-  // Get invoices for a given patientId
-  const getInvoices = async (patientId) => {
+  // Get visits for a given patientId
+  const getVisits = async (patientId) => {
     let response;
-    let invoices;
+    let visits;
 
     try {
-      response = await InvoiceService.getInvoices({ patientId });
-      invoices = response.data;
+      response = await VisitService.getVisits({ patientId });
+      visits = response.data;
 
-      setInvoices(invoices);
+      setVisits(visits);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -221,7 +221,7 @@ function ProceduresTab({
   // onUpdated handler
   const handleUpdated = (patientId) => {
     getProcedures(patientId);
-    getInvoices(patientId);
+    getVisits(patientId);
   };
 
   // onChange handler for the tabs
@@ -229,15 +229,15 @@ function ProceduresTab({
     setTabIndex(newValue);
   };
 
-  // onSelect handler for the invoice of patientProcedure
-  const handleSelectInvoice = (invoice) => {
+  // onSelect handler for the visit of patientProcedure
+  const handleSelectVisit = (visit) => {
     const updatedProcedures = [];
     for (let procedure of selectedProcedures) {
       for (let i = 0; i < procedure.ids.length; i++) {
         const found = procedures.find((item) => item.id === procedure.ids[i]);
         updatedProcedures.push({
           ...found,
-          invoice: invoice,
+          visit: visit,
           patient: patient,
         });
       }
@@ -247,27 +247,27 @@ function ProceduresTab({
     saveProcedure(updatedProcedures);
   };
 
-  // onSelect handler for creating new invoice of patientProcedure
-  const handleCreateInvoice = () => {
+  // onSelect handler for creating new visit of patientProcedure
+  const handleCreateVisit = () => {
     const updatedProcedures = [];
     for (let procedure of selectedProcedures) {
       for (let i = 0; i < procedure.ids.length; i++) {
         const found = procedures.find((item) => item.id === procedure.ids[i]);
         updatedProcedures.push({
           ...found,
-          invoice: null,
+          visit: null,
           patient: patient,
         });
       }
     }
 
     setSelectedProcedures(null);
-    createInvoice(updatedProcedures);
+    createVisit(updatedProcedures);
   };
 
-  const invoiceOptions = invoices.map((invoice) => ({
-    label: `📌 ${invoice.title}`,
-    command: () => handleSelectInvoice(invoice),
+  const visitOptions = visits.map((visit) => ({
+    label: `📌 ${visit.title}`,
+    command: () => handleSelectVisit(visit),
   }));
 
   return (
@@ -325,7 +325,7 @@ function ProceduresTab({
       </Grid>
 
       <Grid container justifyContent="center" mt={3}>
-        {/* Select Invoice */}
+        {/* Select Visit */}
         {selectedProcedures?.length > 0 && (
           <Grid item xs={6} md={4} mt={2} style={{ textAlign: "center" }}>
             <SplitButton
@@ -335,8 +335,8 @@ function ProceduresTab({
               icon="pi pi-plus"
               label="Plan Oluştur"
               menuStyle={{ borderRadius: "0.5rem", color: "#182A4D" }}
-              model={invoiceOptions}
-              onClick={handleCreateInvoice}
+              model={visitOptions}
+              onClick={handleCreateVisit}
             />
           </Grid>
         )}
@@ -351,9 +351,9 @@ function ProceduresTab({
         <ProcedureDialog
           initPatientProcedure={{
             patient,
-            invoice: procedures.sort(
-              (a, b) => new Date(b?.invoice.id) - new Date(a?.invoice.id)
-            )[0]?.invoice,
+            visit: procedures.sort(
+              (a, b) => new Date(b?.visit.id) - new Date(a?.visit.id)
+            )[0]?.visit,
           }}
           selectedTeeth={selectedTeeth}
           onChangeTeeth={handleChangeTeeth}

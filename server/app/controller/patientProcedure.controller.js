@@ -279,7 +279,7 @@ exports.deletePatientProcedure = async (req, res) => {
         {
           model: Visit,
           as: "visit",
-          attributes: [],
+          attributes: ["ApprovedDate"],
           include: [
             {
               model: Patient,

@@ -3,9 +3,9 @@ import { Grid, Typography, Tooltip, ClickAwayListener } from "@mui/material";
 import { InputText } from "primereact";
 import { Cancel } from "components/Button";
 
-function InvoiceTitle({ invoice, onSubmit }) {
-  const prevTitle = useRef(invoice.title);
-  const [title, setTitle] = useState(invoice.title);
+function VisitTitle({ visit, onSubmit }) {
+  const prevTitle = useRef(visit.title);
+  const [title, setTitle] = useState(visit.title);
   const [isEdit, setIsEdit] = useState(false);
 
   // HANDLERS -----------------------------------------------------------------
@@ -91,4 +91,4 @@ function InvoiceTitle({ invoice, onSubmit }) {
   );
 }
 
-export default InvoiceTitle;
+export default VisitTitle;

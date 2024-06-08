@@ -7,7 +7,7 @@ import note from "./note.service";
 import procedure from "./procedure.service";
 import patientProcedure from "./patientProcedure.service";
 import procedureCategory from "./procedureCategory.service";
-import visit from "./invoice.service";
+import visit from "./visit.service";
 import auth from "./auth.service";
 
 const PatientService = patient;
@@ -19,7 +19,7 @@ const NoteService = note;
 const ProcedureService = procedure;
 const PatientProcedureService = patientProcedure;
 const ProcedureCategoryService = procedureCategory;
-const InvoiceService = visit;
+const VisitService = visit;
 const AuthService = auth;
 
 export {
@@ -32,6 +32,6 @@ export {
   ProcedureService,
   PatientProcedureService,
   ProcedureCategoryService,
-  InvoiceService,
+  VisitService,
   AuthService,
 };

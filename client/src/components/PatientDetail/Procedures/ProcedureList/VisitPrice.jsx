@@ -3,16 +3,16 @@ import { Grid, Typography, Tooltip, ClickAwayListener } from "@mui/material";
 import { InputNumber } from "primereact";
 import { Cancel } from "components/Button";
 
-function InvoiceDiscount({ invoice, onSubmit }) {
-  const prevDiscount = useRef(invoice.discount);
-  const [discount, setDiscount] = useState(invoice.discount);
+function VisitPrice({ visit, onSubmit }) {
+  const prevPrice = useRef(visit.price);
+  const [price, setPrice] = useState(visit.price);
   const [isEdit, setIsEdit] = useState(false);
 
-  // Update component state when invoice prop changes
+  // Update component state when visit prop changes
   useEffect(() => {
-    setDiscount(invoice.discount);
-    prevDiscount.current = invoice.discount;
-  }, [invoice]);
+    setPrice(visit.price);
+    prevPrice.current = visit.price;
+  }, [visit]);
 
   // HANDLERS -----------------------------------------------------------------
   // onEdit handler
@@ -22,19 +22,19 @@ function InvoiceDiscount({ invoice, onSubmit }) {
 
   // onChange handler
   const handleChange = (event) => {
-    setDiscount(event.value || 0);
+    setPrice(event.value || 0);
   };
 
   // onSave handler, to save changes
   const handleSave = () => {
-    prevDiscount.current = discount;
+    prevPrice.current = price;
     setIsEdit(false);
-    onSubmit(discount);
+    onSubmit(price);
   };
 
   // onCancel handler, discard changes to amount
   const handleCancel = () => {
-    setDiscount(prevDiscount.current);
+    setPrice(prevPrice.current);
     setIsEdit(false);
   };
 
@@ -54,22 +54,17 @@ function InvoiceDiscount({ invoice, onSubmit }) {
       <Grid item xs={10} my={1}>
         <ClickAwayListener onClickAway={handleClickAway}>
           <InputNumber
-            id="discount"
-            value={discount}
-            mode="decimal"
-            prefix="%"
-            maxFractionDigits={2}
+            id="price"
+            value={price}
+            mode="currency"
             min={0}
-            max={100}
+            currency="TRY"
+            locale="tr-TR"
             variant="outlined"
             autoFocus={true}
             className="w-full"
-            inputStyle={{
-              padding: "8px",
-              textAlign: "right",
-              fontSize: "0.875rem",
-            }}
-            style={{ padding: "1px" }}
+            inputStyle={{ padding: "8px", textAlign: "right" }}
+            style={{ padding: "2px" }}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
@@ -80,7 +75,7 @@ function InvoiceDiscount({ invoice, onSubmit }) {
       </Grid>
     </Grid>
   ) : (
-    <Tooltip title="Oranı düzenle" placement="bottom-start" enterDelay={500}>
+    <Tooltip title="Tutarı düzenle" placement="bottom-start" enterDelay={500}>
       <Grid
         container
         item
@@ -96,18 +91,16 @@ function InvoiceDiscount({ invoice, onSubmit }) {
           },
         }}
       >
-        <Typography variant="caption">
-          İndirim: %{" "}
-          {discount
-            ? discount.toLocaleString("tr-TR", {
-                style: "decimal",
-                maximumFractionDigits: 2,
-              })
-            : 0}
+        <Typography variant="h5" fontWeight="bolder">
+          Toplam: ₺
+          {price.toLocaleString("tr-TR", {
+            style: "decimal",
+            maximumFractionDigits: 2,
+          })}
         </Typography>
       </Grid>
     </Tooltip>
   );
 }
 
-export default InvoiceDiscount;
+export default VisitPrice;
