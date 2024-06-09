@@ -52,6 +52,15 @@ exports.getVisits = async (req, res) => {
       nest: true,
     });
 
+    // Find total price of patient procedures for each visit
+    for (const visit of visits) {
+      visit.price = await PatientProcedure.sum("Price", {
+        where: {
+          VisitId: visit.id,
+        },
+      });
+    }
+
     res.status(200).send(visits);
   } catch (error) {
     res.status(500).send(error);

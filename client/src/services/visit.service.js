@@ -7,8 +7,11 @@ let visit = {};
  * Get visits for a given patientId
  * @param patientId id of the patient
  */
-visit.getVisits = ({ patientId }, options) => {
-  return API.get(`${API_URL}/patients/${patientId}/visits`);
+visit.getVisits = (patientId, approved = null, options = {}) => {
+  return API.get(
+    `${API_URL}/patients/${patientId}/visits?approved=${approved}`,
+    options
+  );
 };
 
 /**

@@ -15,11 +15,11 @@ function StatisticCard({ label, amount, ...props }) {
     >
       <Typography variant="h6">{label}</Typography>
       <Grid container alignItems="center" justifyContent="center">
-        <Grid item pr={1}>
-          <Typography variant="h6">₺</Typography>
-        </Grid>
         <Grid item>
-          <Typography variant="h1" fontWeight="light">
+          <Typography variant="h5" component="span">
+            ₺
+          </Typography>
+          <Typography variant="h1" component="span" fontWeight="bold">
             {amount.toLocaleString("tr-TR", {
               style: "decimal",
               maximumFractionDigits: 2,

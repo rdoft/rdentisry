@@ -70,7 +70,7 @@ function ProceduresTab({
         code === 401 ? navigate(`/login`) : toast.error(message);
       });
 
-    VisitService.getVisits({ patientId: patient.id }, { signal })
+    VisitService.getVisits(patient.id, true, { signal })
       .then((res) => {
         setVisits(res.data);
       })
@@ -196,7 +196,7 @@ function ProceduresTab({
     let visits;
 
     try {
-      response = await VisitService.getVisits({ patientId });
+      response = await VisitService.getVisits(patientId);
       visits = response.data;
 
       setVisits(visits);
