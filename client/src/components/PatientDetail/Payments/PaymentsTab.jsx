@@ -220,76 +220,68 @@ function PaymentsTab({
   return (
     <>
       <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
-        {(payments.length === 0) & (plannedPayments.length === 0) ? (
-          <NotFoundText text="Ödeme yok" p={3} m={3} />
-        ) : (
-          <Grid container alignItems="center" justifyContent="center" mt={2}>
-            {/* Statistics */}
-            <PaymentStatistic
-              totalAmount={total}
-              completedAmount={completedAmount}
-              waitingAmount={waitingAmount}
-              overdueAmount={overdueAmount}
-            />
+        <Grid container alignItems="center" justifyContent="center" mt={2}>
+          {/* Statistics */}
+          <PaymentStatistic
+            totalAmount={total}
+            completedAmount={completedAmount}
+            waitingAmount={waitingAmount}
+            overdueAmount={overdueAmount}
+          />
 
-            {/* Progressbar */}
-            <Grid item xs={8} pb={6}>
-              <ProgressBar
-                value={progress}
-                color="#22A06A"
-                className="border-round-2xl"
-                showValue={false}
-              ></ProgressBar>
+          {/* Progressbar */}
+          <Grid item xs={8} pb={6}>
+            <ProgressBar
+              value={progress}
+              color="#22A06A"
+              className="border-round-2xl"
+              showValue={false}
+            ></ProgressBar>
+          </Grid>
+
+          {/* Timeline */}
+          <Grid container item md={10} xs={12} justifyContent="center" pb={2}>
+            {/* PaymentPlan Timeline */}
+            <Grid item md={5} xs={6}>
+              <CardTitle
+                style={{ textAlign: "center", marginBottom: 5, marginX: 20 }}
+              >
+                Ödeme Planı
+              </CardTitle>
+              <Timeline
+                value={plannedPayments}
+                marker={paymentMarker}
+                content={paymentContent}
+                opposite={paymentDate}
+              />
+              {/* Add payment plan */}
+              <NewItem label="Ödeme Planı Ekle" onClick={handlePlanDialog} />
             </Grid>
 
-            {/* Timeline */}
-            <Grid container item md={10} xs={12} justifyContent="center">
-              <Grid item md={5} xs={6}>
-                <CardTitle
-                  style={{ textAlign: "center", marginBottom: 5, marginX: 20 }}
-                >
-                  Ödeme Planı
-                </CardTitle>
-                <Timeline
-                  value={plannedPayments}
-                  marker={paymentMarker}
-                  content={paymentContent}
-                  opposite={paymentDate}
-                />
-              </Grid>
-              <Grid item md={5} xs={6}>
-                <CardTitle
-                  style={{ textAlign: "center", marginBottom: 5, marginX: 20 }}
-                >
-                  Ödemeler
-                </CardTitle>
-                <Timeline
-                  value={payments}
-                  marker={paymentMarker}
-                  content={paymentContent}
-                  opposite={paymentDate}
-                />
-              </Grid>
+            {/* Payment Timeline */}
+            <Grid item md={5} xs={6}>
+              <CardTitle
+                style={{ textAlign: "center", marginBottom: 5, marginX: 20 }}
+              >
+                Ödemeler
+              </CardTitle>
+              <Timeline
+                value={payments}
+                marker={paymentMarker}
+                content={paymentContent}
+                opposite={paymentDate}
+              />
+              {/* Add payment */}
+              <NewItem label="Ödeme Ekle" onClick={handlePaymentDialog} />
             </Grid>
           </Grid>
-        )}
+        </Grid>
       </div>
-
-      <Grid container justifyContent="center" mt={3}>
-        <Grid item xs={6} md={4}>
-          {/* Add payment */}
-          <NewItem label="Ödeme Planı Ekle" onClick={handlePlanDialog} />
-        </Grid>
-        <Grid item xs={6} md={4}>
-          {/* Add payment Plan */}
-          <NewItem label="Ödeme Ekle" onClick={handlePaymentDialog} />
-        </Grid>
-      </Grid>
 
       {/* Payment dialog */}
       {paymentDialog === "payment" && (
         <PaymentDialog
-          initPayment={payment ? payment : { patient }}
+          initPayment={payment ? payment : { patient, amount: waitingAmount }}
           onHide={handleHideDialog}
           onSubmit={savePayment}
           onDelete={payment && deletePayment}
@@ -300,6 +292,7 @@ function PaymentsTab({
       {paymentDialog === "plan" && (
         <PaymentPlanDialog
           patient={patient}
+          initAmount={waitingAmount}
           onHide={handleHideDialog}
           onSubmit={savePayments}
         />

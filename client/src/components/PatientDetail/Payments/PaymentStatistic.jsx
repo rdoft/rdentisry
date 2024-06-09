@@ -34,7 +34,7 @@ export function PaymentStatistic({
           color="#1E7AFC"
         ></StatisticCard>
       </Grid>
-      {/* {overdueAmount !== 0 && ( */}
+      {/* {overdueAmount !== 0 && (
       <Grid item xs={3} md={2}>
         <StatisticCard
           label={"Vadesi Geçen"}
@@ -43,7 +43,7 @@ export function PaymentStatistic({
           color="#EF4444"
         ></StatisticCard>
       </Grid>
-      {/* )} */}
+      )} */}
     </Grid>
   );
 }

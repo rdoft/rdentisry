@@ -10,14 +10,13 @@ const calcProgress = (payments, plannedPayments, total) => {
     return acc + payment.amount;
   }, 0);
 
-  for (let payment of plannedPayments) {
+  for (let plannedPayment of plannedPayments) {
     // Calc overdue payment
-    if (new Date(payment.plannedDate) < new Date()) {
-      overdue += payment.amount;
+    if (new Date(plannedPayment.plannedDate) < new Date()) {
+      overdue += plannedPayment.amount - plannedPayment.paid;
     }
   }
 
-  overdue = overdue - completed > 0 ? overdue - completed : 0;
   waiting = total - completed > 0 ? total - completed : 0;
   progress =
     total > 0 ? Math.floor((completed / total) * 100) : completed > 0 ? 100 : 0;

@@ -12,12 +12,12 @@ import schema from "schemas/payment.schema";
 // services
 import { PatientService } from "services";
 
-function PaymentPlanDialog({ patient, onHide, onSubmit }) {
+function PaymentPlanDialog({ patient, initAmount = 0, onHide, onSubmit }) {
   const navigate = useNavigate();
 
   const [patients, setPatients] = useState(null);
   const [instalment, setInstalment] = useState(1);
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState(initAmount);
   const [dates, setDates] = useState([]);
 
   // Validation of payments object & properties

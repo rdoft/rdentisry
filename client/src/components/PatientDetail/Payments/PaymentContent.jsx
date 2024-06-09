@@ -31,6 +31,7 @@ function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
       patient: payment.patient,
       amount: payment.amount - payment.paid,
       actualDate: new Date(),
+      isPlanned: true,
     });
   };
 

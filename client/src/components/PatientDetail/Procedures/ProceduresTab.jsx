@@ -90,6 +90,10 @@ function ProceduresTab({
     (procedure) =>
       selectedTeeth.includes(0) || selectedTeeth.includes(procedure.toothNumber)
   );
+  // Get the recent visit of the patient
+  const recentVisit = procedures.sort(
+    (a, b) => new Date(b?.visit.id) - new Date(a?.visit.id)
+  )[0]?.visit;
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of the procedures of the patient and set procedures value
@@ -351,9 +355,8 @@ function ProceduresTab({
         <ProcedureDialog
           initPatientProcedure={{
             patient,
-            visit: procedures.sort(
-              (a, b) => new Date(b?.visit.id) - new Date(a?.visit.id)
-            )[0]?.visit,
+            visit:
+              recentVisit && !recentVisit.approvedDate ? recentVisit : null,
           }}
           selectedTeeth={selectedTeeth}
           onChangeTeeth={handleChangeTeeth}
