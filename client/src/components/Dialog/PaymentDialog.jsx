@@ -22,8 +22,8 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
     patient: null,
     type: "",
     amount: 0,
-    plannedDate: null,
     actualDate: new Date(),
+    isPlanned: false,
     ...initPayment,
   });
   // Validation of payment object & properties
@@ -63,16 +63,6 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
 
     switch (name) {
       case "actualDate":
-        value = value
-          ? new Date(
-              Date.UTC(value.getFullYear(), value.getMonth(), value.getDate())
-            )
-          : null;
-
-        _isError["date"] =
-          schema[name].validate(value).error || !value ? true : false;
-        break;
-      case "plannedDate":
         value = value
           ? new Date(
               Date.UTC(value.getFullYear(), value.getMonth(), value.getDate())

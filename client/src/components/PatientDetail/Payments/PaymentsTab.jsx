@@ -4,18 +4,21 @@ import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { Timeline, ProgressBar } from "primereact";
-import { calcProgress, calcCompletedPayment } from "utils";
 import { CardTitle } from "components/cards";
 import { PaymentDialog, PaymentPlanDialog } from "components/Dialog";
 import { NewItem } from "components/Button";
+import { calcProgress } from "utils";
 import NotFoundText from "components/Text/NotFoundText";
 import PaymentStatistic from "./PaymentStatistic";
 import PaymentMarker from "./PaymentMarker";
 import PaymentDateTag from "./PaymentDateTag";
 import PaymentContent from "./PaymentContent";
 
+// assets
+import "assets/styles/PatientDetail/PaymentsTab.css";
+
 // services
-import { PaymentService } from "services";
+import { PaymentService, VisitService } from "services";
 
 function PaymentsTab({
   patient,
@@ -28,6 +31,7 @@ function PaymentsTab({
   const navigate = useNavigate();
 
   // Set the default values
+  const [total, setTotal] = useState(0);
   const [payment, setPayment] = useState(null);
   const [payments, setPayments] = useState([]);
   const [plannedPayments, setPlannedPayments] = useState([]);
@@ -37,15 +41,37 @@ function PaymentsTab({
     const controller = new AbortController();
     const signal = controller.signal;
 
-    PaymentService.getPayments(patient.id, { signal })
+    // Set the payments
+    PaymentService.getPayments(patient.id, false, { signal })
       .then((res) => {
-        // Set the payments and planned payments
-        let payments = res.data.filter((payment) => payment.actualDate);
-        let plannedPayments = res.data.filter((payment) => payment.plannedDate);
-        plannedPayments = calcCompletedPayment(payments, plannedPayments);
+        setPayments(res.data);
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
 
-        setPayments(payments);
-        setPlannedPayments(plannedPayments);
+    // Set planned payments
+    PaymentService.getPayments(patient.id, true, { signal })
+      .then((res) => {
+        setPlannedPayments(res.data);
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
+    // Set total payment
+    VisitService.getVisits(patient.id, true, { signal })
+      .then((res) => {
+        setTotal(
+          res.data.reduce(
+            (acc, visit) => acc + visit.price * ((100 - visit.discount) / 100),
+            0
+          )
+        );
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
@@ -60,26 +86,24 @@ function PaymentsTab({
 
   // Calculate the payments percentage
   const { progress, completedAmount, waitingAmount, overdueAmount } =
-    calcProgress(payments, plannedPayments);
+    calcProgress(payments, plannedPayments, total);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of payments of the patient and set payments value
   const getPayments = async (patientId) => {
     let response;
-    let payments;
-    let plannedPayments;
+    let countPayment;
 
     try {
       response = await PaymentService.getPayments(patientId);
-      payments = response.data.filter((payment) => payment.actualDate);
-      plannedPayments = response.data.filter((payment) => payment.plannedDate);
-      plannedPayments = calcCompletedPayment(payments, plannedPayments);
+      countPayment = response.data.length;
+      setPayments(response.data);
+      response = await PaymentService.getPayments(patientId, true);
+      setPlannedPayments(response.data);
 
-      setPayments(payments);
-      setPlannedPayments(plannedPayments);
       setCounts({
         ...counts,
-        payment: payments.length,
+        payment: countPayment,
       });
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -90,12 +114,14 @@ function PaymentsTab({
   // Save payment (create/update)
   const savePayment = async (payment) => {
     try {
+      const plan = payment.plannedDate ? true : false;
+
       // If update payment, then update and return
       if (payment.id) {
-        await PaymentService.updatePayment(payment.id, payment);
+        await PaymentService.updatePayment(payment.id, payment, plan);
       } else {
         // If create payment, then create payment
-        await PaymentService.savePayment(payment);
+        await PaymentService.savePayment(payment, plan);
       }
 
       // Get and set the updated list of payments
@@ -113,7 +139,8 @@ function PaymentsTab({
     try {
       // Create all payments
       for (let payment of payments) {
-        await PaymentService.savePayment(payment);
+        const plan = payment.plannedDate ? true : false;
+        await PaymentService.savePayment(payment, plan);
       }
 
       // Get and set the updated list of payments
@@ -129,7 +156,8 @@ function PaymentsTab({
   //  Delete appointment
   const deletePayment = async (payment) => {
     try {
-      await PaymentService.deletePayment(payment.id);
+      const plan = payment.plannedDate ? true : false;
+      await PaymentService.deletePayment(payment.id, plan);
 
       // Get and set the updated list of payments
       getPayments(patient.id);
@@ -198,6 +226,7 @@ function PaymentsTab({
           <Grid container alignItems="center" justifyContent="center" mt={2}>
             {/* Statistics */}
             <PaymentStatistic
+              totalAmount={total}
               completedAmount={completedAmount}
               waitingAmount={waitingAmount}
               overdueAmount={overdueAmount}
