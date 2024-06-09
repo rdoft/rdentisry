@@ -26,7 +26,6 @@ exports.getPayments = async (req, res) => {
           ["Amount", "amount"],
           ["PlannedDate", "plannedDate"],
         ],
-        order: [["PlannedDate", "ASC"]],
         include: [
           {
             model: Patient,
@@ -44,6 +43,10 @@ exports.getPayments = async (req, res) => {
               ...(patientId && { PatientId: patientId }),
             },
           },
+        ],
+        order: [
+          ["PlannedDate", "ASC"],
+          ["PaymentPlanId", "ASC"],
         ],
         raw: true,
         nest: true,
@@ -81,7 +84,6 @@ exports.getPayments = async (req, res) => {
           ["ActualDate", "actualDate"],
           ["IsPlanned", "isPlanned"],
         ],
-        order: [["ActualDate", "ASC"]],
         include: [
           {
             model: Patient,
@@ -99,6 +101,10 @@ exports.getPayments = async (req, res) => {
               ...(patientId && { PatientId: patientId }),
             },
           },
+        ],
+        order: [
+          ["ActualDate", "ASC"],
+          ["PaymentId", "ASC"],
         ],
         raw: true,
         nest: true,

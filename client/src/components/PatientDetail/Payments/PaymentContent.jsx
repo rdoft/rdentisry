@@ -35,6 +35,14 @@ function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
     });
   };
 
+  //  onClick isPlanned handler
+  const handleChangeReduce = (checked) => {
+    onSubmit({
+      ...payment,
+      isPlanned: checked,
+    });
+  };
+
   // onDelete handler
   const handleDelete = () => {
     setIsDelete(true);
@@ -80,7 +88,11 @@ function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
           {payment.plannedDate ? (
             <PaymentAmount amount={payment.amount} paid={payment.paid} />
           ) : (
-            <PaymentAmount amount={payment.amount} type={payment.type} />
+            <PaymentAmount
+              amount={payment.amount}
+              isReduce={payment.isPlanned}
+              onChange={handleChangeReduce}
+            />
           )}
         </Grid>
         <Grid

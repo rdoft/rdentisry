@@ -1,9 +1,16 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
 import { CardTitle } from "components/cards";
-import PaymentType from "./PaymentType";
+import { Reduce } from "components/Button";
 
-function PaymentAmount({ amount, paid, type }) {
+function PaymentAmount({ amount, paid, isReduce, onChange }) {
+  // HANDLERS -----------------------------------------------------------------
+  // onChnageReduce handler
+  const handleClickReduce = () => {
+    onChange(!isReduce);
+  };
+
+  // TEMPLATEs -----------------------------------------------------------------
   const _amount = amount.toLocaleString("tr-TR", {
     style: "decimal",
     maximumFractionDigits: 2,
@@ -37,8 +44,8 @@ function PaymentAmount({ amount, paid, type }) {
               {_amount}
             </CardTitle>
           </Grid>
-          <Grid item xs fontSize={12} alignContent="center" >
-            <PaymentType type={type} />
+          <Grid item xs fontSize={12} alignContent="center">
+            <Reduce isReduce={isReduce} onClick={handleClickReduce} />
           </Grid>
         </Grid>
       )}

@@ -10,6 +10,7 @@ import Prev from "./Prev";
 import Cancel from "./Cancel";
 import NewItem from "./NewItem";
 import Goto from "./Goto";
+import Reduce from "./Reduce";
 
 export {
   Add,
@@ -24,4 +25,5 @@ export {
   Cancel,
   NewItem,
   Goto,
+  Reduce,
 };
