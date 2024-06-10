@@ -221,16 +221,6 @@ function PaymentsTab({
     return <PaymentMarker payment={payment} />;
   };
 
-  // Warning of mismatch between remaining and waiting amount
-  const warning = (
-    <Tooltip title="Kalan tutar ile bekleyen ödeme planı tutarı uyuşmamaktadır. Lütfen ödeme planını kontrol edin.">
-      <i
-        className="pi pi-exclamation-triangle pl-3"
-        style={{ color: "#EF4444" }}
-      ></i>
-    </Tooltip>
-  );
-
   return (
     <>
       <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
@@ -264,9 +254,17 @@ function PaymentsTab({
                   marginX: 20,
                 }}
               >
-                Ödeme Planı
-                {/* Warning */}
-                {remainingAmount !== waitingAmount && warning}
+                {remainingAmount === waitingAmount ? (
+                  "Ödeme Planı"
+                ) : (
+                  <Tooltip title="Kalan tutar ile bekleyen ödeme planı tutarı uyuşmamaktadır. Lütfen ödeme planını kontrol edin.">
+                    Ödeme Planı
+                    <i
+                      className="pi pi-exclamation-triangle pl-3"
+                      style={{ color: "#EF4444" }}
+                    ></i>
+                  </Tooltip>
+                )}
               </CardTitle>
               <Timeline
                 value={plannedPayments}
