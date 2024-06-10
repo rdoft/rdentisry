@@ -258,11 +258,13 @@ function PaymentsTab({
                   "Ödeme Planı"
                 ) : (
                   <Tooltip title="Kalan tutar ile bekleyen ödeme planı tutarı uyuşmamaktadır. Lütfen ödeme planını kontrol edin.">
-                    Ödeme Planı
-                    <i
-                      className="pi pi-exclamation-triangle pl-3"
-                      style={{ color: "#EF4444" }}
-                    ></i>
+                    <>
+                      Ödeme Planı
+                      <i
+                        className="pi pi-exclamation-triangle pl-3"
+                        style={{ color: "#EF4444" }}
+                      ></i>
+                    </>
                   </Tooltip>
                 )}
               </CardTitle>
