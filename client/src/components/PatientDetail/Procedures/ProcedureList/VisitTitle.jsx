@@ -57,7 +57,7 @@ function VisitTitle({ visit, onSubmit }) {
             variant="outlined"
             autoFocus={true}
             className="w-full"
-            style={{ padding: "8px" }}
+            style={{ padding: "9px" }}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
           />

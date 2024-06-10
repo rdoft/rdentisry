@@ -9,6 +9,7 @@ import VisitPrice from "./VisitPrice";
 
 // services
 import { VisitService } from "services";
+import VisitStatus from "./VisitStatus";
 
 function ProcedureListHeader({ initVisit, total, patient, onUpdated }) {
   const navigate = useNavigate();
@@ -78,6 +79,14 @@ function ProcedureListHeader({ initVisit, total, patient, onUpdated }) {
     });
   };
 
+  // onStatusSubmit handler
+  const handleStatusSubmit = (value) => {
+    updateVisit({
+      ...visit,
+      approvedDate: value,
+    });
+  };
+
   return (
     <Grid
       container
@@ -89,6 +98,7 @@ function ProcedureListHeader({ initVisit, total, patient, onUpdated }) {
       <Grid item xs={9}>
         {/* Title */}
         <VisitTitle visit={visit} onSubmit={handleTitleSubmit} />
+        <VisitStatus visit={visit} onSubmit={handleStatusSubmit} />
       </Grid>
       <Grid item xl={2} xs={3}>
         {/* Discount */}
