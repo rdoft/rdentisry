@@ -83,7 +83,7 @@ function VisitDiscount({ visit, onSubmit }) {
     <Tooltip
       title={
         visit.approvedDate
-          ? "Ziyaret onaylandı, indirim oranı değiştirilemez"
+          ? "Tedavi planı onaylandı, indirim oranı değiştirilemez"
           : "İndirimi düzenle"
       }
       placement="bottom-start"

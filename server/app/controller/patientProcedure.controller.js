@@ -290,7 +290,7 @@ exports.deletePatientProcedure = async (req, res) => {
     }
     if (patientProcedure.visit.ApprovedDate) {
       return res.status(400).send({
-        message: "Onaylanmış bir ziyaret için değişiklik yapılamaz",
+        message: "Onaylanmış bir tedavi planı için değişiklik yapılamaz",
       });
     }
     await patientProcedure.destroy();

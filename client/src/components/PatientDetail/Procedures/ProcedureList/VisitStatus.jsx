@@ -1,5 +1,6 @@
 import React from "react";
 import { Dropdown, Tag } from "primereact";
+import { Tooltip } from "@mui/material";
 
 // assets
 import "assets/styles/PatientDetail/VisitStatus.css";
@@ -34,23 +35,58 @@ function VisitStatus({ visit, onSubmit }) {
   // Status value template
   const statusValueTemplate = (option) => {
     return (
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <i
-          className={
-            option.status === "approved"
-              ? "pi pi-check-circle"
-              : "pi pi-circle-fill"
+      <div
+        style={{ display: "flex", alignItems: "center", marginRight: "-4px" }}
+      >
+        <Tooltip
+          placement="right"
+          enterDelay={750}
+          title={
+            option.status === "approved" ? (
+              <>
+                <ul>
+                  <li>
+                    Tedavi planı onayı kaldırıldığında ücret ve indirim oranı
+                    üzerinde değişiklik yapılabilir
+                  </li>
+                  <li>Toplam tutar hasta borcundan eksiltilir</li>
+                  <li>
+                    Daha önce oluşturulmuş ödeme planı varsa otomatik olarak
+                    silinmez
+                  </li>
+                </ul>
+              </>
+            ) : (
+              <>
+                <ul>
+                  <li>
+                    Tedavi planı onaylandığında ücret ve indirim oranı üzerinde
+                    değişiklik yapılamaz
+                  </li>
+                  <li>Toplam tutar hasta borcuna yansıtılır</li>
+                  <li>Ödeme planı oluşturulabilir</li>
+                </ul>
+              </>
+            )
           }
-          style={{ color: option.color, marginRight: "2px" }}
-        ></i>
+        >
+          <i
+            className={
+              option.status === "approved"
+                ? "pi pi-check-circle"
+                : "pi pi-circle-fill"
+            }
+            style={{ color: option.color, marginRight: "2px" }}
+          ></i>
 
-        <Tag
-          value={option.label}
-          style={{
-            backgroundColor: option.bgColor,
-            color: option.color,
-          }}
-        />
+          <Tag
+            value={option.label}
+            style={{
+              backgroundColor: option.bgColor,
+              color: option.color,
+            }}
+          />
+        </Tooltip>
       </div>
     );
   };

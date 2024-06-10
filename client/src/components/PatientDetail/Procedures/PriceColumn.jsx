@@ -81,7 +81,7 @@ function PriceColumn({ procedure, onSubmit }) {
     <Tooltip
       title={
         procedure.visit.approvedDate
-          ? "Ziyaret onaylandı, tedavi tutarı değiştirilemez"
+          ? "Tedavi planı onaylandı, tedavi ücreti değiştirilemez"
           : "Tutarı düzenle"
       }
       placement="bottom-start"

@@ -151,7 +151,7 @@ exports.updateVisit = async (req, res) => {
       ],
     });
     if (!visit) {
-      res.status(404).send({ message: "Ziyaret bulunamadı" });
+      res.status(404).send({ message: "Tedavi planı bulunamadı" });
       return;
     }
 
@@ -197,11 +197,11 @@ exports.deleteVisit = async (req, res) => {
       ],
     });
     if (!visit) {
-      res.status(404).send({ message: "Ziyaret bulunamadı" });
+      res.status(404).send({ message: "Tedavi planı bulunamadı" });
       return;
     }
     if (visit.ApprovedDate) {
-      res.status(400).send({ message: "Onaylanmış ziyaret silinemez" });
+      res.status(400).send({ message: "Onaylanmış tedavi planı silinemez" });
       return;
     }
 
