@@ -29,3 +29,7 @@
 .p-splitbutton.p-button-text > .p-button {
   color: #182a4d;
 }
+
+.p-checkbox.p-component.p-disabled {
+  visibility: hidden;
+}

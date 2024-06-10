@@ -11,7 +11,13 @@ import VisitPrice from "./VisitPrice";
 import { VisitService } from "services";
 import VisitStatus from "./VisitStatus";
 
-function ProcedureListHeader({ initVisit, total, patient, onUpdated }) {
+function ProcedureListHeader({
+  initVisit,
+  total,
+  patient,
+  onUpdated,
+  setSelectedProcedures,
+}) {
   const navigate = useNavigate();
 
   const price = useRef(total);
@@ -81,6 +87,7 @@ function ProcedureListHeader({ initVisit, total, patient, onUpdated }) {
 
   // onStatusSubmit handler
   const handleStatusSubmit = (value) => {
+    setSelectedProcedures(null);
     updateVisit({
       ...visit,
       approvedDate: value,

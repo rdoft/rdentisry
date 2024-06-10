@@ -128,6 +128,9 @@ function ProcedureList({
     setRowIndex(null);
   };
 
+  const isRowSelectable = (event) =>
+    event.data.visit.approvedDate ? false : true;
+
   // TEMPLATES ----------------------------------------------------------------
   // Delete confirm dialog
   const deleteDialog = (
@@ -165,6 +168,7 @@ function ProcedureList({
           total={calcVisitTotal(procedure.visit.id)}
           patient={patient}
           onUpdated={onUpdated}
+          setSelectedProcedures={setSelectedProcedures}
         />
       </Grid>
     );
@@ -191,7 +195,7 @@ function ProcedureList({
         onSelectionChange={handleChangeSelection}
         onRowMouseEnter={handleRowMouseEnter}
         onRowMouseLeave={handleRowMouseLeave}
-        selectionMode="checkbox"
+        isDataSelectable={isRowSelectable}
         responsiveLayout="scroll"
         dataKey="id"
         rowGroupMode="subheader"
@@ -201,7 +205,6 @@ function ProcedureList({
         sortOrder={-1}
         scrollable
         size="small"
-        // scrollHeight="50vh"
         rowGroupHeaderTemplate={header}
         emptyMessage="Hiçbir işlem bulunamadı"
       >
@@ -246,7 +249,7 @@ function ProcedureList({
         {/* Procedure action buttons */}
         <Column
           body={(procedure) =>
-            procedure.id === rowIndex ? (
+            procedure.id === rowIndex && !procedure.visit.approvedDate ? (
               <Delete onClick={() => handleDelete(procedure)} />
             ) : null
           }

@@ -78,11 +78,19 @@ function PriceColumn({ procedure, onSubmit }) {
       </Grid>
     </Grid>
   ) : (
-    <Tooltip title="Tutarı düzenle" placement="bottom-start" enterDelay={500}>
+    <Tooltip
+      title={
+        procedure.visit.approvedDate
+          ? "Ziyaret onaylandı, tedavi tutarı değiştirilemez"
+          : "Tutarı düzenle"
+      }
+      placement="bottom-start"
+      enterDelay={500}
+    >
       <Grid
         container
         item
-        onClick={handleEdit}
+        onClick={!procedure.visit.approvedDate ? handleEdit : undefined}
         xs={10}
         py={0.5}
         pl={1}
@@ -90,7 +98,9 @@ function PriceColumn({ procedure, onSubmit }) {
         sx={{
           borderRadius: "8px",
           "&:hover": {
-            backgroundColor: "#f5f5f5",
+            backgroundColor: procedure.visit.approvedDate
+              ? "inherit"
+              : "#f5f5f5",
           },
         }}
       >

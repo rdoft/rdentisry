@@ -78,7 +78,7 @@ function VisitPrice({ visit, onSubmit }) {
     <Tooltip
       title={
         visit.approvedDate
-          ? "Tutarı düzenlemek için onayı kaldırın"
+          ? "Ziyaret onaylandı, toplam tutar değiştirilemez"
           : "Tutarı düzenle"
       }
       placement="bottom-start"
