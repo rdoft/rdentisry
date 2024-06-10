@@ -70,22 +70,24 @@ function VisitStatus({ visit, onSubmit }) {
             )
           }
         >
-          <i
-            className={
-              option.status === "approved"
-                ? "pi pi-check-circle"
-                : "pi pi-circle-fill"
-            }
-            style={{ color: option.color, marginRight: "2px" }}
-          ></i>
+          <>
+            <i
+              className={
+                option.status === "approved"
+                  ? "pi pi-check-circle"
+                  : "pi pi-circle-fill"
+              }
+              style={{ color: option.color, marginRight: "2px" }}
+            ></i>
 
-          <Tag
-            value={option.label}
-            style={{
-              backgroundColor: option.bgColor,
-              color: option.color,
-            }}
-          />
+            <Tag
+              value={option.label}
+              style={{
+                backgroundColor: option.bgColor,
+                color: option.color,
+              }}
+            />
+          </>
         </Tooltip>
       </div>
     );

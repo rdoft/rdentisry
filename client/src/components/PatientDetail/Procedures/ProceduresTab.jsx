@@ -27,7 +27,11 @@ function ProceduresTab({
 }) {
   const navigate = useNavigate();
 
-  const [tabIndex, setTabIndex] = useState(0);
+  const [tabIndex, setTabIndex] = useState(
+    localStorage.getItem("activeTabIndexProcedure")
+      ? parseInt(localStorage.getItem("activeTabIndexProcedure"))
+      : 0
+  );
   const [procedures, setProcedures] = useState([]);
   const [selectedTeeth, setSelectedTeeth] = useState([0]);
   const [selectedProcedures, setSelectedProcedures] = useState(null);
@@ -231,6 +235,7 @@ function ProceduresTab({
   // onChange handler for the tabs
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
+    localStorage.setItem("activeTabIndexProcedure", newValue);
   };
 
   // onSelect handler for the visit of patientProcedure
