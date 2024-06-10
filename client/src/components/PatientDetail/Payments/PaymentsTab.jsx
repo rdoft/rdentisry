@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
-import { Grid } from "@mui/material";
+import { Grid, Tooltip } from "@mui/material";
 import { Timeline, ProgressBar } from "primereact";
 import { CardTitle } from "components/cards";
 import { PaymentDialog, PaymentPlanDialog } from "components/Dialog";
@@ -84,8 +84,13 @@ function PaymentsTab({
   }, [navigate, patient]);
 
   // Calculate the payments percentage
-  const { progress, completedAmount, waitingAmount, overdueAmount } =
-    calcProgress(payments, plannedPayments, total);
+  const {
+    progress,
+    completedAmount,
+    remainingAmount,
+    overdueAmount,
+    waitingAmount,
+  } = calcProgress(payments, plannedPayments, total);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of payments of the patient and set payments value
@@ -216,6 +221,16 @@ function PaymentsTab({
     return <PaymentMarker payment={payment} />;
   };
 
+  // Warning of mismatch between remaining and waiting amount
+  const warning = (
+    <Tooltip title="Kalan tutar ile bekleyen ödeme planı tutarı uyuşmamaktadır. Lütfen ödeme planını kontrol edin.">
+      <i
+        className="pi pi-exclamation-triangle pl-3"
+        style={{ color: "#EF4444" }}
+      ></i>
+    </Tooltip>
+  );
+
   return (
     <>
       <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
@@ -224,7 +239,7 @@ function PaymentsTab({
           <PaymentStatistic
             totalAmount={total}
             completedAmount={completedAmount}
-            waitingAmount={waitingAmount}
+            waitingAmount={remainingAmount}
             overdueAmount={overdueAmount}
           />
 
@@ -243,9 +258,15 @@ function PaymentsTab({
             {/* PaymentPlan Timeline */}
             <Grid item md={5} xs={6}>
               <CardTitle
-                style={{ textAlign: "center", marginBottom: 5, marginX: 20 }}
+                style={{
+                  textAlign: "center",
+                  marginBottom: 5,
+                  marginX: 20,
+                }}
               >
                 Ödeme Planı
+                {/* Warning */}
+                {remainingAmount !== waitingAmount && warning}
               </CardTitle>
               <Timeline
                 value={plannedPayments}
@@ -280,7 +301,7 @@ function PaymentsTab({
       {/* Payment dialog */}
       {paymentDialog === "payment" && (
         <PaymentDialog
-          initPayment={payment ? payment : { patient, amount: waitingAmount }}
+          initPayment={payment ? payment : { patient, amount: remainingAmount }}
           onHide={handleHideDialog}
           onSubmit={savePayment}
           onDelete={payment && deletePayment}
@@ -291,7 +312,7 @@ function PaymentsTab({
       {paymentDialog === "plan" && (
         <PaymentPlanDialog
           patient={patient}
-          initAmount={waitingAmount}
+          initAmount={remainingAmount}
           onHide={handleHideDialog}
           onSubmit={savePayments}
         />
