@@ -80,19 +80,28 @@ function VisitDiscount({ visit, onSubmit }) {
       </Grid>
     </Grid>
   ) : (
-    <Tooltip title="Oranı düzenle" placement="bottom-start" enterDelay={500}>
+    <Tooltip
+      title={
+        visit.approvedDate
+          ? "İndirimi düzenlemek için onayı kaldırın"
+          : "İndirimi düzenle"
+      }
+      placement="bottom-start"
+      enterDelay={500}
+    >
       <Grid
         container
         item
-        onClick={handleEdit}
+        onClick={!visit.approvedDate ? handleEdit : undefined}
         justifyContent="end"
         xs={10}
         p={1}
         m={-1}
         sx={{
+          cursor: visit.approvedDate ? "default" : "pointer",
           borderRadius: "8px",
           "&:hover": {
-            backgroundColor: "#f5f5f5",
+            backgroundColor: visit.approvedDate ? "inherit" : "#f5f5f5",
           },
         }}
       >
