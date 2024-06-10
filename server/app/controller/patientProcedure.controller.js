@@ -137,11 +137,6 @@ exports.savePatientProcedure = async (req, res) => {
         PatientId: patientId,
       },
     });
-    if (visit_.ApprovedDate) {
-      return res
-        .status(400)
-        .send({ message: "Onaylanmış bir ziyaret için değişiklik yapılamaz" });
-    }
 
     // Create patient procedure record
     patientProcedure = await PatientProcedure.create({
@@ -204,7 +199,7 @@ exports.updatePatientProcedure = async (req, res) => {
         {
           model: Visit,
           as: "visit",
-          attributes: [],
+          attributes: ["VisitId", "ApprovedDate"],
           include: [
             {
               model: Patient,
@@ -229,11 +224,6 @@ exports.updatePatientProcedure = async (req, res) => {
           PatientId: patientId,
         },
       });
-      if (visit_.ApprovedDate) {
-        return res.status(400).send({
-          message: "Onaylanmış bir ziyaret için değişiklik yapılamaz",
-        });
-      }
 
       // Update patient procedure record
       await patientProcedure.update({

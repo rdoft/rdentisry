@@ -196,6 +196,7 @@ function ProcedureList({
         onRowMouseEnter={handleRowMouseEnter}
         onRowMouseLeave={handleRowMouseLeave}
         isDataSelectable={isRowSelectable}
+        selectionMode="checkbox"
         responsiveLayout="scroll"
         dataKey="id"
         rowGroupMode="subheader"
