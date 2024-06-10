@@ -75,11 +75,19 @@ function VisitPrice({ visit, onSubmit }) {
       </Grid>
     </Grid>
   ) : (
-    <Tooltip title="Tutarı düzenle" placement="bottom-start" enterDelay={500}>
+    <Tooltip
+      title={
+        visit.approvedDate
+          ? "Tutarı düzenlemek için onayı kaldırın"
+          : "Tutarı düzenle"
+      }
+      placement="bottom-start"
+      enterDelay={500}
+    >
       <Grid
         container
         item
-        onClick={handleEdit}
+        onClick={!visit.approvedDate ? handleEdit : undefined}
         justifyContent="end"
         xs={10}
         p={1}
@@ -87,7 +95,7 @@ function VisitPrice({ visit, onSubmit }) {
         sx={{
           borderRadius: "8px",
           "&:hover": {
-            backgroundColor: "#f5f5f5",
+            backgroundColor: visit.approvedDate ? "inherit" : "#f5f5f5",
           },
         }}
       >
