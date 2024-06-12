@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { errorHandler } from "utils";
 import { toast } from "react-hot-toast";
-import { SplitButton } from "primereact";
 import { Grid, Tabs, Tab, Avatar } from "@mui/material";
 import { ProcedureDialog } from "components/Dialog";
-import { NewItem } from "components/Button";
+import { NewItem, SplitItem } from "components/Button";
 import ProcedureToolbar from "./ProcedureToolbar";
 import DentalChart from "./DentalChart";
 import ProcedureList from "./ProcedureList/ProcedureList";
@@ -284,17 +283,11 @@ function ProceduresTab({
     createVisit(updatedProcedures);
   };
 
-  const visitOptions = visits.map((visit) => ({
-    label: `📌 ${visit.title}`,
-    command: () => handleSelectVisit(visit),
-  }));
-
   return (
     <>
       <Grid
         container
         mt={2}
-        pb={3}
         justifyContent="center"
         sx={{ borderRadius: 2, backgroundColor: "#FFFFFF" }}
       >
@@ -327,6 +320,23 @@ function ProceduresTab({
               </Grid>
             </Grid>
           )}
+
+          {/* Action buttons */}
+          <Grid container justifyContent="center">
+            {selectedProcedures?.length > 0 && (
+              <Grid item xs={6} md={5}>
+                <SplitItem
+                  label="Plan Oluştur"
+                  options={visits}
+                  onClick={handleCreateVisit}
+                  onSelect={handleSelectVisit}
+                />
+              </Grid>
+            )}
+            <Grid item xs={6} md={5}>
+              <NewItem label="Tedavi Ekle" onClick={showDialog} />
+            </Grid>
+          </Grid>
         </Grid>
 
         {/* Tabs */}
@@ -340,28 +350,6 @@ function ProceduresTab({
             <Tab value={0} icon={<Avatar src={TeethIcon} />} disableRipple />
             <Tab value={1} icon={<Avatar src={ListIcon} />} disableRipple />
           </Tabs>
-        </Grid>
-      </Grid>
-
-      <Grid container justifyContent="center" mt={3}>
-        {/* Select Visit */}
-        {selectedProcedures?.length > 0 && (
-          <Grid item xs={6} md={4} mt={2} style={{ textAlign: "center" }}>
-            <SplitButton
-              text
-              outlined
-              size="small"
-              icon="pi pi-plus"
-              label="Plan Oluştur"
-              menuStyle={{ borderRadius: "0.5rem", color: "#182A4D" }}
-              model={visitOptions}
-              onClick={handleCreateVisit}
-            />
-          </Grid>
-        )}
-        {/* Add Procedure */}
-        <Grid item xs={6} md={4}>
-          <NewItem label="Tedavi Ekle" onClick={showDialog} />
         </Grid>
       </Grid>
 
