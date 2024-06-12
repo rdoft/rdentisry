@@ -158,8 +158,10 @@ function ProceduresTab({
     }
   };
 
-  // Delete the procedure
+  // Delete the procedure and filter selected procedures
   const deleteProcedure = async (procedure) => {
+    let _selectedProcedures;
+
     try {
       if (Array.isArray(procedure)) {
         for (let p of procedure) {
@@ -168,14 +170,22 @@ function ProceduresTab({
             p.id
           );
         }
+        _selectedProcedures = selectedProcedures
+          ? selectedProcedures.filter(
+              (item) => !procedure.find((p) => p.id === item.id)
+            )
+          : null;
       } else {
         await PatientProcedureService.deletePatientProcedure(
           patient.id,
           procedure.id
         );
+        _selectedProcedures = selectedProcedures
+          ? selectedProcedures.filter((item) => item.id !== procedure.id)
+          : null;
       }
 
-      // Get and set the updated list of procedures
+      setSelectedProcedures(_selectedProcedures);
       getProcedures(patient.id);
       getVisits(patient.id);
     } catch (error) {

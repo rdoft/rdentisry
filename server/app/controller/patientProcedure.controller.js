@@ -288,11 +288,6 @@ exports.deletePatientProcedure = async (req, res) => {
     if (!patientProcedure) {
       return res.status(404).send({ message: "Tedavi mevcut değil" });
     }
-    if (patientProcedure.visit.ApprovedDate) {
-      return res.status(400).send({
-        message: "Onaylanmış bir tedavi planı için değişiklik yapılamaz",
-      });
-    }
     await patientProcedure.destroy();
 
     res.status(200).send({ id: patientProcedureId });
