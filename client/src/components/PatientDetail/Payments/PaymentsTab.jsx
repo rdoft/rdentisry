@@ -258,14 +258,17 @@ function PaymentsTab({
                 {remainingAmount === waitingAmount ? (
                   "Ödeme Planı"
                 ) : (
-                  <Tooltip title="Kalan tutar ile bekleyen ödeme planı tutarı uyuşmamaktadır. Lütfen ödeme planını kontrol edin.">
-                    <>
+                  <Tooltip
+                    title="Kalan tutar ile bekleyen ödeme planı tutarı uyuşmamaktadır. Lütfen ödeme planını kontrol edin."
+                    placement="right"
+                  >
+                    <div>
                       Ödeme Planı
                       <i
                         className="pi pi-exclamation-triangle pl-3"
                         style={{ color: "#EF4444" }}
                       ></i>
-                    </>
+                    </div>
                   </Tooltip>
                 )}
               </CardTitle>
