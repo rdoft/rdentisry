@@ -326,7 +326,7 @@ function ProceduresTab({
             {selectedProcedures?.length > 0 && (
               <Grid item xs={6} md={5}>
                 <SplitItem
-                  label="Plan Oluştur"
+                  label="Tedavi Planı Ekle"
                   options={visits}
                   onClick={handleCreateVisit}
                   onSelect={handleSelectVisit}

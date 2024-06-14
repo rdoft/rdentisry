@@ -1,15 +1,21 @@
 import React, { useRef } from "react";
 import { Menu } from "primereact";
-import { Add, More } from "components/Button";
+import { Add, Goto, More } from "components/Button";
 
 function PatientDetailToolbarAction({
   activeIndex,
+  onTabChange,
   showAppointmentDialog,
   showPaymentDialog,
   showNoteDialog,
   showProcedureDialog,
 }) {
   const menuLeft = useRef(null);
+
+  // on payment plan handler
+  const handleTabChange = (index) => {
+    onTabChange({ index: 1 });
+  };
 
   switch (activeIndex) {
     case 0:
@@ -40,11 +46,6 @@ function PatientDetailToolbarAction({
     case 3:
       return (
         <>
-          <Add
-            label="Tedavi Ekle"
-            default={true}
-            onClick={showProcedureDialog}
-          />
           <Menu
             model={[
               {
@@ -58,6 +59,16 @@ function PatientDetailToolbarAction({
             popup
           />
           <More onClick={(event) => menuLeft.current.toggle(event)} />
+          <Add
+            label="Tedavi Ekle"
+            default={true}
+            onClick={showProcedureDialog}
+          />
+          <Goto
+            label="Ödeme Planına Git"
+            default={true}
+            onClick={() => handleTabChange(1)}
+          />
         </>
       );
     // case 4:

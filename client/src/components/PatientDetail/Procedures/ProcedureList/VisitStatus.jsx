@@ -70,7 +70,7 @@ function VisitStatus({ visit, onSubmit }) {
             )
           }
         >
-          <>
+          <div>
             <i
               className={
                 option.status === "approved"
@@ -87,7 +87,7 @@ function VisitStatus({ visit, onSubmit }) {
                 color: option.color,
               }}
             />
-          </>
+          </div>
         </Tooltip>
       </div>
     );

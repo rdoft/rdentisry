@@ -149,6 +149,7 @@ function PatientDetail() {
             startContent={
               <PatientDetailToolbarAction
                 activeIndex={activeIndex}
+                onTabChange={handleTabChange}
                 showAppointmentDialog={showAppointmentDialog}
                 showPaymentDialog={showPaymentDialog}
                 showNoteDialog={showNoteDialog}
