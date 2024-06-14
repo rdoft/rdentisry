@@ -14,7 +14,7 @@ function PatientDetailToolbarAction({
 
   // on payment plan handler
   const handleTabChange = (index) => {
-    onTabChange({ index: 1 });
+    onTabChange({ index });
   };
 
   switch (activeIndex) {
