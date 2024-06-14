@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import { NewItem } from "components/Button";
-import NotFoundText from "components/Text/NotFoundText";
+import { NotFoundText } from "components/Text";
 import NoteCard from "./NoteCard";
 import Note from "./Note";
 
@@ -140,9 +140,18 @@ function NotesTab({
     <>
       <Grid container justifyContent="space-between" mt={2}>
         {/* Note list */}
-        <Grid item xs={4} pr={3}>
+        <Grid
+          item
+          xs={4}
+          px={1}
+          py={3}
+          sx={{ borderRadius: 2, backgroundColor: "white" }}
+        >
           {notes.length === 0 ? (
-            <NotFoundText text="Not yok" p={3} />
+            <NotFoundText
+              text="Not yok"
+              style={{ backgroundColor: "#F5F5F5" }}
+            />
           ) : (
             <DataScroller
               value={notes}
@@ -158,7 +167,7 @@ function NotesTab({
         {/* Note detail */}
         <Grid
           item
-          xs={8}
+          xs={7.8}
           px={3}
           sx={{
             borderRadius: 2,

@@ -7,6 +7,7 @@ import { Timeline, ProgressBar } from "primereact";
 import { CardTitle } from "components/cards";
 import { PaymentDialog, PaymentPlanDialog } from "components/Dialog";
 import { NewItem } from "components/Button";
+import { NotFoundText } from "components/Text";
 import { calcProgress } from "utils";
 import PaymentStatistic from "./PaymentStatistic";
 import PaymentMarker from "./PaymentMarker";
@@ -244,9 +245,9 @@ function PaymentsTab({
           </Grid>
 
           {/* Timeline */}
-          <Grid container item md={10} xs={12} justifyContent="center" pb={2}>
+          <Grid container item md={10} xs={12} justifyContent="center">
             {/* PaymentPlan Timeline */}
-            <Grid item md={5} xs={6}>
+            <Grid item md={5} xs={6} px={1} py={3}>
               <CardTitle
                 style={{
                   textAlign: "center",
@@ -268,29 +269,47 @@ function PaymentsTab({
                   </Tooltip>
                 )}
               </CardTitle>
-              <Timeline
-                value={plannedPayments}
-                marker={paymentMarker}
-                content={paymentContent}
-                opposite={paymentDate}
-              />
+
+              {plannedPayments.length === 0 ? (
+                <NotFoundText
+                  text="Ödeme planı yok"
+                  style={{ backgroundColor: "#F5F5F5" }}
+                />
+              ) : (
+                <Timeline
+                  value={plannedPayments}
+                  marker={paymentMarker}
+                  content={paymentContent}
+                  opposite={paymentDate}
+                />
+              )}
+
               {/* Add payment plan */}
               <NewItem label="Ödeme Planı Ekle" onClick={handlePlanDialog} />
             </Grid>
 
             {/* Payment Timeline */}
-            <Grid item md={5} xs={6}>
+            <Grid item md={5} xs={6} px={1} py={3}>
               <CardTitle
                 style={{ textAlign: "center", marginBottom: 5, marginX: 20 }}
               >
                 Ödemeler
               </CardTitle>
-              <Timeline
-                value={payments}
-                marker={paymentMarker}
-                content={paymentContent}
-                opposite={paymentDate}
-              />
+
+              {payments.length === 0 ? (
+                <NotFoundText
+                  text="Ödeme yok"
+                  style={{ backgroundColor: "#F5F5F5" }}
+                />
+              ) : (
+                <Timeline
+                  value={payments}
+                  marker={paymentMarker}
+                  content={paymentContent}
+                  opposite={paymentDate}
+                />
+              )}
+
               {/* Add payment */}
               <NewItem label="Ödeme Ekle" onClick={handlePaymentDialog} />
             </Grid>

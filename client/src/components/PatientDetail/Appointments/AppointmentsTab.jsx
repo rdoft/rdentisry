@@ -162,9 +162,12 @@ function AppointmentsTab({
             </CardTitle>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={12} px={1} py={3} sx={{ backgroundColor: "white" }}>
             {activeAppointments.length === 0 ? (
-              <NotFoundText text="Randevu yok" p={3} />
+              <NotFoundText
+                text="Aktif randevu yok"
+                style={{ backgroundColor: "#F5F5F5" }}
+              />
             ) : (
               <DataScroller
                 value={activeAppointments}
@@ -172,10 +175,10 @@ function AppointmentsTab({
                 rows={10}
               ></DataScroller>
             )}
-          </Grid>
 
-          {/* Add appointment */}
-          <NewItem label="Randevu Ekle" onClick={showDialog} />
+            {/* Add appointment */}
+            <NewItem label="Randevu Ekle" onClick={showDialog} />
+          </Grid>
         </Grid>
 
         {/* Other appointments */}
@@ -186,9 +189,12 @@ function AppointmentsTab({
             </CardTitle>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={12} px={1} py={3} sx={{ backgroundColor: "white" }}>
             {otherAppointments.length === 0 ? (
-              <NotFoundText text="Randevu yok" p={3} />
+              <NotFoundText
+                text="Diğer randevu yok"
+                style={{ backgroundColor: "#F5F5F5" }}
+              />
             ) : (
               <DataScroller
                 value={otherAppointments}
@@ -196,10 +202,10 @@ function AppointmentsTab({
                 rows={10}
               ></DataScroller>
             )}
-          </Grid>
 
-          {/* Add appointment */}
-          <NewItem label="Randevu Ekle" onClick={showDialog} />
+            {/* Add appointment */}
+            <NewItem label="Randevu Ekle" onClick={showDialog} />
+          </Grid>
         </Grid>
       </Grid>
 
