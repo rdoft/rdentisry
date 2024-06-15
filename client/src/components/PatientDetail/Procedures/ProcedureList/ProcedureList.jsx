@@ -178,7 +178,7 @@ function ProcedureList({
     return (
       <div className="flex align-items-center gap-2">
         <ProcedureCategory
-          category={procedure.procedure.procedureCategory.title}
+          category={procedure.procedure.procedureCategory?.title}
           isLabel={false}
         />
         <span>{procedure.procedure.name}</span>

@@ -94,6 +94,7 @@ function VisitPrice({ visit, onSubmit }) {
         m={-1}
         sx={{
           borderRadius: "8px",
+          color: visit.approvedDate ? "#22A069" : "inherit",
           "&:hover": {
             backgroundColor: visit.approvedDate ? "inherit" : "#f5f5f5",
           },

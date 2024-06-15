@@ -99,6 +99,7 @@ function VisitDiscount({ visit, onSubmit }) {
         m={-1}
         sx={{
           cursor: visit.approvedDate ? "default" : "pointer",
+          color: visit.approvedDate ? "#22A069" : "inherit",
           borderRadius: "8px",
           "&:hover": {
             backgroundColor: visit.approvedDate ? "inherit" : "#f5f5f5",
