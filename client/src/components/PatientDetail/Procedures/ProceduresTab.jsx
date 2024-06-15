@@ -98,6 +98,14 @@ function ProceduresTab({
     (a, b) => new Date(b?.visit.id) - new Date(a?.visit.id)
   )[0]?.visit;
 
+  // options hanlder of SplitButton
+  const visitOptions = visits
+    .filter((item) => !item.approvedDate)
+    .map((item) => ({
+      label: `📌 ${item.title}`,
+      command: () => handleSelectVisit(item),
+    }));
+
   // SERVICES -----------------------------------------------------------------
   // Get the list of the procedures of the patient and set procedures value
   const getProcedures = async (patientId) => {
@@ -327,7 +335,7 @@ function ProceduresTab({
               <Grid item xs={6} md={5}>
                 <SplitItem
                   label="Tedavi Planı Ekle"
-                  options={visits}
+                  options={visitOptions}
                   onClick={handleCreateVisit}
                   onSelect={handleSelectVisit}
                 />
