@@ -34,7 +34,7 @@ function ProceduresTab({
   const [procedures, setProcedures] = useState([]);
   const [selectedTeeth, setSelectedTeeth] = useState([0]);
   const [selectedProcedures, setSelectedProcedures] = useState(null);
-  const [visits, setVisits] = useState([]);
+  const [nonapprovedVisits, setNonapprovedVisits] = useState([]);
 
   // Add keydown event listener
   // when component mounts and remove it when unmounts
@@ -73,9 +73,9 @@ function ProceduresTab({
         code === 401 ? navigate(`/login`) : toast.error(message);
       });
 
-    VisitService.getVisits(patient.id, true, { signal })
+    VisitService.getVisits(patient.id, false, { signal })
       .then((res) => {
-        setVisits(res.data);
+        setNonapprovedVisits(res.data);
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
@@ -99,12 +99,10 @@ function ProceduresTab({
   )[0]?.visit;
 
   // options hanlder of SplitButton
-  const visitOptions = visits
-    .filter((item) => !item.approvedDate)
-    .map((item) => ({
-      label: `📌 ${item.title}`,
-      command: () => handleSelectVisit(item),
-    }));
+  const visitOptions = nonapprovedVisits.map((item) => ({
+    label: `📌 ${item.title}`,
+    command: () => handleSelectVisit(item),
+  }));
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of the procedures of the patient and set procedures value
@@ -221,10 +219,10 @@ function ProceduresTab({
     let visits;
 
     try {
-      response = await VisitService.getVisits(patientId);
+      response = await VisitService.getVisits(patientId, false);
       visits = response.data;
 
-      setVisits(visits);
+      setNonapprovedVisits(visits);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);

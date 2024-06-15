@@ -176,6 +176,7 @@ function PatientDetail() {
               )}
             >
               <AppointmentsTab
+                key={patient.id}
                 patient={patient}
                 patients={patients}
                 setPatients={setPatients}
@@ -199,6 +200,7 @@ function PatientDetail() {
               )}
             >
               <PaymentsTab
+                key={patient.id}
                 patient={patient}
                 paymentDialog={dialog.payment}
                 showDialog={showPaymentDialog}
@@ -242,6 +244,7 @@ function PatientDetail() {
               )}
             >
               <ProceduresTab
+                key={patient.id}
                 patient={patient}
                 procedureDialog={dialog.procedure}
                 showDialog={showProcedureDialog}
