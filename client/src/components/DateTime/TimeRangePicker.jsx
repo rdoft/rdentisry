@@ -15,6 +15,7 @@ function TimeRangePicker({ start, end, onChange }) {
 
   return (
     <LocalizationProvider
+      className="picker-container"
       dateAdapter={AdapterDayjs}
       localeText={
         trTR.components.MuiLocalizationProvider.defaultProps.localeText

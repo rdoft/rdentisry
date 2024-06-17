@@ -16,6 +16,9 @@ import { DialogTemp, DoctorDialog, PatientDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
 import { calcDuration } from "utils";
 
+// assets
+import "assets/styles/Dialog/AppointmentDialog.css";
+
 // schemas
 import schema from "schemas/appointment.schema";
 

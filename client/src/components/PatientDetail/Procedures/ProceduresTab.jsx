@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import { Grid, Tabs, Tab, Avatar } from "@mui/material";
 import { ProcedureDialog } from "components/Dialog";
 import { NewItem, SplitItem } from "components/Button";
+import { AppointmentDialog } from "components/Dialog";
 import ProcedureToolbar from "./ProcedureToolbar";
 import DentalChart from "./DentalChart";
 import ProcedureList from "./ProcedureList/ProcedureList";
@@ -14,13 +15,20 @@ import "assets/styles/PatientDetail/ProceduresTab.css";
 import { ListIcon, TeethIcon } from "assets/images/icons";
 
 // services
-import { PatientProcedureService, VisitService } from "services";
+import {
+  PatientProcedureService,
+  VisitService,
+  AppointmentService,
+} from "services";
 
 function ProceduresTab({
   patient,
   procedureDialog,
-  showDialog,
-  hideDialog,
+  appointmentDialog,
+  showProcedureDialog,
+  hideProcedureDialog,
+  showAppointmentDialog,
+  hideAppointmentDialog,
   counts,
   setCounts,
 }) {
@@ -34,7 +42,8 @@ function ProceduresTab({
   const [procedures, setProcedures] = useState([]);
   const [selectedTeeth, setSelectedTeeth] = useState([0]);
   const [selectedProcedures, setSelectedProcedures] = useState(null);
-  const [nonapprovedVisits, setNonapprovedVisits] = useState([]);
+  const [visits, setVisits] = useState([]);
+  const [description, setDescription] = useState("");
 
   // Add keydown event listener
   // when component mounts and remove it when unmounts
@@ -73,9 +82,9 @@ function ProceduresTab({
         code === 401 ? navigate(`/login`) : toast.error(message);
       });
 
-    VisitService.getVisits(patient.id, false, { signal })
+    VisitService.getVisits(patient.id, null, { signal })
       .then((res) => {
-        setNonapprovedVisits(res.data);
+        setVisits(res.data);
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
@@ -97,12 +106,6 @@ function ProceduresTab({
   const recentVisit = procedures.sort(
     (a, b) => new Date(b?.visit.id) - new Date(a?.visit.id)
   )[0]?.visit;
-
-  // options hanlder of SplitButton
-  const visitOptions = nonapprovedVisits.map((item) => ({
-    label: `📌 ${item.title}`,
-    command: () => handleSelectVisit(item),
-  }));
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of the procedures of the patient and set procedures value
@@ -219,10 +222,22 @@ function ProceduresTab({
     let visits;
 
     try {
-      response = await VisitService.getVisits(patientId, false);
+      response = await VisitService.getVisits(patientId);
       visits = response.data;
 
-      setNonapprovedVisits(visits);
+      setVisits(visits);
+    } catch (error) {
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
+    }
+  };
+
+  // Save appointment (create/update)
+  const saveAppointment = async (appointment) => {
+    try {
+      await AppointmentService.saveAppointment(appointment);
+      
+      hideAppointmentDialog();
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
@@ -271,7 +286,7 @@ function ProceduresTab({
     saveProcedure(updatedProcedures);
   };
 
-  // onSelect handler for creating new visit of patientProcedure
+  // onClick handler for creating new visit of patientProcedure
   const handleCreateVisit = () => {
     const updatedProcedures = [];
     for (let procedure of selectedProcedures) {
@@ -288,6 +303,44 @@ function ProceduresTab({
     setSelectedProcedures(null);
     createVisit(updatedProcedures);
   };
+
+  // onSelect handler for creating new appointment
+  const handleSelectAppointment = (visit) => {
+    const description = procedures
+      .filter((procedure) => procedure.visitId === visit.id)
+      .map(
+        (procedure) =>
+          `• [${
+            procedure.toothNumber === 0 ? "Genel" : procedure.toothNumber
+          }] ${procedure.procedure.name}`
+      )
+      .join("\n");
+    setDescription(description);
+    showAppointmentDialog();
+  };
+
+  // onClick handler for creating new appointment
+  const handleCreateAppointment = () => {
+    setDescription("");
+    showAppointmentDialog();
+  };
+
+  // TEMPLATES ----------------------------------------------------------------
+  // options of SplitButton for visits
+  const pendingVisits = visits
+    .filter((item) => !item.approvedDate)
+    .map((item) => ({
+      label: `📌 ${item.title}`,
+      command: () => handleSelectVisit(item),
+    }));
+
+  // options of SplitButton for visits
+  const approvedVisits = visits
+    .filter((item) => item.approvedDate)
+    .map((item) => ({
+      label: `📌 ${item.title}`,
+      command: () => handleSelectAppointment(item),
+    }));
 
   return (
     <>
@@ -329,18 +382,31 @@ function ProceduresTab({
 
           {/* Action buttons */}
           <Grid container justifyContent="center">
-            {selectedProcedures?.length > 0 && (
-              <Grid item xs={6} md={5}>
-                <SplitItem
-                  label="Tedavi Planı Ekle"
-                  options={visitOptions}
-                  onClick={handleCreateVisit}
-                  onSelect={handleSelectVisit}
-                />
-              </Grid>
-            )}
+            {/* {selectedProcedures?.length > 0 && ( */}
+            <Grid
+              container
+              item
+              xs={6}
+              md={5}
+              spacing={1}
+              justifyContent="center"
+            >
+              <SplitItem
+                label="Randevu Ekle"
+                options={approvedVisits}
+                onClick={handleCreateAppointment}
+                onSelect={handleSelectAppointment}
+              />
+              <SplitItem
+                label="Tedavi Planı Ekle"
+                options={pendingVisits}
+                onClick={handleCreateVisit}
+                onSelect={handleSelectVisit}
+              />
+            </Grid>
+            {/* )} */}
             <Grid item xs={6} md={5}>
-              <NewItem label="Tedavi Ekle" onClick={showDialog} />
+              <NewItem label="Tedavi Ekle" onClick={showProcedureDialog} />
             </Grid>
           </Grid>
         </Grid>
@@ -359,7 +425,7 @@ function ProceduresTab({
         </Grid>
       </Grid>
 
-      {/* Dialog */}
+      {/* Procedure Dialog */}
       {procedureDialog && (
         <ProcedureDialog
           initPatientProcedure={{
@@ -369,8 +435,17 @@ function ProceduresTab({
           }}
           selectedTeeth={selectedTeeth}
           onChangeTeeth={handleChangeTeeth}
-          onHide={hideDialog}
+          onHide={hideProcedureDialog}
           onSubmit={saveProcedure}
+        />
+      )}
+
+      {/* Appointment Dialog */}
+      {appointmentDialog && (
+        <AppointmentDialog
+          initAppointment={{ description, patient }}
+          onSubmit={saveAppointment}
+          onHide={hideAppointmentDialog}
         />
       )}
     </>

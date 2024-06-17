@@ -4,7 +4,7 @@ import { SplitButton } from "primereact";
 
 function SplitItem({ label, options, onClick }) {
   return (
-    <Grid item xs={12} mt={3} style={{ textAlign: "center" }}>
+    <Grid item xs="auto" mt={3} style={{ textAlign: "center" }}>
       <SplitButton
         text
         outlined

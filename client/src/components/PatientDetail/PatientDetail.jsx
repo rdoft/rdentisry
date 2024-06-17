@@ -247,8 +247,11 @@ function PatientDetail() {
                 key={patient.id}
                 patient={patient}
                 procedureDialog={dialog.procedure}
-                showDialog={showProcedureDialog}
-                hideDialog={hideProcedureDialog}
+                appointmentDialog={dialog.appointment}
+                showProcedureDialog={showProcedureDialog}
+                hideProcedureDialog={hideProcedureDialog}
+                showAppointmentDialog={showAppointmentDialog}
+                hideAppointmentDialog={hideAppointmentDialog}
                 counts={counts}
                 setCounts={setCounts}
               />
