@@ -10,8 +10,10 @@ function VisitDiscount({ visit, onSubmit }) {
 
   // Update component state when visit prop changes
   useEffect(() => {
-    setDiscount(visit.discount);
-    prevDiscount.current = visit.discount;
+    if (!isEdit) {
+      setDiscount(visit.discount);
+      prevDiscount.current = visit.discount;
+    }
   }, [visit]);
 
   // HANDLERS -----------------------------------------------------------------

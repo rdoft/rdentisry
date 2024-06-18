@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Grid, Typography, Tooltip, ClickAwayListener } from "@mui/material";
 import { InputText } from "primereact";
 import { Cancel } from "components/Button";
@@ -7,6 +7,14 @@ function VisitTitle({ visit, onSubmit }) {
   const prevTitle = useRef(visit.title);
   const [title, setTitle] = useState(visit.title);
   const [isEdit, setIsEdit] = useState(false);
+
+  // Update component state when visit prop changes
+  useEffect(() => {
+    if (!isEdit) {
+      setTitle(visit.title);
+      prevTitle.current = visit.title;
+    }
+  }, [visit]);
 
   // HANDLERS -----------------------------------------------------------------
   // onEdit handler

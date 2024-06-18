@@ -10,8 +10,10 @@ function VisitPrice({ visit, onSubmit }) {
 
   // Update component state when visit prop changes
   useEffect(() => {
-    setPrice(visit.price);
-    prevPrice.current = visit.price;
+    if (!isEdit) {
+      setPrice(visit.price);
+      prevPrice.current = visit.price;
+    }
   }, [visit]);
 
   // HANDLERS -----------------------------------------------------------------
