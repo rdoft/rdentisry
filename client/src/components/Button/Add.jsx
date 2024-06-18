@@ -12,7 +12,7 @@ function Add({ label, onClick, ...props }) {
     />
   ) : (
     <Button
-      text
+      text={props.border ? false : true}
       outlined
       size="small"
       icon="pi pi-plus"

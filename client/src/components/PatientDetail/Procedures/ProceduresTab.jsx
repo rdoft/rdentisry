@@ -236,7 +236,7 @@ function ProceduresTab({
   const saveAppointment = async (appointment) => {
     try {
       await AppointmentService.saveAppointment(appointment);
-      
+
       hideAppointmentDialog();
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -310,9 +310,9 @@ function ProceduresTab({
       .filter((procedure) => procedure.visitId === visit.id)
       .map(
         (procedure) =>
-          `• [${
+          `• ${procedure.procedure.name}, [${
             procedure.toothNumber === 0 ? "Genel" : procedure.toothNumber
-          }] ${procedure.procedure.name}`
+          }]`
       )
       .join("\n");
     setDescription(description);
@@ -382,29 +382,32 @@ function ProceduresTab({
 
           {/* Action buttons */}
           <Grid container justifyContent="center">
-            {/* {selectedProcedures?.length > 0 && ( */}
-            <Grid
-              container
-              item
-              xs={6}
-              md={5}
-              spacing={1}
-              justifyContent="center"
-            >
-              <SplitItem
-                label="Randevu Ekle"
-                options={approvedVisits}
-                onClick={handleCreateAppointment}
-                onSelect={handleSelectAppointment}
-              />
-              <SplitItem
-                label="Tedavi Planı Ekle"
-                options={pendingVisits}
-                onClick={handleCreateVisit}
-                onSelect={handleSelectVisit}
-              />
-            </Grid>
-            {/* )} */}
+            {(selectedProcedures?.length > 0 || approvedVisits?.length > 0) &&
+              tabIndex === 1 && (
+                <Grid
+                  container
+                  item
+                  xs={6}
+                  md={5}
+                  spacing={1}
+                  justifyContent="center"
+                >
+                  {approvedVisits?.length > 0 && (
+                    <SplitItem
+                      label="Randevu Ekle"
+                      options={approvedVisits}
+                      onClick={handleCreateAppointment}
+                    />
+                  )}
+                  {selectedProcedures?.length > 0 && (
+                    <SplitItem
+                      label="Tedavi Planı Ekle"
+                      options={pendingVisits}
+                      onClick={handleCreateVisit}
+                    />
+                  )}
+                </Grid>
+              )}
             <Grid item xs={6} md={5}>
               <NewItem label="Tedavi Ekle" onClick={showProcedureDialog} />
             </Grid>

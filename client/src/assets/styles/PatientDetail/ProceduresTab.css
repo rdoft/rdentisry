@@ -26,8 +26,9 @@
   justify-content: center;
 } */
 
-.p-splitbutton.p-button-text > .p-button {
-  color: #182a4d;
+.splitbutton-custom .p-button {
+  color: #182a4d !important;
+  border-color: #182a4d !important;
 }
 
 .p-checkbox.p-component.p-disabled {
