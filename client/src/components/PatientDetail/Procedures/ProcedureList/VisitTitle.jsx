@@ -14,7 +14,7 @@ function VisitTitle({ visit, onSubmit }) {
       setTitle(visit.title);
       prevTitle.current = visit.title;
     }
-  }, [visit]);
+  }, [visit, isEdit]);
 
   // HANDLERS -----------------------------------------------------------------
   // onEdit handler

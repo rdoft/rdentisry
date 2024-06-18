@@ -14,7 +14,7 @@ function VisitPrice({ visit, onSubmit }) {
       setPrice(visit.price);
       prevPrice.current = visit.price;
     }
-  }, [visit]);
+  }, [visit, isEdit]);
 
   // HANDLERS -----------------------------------------------------------------
   // onEdit handler

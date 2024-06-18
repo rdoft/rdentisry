@@ -14,7 +14,7 @@ function VisitDiscount({ visit, onSubmit }) {
       setDiscount(visit.discount);
       prevDiscount.current = visit.discount;
     }
-  }, [visit]);
+  }, [visit, isEdit]);
 
   // HANDLERS -----------------------------------------------------------------
   // onEdit handler
