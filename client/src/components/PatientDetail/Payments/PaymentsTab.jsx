@@ -91,6 +91,7 @@ function PaymentsTab({
     remainingAmount,
     overdueAmount,
     waitingAmount,
+    overpaidAmount,
   } = calcProgress(payments, plannedPayments, total);
 
   // SERVICES -----------------------------------------------------------------
@@ -222,6 +223,33 @@ function PaymentsTab({
     return <PaymentMarker payment={payment} />;
   };
 
+  // Payment plan error tooltip
+  const paymentPlanTitle = () => {
+    let message;
+
+    if (waitingAmount > remainingAmount) {
+      message =
+        "Kalan tutardan fazla bekleyen ödeme planı tutarı bulunmaktadır. Lütfen ödeme planını kontrol edin.";
+    } else if (waitingAmount < remainingAmount || 0 < overpaidAmount) {
+      message =
+        "Eksik ödeme planı bulunmaktadır. Lütfen ödeme planını veya ödemeleri kontrol edin.";
+    }
+
+    return message ? (
+      <Tooltip title={message} placement="right">
+        <div>
+          Ödeme Planı
+          <i
+            className="pi pi-exclamation-triangle pl-3"
+            style={{ color: "#EF4444" }}
+          ></i>
+        </div>
+      </Tooltip>
+    ) : (
+      "Ödeme Planı"
+    );
+  };
+
   return (
     <>
       <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
@@ -255,22 +283,7 @@ function PaymentsTab({
                   marginX: 20,
                 }}
               >
-                {remainingAmount === waitingAmount ? (
-                  "Ödeme Planı"
-                ) : (
-                  <Tooltip
-                    title="Kalan tutar ile bekleyen ödeme planı tutarı uyuşmamaktadır. Lütfen ödeme planını kontrol edin."
-                    placement="right"
-                  >
-                    <div>
-                      Ödeme Planı
-                      <i
-                        className="pi pi-exclamation-triangle pl-3"
-                        style={{ color: "#EF4444" }}
-                      ></i>
-                    </div>
-                  </Tooltip>
-                )}
+                {paymentPlanTitle()}
               </CardTitle>
 
               {plannedPayments.length === 0 ? (
@@ -334,7 +347,10 @@ function PaymentsTab({
       {paymentDialog === "plan" && (
         <PaymentPlanDialog
           patient={patient}
-          initAmount={remainingAmount}
+          initAmount={Math.max(
+            0,
+            overpaidAmount + remainingAmount - waitingAmount
+          )}
           onHide={handleHideDialog}
           onSubmit={savePayments}
         />

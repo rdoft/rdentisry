@@ -5,10 +5,16 @@ const calcProgress = (payments, plannedPayments, total) => {
   let progress = 0;
   let remaining = 0;
   let completed = 0;
+  let overpaid = 0;
 
   // Calc completed payment
   completed = payments.reduce((acc, payment) => {
     return acc + payment.amount;
+  }, 0);
+
+  // Calc overpaid payment
+  overpaid = payments.reduce((acc, payment) => {
+    return payment.isPlanned ? acc + payment.amount : acc;
   }, 0);
 
   for (let plannedPayment of plannedPayments) {
@@ -18,6 +24,7 @@ const calcProgress = (payments, plannedPayments, total) => {
     }
     // Calc waiting payment
     waiting += plannedPayment.amount - plannedPayment.paid;
+    overpaid -= plannedPayment.paid;
   }
 
   remaining = total - completed > 0 ? total - completed : 0;
@@ -30,6 +37,7 @@ const calcProgress = (payments, plannedPayments, total) => {
     remainingAmount: remaining,
     overdueAmount: overdue,
     waitingAmount: waiting,
+    overpaidAmount: overpaid,
   };
 };
 
