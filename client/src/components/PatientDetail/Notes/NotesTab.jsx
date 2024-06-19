@@ -63,16 +63,13 @@ function NotesTab({
   // Get the list of the notes of the patient and set notes value
   const getNotes = async (patientId) => {
     let response;
-    let notes;
 
     try {
       response = await NoteService.getNotes(patientId);
-      notes = response.data;
-
-      setNotes(notes);
+      setNotes(response.data);
       setCounts({
         ...counts,
-        note: notes.length,
+        note: { other: response.data.length },
       });
     } catch (error) {
       const { code, message } = errorHandler(error);

@@ -98,18 +98,22 @@ function PaymentsTab({
   // Get the list of payments of the patient and set payments value
   const getPayments = async (patientId) => {
     let response;
-    let countPayment;
+    let countPayment = { pending: 0, completed: 0 };
 
     try {
       response = await PaymentService.getPayments(patientId);
-      countPayment = response.data.length;
       setPayments(response.data);
-      response = await PaymentService.getPayments(patientId, true);
-      setPlannedPayments(response.data);
 
+      response = await PaymentService.getPayments(patientId, true);
+      response.data.forEach((payment) => {
+        payment.paid === payment.amount
+          ? countPayment.completed++
+          : countPayment.pending++;
+      });
+      setPlannedPayments(response.data);
       setCounts({
         ...counts,
-        payment: countPayment,
+        payment: { ...countPayment },
       });
     } catch (error) {
       const { code, message } = errorHandler(error);

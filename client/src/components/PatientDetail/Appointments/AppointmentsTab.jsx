@@ -67,17 +67,20 @@ function AppointmentsTab({
   // Get the list of appointments of the patient and set appointmets value
   const getAppointments = async (patientId) => {
     let response;
-    let appointments;
+    let countAppointment = { pending: 0, completed: 0 };
 
     try {
       response = await AppointmentService.getAppointments({ patientId });
       // appointments = response.data.reverse();
-      appointments = response.data;
-
-      setAppointments(appointments);
+      response.data.forEach((appointment) => {
+        appointment.status === "active"
+          ? countAppointment.pending++
+          : countAppointment.completed++;
+      });
+      setAppointments(response.data);
       setCounts({
         ...counts,
-        appointment: appointments.length,
+        appointment: { ...countAppointment },
       });
     } catch (error) {
       const { code, message } = errorHandler(error);

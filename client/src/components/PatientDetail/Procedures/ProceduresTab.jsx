@@ -111,18 +111,21 @@ function ProceduresTab({
   // Get the list of the procedures of the patient and set procedures value
   const getProcedures = async (patientId) => {
     let response;
-    let procedures;
+    let countProcedure = { pending: 0, completed: 0 };
 
     try {
       response = await PatientProcedureService.getPatientProcedures({
         patientId,
       });
-      procedures = response.data;
-
-      setProcedures(procedures);
+      response.data.forEach((procedure) => {
+        procedure.completedDate
+          ? countProcedure.completed++
+          : countProcedure.pending++;
+      });
+      setProcedures(response.data);
       setCounts({
         ...counts,
-        procedure: procedures.length,
+        procedure: { ...countProcedure },
       });
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -234,10 +237,27 @@ function ProceduresTab({
 
   // Save appointment (create/update)
   const saveAppointment = async (appointment) => {
-    try {
-      await AppointmentService.saveAppointment(appointment);
+    let countAppointment = { pending: 0, completed: 0 };
+    let response;
 
+    try {
+      // Save the appointment
+      await AppointmentService.saveAppointment(appointment);
       hideAppointmentDialog();
+
+      // Update the appointment counts
+      response = await AppointmentService.getAppointments({
+        patientId: patient.id,
+      });
+      response.data.forEach((appointment) => {
+        appointment.status === "active"
+          ? countAppointment.pending++
+          : countAppointment.completed++;
+      });
+      setCounts({
+        ...counts,
+        appointment: { ...countAppointment },
+      });
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);

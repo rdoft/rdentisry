@@ -25,19 +25,19 @@ const getTabCounts = async (patient) => {
     });
 
     // Count the appointments based on its status
-    appointments.data.map((appointment) => {
+    appointments.data.forEach((appointment) => {
       appointment.status === "active"
         ? counts.appointment.pending++
         : counts.appointment.completed++;
     });
     // Count the payments based on its status
-    plannedPayments.data.map((payment) => {
+    plannedPayments.data.forEach((payment) => {
       payment.paid === payment.amount
         ? counts.payment.completed++
         : counts.payment.pending++;
     });
     // Count the procedures based on its status
-    procedures.data.map((procedure) => {
+    procedures.data.forEach((procedure) => {
       procedure.completedDate
         ? counts.procedure.completed++
         : counts.procedure.pending++;
