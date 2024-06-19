@@ -4,7 +4,7 @@ import { Button } from "primereact";
 function More({ label, onClick, ...props }) {
   return (
     <Button
-      className="bg-bluegray-50 hover:bg-bluegray-100 border-0 text-bluegray-900 m-2"
+      className="bg-bluegray-50 hover:bg-bluegray-100 border-0 text-bluegray-900 mr-2"
       size="small"
       icon="pi pi-ellipsis-h"
       label={label}

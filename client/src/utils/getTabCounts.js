@@ -7,22 +7,45 @@ import {
 
 // Get all tabs counts based on the patient
 const getTabCounts = async (patient) => {
+  let counts = {
+    appointment: { pending: 0, completed: 0 },
+    payment: { pending: 0, completed: 0 },
+    note: { other: 0 },
+    procedure: { pending: 0, completed: 0 },
+  };
+
   try {
     const appointments = await AppointmentService.getAppointments({
       patientId: patient.id,
     });
-    const payments = await PaymentService.getPayments(patient.id);
+    const plannedPayments = await PaymentService.getPayments(patient.id, true);
     const notes = await NoteService.getNotes(patient.id);
     const procedures = await PatientProcedureService.getPatientProcedures({
       patientId: patient.id,
     });
 
-    return {
-      appointment: appointments.data.length ?? 0,
-      payment: payments.data.length ?? 0,
-      note: notes.data.length ?? 0,
-      procedure: procedures.data.length ?? 0,
-    };
+    // Count the appointments based on its status
+    appointments.data.map((appointment) => {
+      appointment.status === "active"
+        ? counts.appointment.pending++
+        : counts.appointment.completed++;
+    });
+    // Count the payments based on its status
+    plannedPayments.data.map((payment) => {
+      payment.paid === payment.amount
+        ? counts.payment.completed++
+        : counts.payment.pending++;
+    });
+    // Count the procedures based on its status
+    procedures.data.map((procedure) => {
+      procedure.completedDate
+        ? counts.procedure.completed++
+        : counts.procedure.pending++;
+    });
+    // Count the notes
+    counts.note.other = notes.data.length ?? 0;
+
+    return counts;
   } catch (error) {
     throw error;
   }

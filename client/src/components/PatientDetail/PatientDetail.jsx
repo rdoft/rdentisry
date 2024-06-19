@@ -32,10 +32,10 @@ function PatientDetail() {
       : 0
   );
   const [counts, setCounts] = useState({
-    appointment: 0,
-    payment: 0,
-    note: 0,
-    procedure: 0,
+    appointment: { pending: 0, completed: 0 },
+    payment: { pending: 0, completed: 0 },
+    note: { other: 0 },
+    procedure: { pending: 0, completed: 0 },
   });
   const [dialog, setDialog] = useState({
     appointment: false,
