@@ -96,6 +96,7 @@ function VisitDiscount({ visit, onSubmit }) {
         item
         onClick={!visit.approvedDate ? handleEdit : undefined}
         justifyContent="end"
+        alignItems="center"
         xs={10}
         p={1}
         m={-1}
@@ -108,6 +109,12 @@ function VisitDiscount({ visit, onSubmit }) {
           },
         }}
       >
+        {visit.approvedDate && (
+          <i
+            className="pi pi-check-circle"
+            style={{ color: "#22A069", marginRight: "5px", fontSize: "0.7rem"}}
+          ></i>
+        )}
         <Typography variant="caption">
           İndirim: %{" "}
           {discount
