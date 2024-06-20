@@ -97,7 +97,6 @@ function Event({ event, step }) {
           {/* Patient */}
           <Grid
             item
-            xs={12}
             onClick={handleClick}
             onMouseEnter={handleMouseEnterPatient}
             onMouseLeave={handleMouseLeavePatient}
