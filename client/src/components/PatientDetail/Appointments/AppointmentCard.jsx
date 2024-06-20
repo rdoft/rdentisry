@@ -1,33 +1,24 @@
 import React, { useState } from "react";
 import { Divider } from "primereact";
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, Box, Avatar } from "@mui/material";
 import { Edit } from "components/Button";
 import AppointmentStatus from "./AppointmentStatus";
 
 // assets
-import {
-  ClockCircleOutlined,
-  ScheduleOutlined,
-  FileTextOutlined,
-} from "@ant-design/icons";
+import { doctorAvatar } from "assets/images/avatars";
 
 function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
   const [isHover, setIsHover] = useState(false);
 
   // Set values as desired format
+  const { name: dname, surname: dsurname } = appointment.doctor;
   const description = appointment.description;
-  const date = new Date(appointment.date).toLocaleDateString("tr-TR", {
-    year: "numeric",
+  const duration = appointment.duration;
+  const month = new Date(appointment.date).toLocaleDateString("tr-TR", {
     month: "long",
+  });
+  const day = new Date(appointment.date).toLocaleDateString("tr-TR", {
     day: "numeric",
-  });
-  const start = new Date(appointment.startTime).toLocaleTimeString("tr-TR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  const end = new Date(appointment.endTime).toLocaleTimeString("tr-TR", {
-    hour: "2-digit",
-    minute: "2-digit",
   });
 
   // HANDLERS -----------------------------------------------------------------
@@ -57,24 +48,54 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
       >
         <Grid item xs={9}>
           {/* Date */}
-          <Typography variant="h5" sx={{ fontWeight: "regular" }}>
-            <ScheduleOutlined /> {`${date}`}
-          </Typography>
+          <Box display="flex" alignItems="center">
+            <Typography
+              variant="h3"
+              fontWeight="bolder"
+              mr={"3px"}
+            >{`${day}`}</Typography>
+            <Typography
+              variant="caption"
+              fontWeight="bolder"
+            >{`${month}`}</Typography>
+          </Box>
 
           {/* Time */}
-          <Typography variant="h5" sx={{ fontWeight: "regular" }}>
-            <ClockCircleOutlined /> {`${start} - ${end}`}
-          </Typography>
+          <Box display="flex" alignItems="center">
+            <Typography variant="h6" mr={1}>
+              ⏱️
+            </Typography>
+            <Typography variant="h5" mr={"3px"}>{`${duration}`}</Typography>
+            <Typography variant="caption">dk.</Typography>
+          </Box>
+
+          {/* Doctor */}
+          {dname && dsurname && (
+            <Box display="flex" gap={1} alignItems="center">
+              <Avatar
+                alt="avatar"
+                src={doctorAvatar}
+                shape="circle"
+                style={{ width: "16px", height: "16px", padding: "1px" }}
+              />
+              <Typography variant="caption" fontWeight="bolder" noWrap>
+                {`Dt. ${dname} ${dsurname}`}
+              </Typography>
+            </Box>
+          )}
 
           {/* Description */}
           {description && (
-            <Typography variant="h6" sx={{ fontWeight: "light" }}>
-              <FileTextOutlined />{" "}
-              {description.includes("\n") ||
-              description.split(/\n/)[0].length > 24
-                ? description.split(/\n/)[0].slice(0, 24) + " ..."
-                : description.split(/\n/)[0]}
-            </Typography>
+            <Box display="flex" gap={1} alignItems="start">
+              <Typography variant="h6">🖋</Typography>
+              <Box display="flex" flexDirection="column">
+                {description.split("\n").map((line, index) => (
+                  <Typography key={index} variant="body2">
+                    {line}
+                  </Typography>
+                ))}{" "}
+              </Box>
+            </Box>
           )}
         </Grid>
 
