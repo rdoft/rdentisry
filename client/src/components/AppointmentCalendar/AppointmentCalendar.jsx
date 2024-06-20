@@ -4,13 +4,15 @@ import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import { AppointmentDialog } from "components/Dialog";
+import { setEvent } from "utils";
 import moment from "moment";
 import DayHeader from "./DayHeader";
-import convert from "./CalendarEvent";
+import Event from "./Event";
 import CalendarToolbar from "./CalendarToolbar";
 
 // assets
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import "assets/styles/AppointmentCalendar/AppointmentCalendar.css";
 
 // services
 import { AppointmentService } from "services";
@@ -156,6 +158,7 @@ const AppointmentCalendar = () => {
   // custom components
   const components = {
     header: ({ date, label }) => <DayHeader date={date} label={label} />,
+    event: ({ event }) => <Event event={event} step={step.current} />,
   };
 
   // Set the date formatting
@@ -208,7 +211,7 @@ const AppointmentCalendar = () => {
 
   // Convert appointments format to events
   const events = filteredAppointments.map((appointment) =>
-    convert(appointment, step.current)
+    setEvent(appointment, step.current)
   );
 
   return (

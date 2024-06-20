@@ -1,8 +1,5 @@
-import React from "react";
-import EventTitle from "./EventTitle";
-
-function convert(event, step) {
-  const { date, startTime, endTime, id, patient } = event;
+function convert(event) {
+  const { date, startTime, endTime } = event;
 
   const startDate = new Date(startTime);
   const endDate = new Date(endTime);
@@ -19,11 +16,9 @@ function convert(event, step) {
   endDate.setDate(day);
 
   return {
-    title: <EventTitle event={event} step={step} />,
     start: startDate,
     end: endDate,
-    patient,
-    id,
+    ...event,
   };
 }
 
