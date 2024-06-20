@@ -29,7 +29,7 @@
 .rbc-time-content > .rbc-day-slot > .rbc-events-container > .rbc-event:hover {
   z-index: 10;
   transform: scale(1.1);
-  height: fit-content !important;
+  display: inline-table;
 }
 
 .rbc-row-segment {
