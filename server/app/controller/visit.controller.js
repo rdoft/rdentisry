@@ -99,19 +99,26 @@ exports.saveVisit = async (req, res) => {
 
     // Create the visit
     visit = await Visit.create({ PatientId: patientId });
-
     // Add patient procedures to the visit
     for (const patientProcedure of patientProcedures) {
-      pp = await PatientProcedure.findOne({
+      [pp, created] = await PatientProcedure.findOrCreate({
         where: {
-          PatientProcedureId: patientProcedure.id,
+          PatientProcedureId: patientProcedure?.id ?? null,
+        },
+        defaults: {
+          VisitId: visit.VisitId,
+          ProcedureId: patientProcedure.procedure.id,
+          ToothNumber: patientProcedure.toothNumber,
+          CompletedDate: null,
+          Price: patientProcedure.price,
         },
       });
 
-      if (pp) {
+      if (!created) {
         await pp.update({
           VisitId: visit.VisitId,
         });
+      } else {
       }
     }
 

@@ -134,30 +134,32 @@ function ProceduresTab({
   };
 
   // Save the procedure (update or create)
-  const saveProcedure = async (procedure) => {
+  const saveProcedures = async (procedures) => {
     try {
-      if (Array.isArray(procedure)) {
-        for (let p of procedure) {
-          p.id
-            ? await PatientProcedureService.updatePatientProcedure({
-                ...p,
-                patient: patient,
-              })
-            : await PatientProcedureService.savePatientProcedure({
-                ...p,
-                patient: patient,
-              });
-        }
-      } else {
+      // Separate procedures based on whether visit is null or not
+      const withVisit = procedures.filter(
+        (procedure) => procedure.visit !== null
+      );
+      const withoutVisit = procedures.filter(
+        (procedure) => procedure.visit === null
+      );
+
+      // Create/Update the procedures with visit
+      for (let procedure of withVisit) {
         procedure.id
           ? await PatientProcedureService.updatePatientProcedure({
               ...procedure,
-              patient,
+              patient: patient,
             })
           : await PatientProcedureService.savePatientProcedure({
               ...procedure,
-              patient,
+              patient: patient,
             });
+      }
+      // Create visit and create/update the procedures
+      // (It will create a new visit for them and create procedures if not exist)
+      if (withoutVisit.length > 0) {
+        await VisitService.saveVisit(patient.id, withoutVisit);
       }
 
       // Get and set the updated list of procedures
@@ -197,20 +199,6 @@ function ProceduresTab({
       }
 
       setSelectedProcedures(_selectedProcedures);
-      getProcedures(patient.id);
-      getVisits(patient.id);
-    } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
-    }
-  };
-
-  // Create the default visit for the patient procedures
-  const createVisit = async (procedures) => {
-    try {
-      await VisitService.saveVisit(patient.id, procedures);
-
-      // Get and set the updated list of procedures
       getProcedures(patient.id);
       getVisits(patient.id);
     } catch (error) {
@@ -303,7 +291,7 @@ function ProceduresTab({
     }
 
     setSelectedProcedures(null);
-    saveProcedure(updatedProcedures);
+    saveProcedures(updatedProcedures);
   };
 
   // onClick handler for creating new visit of patientProcedure
@@ -321,7 +309,7 @@ function ProceduresTab({
     }
 
     setSelectedProcedures(null);
-    createVisit(updatedProcedures);
+    saveProcedures(updatedProcedures);
   };
 
   // onSelect handler for creating new appointment
@@ -392,7 +380,7 @@ function ProceduresTab({
                   procedures={filteredProcedures}
                   selectedProcedures={selectedProcedures}
                   setSelectedProcedures={setSelectedProcedures}
-                  onSubmit={saveProcedure}
+                  onSubmit={saveProcedures}
                   onDelete={deleteProcedure}
                   onUpdated={handleUpdated}
                 />
@@ -459,7 +447,7 @@ function ProceduresTab({
           selectedTeeth={selectedTeeth}
           onChangeTeeth={handleChangeTeeth}
           onHide={hideProcedureDialog}
-          onSubmit={saveProcedure}
+          onSubmit={saveProcedures}
         />
       )}
 
