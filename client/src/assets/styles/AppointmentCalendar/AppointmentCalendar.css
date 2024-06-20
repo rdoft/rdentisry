@@ -32,6 +32,15 @@
   height: fit-content !important;
 }
 
+.rbc-row-segment {
+  transition: 0.3s;
+}
+
+.rbc-row-segment:hover > .rbc-event {
+  min-width: min-content;
+  transform: scale(1.1);
+}
+
 .rbc-timeslot-group {
   min-height: 5em;
 }

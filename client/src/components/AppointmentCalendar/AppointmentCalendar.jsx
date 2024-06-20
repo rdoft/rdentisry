@@ -8,6 +8,7 @@ import { setEvent } from "utils";
 import moment from "moment";
 import DayHeader from "./DayHeader";
 import Event from "./Event";
+import MonthEvent from "./MonthEvent";
 import CalendarToolbar from "./CalendarToolbar";
 
 // assets
@@ -159,6 +160,9 @@ const AppointmentCalendar = () => {
   const components = {
     header: ({ date, label }) => <DayHeader date={date} label={label} />,
     event: ({ event }) => <Event event={event} step={step.current} />,
+    month: {
+      event: MonthEvent,
+    },
   };
 
   // Set the date formatting
