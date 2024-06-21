@@ -165,7 +165,13 @@ function AppointmentsTab({
             </CardTitle>
           </Grid>
 
-          <Grid item xs={12} px={1} py={3} sx={{ backgroundColor: "white" }}>
+          <Grid
+            item
+            xs={12}
+            px={1}
+            py={3}
+            sx={{ backgroundColor: "white", borderRadius: "8px" }}
+          >
             {activeAppointments.length === 0 ? (
               <NotFoundText
                 text="Aktif randevu yok"
@@ -192,7 +198,13 @@ function AppointmentsTab({
             </CardTitle>
           </Grid>
 
-          <Grid item xs={12} px={1} py={3} sx={{ backgroundColor: "white" }}>
+          <Grid
+            item
+            xs={12}
+            px={1}
+            py={3}
+            sx={{ backgroundColor: "white", borderRadius: "8px" }}
+          >
             {otherAppointments.length === 0 ? (
               <NotFoundText
                 text="Diğer randevu yok"
