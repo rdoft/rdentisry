@@ -11,7 +11,6 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
   const [isHover, setIsHover] = useState(false);
 
   // Set values as desired format
-  const { name: dname, surname: dsurname } = appointment.doctor;
   const description = appointment.description;
   const duration = appointment.duration;
   const month = new Date(appointment.date).toLocaleDateString("tr-TR", {
@@ -20,6 +19,7 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
   const day = new Date(appointment.date).toLocaleDateString("tr-TR", {
     day: "numeric",
   });
+  const { name: dname = "", surname: dsurname = "" } = appointment.doctor || {};
 
   // HANDLERS -----------------------------------------------------------------
   // onMouseEnter handler for display buttons

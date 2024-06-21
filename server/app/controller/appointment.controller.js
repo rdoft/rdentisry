@@ -76,6 +76,7 @@ exports.getAppointments = async (req, res) => {
     appointments.map((appointment) => {
       appointment.startTime = new Date(`1970-01-01T${appointment.startTime}`);
       appointment.endTime = new Date(`1970-01-01T${appointment.endTime}`);
+      appointment.doctor = appointment.doctor?.id ? appointment.doctor : null;
       appointments_.push(appointment);
     });
     res.status(200).send(appointments_);
@@ -189,8 +190,7 @@ exports.saveAppointment = async (req, res) => {
 
     if (!patientRecord || (doctor && !doctorRecord)) {
       return res.status(404).send({
-        message:
-          "Randevu oluşturmak istenen hasta veya doktor mevcut değil",
+        message: "Randevu oluşturmak istenen hasta veya doktor mevcut değil",
       });
     }
 

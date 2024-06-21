@@ -312,6 +312,7 @@ function AppointmentDialog({
             onChange={(event) =>
               handleChange({ target: { name: "date", value: event } })
             }
+            defaultMonth={new Date(appointment.date)}
           />
         </div>
 

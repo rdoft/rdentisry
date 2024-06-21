@@ -18,8 +18,8 @@ function Event({ event, step }) {
 
   const { description, startTime, endTime } = event;
   const { id, name: pname, surname: psurname } = event.patient;
-  const { name: dname, surname: dsurname } = event.doctor;
-
+  const { name: dname = '', surname: dsurname = '' } = event.doctor || {};
+  
   const startDate = new Date(startTime);
   const endDate = new Date(endTime);
   const startHours = startDate.toLocaleTimeString("tr-TR", {
@@ -67,7 +67,7 @@ function Event({ event, step }) {
     <Tooltip
       title={
         isHoverName
-          ? "Hasta detayına git"
+          ? "Hastaya git"
           : "Düzenle"
       }
       placement="bottom"
