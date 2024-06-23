@@ -17,6 +17,7 @@ import "assets/styles/AppointmentCalendar/AppointmentCalendar.css";
 
 // services
 import { AppointmentService } from "services";
+import calcDuration from "utils/calcDuration";
 
 require("moment/locale/tr.js");
 const localizer = momentLocalizer(moment);
@@ -63,7 +64,7 @@ const AppointmentCalendar = () => {
   // And filter by doctor if doctor selected
   const filteredAppointments = appointments.filter(
     (appointment) =>
-      (!doctor || appointment.doctor.id === doctor?.id) &&
+      (!doctor || appointment.doctor?.id === doctor?.id) &&
       (showAll || appointment.status === "active")
   );
 
@@ -144,6 +145,32 @@ const AppointmentCalendar = () => {
   // onSelectEvent handler for goto patient page
   const handleSelectEvent = async (event) => {
     handleClickEdit(event.id);
+  };
+
+  // onSelectSlot handler for add new appointment
+  const handleSelectSlot = ({ start, end }) => {
+    // Set date and start-end time
+    const date = new Date(
+      Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())
+    );
+    const startTime = new Date(0);
+    const endTime = new Date(0);
+    startTime.setHours(start.getHours());
+    startTime.setMinutes(start.getMinutes());
+    endTime.setHours(end.getHours());
+    endTime.setMinutes(end.getMinutes());
+
+    // Calculate duration
+    const duration = calcDuration(startTime, endTime);
+
+    setAppointment({
+      doctor,
+      date,
+      startTime,
+      endTime,
+      duration,
+    });
+    showAppointmentDialog();
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -256,7 +283,9 @@ const AppointmentCalendar = () => {
           new Date(today.getFullYear(), today.getMonth(), today.getDate(), 22)
         }
         formats={formats}
+        selectable
         onSelectEvent={handleSelectEvent}
+        onSelectSlot={handleSelectSlot}
       />
       {appointmentDialog && (
         <AppointmentDialog

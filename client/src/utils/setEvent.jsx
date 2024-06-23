@@ -1,4 +1,4 @@
-function convert(event) {
+function setEvent(event) {
   const { date, startTime, endTime } = event;
 
   const startDate = new Date(startTime);
@@ -22,4 +22,4 @@ function convert(event) {
   };
 }
 
-export default convert;
+export default setEvent;

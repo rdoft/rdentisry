@@ -74,8 +74,8 @@ exports.getAppointments = async (req, res) => {
 
     let appointments_ = [];
     appointments.map((appointment) => {
-      appointment.startTime = new Date(`1970-01-01T${appointment.startTime}`);
-      appointment.endTime = new Date(`1970-01-01T${appointment.endTime}`);
+      appointment.startTime = new Date(`1970-01-01T${appointment.startTime}Z`);
+      appointment.endTime = new Date(`1970-01-01T${appointment.endTime}Z`);
       appointment.doctor = appointment.doctor?.id ? appointment.doctor : null;
       appointments_.push(appointment);
     });

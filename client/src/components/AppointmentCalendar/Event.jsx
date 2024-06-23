@@ -16,17 +16,15 @@ function Event({ event, step }) {
   const [isHover, setIsHover] = useState(false);
   const [isHoverName, setIsHoverName] = useState(false);
 
-  const { description, startTime, endTime } = event;
+  const { description, start, end } = event;
   const { id, name: pname, surname: psurname } = event.patient;
-  const { name: dname = '', surname: dsurname = '' } = event.doctor || {};
-  
-  const startDate = new Date(startTime);
-  const endDate = new Date(endTime);
-  const startHours = startDate.toLocaleTimeString("tr-TR", {
+  const { name: dname = "", surname: dsurname = "" } = event.doctor || {};
+
+  const startHours = start.toLocaleTimeString("tr-TR", {
     hour: "2-digit",
     minute: "2-digit",
   });
-  const endHours = endDate.toLocaleTimeString("tr-TR", {
+  const endHours = end.toLocaleTimeString("tr-TR", {
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -65,11 +63,7 @@ function Event({ event, step }) {
 
   return (
     <Tooltip
-      title={
-        isHoverName
-          ? "Hastaya git"
-          : "Düzenle"
-      }
+      title={isHoverName ? "Hastaya git" : "Düzenle"}
       placement="bottom"
       followCursor={true}
     >
