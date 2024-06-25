@@ -29,19 +29,8 @@
   display: none;
 }
 
-.rbc-time-content > .rbc-day-slot > .rbc-events-container > .rbc-event:hover {
-  z-index: 10;
-  transform: scale(1.1);
-  display: inline-table;
-}
-
 .rbc-row-segment {
   transition: 0.3s;
-}
-
-.rbc-row-segment:hover > .rbc-event {
-  min-width: min-content;
-  transform: scale(1.1);
 }
 
 .rbc-timeslot-group {

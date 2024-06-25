@@ -94,10 +94,8 @@ const AppointmentCalendar = () => {
     try {
       if (appointment.id) {
         await AppointmentService.updateAppointment(appointment.id, appointment);
-        toast.success("Randevu bilgileri başarıyla güncellendi!");
       } else {
         await AppointmentService.saveAppointment(appointment);
-        toast.success("Yeni randevu başarıyla kaydedildi!");
       }
 
       // Get and set the updated list of appointments
@@ -154,11 +152,8 @@ const AppointmentCalendar = () => {
 
   // onSelectSlot handler for add new appointment
   const handleSelectSlot = ({ start, end }) => {
-    // Set date and start-end time
-    const date = new Date(
-      Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())
-    );
-    const { startTime, endTime, duration } = getEventTime({ start, end });
+    // Set date, start-end time and duration
+    const { date, startTime, endTime, duration } = getEventTime({ start, end });
     setAppointment({
       doctor,
       date,
@@ -171,9 +166,23 @@ const AppointmentCalendar = () => {
 
   // onEventResize handler for update appointment
   const handleResizeEvent = async ({ event, start, end }) => {
+    // Set start-end time and duration
     const { startTime, endTime, duration } = getEventTime({ start, end });
     saveAppointment({
       ...event,
+      startTime,
+      endTime,
+      duration,
+    });
+  };
+
+  // onEventDrop handler for update appointment
+  const handleDropEvent = async ({ event, start, end }) => {
+    // Set date, start-end time and duration
+    const { date, startTime, endTime, duration } = getEventTime({ start, end });
+    saveAppointment({
+      ...event,
+      date,
       startTime,
       endTime,
       duration,
@@ -294,6 +303,7 @@ const AppointmentCalendar = () => {
         onSelectEvent={handleSelectEvent}
         onSelectSlot={handleSelectSlot}
         onEventResize={handleResizeEvent}
+        onEventDrop={handleDropEvent}
       />
       {appointmentDialog && (
         <AppointmentDialog

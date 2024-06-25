@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { activeItem } from "store/reducers/menu";
-import { Grid, Typography, Box, Avatar } from "@mui/material";
+import { Grid, Typography, Box, Avatar, Tooltip } from "@mui/material";
 import { Goto } from "components/Button";
 
 // assets
@@ -14,17 +14,16 @@ function MonthEvent({ event }) {
   const dispatch = useDispatch();
 
   const [isHover, setIsHover] = useState(false);
+  const [isHoverName, setIsHoverName] = useState(false);
 
-  const { startTime, endTime } = event;
+  const { start, end } = event;
   const { id, name: pname, surname: psurname } = event.patient;
 
-  const startDate = new Date(startTime);
-  const endDate = new Date(endTime);
-  const startHours = startDate.toLocaleTimeString("tr-TR", {
+  const startHours = start.toLocaleTimeString("tr-TR", {
     hour: "2-digit",
     minute: "2-digit",
   });
-  const endHours = endDate.toLocaleTimeString("tr-TR", {
+  const endHours = end.toLocaleTimeString("tr-TR", {
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -39,6 +38,15 @@ function MonthEvent({ event }) {
   const handleMouseLeave = () => {
     setIsHover(false);
   };
+  // onMouseEnter handler for patient
+  const handleMouseEnterPatient = () => {
+    setIsHoverName(true);
+  };
+
+  // onMouseLeave handler for patient
+  const handleMouseLeavePatient = () => {
+    setIsHoverName(false);
+  };
 
   // onClick handler
   const handleClick = (event) => {
@@ -49,48 +57,58 @@ function MonthEvent({ event }) {
   };
 
   return (
-    <Grid
-      container
-      onClick={handleClick}
-      onContextMenu={handleClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+    <Tooltip
+      title={isHoverName ? "Hastaya git" : "Görüntüle / Düzenle"}
+      placement="right"
+      followCursor={true}
     >
-      <Grid container>
-        {isHover ? (
-          <Grid item xs={12}>
-            <Box display="flex" gap={1} alignItems="start">
-              <Avatar
-                alt="avatar"
-                src={patientAvatar}
-                shape="circle"
-                style={{ width: "18px", height: "18px", padding: "1px" }}
-              />
-              <Typography variant="h6" fontWeight="bolder" noWrap>
-                {`${pname} ${psurname}`}
-              </Typography>
-              <Goto
-                severity="info"
-                style={{
-                  color: "#3B5DBF",
-                  padding: "0.1rem",
-                  width: "auto",
-                }}
-              />
-            </Box>
-          </Grid>
-        ) : (
-          <Grid item xs={12}>
-            <Box display="flex" gap={1} alignItems="center">
-              <Typography variant="h5">⏱️</Typography>
-              <Typography variant="caption">
-                {`${startHours}-${endHours}`}
-              </Typography>
-            </Box>
-          </Grid>
-        )}
+      <Grid
+        container
+        onContextMenu={handleClick}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <Grid container>
+          {isHover ? (
+            <Grid
+              item
+              onClick={handleClick}
+              onMouseEnter={handleMouseEnterPatient}
+              onMouseLeave={handleMouseLeavePatient}
+            >
+              <Box display="flex" gap={1} alignItems="start">
+                <Avatar
+                  alt="avatar"
+                  src={patientAvatar}
+                  shape="circle"
+                  style={{ width: "18px", height: "18px", padding: "1px" }}
+                />
+                <Typography variant="h6" fontWeight="bolder" noWrap>
+                  {`${pname} ${psurname}`}
+                </Typography>
+                <Goto
+                  severity="info"
+                  style={{
+                    color: "#3B5DBF",
+                    padding: "0.1rem",
+                    width: "auto",
+                  }}
+                />
+              </Box>
+            </Grid>
+          ) : (
+            <Grid item>
+              <Box display="flex" gap={1} alignItems="center">
+                <Typography variant="h5">⏱️</Typography>
+                <Typography variant="caption" fontWeight="bolder">
+                  {`${startHours}-${endHours}`}
+                </Typography>
+              </Box>
+            </Grid>
+          )}
+        </Grid>
       </Grid>
-    </Grid>
+    </Tooltip>
   );
 }
 

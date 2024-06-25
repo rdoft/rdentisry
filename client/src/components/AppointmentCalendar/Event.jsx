@@ -29,8 +29,8 @@ function Event({ event, step }) {
     minute: "2-digit",
   });
 
-  const showDescription = description && event.duration >= step;
-  const showOnlyName = event.duration <= step / 2;
+  const lg = event.duration >= step;
+  const sm = event.duration <= step / 2;
 
   // HANDLERS -----------------------------------------------------------------
   // onMouseEnter handler for display buttons
@@ -63,7 +63,7 @@ function Event({ event, step }) {
 
   return (
     <Tooltip
-      title={isHoverName ? "Hastaya git" : "Düzenle"}
+      title={isHoverName ? "Hastaya git" : "Görüntüle / Düzenle"}
       placement="bottom"
       followCursor={true}
     >
@@ -77,25 +77,24 @@ function Event({ event, step }) {
       >
         <Grid container>
           {/* Time */}
-          {(isHover || !showOnlyName) && (
-            <Grid item xs={12}>
-              <Box display="flex" gap={1} alignItems="center">
-                <Typography variant="h5">⏱️</Typography>
-                <Typography variant="caption">
-                  {`${startHours}-${endHours}`}
-                </Typography>
-              </Box>
-            </Grid>
-          )}
+          <Grid item xs={sm ? 6 : 12}>
+            <Box display="flex" gap={1} alignItems="center">
+              <Typography variant="h5">⏱️</Typography>
+              <Typography variant="caption" fontWeight="bolder">
+                {`${startHours}-${endHours}`}
+              </Typography>
+            </Box>
+          </Grid>
 
           {/* Patient */}
           <Grid
             item
+            xs={sm && 6}
             onClick={handleClick}
             onMouseEnter={handleMouseEnterPatient}
             onMouseLeave={handleMouseLeavePatient}
           >
-            <Box display="flex" gap={1} alignItems="start">
+            <Box display="flex" gap={1} alignItems="center">
               <Avatar
                 alt="avatar"
                 src={patientAvatar}
@@ -121,7 +120,7 @@ function Event({ event, step }) {
           </Grid>
 
           {/* Doctor */}
-          {(isHover || !showOnlyName) && dname && (
+          {lg && dname && (
             <Grid item xs={12}>
               <Box display="flex" gap={1} alignItems="start">
                 <Avatar
@@ -137,7 +136,7 @@ function Event({ event, step }) {
             </Grid>
           )}
 
-          {(isHover || !showOnlyName) && showDescription && (
+          {lg && description && (
             <Grid item xs={12}>
               <Box display="flex" gap={1} alignItems="start">
                 <Typography variant="h6">🖋</Typography>

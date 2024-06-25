@@ -9,6 +9,9 @@ import calcDuration from "./calcDuration";
  * @returns {Object} startTime, endTime, duration
  */
 function getEventTime({ start, end }) {
+  const date = new Date(
+    Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())
+  );
   const startTime = new Date(0);
   const endTime = new Date(0);
   startTime.setHours(start.getHours());
@@ -18,6 +21,7 @@ function getEventTime({ start, end }) {
   const duration = calcDuration(startTime, endTime);
 
   return {
+    date,
     startTime,
     endTime,
     duration,

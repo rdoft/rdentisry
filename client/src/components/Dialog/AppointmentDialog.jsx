@@ -158,22 +158,18 @@ function AppointmentDialog({
 
     switch (name) {
       case "startTime":
-        let start = new Date(0);
-        let end = new Date(0);
+        const start = new Date(0);
+        const end = new Date(0);
 
         start.setHours(value.hour());
         start.setMinutes(value.minute());
         value = start;
 
-        _appointment.endTime = new Date(_appointment.endTime);
-        end.setHours(_appointment.endTime.getHours());
-        end.setMinutes(_appointment.endTime.getMinutes());
-
-        if (start > end) {
-          end = start;
-          _appointment.endTime = start;
-        }
-        _appointment.duration = calcDuration(start, end);
+        end.setHours(start.getHours());
+        end.setMinutes(
+          start.getMinutes() + parseInt(_appointment.duration || 0)
+        );
+        _appointment.endTime = end;
         break;
 
       case "duration":
@@ -341,10 +337,10 @@ function AppointmentDialog({
           <div className="col-6 md:col-4">
             <InputText
               id="duration"
+              name="duration"
               className="w-full"
               placeholder={"dk"}
               value={appointment.duration}
-              name="duration"
               onChange={handleChange}
             />
           </div>
