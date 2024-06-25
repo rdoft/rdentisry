@@ -19,7 +19,6 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 
 // services
 import { AppointmentService } from "services";
-import calcDuration from "utils/calcDuration";
 
 require("moment/locale/tr.js");
 const DnDCalendar = withDragAndDrop(Calendar);

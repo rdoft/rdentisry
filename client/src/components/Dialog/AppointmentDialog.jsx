@@ -14,7 +14,6 @@ import { DatePicker, TimeRangePicker } from "components/DateTime";
 import { DropdownDoctor, DropdownPatient } from "components/Dropdown";
 import { DialogTemp, DoctorDialog, PatientDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
-import { calcDuration } from "utils";
 
 // assets
 import "assets/styles/Dialog/AppointmentDialog.css";
