@@ -28,6 +28,8 @@ const AppointmentCalendar = () => {
 
   // Set the default values
   const step = useRef(30);
+  const timeslots = useRef(2);
+
   // const [step, setStep] = useState(30);
   const [showAll, setShowAll] = useState(
     localStorage.getItem("showAllAppointment") === "true"
@@ -271,8 +273,8 @@ const AppointmentCalendar = () => {
         defaultView={"week"}
         startAccessor={"start"}
         endAccessor={"end"}
-        timeslots={1}
-        step={step.current}
+        timeslots={timeslots.current}
+        step={step.current / timeslots.current}
         showAllEvents={true}
         length="7"
         allDayAccessor={null}
@@ -283,7 +285,7 @@ const AppointmentCalendar = () => {
           new Date(today.getFullYear(), today.getMonth(), today.getDate(), 22)
         }
         formats={formats}
-        selectable
+        selectable="ignoreEvents"
         onSelectEvent={handleSelectEvent}
         onSelectSlot={handleSelectSlot}
       />

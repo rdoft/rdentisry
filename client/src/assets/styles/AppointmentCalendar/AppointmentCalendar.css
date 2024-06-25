@@ -4,6 +4,9 @@
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
 }
+.rbc-events-container {
+  background-color: transparent;
+}
 
 .rbc-event {
   background-color: #e8f0ff !important;
@@ -45,6 +48,10 @@
   min-height: 5em;
 }
 
+.rbc-time-slot {
+  border: 1px solid transparent !important;
+}
+
 .rbc-allday-cell {
   display: none;
 }
@@ -62,4 +69,14 @@
   font-weight: 600;
   font-size: 1.4rem;
   color: #333c5e;
+}
+
+/* Slot when selected */
+.rbc-day-slot .rbc-slot-selection {
+  opacity: 0.7;
+  background-color: #DFD8FD;
+  color: #776AC1;
+  font-weight: 700;
+  font-size: small;
+  border-radius: 5px;
 }
