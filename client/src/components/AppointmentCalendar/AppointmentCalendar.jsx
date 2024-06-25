@@ -3,8 +3,9 @@ import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
 import { Calendar, momentLocalizer } from "react-big-calendar";
+import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
+import { getEventTime, setEventTime } from "utils";
 import { AppointmentDialog } from "components/Dialog";
-import { setEvent } from "utils";
 import moment from "moment";
 import DayHeader from "./DayHeader";
 import Event from "./Event";
@@ -14,12 +15,14 @@ import CalendarToolbar from "./CalendarToolbar";
 // assets
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import "assets/styles/AppointmentCalendar/AppointmentCalendar.css";
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 
 // services
 import { AppointmentService } from "services";
 import calcDuration from "utils/calcDuration";
 
 require("moment/locale/tr.js");
+const DnDCalendar = withDragAndDrop(Calendar);
 const localizer = momentLocalizer(moment);
 const today = new Date();
 
@@ -155,16 +158,7 @@ const AppointmentCalendar = () => {
     const date = new Date(
       Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())
     );
-    const startTime = new Date(0);
-    const endTime = new Date(0);
-    startTime.setHours(start.getHours());
-    startTime.setMinutes(start.getMinutes());
-    endTime.setHours(end.getHours());
-    endTime.setMinutes(end.getMinutes());
-
-    // Calculate duration
-    const duration = calcDuration(startTime, endTime);
-
+    const { startTime, endTime, duration } = getEventTime({ start, end });
     setAppointment({
       doctor,
       date,
@@ -173,6 +167,17 @@ const AppointmentCalendar = () => {
       duration,
     });
     showAppointmentDialog();
+  };
+
+  // onEventResize handler for update appointment
+  const handleResizeEvent = async ({ event, start, end }) => {
+    const { startTime, endTime, duration } = getEventTime({ start, end });
+    saveAppointment({
+      ...event,
+      startTime,
+      endTime,
+      duration,
+    });
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -244,7 +249,7 @@ const AppointmentCalendar = () => {
 
   // Convert appointments format to events
   const events = filteredAppointments.map((appointment) =>
-    setEvent(appointment, step.current)
+    setEventTime(appointment, step.current)
   );
 
   return (
@@ -258,7 +263,7 @@ const AppointmentCalendar = () => {
         setShowAll={setShowAll}
         onClickAddAppointment={showAppointmentDialog}
       />
-      <Calendar
+      <DnDCalendar
         style={{
           height: "calc(100vh - 190px)",
           // marginTop: "20px",
@@ -288,6 +293,7 @@ const AppointmentCalendar = () => {
         selectable="ignoreEvents"
         onSelectEvent={handleSelectEvent}
         onSelectSlot={handleSelectSlot}
+        onEventResize={handleResizeEvent}
       />
       {appointmentDialog && (
         <AppointmentDialog
