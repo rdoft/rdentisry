@@ -2,29 +2,67 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { errorHandler } from "utils";
 import { toast } from "react-hot-toast";
-import { Grid } from "@mui/material";
+import { Grid, Tabs, Tab, Avatar } from "@mui/material";
 import { ProcedureDialog } from "components/Dialog";
+import { NewItem, SplitItem } from "components/Button";
+import { AppointmentDialog } from "components/Dialog";
 import ProcedureToolbar from "./ProcedureToolbar";
 import DentalChart from "./DentalChart";
-import ProcedureList from "./ProcedureList";
+import ProcedureList from "./ProcedureList/ProcedureList";
 
 // assets
 import "assets/styles/PatientDetail/ProceduresTab.css";
+import { ListIcon, TeethIcon } from "assets/images/icons";
 
 // services
-import { PatientProcedureService } from "services";
+import {
+  PatientProcedureService,
+  VisitService,
+  AppointmentService,
+} from "services";
 
 function ProceduresTab({
   patient,
   procedureDialog,
-  hideDialog,
+  appointmentDialog,
+  showProcedureDialog,
+  hideProcedureDialog,
+  showAppointmentDialog,
+  hideAppointmentDialog,
   counts,
   setCounts,
 }) {
   const navigate = useNavigate();
 
+  const [tabIndex, setTabIndex] = useState(
+    localStorage.getItem("activeTabIndexProcedure")
+      ? parseInt(localStorage.getItem("activeTabIndexProcedure"))
+      : 0
+  );
   const [procedures, setProcedures] = useState([]);
-  const [selectedTooth, setSelectedTooth] = useState(null);
+  const [selectedTeeth, setSelectedTeeth] = useState([0]);
+  const [selectedProcedures, setSelectedProcedures] = useState(null);
+  const [visits, setVisits] = useState([]);
+  const [description, setDescription] = useState("");
+
+  // Add keydown event listener
+  // when component mounts and remove it when unmounts
+  useEffect(() => {
+    // onKeyDown handler to cancel selected tooth
+    const handleKeyDown = (event) => {
+      // If an input element is focused, do not execute the rest of the handler
+      if (document.activeElement.tagName.toLowerCase() === "input") {
+        return;
+      }
+
+      event.key === "Escape" && setSelectedTeeth([0]);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [setSelectedTeeth]);
 
   // Set the page on loading
   useEffect(() => {
@@ -44,41 +82,50 @@ function ProceduresTab({
         code === 401 ? navigate(`/login`) : toast.error(message);
       });
 
+    VisitService.getVisits(patient.id, null, { signal })
+      .then((res) => {
+        setVisits(res.data);
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
     return () => {
       controller.abort();
     };
   }, [navigate, patient]);
 
-  // Group procedures by tooth number
-  let groupedProcedures = {};
-  let tooth;
-  for (let procedure of procedures) {
-    tooth = procedure.toothNumber;
-    if (tooth || tooth === 0) {
-      if (groupedProcedures[tooth]) {
-        groupedProcedures[tooth].push(procedure);
-      } else {
-        groupedProcedures[tooth] = [procedure];
-      }
-    }
-  }
+  // Filter procedures based on selectedTeeth
+  const filteredProcedures = procedures.filter(
+    (procedure) =>
+      selectedTeeth.includes(0) || selectedTeeth.includes(procedure.toothNumber)
+  );
+  // Get the recent visit of the patient
+  const recentVisit = procedures.sort(
+    (a, b) => new Date(b?.visit.id) - new Date(a?.visit.id)
+  )[0]?.visit;
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of the procedures of the patient and set procedures value
   const getProcedures = async (patientId) => {
     let response;
-    let procedures;
+    let countProcedure = { pending: 0, completed: 0 };
 
     try {
       response = await PatientProcedureService.getPatientProcedures({
         patientId,
       });
-      procedures = response.data;
-
-      setProcedures(procedures);
+      response.data.forEach((procedure) => {
+        procedure.completedDate
+          ? countProcedure.completed++
+          : countProcedure.pending++;
+      });
+      setProcedures(response.data);
       setCounts({
         ...counts,
-        procedure: procedures.length,
+        procedure: { ...countProcedure },
       });
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -86,102 +133,330 @@ function ProceduresTab({
     }
   };
 
-  // Save the procedure
-  const saveProcedure = async (procedure) => {
+  // Save the procedure (update or create)
+  const saveProcedures = async (procedures) => {
     try {
-      // Update
-      if (procedure.id) {
-        await PatientProcedureService.updatePatientProcedure(procedure);
-      } else {
-        // Create
-        await PatientProcedureService.savePatientProcedure(procedure);
+      // Separate procedures based on whether visit is null or not
+      const withVisit = procedures.filter(
+        (procedure) => procedure.visit !== null
+      );
+      const withoutVisit = procedures.filter(
+        (procedure) => procedure.visit === null
+      );
+
+      // Create/Update the procedures with visit
+      for (let procedure of withVisit) {
+        procedure.id
+          ? await PatientProcedureService.updatePatientProcedure({
+              ...procedure,
+              patient: patient,
+            })
+          : await PatientProcedureService.savePatientProcedure({
+              ...procedure,
+              patient: patient,
+            });
+      }
+      // Create visit and create/update the procedures
+      // (It will create a new visit for them and create procedures if not exist)
+      if (withoutVisit.length > 0) {
+        await VisitService.saveVisit(patient.id, withoutVisit);
       }
 
       // Get and set the updated list of procedures
       getProcedures(patient.id);
+      getVisits(patient.id);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
-  // Delete the procedure
+  // Delete the procedure and filter selected procedures
   const deleteProcedure = async (procedure) => {
-    try {
-      await PatientProcedureService.deletePatientProcedure(
-        patient.id,
-        procedure.id
-      );
+    let _selectedProcedures;
 
-      // Get and set the updated list of procedures
+    try {
+      if (Array.isArray(procedure)) {
+        for (let p of procedure) {
+          await PatientProcedureService.deletePatientProcedure(
+            patient.id,
+            p.id
+          );
+        }
+        _selectedProcedures = selectedProcedures
+          ? selectedProcedures.filter(
+              (item) => !procedure.find((p) => p.id === item.id)
+            )
+          : null;
+      } else {
+        await PatientProcedureService.deletePatientProcedure(
+          patient.id,
+          procedure.id
+        );
+        _selectedProcedures = selectedProcedures
+          ? selectedProcedures.filter((item) => item.id !== procedure.id)
+          : null;
+      }
+
+      setSelectedProcedures(_selectedProcedures);
       getProcedures(patient.id);
+      getVisits(patient.id);
     } catch (error) {
       const { code, message } = errorHandler(error);
       code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
+
+  // Get visits for a given patientId
+  const getVisits = async (patientId) => {
+    let response;
+    let visits;
+
+    try {
+      response = await VisitService.getVisits(patientId);
+      visits = response.data;
+
+      setVisits(visits);
+    } catch (error) {
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
+    }
+  };
+
+  // Save appointment (create/update)
+  const saveAppointment = async (appointment) => {
+    let countAppointment = { pending: 0, completed: 0 };
+    let response;
+
+    try {
+      // Save the appointment
+      await AppointmentService.saveAppointment(appointment);
+      hideAppointmentDialog();
+
+      // Update the appointment counts
+      response = await AppointmentService.getAppointments({
+        patientId: patient.id,
+      });
+      response.data.forEach((appointment) => {
+        appointment.status === "active"
+          ? countAppointment.pending++
+          : countAppointment.completed++;
+      });
+      setCounts({
+        ...counts,
+        appointment: { ...countAppointment },
+      });
+    } catch (error) {
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
+    }
+  };
+
+  // HANDLERS -----------------------------------------------------------------
+  // onSelectTooth handler
+  const handleChangeTeeth = (teeth) => {
+    teeth = teeth?.filter((tooth) => tooth !== 0);
+
+    if (teeth && teeth.length > 0) {
+      setSelectedTeeth(teeth);
+    } else {
+      setSelectedTeeth([0]);
+    }
+  };
+
+  // onUpdated handler
+  const handleUpdated = (patientId) => {
+    getProcedures(patientId);
+    getVisits(patientId);
+  };
+
+  // onChange handler for the tabs
+  const handleTabChange = (event, newValue) => {
+    setTabIndex(newValue);
+    localStorage.setItem("activeTabIndexProcedure", newValue);
+  };
+
+  // onSelect handler for the visit of patientProcedure
+  const handleSelectVisit = (visit) => {
+    const updatedProcedures = [];
+    for (let procedure of selectedProcedures) {
+      for (let i = 0; i < procedure.ids.length; i++) {
+        const found = procedures.find((item) => item.id === procedure.ids[i]);
+        updatedProcedures.push({
+          ...found,
+          visit: visit,
+          patient: patient,
+        });
+      }
+    }
+
+    setSelectedProcedures(null);
+    saveProcedures(updatedProcedures);
+  };
+
+  // onClick handler for creating new visit of patientProcedure
+  const handleCreateVisit = () => {
+    const updatedProcedures = [];
+    for (let procedure of selectedProcedures) {
+      for (let i = 0; i < procedure.ids.length; i++) {
+        const found = procedures.find((item) => item.id === procedure.ids[i]);
+        updatedProcedures.push({
+          ...found,
+          visit: null,
+          patient: patient,
+        });
+      }
+    }
+
+    setSelectedProcedures(null);
+    saveProcedures(updatedProcedures);
+  };
+
+  // onSelect handler for creating new appointment
+  const handleSelectAppointment = (visit) => {
+    const description = procedures
+      .filter((procedure) => procedure.visitId === visit.id)
+      .map(
+        (procedure) =>
+          `• ${procedure.procedure.name}, [${
+            procedure.toothNumber === 0 ? "Genel" : procedure.toothNumber
+          }]`
+      )
+      .join("\n");
+    setDescription(description);
+    showAppointmentDialog();
+  };
+
+  // onClick handler for creating new appointment
+  const handleCreateAppointment = () => {
+    setDescription("");
+    showAppointmentDialog();
+  };
+
+  // TEMPLATES ----------------------------------------------------------------
+  // options of SplitButton for visits
+  const pendingVisits = visits
+    .filter((item) => !item.approvedDate)
+    .map((item) => ({
+      label: `📌 ${item.title}`,
+      command: () => handleSelectVisit(item),
+    }));
+
+  // options of SplitButton for visits
+  const approvedVisits = visits
+    .filter((item) => item.approvedDate)
+    .map((item) => ({
+      label: `📌 ${item.title}`,
+      command: () => handleSelectAppointment(item),
+    }));
 
   return (
     <>
       <Grid
         container
-        justifyContent="space-between"
         mt={2}
-        p={3}
+        justifyContent="center"
         sx={{ borderRadius: 2, backgroundColor: "#FFFFFF" }}
       >
-        {/* Dental chart */}
-        <Grid
-          container
-          item
-          lg={6}
-          xs={12}
-          pr={{ lg: 3 }}
-          pb={{ xs: 3, lg: 0 }}
-        >
-          <DentalChart
-            procedures={groupedProcedures}
-            selectedTooth={selectedTooth}
-            onChangeTooth={setSelectedTooth}
-          />
+        <Grid container item xl={11} xs={10} py={3} justifyContent="center">
+          {tabIndex === 0 && (
+            <DentalChart
+              procedures={procedures}
+              selectedTeeth={selectedTeeth}
+              onChangeTeeth={handleChangeTeeth}
+            />
+          )}
+          {tabIndex === 1 && (
+            <Grid container item>
+              <Grid item xs={12} pb={3}>
+                <ProcedureToolbar
+                  selectedTeeth={selectedTeeth}
+                  onChangeTeeth={handleChangeTeeth}
+                />
+              </Grid>
+              <Grid item xs>
+                <ProcedureList
+                  patient={patient}
+                  procedures={filteredProcedures}
+                  selectedProcedures={selectedProcedures}
+                  setSelectedProcedures={setSelectedProcedures}
+                  onSubmit={saveProcedures}
+                  onDelete={deleteProcedure}
+                  onUpdated={handleUpdated}
+                />
+              </Grid>
+            </Grid>
+          )}
+
+          {/* Action buttons */}
+          <Grid container justifyContent="center">
+            {(selectedProcedures?.length > 0 || approvedVisits?.length > 0) &&
+              tabIndex === 1 && (
+                <Grid
+                  container
+                  item
+                  xs={6}
+                  md={5}
+                  spacing={1}
+                  justifyContent="center"
+                >
+                  {approvedVisits?.length > 0 && (
+                    <SplitItem
+                      label="Randevu Ekle"
+                      options={approvedVisits}
+                      onClick={handleCreateAppointment}
+                    />
+                  )}
+                  {selectedProcedures?.length > 0 && (
+                    <SplitItem
+                      label="Tedavi Planı Ekle"
+                      options={pendingVisits}
+                      onClick={handleCreateVisit}
+                    />
+                  )}
+                </Grid>
+              )}
+            <Grid item xs={6} md={5}>
+              <NewItem label="Tedavi Ekle" onClick={showProcedureDialog} />
+            </Grid>
+          </Grid>
         </Grid>
 
-        {/* Procedures */}
-        <Grid
-          item
-          lg={6}
-          xs={12}
-          p={3}
-          sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
-        >
-          {/* Toolbar */}
-          <Grid item pb={2}>
-            <ProcedureToolbar
-              selectedTooth={selectedTooth}
-              onChangeTooth={setSelectedTooth}
-            />
-          </Grid>
-
-          {/* Procedure list */}
-          <ProcedureList
-            patient={patient}
-            selectedTooth={selectedTooth}
-            procedures={groupedProcedures}
-            onSubmit={saveProcedure}
-            onDelete={deleteProcedure}
-          />
+        {/* Tabs */}
+        <Grid item xs="auto" py={3}>
+          <Tabs
+            value={tabIndex}
+            onChange={handleTabChange}
+            centered
+            orientation="vertical"
+          >
+            <Tab value={0} icon={<Avatar src={TeethIcon} />} disableRipple />
+            <Tab value={1} icon={<Avatar src={ListIcon} />} disableRipple />
+          </Tabs>
         </Grid>
       </Grid>
 
-      {/* Dialog */}
+      {/* Procedure Dialog */}
       {procedureDialog && (
         <ProcedureDialog
           initPatientProcedure={{
             patient,
-            toothNumber: selectedTooth || 0,
+            visit:
+              recentVisit && !recentVisit.approvedDate ? recentVisit : null,
           }}
-          onHide={hideDialog}
-          onSubmit={saveProcedure}
+          selectedTeeth={selectedTeeth}
+          onChangeTeeth={handleChangeTeeth}
+          onHide={hideProcedureDialog}
+          onSubmit={saveProcedures}
+        />
+      )}
+
+      {/* Appointment Dialog */}
+      {appointmentDialog && (
+        <AppointmentDialog
+          initAppointment={{ description, patient }}
+          onSubmit={saveAppointment}
+          onHide={hideAppointmentDialog}
         />
       )}
     </>

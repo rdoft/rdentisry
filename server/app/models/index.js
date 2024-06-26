@@ -26,7 +26,8 @@ db.doctor = require("./doctor.model")(sequelize, Sequelize);
 db.appointment = require("./appointment.model")(sequelize, Sequelize);
 db.note = require("./note.model")(sequelize, Sequelize);
 db.payment = require("./payment.model")(sequelize, Sequelize);
-db.invoice = require("./invoice.model")(sequelize, Sequelize);
+db.paymentPlan = require("./paymentPlan.model")(sequelize, Sequelize);
+db.visit = require("./visit.model")(sequelize, Sequelize);
 db.procedure = require("./procedure.model")(sequelize, Sequelize);
 db.procedureCategory = require("./procedureCategory.model")(
   sequelize,
@@ -75,6 +76,26 @@ db.payment.belongsTo(db.patient, {
   foreignKey: "PatientId",
 });
 
+// patient - paymentPlan (one to many)
+db.patient.hasMany(db.paymentPlan, {
+  as: "paymentPlans",
+  foreignKey: "PatientId",
+});
+db.paymentPlan.belongsTo(db.patient, {
+  as: "patient",
+  foreignKey: "PatientId",
+});
+
+// patient - visit (one to many)
+db.patient.hasMany(db.visit, {
+  as: "visits",
+  foreignKey: "PatientId",
+});
+db.visit.belongsTo(db.patient, {
+  as: "patient",
+  foreignKey: "PatientId",
+});
+
 // doctor - appointment (one to many)
 db.doctor.hasMany(db.appointment, {
   as: "appointments",
@@ -95,18 +116,6 @@ db.procedure.belongsTo(db.procedureCategory, {
   foreignKey: "ProcedureCategoryId",
 });
 
-// patient - patientProcedure (one to many)
-db.patient.hasMany(db.patientProcedure, {
-  as: "patientProcedures",
-  foreignKey: "PatientId",
-  onDelete: "cascade",
-  hooks: true,
-});
-db.patientProcedure.belongsTo(db.patient, {
-  as: "patient",
-  foreignKey: "PatientId",
-});
-
 // procedure - patientProcedure (one to many)
 db.procedure.hasMany(db.patientProcedure, {
   as: "patientProcedures",
@@ -117,14 +126,16 @@ db.patientProcedure.belongsTo(db.procedure, {
   foreignKey: "ProcedureId",
 });
 
-// patientProcedure - invoice (one to one)
-db.patientProcedure.hasOne(db.invoice, {
-  as: "invoice",
-  foreignKey: "PatientProcedureId",
+// visit - patientProcedure (one to many)
+db.visit.hasMany(db.patientProcedure, {
+  as: "patientProcedures",
+  foreignKey: "VisitId",
+  onDelete: "cascade",
+  hooks: true,
 });
-db.invoice.belongsTo(db.patientProcedure, {
-  as: "procedure",
-  foreignKey: "PatientProcedureId",
+db.patientProcedure.belongsTo(db.visit, {
+  as: "visit",
+  foreignKey: "VisitId",
 });
 
 // notificationEvent - notification (one to many)
@@ -209,7 +220,8 @@ db.doctor.beforeDestroy(async (doctor) => {
 // Control If patient has any payments before destroy
 db.patient.beforeDestroy(async (patient) => {
   const paymentCount = await patient.countPayments();
-  if (paymentCount > 0) {
+  const visitCount = await patient.countVisits();
+  if (paymentCount > 0 || visitCount > 0) {
     throw new Sequelize.ForeignKeyConstraintError();
   }
 });
@@ -221,7 +233,12 @@ db.patient.beforeBulkDestroy(async (options) => {
       PatientId: options.where.PatientId,
     },
   });
-  if (paymentCount > 0) {
+  const visitCount = await db.visit.count({
+    where: {
+      PatientId: options.where.PatientId,
+    },
+  });
+  if (paymentCount > 0 || visitCount > 0) {
     throw new Sequelize.ForeignKeyConstraintError();
   }
 });
@@ -243,6 +260,48 @@ db.procedure.beforeBulkDestroy(async (options) => {
   });
   if (patientCount > 0) {
     throw new Sequelize.ForeignKeyConstraintError();
+  }
+});
+
+// Hook to delete visits after patientProcedure update
+db.patientProcedure.afterUpdate(async (patientProcedure) => {
+  // Get the previous visit ID
+  const previousVisitId = patientProcedure._previousDataValues.VisitId;
+
+  if (previousVisitId) {
+    const oldVisit = await db.visit.findOne({
+      where: { VisitId: previousVisitId },
+      include: [
+        {
+          model: db.patientProcedure,
+          as: "patientProcedures",
+        },
+      ],
+    });
+
+    if (oldVisit && oldVisit.patientProcedures.length === 0) {
+      oldVisit.destroy();
+    }
+  }
+});
+
+// Control if there is empty visit when delete patientProcedure,
+// if empty then destroy visit
+db.patientProcedure.afterDestroy(async (patientProcedure) => {
+  const visit = await db.visit.findOne({
+    where: {
+      VisitId: patientProcedure.VisitId,
+    },
+    include: [
+      {
+        model: db.patientProcedure,
+        as: "patientProcedures",
+      },
+    ],
+  });
+
+  if (visit && visit.patientProcedures.length === 0) {
+    visit.destroy();
   }
 });
 

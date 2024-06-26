@@ -1,90 +1,96 @@
 const { Sequelize } = require("../models");
 const db = require("../models");
-
 const Payment = db.payment;
+const PaymentPlan = db.paymentPlan;
 const Patient = db.patient;
 const Notification = db.notification;
 const NotificationEvent = db.notificationEvent;
 
-const UPCOMMING = 2; // Days of upcoming payment
+const { processPatientsPayments } = require("../utils/payment.util");
 
 /**
  * Add notifications for upcoming and overdue payments of the patients
  */
 exports.run = async () => {
-  let overdueEvent;
-  let upcomingEvent;
-  let overduePatients;
-  let upcomingPatients;
-  const today = new Date();
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + UPCOMMING);
-
   try {
-    // Create notificaitonEvent if NOT payment type events exist
-    [overdueEvent] = await NotificationEvent.findOrCreate({
+    // Create notificationEvent if NOT payment type events exist
+    const [overdueEvent] = await NotificationEvent.findOrCreate({
       where: {
         Event: "overdue",
         Type: "payment",
       },
     });
-    [upcomingEvent] = await NotificationEvent.findOrCreate({
+    const [upcomingEvent] = await NotificationEvent.findOrCreate({
       where: {
         Event: "upcoming",
         Type: "payment",
       },
     });
 
-    // Find overdue payment of the patients
-    overduePatients = await Patient.findAll({
+    // Query to find all patients with their payment plans
+    let patients = await Patient.findAll({
+      attributes: [
+        ["PatientId", "id"],
+        ["UserId", "userId"],
+        ["IdNumber", "idNumber"],
+        ["Name", "name"],
+        ["Surname", "surname"],
+        ["Phone", "phone"],
+        ["BirthYear", "birthYear"],
+      ],
       include: [
         {
-          model: Payment,
-          as: "payments",
-          where: {
-            PlannedDate: {
-              [Sequelize.Op.eq]: today,
-            },
-            ActualDate: null,
-          },
+          model: PaymentPlan,
+          as: "paymentPlans",
+          attributes: [
+            ["PaymentPlanId", "id"],
+            ["Amount", "amount"],
+            ["PlannedDate", "plannedDate"],
+          ],
         },
       ],
-    });
-    // Find upcomming payments of the patients
-    upcomingPatients = await Patient.findAll({
-      include: [
-        {
-          model: Payment,
-          as: "payments",
-          where: {
-            PlannedDate: {
-              [Sequelize.Op.eq]: tomorrow,
-            },
-            ActualDate: null,
-          },
-        },
+      order: [
+        [{ model: PaymentPlan, as: "paymentPlans" }, "PlannedDate", "ASC"],
       ],
     });
 
+    // Query to find total planned payments per patient
+    const payments = await Payment.findAll({
+      attributes: [
+        ["PatientId", , "patientId"],
+        [Sequelize.fn("SUM", Sequelize.col("Amount")), "total"],
+      ],
+      where: {
+        IsPlanned: true,
+      },
+      group: [Sequelize.col("Payment.PatientId")],
+      raw: true,
+    });
+
+    // Calculate overdue & upcoming status
+    patients = processPatientsPayments(patients, payments, false);
+
     // Create notification for overdue payments
-    for (let patient of overduePatients) {
-      await Notification.create({
-        Message: `${patient.Name} ${patient.Surname} isimli hastanın vadesi geçen ödemesi bulunmaktadır`,
-        Status: "sent",
-        PatientId: patient.PatientId,
-        UserId: patient.UserId,
-        NotificationEventId: overdueEvent.NotificationEventId,
-      });
-    }
-    // Create notification for upcoming payments
-    for (let patient of upcomingPatients) {
-      await Notification.create({
-        Message: `${patient.Name} ${patient.Surname} isimli hastanın yaklaşan ödemesi bulunmaktadır`,
-        Status: "sent",
-        PatientId: patient.PatientId,
-        UserId: patient.UserId,
-        NotificationEventId: upcomingEvent.NotificationEventId,
-      });
+    for (let patient of patients) {
+      if (patient.overdue) {
+        await Notification.create({
+          Message: `${patient.name} ${patient.surname} isimli hastanın vadesi geçen ödeme planı bulunmaktadır`,
+          Status: "sent",
+          PatientId: patient.id,
+          UserId: patient.userId,
+          NotificationEventId: overdueEvent.NotificationEventId,
+        });
+      }
+
+      if (patient.upcoming) {
+        await Notification.create({
+          Message: `${patient.name} ${patient.surname} isimli hastanın yaklaşan ödeme planı bulunmaktadır`,
+          Status: "sent",
+          PatientId: patient.id,
+          UserId: patient.userId,
+          NotificationEventId: upcomingEvent.NotificationEventId,
+        });
+      }
     }
   } catch (error) {
     console.log(error);

@@ -78,6 +78,7 @@ function PriceColumn({ procedure, onSubmit }) {
     <Tooltip title="Fiyatı düzenle" placement="bottom-start" enterDelay={500}>
       <Grid
         container
+        item
         onClick={handleEdit}
         xs={9}
         p={1}

@@ -1,23 +1,31 @@
 import React from "react";
 import { Tag } from "primereact";
 
-function PaymentDateTag({ actual, planned }) {
+function PaymentDateTag({ payment }) {
   let color;
   let bgColor;
   let label;
 
-  if (actual) {
-    color = "#22A069";
-    bgColor = "#DFFCF0";
-    label = new Date(actual).toLocaleDateString("tr-TR", {
+  if (payment.actualDate) {
+    color = "#22A06A";
+    bgColor = "#DFF6EC";
+    label = new Date(payment.actualDate).toLocaleDateString("tr-TR", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-  } else if (new Date(planned).getTime() < new Date().getTime()) {
+  } else if (payment.amount === payment.paid) {
+    color = "#172B4D";
+    bgColor = "#F3F4F5";
+    label = new Date(payment.plannedDate).toLocaleDateString("tr-TR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  } else if (new Date(payment.plannedDate).getTime() < new Date().getTime()) {
     color = "#EF4444";
     bgColor = "#FFD2CB";
-    label = new Date(planned).toLocaleDateString("tr-TR", {
+    label = new Date(payment.plannedDate).toLocaleDateString("tr-TR", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -25,7 +33,7 @@ function PaymentDateTag({ actual, planned }) {
   } else {
     color = "#1E7AFC";
     bgColor = "#E8F0FF";
-    label = new Date(planned).toLocaleDateString("tr-TR", {
+    label = new Date(payment.plannedDate).toLocaleDateString("tr-TR", {
       year: "numeric",
       month: "long",
       day: "numeric",

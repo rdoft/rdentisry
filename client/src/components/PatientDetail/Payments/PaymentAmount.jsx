@@ -1,10 +1,21 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
 import { CardTitle } from "components/cards";
-import PaymentType from "./PaymentType";
+import { Reduce } from "components/Button";
 
-function PaymentAmount({ amount, type }) {
+function PaymentAmount({ amount, paid, isReduce, onChange }) {
+  // HANDLERS -----------------------------------------------------------------
+  // onChnageReduce handler
+  const handleClickReduce = () => {
+    onChange(!isReduce);
+  };
+
+  // TEMPLATEs -----------------------------------------------------------------
   const _amount = amount.toLocaleString("tr-TR", {
+    style: "decimal",
+    maximumFractionDigits: 2,
+  });
+  const _paid = paid?.toLocaleString("tr-TR", {
     style: "decimal",
     maximumFractionDigits: 2,
   });
@@ -15,17 +26,29 @@ function PaymentAmount({ amount, type }) {
       alignItems="start"
       justifyContent="start"
       direction="column"
-      spacing={1}
-      pb={6}
+      paddingBottom={1}
     >
-      <Grid item xs={12}>
-        <CardTitle variant="h4">
-          <Typography variant="caption">₺</Typography>{_amount}
-        </CardTitle>
-      </Grid>
-      <Grid item xs={12} fontSize={12}>
-        <PaymentType type={type} />
-      </Grid>
+      {paid != null ? (
+        <Grid item xs={12}>
+          <CardTitle variant="h4">
+            <Typography variant="caption">₺</Typography>
+            {_amount}
+            <Typography variant="caption"> / {_paid}</Typography>
+          </CardTitle>
+        </Grid>
+      ) : (
+        <Grid container>
+          <Grid item xs={"auto"} paddingRight={4}>
+            <CardTitle variant="h4">
+              <Typography variant="caption">₺</Typography>
+              {_amount}
+            </CardTitle>
+          </Grid>
+          <Grid item xs fontSize={12} alignContent="center">
+            <Reduce isReduce={isReduce} onClick={handleClickReduce} />
+          </Grid>
+        </Grid>
+      )}
     </Grid>
   );
 }

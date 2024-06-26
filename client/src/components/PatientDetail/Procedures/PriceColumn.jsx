@@ -1,12 +1,12 @@
 import React, { useState, useRef } from "react";
 import { Grid, Typography, Tooltip, ClickAwayListener } from "@mui/material";
 import { InputNumber } from "primereact";
-import { CardTitle } from "components/cards";
 import { Cancel } from "components/Button";
 
-function PriceColumn({ procedure, onSubmit, isEdit, setIsEdit }) {
-  const prevPrice = useRef(procedure.invoice.amount);
-  const [price, setPrice] = useState(procedure.invoice.amount);
+function PriceColumn({ procedure, onSubmit }) {
+  const prevPrice = useRef(procedure.price);
+  const [isEdit, setIsEdit] = useState(false);
+  const [price, setPrice] = useState(procedure.price);
 
   // HANDLERS -----------------------------------------------------------------
   // onEdit handler
@@ -26,10 +26,7 @@ function PriceColumn({ procedure, onSubmit, isEdit, setIsEdit }) {
     setIsEdit(false);
     onSubmit({
       ...procedure,
-      invoice: {
-        ...procedure.invoice,
-        amount: price,
-      },
+      price: price,
     });
   };
 
@@ -57,7 +54,7 @@ function PriceColumn({ procedure, onSubmit, isEdit, setIsEdit }) {
 
   return isEdit ? (
     <Grid container alignItems="center" m={"-16px"}>
-      <Grid item xs="auto">
+      <Grid item xs={10}>
         <ClickAwayListener onClickAway={handleClickAway}>
           <InputNumber
             id="price"
@@ -70,26 +67,50 @@ function PriceColumn({ procedure, onSubmit, isEdit, setIsEdit }) {
             variant="outlined"
             autoFocus={true}
             className="w-full"
-            inputStyle={{ padding: "8px" }}
+            inputStyle={{ padding: "4px 8px" }}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
         </ClickAwayListener>
       </Grid>
-      <Grid item xs>
+      <Grid item xs={2}>
         <Cancel onClick={handleCancel} />
       </Grid>
     </Grid>
   ) : (
-    <Tooltip title="Fiyatı düzenle" placement="bottom-start" enterDelay={500}>
-      <Grid container onClick={handleEdit}>
-        <CardTitle>
-          <Typography variant="caption">₺</Typography>
+    <Tooltip
+      title={
+        procedure.visit.approvedDate
+          ? "Tedavi planı onaylandı, tedavi ücreti değiştirilemez"
+          : "Tutarı düzenle"
+      }
+      placement="bottom-start"
+      enterDelay={500}
+    >
+      <Grid
+        container
+        item
+        onClick={!procedure.visit.approvedDate ? handleEdit : undefined}
+        xs={10}
+        py={0.5}
+        pl={1}
+        m={-1}
+        sx={{
+          borderRadius: "8px",
+          "&:hover": {
+            backgroundColor: procedure.visit.approvedDate
+              ? "inherit"
+              : "#f5f5f5",
+          },
+        }}
+      >
+        <Typography variant="h6">₺</Typography>
+        <Typography variant="h5">
           {price.toLocaleString("tr-TR", {
             style: "decimal",
             maximumFractionDigits: 2,
           })}
-        </CardTitle>
+        </Typography>
       </Grid>
     </Tooltip>
   );

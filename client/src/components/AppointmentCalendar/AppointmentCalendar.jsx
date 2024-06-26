@@ -2,31 +2,39 @@ import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { Calendar, momentLocalizer } from "react-big-calendar";
-import { activeItem } from "store/reducers/menu";
+import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
+import { getEventTime, setEventTime } from "utils";
 import { AppointmentDialog } from "components/Dialog";
 import moment from "moment";
+import Event from "./Event";
+import MonthEvent from "./MonthEvent";
 import DayHeader from "./DayHeader";
-import convert from "./CalendarEvent";
+import TimeGutter from "./TimeGutter";
+import TimeGutterHeader from "./TimeGutterHeader";
+import RBCToolbar from "./RBCToolbar";
 import CalendarToolbar from "./CalendarToolbar";
 
 // assets
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import "assets/styles/AppointmentCalendar/AppointmentCalendar.css";
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 
 // services
 import { AppointmentService } from "services";
 
 require("moment/locale/tr.js");
+const DnDCalendar = withDragAndDrop(Calendar);
 const localizer = momentLocalizer(moment);
 const today = new Date();
 
 const AppointmentCalendar = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   // Set the default values
   const step = useRef(30);
+  const timeslots = useRef(2);
+
   // const [step, setStep] = useState(30);
   const [showAll, setShowAll] = useState(
     localStorage.getItem("showAllAppointment") === "true"
@@ -63,7 +71,7 @@ const AppointmentCalendar = () => {
   // And filter by doctor if doctor selected
   const filteredAppointments = appointments.filter(
     (appointment) =>
-      (!doctor || appointment.doctor.id === doctor?.id) &&
+      (!doctor || appointment.doctor?.id === doctor?.id) &&
       (showAll || appointment.status === "active")
   );
 
@@ -88,10 +96,8 @@ const AppointmentCalendar = () => {
     try {
       if (appointment.id) {
         await AppointmentService.updateAppointment(appointment.id, appointment);
-        toast.success("Randevu bilgileri başarıyla güncellendi!");
       } else {
         await AppointmentService.saveAppointment(appointment);
-        toast.success("Yeni randevu başarıyla kaydedildi!");
       }
 
       // Get and set the updated list of appointments
@@ -143,8 +149,46 @@ const AppointmentCalendar = () => {
 
   // onSelectEvent handler for goto patient page
   const handleSelectEvent = async (event) => {
-    navigate(`/patients/${event.patient.id}`);
-    dispatch(activeItem({ openItem: ["patients"] }));
+    handleClickEdit(event.id);
+  };
+
+  // onSelectSlot handler for add new appointment
+  const handleSelectSlot = ({ start, end }) => {
+    // Set date, start-end time and duration
+    const { date, startTime, endTime, duration } = getEventTime({ start, end });
+    setAppointment({
+      doctor,
+      date,
+      startTime,
+      endTime,
+      duration,
+    });
+    showAppointmentDialog();
+  };
+
+  // onEventResize handler for update appointment
+  const handleResizeEvent = async ({ event, start, end }) => {
+    // Set start-end time and duration
+    const { startTime, endTime, duration } = getEventTime({ start, end });
+    saveAppointment({
+      ...event,
+      startTime,
+      endTime,
+      duration,
+    });
+  };
+
+  // onEventDrop handler for update appointment
+  const handleDropEvent = async ({ event, start, end }) => {
+    // Set date, start-end time and duration
+    const { date, startTime, endTime, duration } = getEventTime({ start, end });
+    saveAppointment({
+      ...event,
+      date,
+      startTime,
+      endTime,
+      duration,
+    });
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -159,7 +203,14 @@ const AppointmentCalendar = () => {
 
   // custom components
   const components = {
-    header: ({ date, label }) => <DayHeader date={date} label={label} />,
+    toolbar: RBCToolbar,
+    header: DayHeader,
+    timeGutterHeader: TimeGutterHeader,
+    timeGutterWrapper: TimeGutter,
+    event: ({ event }) => <Event event={event} step={step.current} />,
+    month: {
+      event: MonthEvent,
+    },
   };
 
   // Set the date formatting
@@ -212,7 +263,7 @@ const AppointmentCalendar = () => {
 
   // Convert appointments format to events
   const events = filteredAppointments.map((appointment) =>
-    convert(appointment, step.current, handleClickEdit)
+    setEventTime(appointment, step.current)
   );
 
   return (
@@ -226,7 +277,7 @@ const AppointmentCalendar = () => {
         setShowAll={setShowAll}
         onClickAddAppointment={showAppointmentDialog}
       />
-      <Calendar
+      <DnDCalendar
         style={{
           height: "calc(100vh - 190px)",
           // marginTop: "20px",
@@ -236,13 +287,13 @@ const AppointmentCalendar = () => {
         events={events}
         dayPropGetter={dayPropGetter}
         components={components}
+        tooltipAccessor={null}
         views={["month", "week"]}
         defaultView={"week"}
         startAccessor={"start"}
         endAccessor={"end"}
-        timeslots={1}
-        step={step.current}
-        tooltipAccessor={(event) => event.tooltip}
+        timeslots={timeslots.current}
+        step={step.current / timeslots.current}
         showAllEvents={true}
         length="7"
         allDayAccessor={null}
@@ -253,7 +304,11 @@ const AppointmentCalendar = () => {
           new Date(today.getFullYear(), today.getMonth(), today.getDate(), 22)
         }
         formats={formats}
+        selectable="ignoreEvents"
         onSelectEvent={handleSelectEvent}
+        onSelectSlot={handleSelectSlot}
+        onEventResize={handleResizeEvent}
+        onEventDrop={handleDropEvent}
       />
       {appointmentDialog && (
         <AppointmentDialog

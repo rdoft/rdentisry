@@ -4,7 +4,8 @@ import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
-import NotFoundText from "components/NotFoundText";
+import { NewItem } from "components/Button";
+import { NotFoundText } from "components/Text";
 import NoteCard from "./NoteCard";
 import Note from "./Note";
 
@@ -14,7 +15,14 @@ import "assets/styles/PatientDetail/NotesTab.css";
 // services
 import { NoteService } from "services";
 
-function NotesTab({ patient, noteDialog, hideDialog, counts, setCounts }) {
+function NotesTab({
+  patient,
+  noteDialog,
+  showDialog,
+  hideDialog,
+  counts,
+  setCounts,
+}) {
   const navigate = useNavigate();
 
   const [isEdit, setEdit] = useState(false);
@@ -45,23 +53,23 @@ function NotesTab({ patient, noteDialog, hideDialog, counts, setCounts }) {
   useEffect(() => {
     if (noteDialog) {
       setNote(null);
+      setTimeout(() => {
+        hideDialog();
+      }, 1000);
     }
-  }, [noteDialog, patient]);
+  }, [noteDialog, hideDialog]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of the notes of the patient and set notes value
   const getNotes = async (patientId) => {
     let response;
-    let notes;
 
     try {
       response = await NoteService.getNotes(patientId);
-      notes = response.data;
-
-      setNotes(notes);
+      setNotes(response.data);
       setCounts({
         ...counts,
-        note: notes.length,
+        note: { other: response.data.length },
       });
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -128,9 +136,19 @@ function NotesTab({ patient, noteDialog, hideDialog, counts, setCounts }) {
   return (
     <>
       <Grid container justifyContent="space-between" mt={2}>
-        <Grid item xs={4} pr={3}>
+        {/* Note list */}
+        <Grid
+          item
+          xs={4}
+          px={1}
+          py={3}
+          sx={{ borderRadius: 2, backgroundColor: "white" }}
+        >
           {notes.length === 0 ? (
-            <NotFoundText text="Not yok" p={3} />
+            <NotFoundText
+              text="Not yok"
+              style={{ backgroundColor: "#F5F5F5" }}
+            />
           ) : (
             <DataScroller
               value={notes}
@@ -138,12 +156,22 @@ function NotesTab({ patient, noteDialog, hideDialog, counts, setCounts }) {
               rows={10}
             ></DataScroller>
           )}
+
+          {/* Add note */}
+          <NewItem label="Not Ekle" onClick={showDialog} />
         </Grid>
+
+        {/* Note detail */}
         <Grid
           item
-          xs={8}
+          xs={7.8}
           px={3}
-          sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}
+          sx={{
+            borderRadius: 2,
+            backgroundColor: "#f5f5f5",
+            border: "1px solid",
+            borderColor: noteDialog ? "#333C5E" : "transparent",
+          }}
         >
           <Note
             key={note?.id}

@@ -1,7 +1,16 @@
-import calcDuration from "./calcDuration";
+import errorHandler from "./errorHandler";
 import calcProgress from "./calcProgress";
 import getTabIndex from "./getTabIndex";
 import getTabCounts from "./getTabCounts";
-import errorHandler from "./errorHandler";
+import calcDuration from "./calcDuration";
+import { getEventTime, setEventTime } from "./eventTime";
 
-export { calcDuration, calcProgress, getTabIndex, getTabCounts, errorHandler };
+export {
+  errorHandler,
+  calcProgress,
+  getTabIndex,
+  getTabCounts,
+  calcDuration,
+  setEventTime,
+  getEventTime,
+};

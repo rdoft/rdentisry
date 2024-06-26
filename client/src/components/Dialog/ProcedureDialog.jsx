@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
-import { Chip, Divider, InputNumber, Checkbox } from "primereact";
+import { Chip, Divider, InputNumber, Checkbox, Dropdown } from "primereact";
 import { DialogTemp } from "components/Dialog";
 import { DropdownPatient, DropdownProcedure } from "components/Dropdown";
 
@@ -11,7 +11,13 @@ import schema from "schemas/procedure.schema";
 // services
 import { PatientService, ProcedureService } from "services";
 
-function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
+function ProcedureDialog({
+  initPatientProcedure = {},
+  onHide,
+  onSubmit,
+  selectedTeeth,
+  onChangeTeeth,
+}) {
   const navigate = useNavigate();
 
   const [patients, setPatients] = useState([]);
@@ -21,17 +27,25 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
   const [patientProcedure, setPatientProcedure] = useState({
     patient: null,
     procedure: null,
-    invoice: {
-      amount: 0,
-    },
-    toothNumber: 0,
+    visit: null,
     ...initPatientProcedure,
   });
+  // Validations
   const [isValid, setIsValid] = useState(false);
   const [isError, setIsError] = useState({
     quantity: false,
     amount: false,
   });
+
+  const teeth = [
+    11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 27, 28, 31, 32,
+    33, 34, 35, 36, 37, 38, 41, 42, 43, 44, 45, 46, 47, 48,
+  ]
+    .filter((tooth) => !selectedTeeth.includes(tooth))
+    .map((tooth) => ({
+      label: tooth ? tooth : "Genel",
+      value: tooth,
+    }));
 
   // Set the doctors from dropdown on loading
   useEffect(() => {
@@ -79,16 +93,12 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
       _patientProcedure = {
         ...patientProcedure,
         procedure: value,
-        invoice: {
-          amount: value.price,
-        },
+        price: value.price,
       };
     } else if (name === "amount") {
       _patientProcedure = {
         ...patientProcedure,
-        invoice: {
-          amount: value,
-        },
+        price: value,
       };
       _isError.amount = schema.price.validate(value).error ? true : false;
     } else if (name === "quantity") {
@@ -108,6 +118,18 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
     setIsValid(_isValid);
   };
 
+  // onAddTeeth handler
+  const handleAddTooth = (tooth) => {
+    if (!selectedTeeth.includes(tooth)) {
+      onChangeTeeth([...selectedTeeth, tooth]);
+    }
+  };
+
+  // onRemoveTeeth handler
+  const handleRemoveTooth = (tooth) => {
+    onChangeTeeth(selectedTeeth.filter((number) => number !== tooth));
+  };
+
   // onHide handler
   const handleHide = () => {
     onHide();
@@ -115,9 +137,18 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
 
   // onSubmit handler
   const handleSubmit = () => {
+    let patientProcedures = [];
     for (let i = 0; i < quantity; i++) {
-      onSubmit(patientProcedure);
+      for (let tooth of selectedTeeth) {
+        patientProcedures.push({
+          ...patientProcedure,
+          toothNumber: tooth,
+        });
+      }
     }
+
+    onSubmit(patientProcedures);
+    // Close the dialog unless isAnother selected
     !isAnother && onHide();
   };
 
@@ -167,7 +198,7 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
         <div className="col-5 md:col-3 p-0">
           <InputNumber
             id="amount"
-            value={patientProcedure.invoice?.amount}
+            value={patientProcedure.price}
             name="amount"
             onChange={(e) =>
               handleChange({
@@ -207,13 +238,36 @@ function ProcedureDialog({ initPatientProcedure = {}, onHide, onSubmit }) {
 
       {/* Tooth */}
       <div className="flex grid align-items-center mb-4">
-        <label className="col-12 md:col-3 font-bold">Diş Numarası</label>
-        <Chip
-          label={patientProcedure.toothNumber || "Genel"}
+        <label className="col-12 md:col-3 font-bold">Dişler</label>
+        {selectedTeeth.map((tooth) => (
+          <Chip
+            key={tooth}
+            label={tooth ? "🦷 " + tooth : "Genel"}
+            removable={tooth !== 0}
+            onRemove={() => handleRemoveTooth(tooth)}
+            style={{
+              backgroundColor: "transparent",
+              border: "1px solid #CED4D9",
+              margin: "0.3rem",
+            }}
+          />
+        ))}
+        <Dropdown
+          name="teeth"
+          options={teeth}
+          filter
+          filterBy="label"
+          placeholder="Seç"
+          onChange={(e) => handleAddTooth(e.value)}
           style={{
-            backgroundColor: "transparent",
-            border: "1px solid #CED4D9",
+            alignItems: "center",
+            width: "7rem",
+            height: "40px",
+            margin: "0.3rem",
+            borderRadius: "18px",
           }}
+          emptyMessage="Sonuç bulunamadı"
+          emptyFilterMessage="Sonuç bulunamadı"
         />
       </div>
 

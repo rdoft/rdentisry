@@ -30,7 +30,7 @@ function ProcedureTableToolbar({
 
   return (
     <Toolbar
-      className="mb-4 p-2"
+      className="mb-3 p-2"
       start={getActionButton}
       end={getSearchInput}
     />

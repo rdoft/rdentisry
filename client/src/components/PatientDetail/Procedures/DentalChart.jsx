@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Badge, Divider, Skeleton } from "primereact";
 import { Grid, ImageList } from "@mui/material";
+import { PressKeyText } from "components/Text";
 import StatusBadge from "./StatusBadge";
 
 // assets
 import { upTeeth, downTeeth } from "assets/images/charts";
 
-function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
+function DentalChart({ procedures, selectedTeeth, onChangeTeeth }) {
   const [loading, setLoading] = useState(true);
 
   // Load image on mount
@@ -26,23 +27,39 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
       .then(() => setLoading(false));
   }, []);
 
+  //FUNCTIONS -----------------------------------------------------------------
+  // Group procedures by tooth number
+  const groupedProcedures = {};
+  for (let procedure of procedures) {
+    const tooth = procedure.toothNumber;
+    if (tooth || tooth === 0) {
+      if (groupedProcedures[tooth]) {
+        groupedProcedures[tooth].push(procedure);
+      } else {
+        groupedProcedures[tooth] = [procedure];
+      }
+    }
+  }
+
   // HANDLERS -----------------------------------------------------------------
   // onClick tooth handler
-  const handleChangeTooth = (tooth) => {
-    tooth === selectedTooth ? onChangeTooth(null) : onChangeTooth(tooth);
+  const handleSelectTooth = (tooth) => {
+    selectedTeeth.includes(tooth)
+      ? onChangeTeeth(selectedTeeth.filter((number) => number !== tooth))
+      : onChangeTeeth([...selectedTeeth, tooth]);
   };
 
   // TEMPLATES ----------------------------------------------------------------
   // Tooth item template
   const toothItem = (tooth) => (
     <>
-      {loading && <Skeleton width="85%" height="8vw"></Skeleton>}
+      {loading && <Skeleton width="65%" height="8vw"></Skeleton>}
       <img
         visiblity={loading ? "hidden" : "visible"}
         srcSet={tooth.src}
         src={tooth.src}
         alt={tooth.number}
-        style={{ width: "85%" }}
+        style={{ width: "65%", minWidth: 45 }}
       />
     </>
   );
@@ -63,7 +80,19 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
   );
 
   return (
-    <Grid item xs={12} p={2}>
+    <Grid container justifyContent="center">
+      <Grid item xs={12} textAlign="center">
+        {/* Information note */}
+        {selectedTeeth && !selectedTeeth.includes(0) ? (
+          <PressKeyText
+            text="Tüm seçimleri kaldırmak için ESC tıklayın"
+            keypad={"ESC"}
+          />
+        ) : (
+          <PressKeyText text="Dişleri seçmek için üzerine tıklayın" />
+        )}
+      </Grid>
+
       {/* Up Teeth */}
       <ImageList cols={16} gap={0}>
         {upTeeth.map((tooth) => (
@@ -71,10 +100,14 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
             key={tooth.number}
             container
             direction="column"
-            onClick={() => handleChangeTooth(tooth.number)}
+            onClick={() => handleSelectTooth(tooth.number)}
+            pt={3}
             sx={{
               opacity:
-                selectedTooth && tooth.number !== selectedTooth ? 0.3 : 1,
+                selectedTeeth.includes(0) ||
+                selectedTeeth.includes(tooth.number)
+                  ? 1
+                  : 0.3,
             }}
           >
             {/* Numbers */}
@@ -83,18 +116,20 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
             </Grid>
 
             {/* Status */}
-            <Grid container item xs={1} textAlign="center">
-              <StatusBadge procedures={procedures[tooth.number]} />
+            <Grid container item xs={1}>
+              <StatusBadge procedures={groupedProcedures[tooth.number]} />
             </Grid>
 
             {/* Teeth */}
-            <Grid item>{toothItem(tooth)}</Grid>
+            <Grid item xs={5} textAlign="center">
+              {toothItem(tooth)}
+            </Grid>
           </Grid>
         ))}
       </ImageList>
 
       {/* Divider */}
-      <Divider className="p-3" />
+      <Divider />
 
       {/* Down Teeth */}
       <ImageList cols={16} gap={0}>
@@ -103,24 +138,23 @@ function DentalChart({ procedures, selectedTooth, onChangeTooth }) {
             key={tooth.number}
             container
             direction="column"
-            onClick={() => handleChangeTooth(tooth.number)}
+            onClick={() => handleSelectTooth(tooth.number)}
             sx={{
               opacity:
-                selectedTooth && tooth.number !== selectedTooth ? 0.3 : 1,
+                selectedTeeth.includes(0) ||
+                selectedTeeth.includes(tooth.number)
+                  ? 1
+                  : 0.3,
             }}
           >
             {/* Teeth */}
-            <Grid item>{toothItem(tooth)}</Grid>
+            <Grid item xs={5} textAlign="center">
+              {toothItem(tooth)}
+            </Grid>
 
             {/* Status */}
-            <Grid
-              container
-              item
-              xs={1}
-              direction="column-reverse"
-              textAlign="center"
-            >
-              <StatusBadge procedures={procedures[tooth.number]} />
+            <Grid container item xs={1} direction="column-reverse">
+              <StatusBadge procedures={groupedProcedures[tooth.number]} />
             </Grid>
 
             {/* Numbers */}

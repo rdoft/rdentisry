@@ -32,14 +32,14 @@ function PatientDetail() {
       : 0
   );
   const [counts, setCounts] = useState({
-    appointment: 0,
-    payment: 0,
-    note: 0,
-    procedure: 0,
+    appointment: { pending: 0, completed: 0 },
+    payment: { pending: 0, completed: 0 },
+    note: { other: 0 },
+    procedure: { pending: 0, completed: 0 },
   });
   const [dialog, setDialog] = useState({
     appointment: false,
-    payment: false,
+    payment: null,
     note: false,
     procedure: false,
   });
@@ -84,10 +84,10 @@ function PatientDetail() {
   };
 
   // Show add appointment dialog
-  const showPaymentDialog = () => {
+  const showPaymentDialog = (type) => {
     setDialog({
       ...dialog,
-      payment: true,
+      payment: type,
     });
   };
 
@@ -95,7 +95,7 @@ function PatientDetail() {
   const hidePaymentDialog = () => {
     setDialog({
       ...dialog,
-      payment: false,
+      payment: null,
     });
   };
 
@@ -149,6 +149,7 @@ function PatientDetail() {
             startContent={
               <PatientDetailToolbarAction
                 activeIndex={activeIndex}
+                onTabChange={handleTabChange}
                 showAppointmentDialog={showAppointmentDialog}
                 showPaymentDialog={showPaymentDialog}
                 showNoteDialog={showNoteDialog}
@@ -175,6 +176,7 @@ function PatientDetail() {
               )}
             >
               <AppointmentsTab
+                key={patient.id}
                 patient={patient}
                 patients={patients}
                 setPatients={setPatients}
@@ -198,6 +200,7 @@ function PatientDetail() {
               )}
             >
               <PaymentsTab
+                key={patient.id}
                 patient={patient}
                 paymentDialog={dialog.payment}
                 showDialog={showPaymentDialog}
@@ -219,8 +222,10 @@ function PatientDetail() {
               )}
             >
               <NotesTab
+                key={patient.id}
                 patient={patient}
                 noteDialog={dialog.note}
+                showDialog={showNoteDialog}
                 hideDialog={hideNoteDialog}
                 counts={counts}
                 setCounts={setCounts}
@@ -239,9 +244,14 @@ function PatientDetail() {
               )}
             >
               <ProceduresTab
+                key={patient.id}
                 patient={patient}
                 procedureDialog={dialog.procedure}
-                hideDialog={hideProcedureDialog}
+                appointmentDialog={dialog.appointment}
+                showProcedureDialog={showProcedureDialog}
+                hideProcedureDialog={hideProcedureDialog}
+                showAppointmentDialog={showAppointmentDialog}
+                hideAppointmentDialog={hideAppointmentDialog}
                 counts={counts}
                 setCounts={setCounts}
               />

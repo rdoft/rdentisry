@@ -1,149 +1,50 @@
-import React, { useEffect, useMemo } from "react";
+import React from "react";
+import { Chip } from "primereact";
 import { Grid } from "@mui/material";
 import { CardTitle } from "components/cards";
-import { Next, Prev, Cancel } from "components/Button";
+import { PressKeyText } from "components/Text";
 
-function ProcedureToolbar({ selectedTooth, onChangeTooth }) {
-  // All theeth numbers
-  const teeth = useMemo(
-    () => [
-      "18",
-      "17",
-      "16",
-      "15",
-      "14",
-      "13",
-      "12",
-      "11",
-      "21",
-      "22",
-      "23",
-      "24",
-      "25",
-      "26",
-      "27",
-      "28",
-      "38",
-      "37",
-      "36",
-      "35",
-      "34",
-      "33",
-      "32",
-      "31",
-      "41",
-      "42",
-      "43",
-      "44",
-      "45",
-      "46",
-      "47",
-      "48",
-    ],
-    []
-  );
-
-  // Add keydown event listener
-  // when component mounts and remove it when unmounts
-  useEffect(() => {
-    // onKeyDown handler to cancel selected tooth
-    const handleKeyDown = (event) => {
-      // If an input element is focused, do not execute the rest of the handler
-      if (document.activeElement.tagName.toLowerCase() === "input") {
-        return;
-      }
-
-      const index = teeth.indexOf(selectedTooth);
-
-      switch (event.key) {
-        case "Escape":
-          onChangeTooth(null);
-          break;
-        case "ArrowRight":
-          if (index < teeth.length - 1) {
-            onChangeTooth(teeth[index + 1]);
-          } else {
-            onChangeTooth(teeth[0]);
-          }
-          break;
-        case "ArrowLeft":
-          if (index > 0) {
-            onChangeTooth(teeth[index - 1]);
-          } else {
-            onChangeTooth(teeth[teeth.length - 1]);
-          }
-          break;
-        default:
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [teeth, selectedTooth, onChangeTooth]);
-
+function ProcedureToolbar({ selectedTeeth, onChangeTeeth }) {
   // HANDLERS -----------------------------------------------------------------
-  // onClickNext handler to selct next tooth
-  const handleNextTooth = () => {
-    const index = teeth.indexOf(selectedTooth);
-    if (index < teeth.length - 1) {
-      onChangeTooth(teeth[index + 1]);
-    } else {
-      onChangeTooth(teeth[0]);
-    }
-    // loose focus
-    document.activeElement.blur();
-  };
-
-  // onClickNext handler to selct prev tooth
-  const handlePrevTooth = () => {
-    const index = teeth.indexOf(selectedTooth);
-    if (index > 0) {
-      onChangeTooth(teeth[index - 1]);
-    } else {
-      onChangeTooth(teeth[teeth.length - 1]);
-    }
-    // loose focus
-    document.activeElement.blur();
-  };
-
-  // onClickCancel handler to cancel selected tooth
-  const handleCancelTooth = () => {
-    onChangeTooth(null);
-    // loose focus
-    document.activeElement.blur();
+  // onClickRemove handler to remove selected tooth
+  const handleRemoveTooth = (tooth) => {
+    onChangeTeeth(selectedTeeth.filter((number) => number !== tooth));
   };
 
   return (
     <Grid container item alignItems="center">
-      {!selectedTooth ? (
+      {selectedTeeth.includes(0) ? (
         <Grid item xs={8}>
           {/* All procedure */}
-          <CardTitle variant="h3">Tüm Tedaviler</CardTitle>
+          <CardTitle variant="h3" style={{ backgroundColor: "transparent" }}>
+            Tüm Tedaviler
+          </CardTitle>
         </Grid>
       ) : (
         <>
-          {/* Prev arrow */}
-          <Grid item xs={1}>
-            <Prev onClick={handlePrevTooth} />
+          {/* Information note */}
+          <Grid item xs={12} textAlign="center">
+            <PressKeyText
+              text="Tüm seçimleri kaldırmak için ESC tıklayın"
+              keypad="ESC"
+            />
           </Grid>
 
-          {/* Next arrow */}
-          <Grid item xs={1}>
-            <Next onClick={handleNextTooth} />
-          </Grid>
-
-          {/* Tooth number */}
-          <Grid item xs={8}>
-            <CardTitle variant="h3">{`Diş ${selectedTooth}`}</CardTitle>
-          </Grid>
-
-          {/* Cancel button */}
-          <Grid container item xs={2} justifyContent="end">
-            <Cancel onClick={handleCancelTooth} />
+          <Grid item xs={12}>
+            {/* Tooth number */}
+            {selectedTeeth.map((tooth) => (
+              <Chip
+                key={tooth}
+                label={tooth ? "🦷 " + tooth : "Genel"}
+                removable
+                onRemove={() => handleRemoveTooth(tooth)}
+                style={{
+                  backgroundColor: "transparent",
+                  border: "1px solid #CED4D9",
+                  margin: "0.3rem",
+                }}
+              />
+            ))}
           </Grid>
         </>
       )}

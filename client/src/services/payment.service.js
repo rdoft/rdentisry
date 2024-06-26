@@ -3,20 +3,20 @@ const API_URL = "/payments";
 
 let payment = {};
 
-payment.savePayment = (payment) => {
-  return API.post(API_URL, payment);
+payment.savePayment = (payment, plan = false) => {
+  return API.post(`${API_URL}?plan=${plan}`, payment);
 };
 
-payment.updatePayment = (id, payment) => {
-  return API.put(`${API_URL}/${id}`, payment);
+payment.updatePayment = (id, payment, plan = false) => {
+  return API.put(`${API_URL}/${id}?plan=${plan}`, payment);
 };
 
-payment.getPayments = (patientId) => {
-  return API.get(`/patients/${patientId}/payments`);
+payment.getPayments = (patientId, plan = false, options = {}) => {
+  return API.get(`/patients/${patientId}/payments?plan=${plan}`, options);
 };
 
-payment.deletePayment = (id) => {
-  return API.delete(`${API_URL}/${id}`);
+payment.deletePayment = (id, plan = false) => {
+  return API.delete(`${API_URL}/${id}?plan=${plan}`);
 };
 
 export default payment;

@@ -6,7 +6,8 @@ import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import { AppointmentDialog } from "components/Dialog";
 import { CardTitle } from "components/cards";
-import NotFoundText from "components/NotFoundText";
+import { NewItem } from "components/Button";
+import NotFoundText from "components/Text/NotFoundText";
 import AppointmentCard from "./AppointmentCard";
 
 // assets
@@ -66,17 +67,20 @@ function AppointmentsTab({
   // Get the list of appointments of the patient and set appointmets value
   const getAppointments = async (patientId) => {
     let response;
-    let appointments;
+    let countAppointment = { pending: 0, completed: 0 };
 
     try {
       response = await AppointmentService.getAppointments({ patientId });
       // appointments = response.data.reverse();
-      appointments = response.data;
-
-      setAppointments(appointments);
+      response.data.forEach((appointment) => {
+        appointment.status === "active"
+          ? countAppointment.pending++
+          : countAppointment.completed++;
+      });
+      setAppointments(response.data);
       setCounts({
         ...counts,
-        appointment: appointments.length,
+        appointment: { ...countAppointment },
       });
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -161,9 +165,18 @@ function AppointmentsTab({
             </CardTitle>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid
+            item
+            xs={12}
+            px={1}
+            py={3}
+            sx={{ backgroundColor: "white", borderRadius: "8px" }}
+          >
             {activeAppointments.length === 0 ? (
-              <NotFoundText text="Randevu yok" p={3} />
+              <NotFoundText
+                text="Aktif randevu yok"
+                style={{ backgroundColor: "#F5F5F5" }}
+              />
             ) : (
               <DataScroller
                 value={activeAppointments}
@@ -171,6 +184,9 @@ function AppointmentsTab({
                 rows={10}
               ></DataScroller>
             )}
+
+            {/* Add appointment */}
+            <NewItem label="Randevu Ekle" onClick={showDialog} />
           </Grid>
         </Grid>
 
@@ -182,9 +198,18 @@ function AppointmentsTab({
             </CardTitle>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid
+            item
+            xs={12}
+            px={1}
+            py={3}
+            sx={{ backgroundColor: "white", borderRadius: "8px" }}
+          >
             {otherAppointments.length === 0 ? (
-              <NotFoundText text="Randevu yok" p={3} />
+              <NotFoundText
+                text="Diğer randevu yok"
+                style={{ backgroundColor: "#F5F5F5" }}
+              />
             ) : (
               <DataScroller
                 value={otherAppointments}
@@ -192,6 +217,9 @@ function AppointmentsTab({
                 rows={10}
               ></DataScroller>
             )}
+
+            {/* Add appointment */}
+            <NewItem label="Randevu Ekle" onClick={showDialog} />
           </Grid>
         </Grid>
       </Grid>

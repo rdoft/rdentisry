@@ -15,15 +15,20 @@ function DayHeader({ date, label }) {
 
   return dayNumber ? (
     <>
-      <Typography variant="h4" pt={1}>
+      <Typography variant="h4" pt={1} sx={{ color: "#182A4C" }}>
         {dayNumber}
       </Typography>
-      <Typography variant="h5" fontWeight="light" pb={1}>
+      <Typography
+        variant="h5"
+        fontWeight="light"
+        pb={1}
+        sx={{ color: "#182A4C" }}
+      >
         {dayName}
       </Typography>
     </>
   ) : (
-    <Typography variant="h5" fontWeight="light" p={2}>
+    <Typography variant="h5" fontWeight="light" p={2} sx={{ color: "#182A4C" }}>
       {dayName}
     </Typography>
   );

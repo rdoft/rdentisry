@@ -7,7 +7,7 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      PatientId: {
+      VisitId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -19,8 +19,20 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      IsComplete: {
-        type: Sequelize.BOOLEAN,
+      CompletedDate: {
+        type: Sequelize.DATEONLY,
+      },
+      Price: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+        defaultValue: 0,
+        validate: {
+          min: (price) => {
+            if (price < 0) {
+              throw new Error("Price must be positive");
+            }
+          },
+        },
       },
     },
     {

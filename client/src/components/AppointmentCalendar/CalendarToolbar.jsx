@@ -164,7 +164,7 @@ function CalendarToolbar({
   return (
     <>
       <Toolbar
-        className="mb-4 p-2"
+        className="mb-3 p-2"
         start={startContent}
         center={centerContent}
         end={endContent}

@@ -22,14 +22,14 @@ function StatusColumn({ procedure, onSubmit }) {
   ];
 
   // Set status of the procedure
-  const status = procedure.isComplete ? statusItems[1] : statusItems[0];
+  const status = procedure.completedDate ? statusItems[1] : statusItems[0];
 
   // HANDLERS -----------------------------------------------------------------
   // onChangeStatus handler
   const handleChange = () => {
     onSubmit({
       ...procedure,
-      isComplete: !procedure.isComplete,
+      completedDate: procedure.completedDate ? null : new Date(),
     });
   };
 

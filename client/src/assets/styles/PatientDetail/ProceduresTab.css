@@ -9,3 +9,28 @@
 .p-scrollpanel .p-scrollpanel-bar {
   background: #c1c1c1;
 }
+
+.procedure-list .p-datascroller-content {
+  padding: 0 !important;
+}
+
+.procedure-list-item .p-datascroller-content {
+  padding: 0.5rem 0.5rem !important;
+}
+
+.p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+  padding: 0rem 0.5rem;
+}
+
+/* .p-datatable .p-column-header-content {
+  justify-content: center;
+} */
+
+.splitbutton-custom .p-button {
+  color: #182a4d !important;
+  border-color: #182a4d !important;
+}
+
+.p-checkbox.p-component.p-disabled {
+  visibility: hidden;
+}

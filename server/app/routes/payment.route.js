@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { validate } = require("../middleware/validation");
+const { validate, validateOR } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
 
 // Patient specific imports
@@ -27,16 +27,21 @@ module.exports = function (app) {
     /**
      * Get payment list of the given patientId
      * @param {string} patientId id of the patient
+     * @query {boolean} plan whether to get payment plans or actual payments
      */
     .get(controller.getPayments);
 
   router
     .route(`/payments`)
     /**
-     * Add a Payment
-     * @body Payment information
+     * Update the Payment or Payment Plan
+     * @param paymentId: Id of the Payment or Payment Plan
+     * @query {boolean} plan whether to update payment plan or actual payment
      */
-    .post(validate(schema.payment, "body"), controller.savePayment);
+    .post(
+      validateOR(schema.payment, schema.paymentPlan, "body"),
+      controller.savePayment
+    );
 
   router
     .route(`/payments/:paymentId`)
@@ -46,12 +51,13 @@ module.exports = function (app) {
      */
     .put(
       validate(schema.id, "params"),
-      validate(schema.payment, "body"),
+      validateOR(schema.payment, schema.paymentPlan, "body"),
       controller.updatePayment
     )
     /**
-     * Delete the Payment
-     * @param paymentId: Id of the Payment
+     * Delete the Payment or Payment Plan
+     * @param paymentId: Id of the Payment or Payment Plan
+     * @query {boolean} plan whether to delete payment plan or actual payment
      */
     .delete(validate(schema.id, "params"), controller.deletePayment);
 

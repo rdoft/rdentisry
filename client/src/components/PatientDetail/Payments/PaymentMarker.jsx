@@ -3,8 +3,12 @@ import { React } from "react";
 function PaymentMarker({ payment }) {
   let color;
   let icon;
+
   if (payment.actualDate) {
     color = "#22A06A";
+    icon = "pi pi-circle-fill";
+  } else if (payment.amount === payment.paid) {
+    color = "#172B4D";
     icon = "pi pi-check";
   } else if (new Date(payment.plannedDate).getTime() < new Date().getTime()) {
     color = "#EF4444";

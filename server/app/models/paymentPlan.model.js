@@ -1,19 +1,15 @@
 module.exports = (sequelize, Sequelize) => {
-  const Invoice = sequelize.define(
-    "Invoice",
+  const PaymentPlan = sequelize.define(
+    "PaymentPlan",
     {
-      InvoiceId: {
+      PaymentPlanId: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      PatientProcedureId: {
+      PatientId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-      },
-      Description: {
-        type: Sequelize.STRING(511),
-        allowNull: true,
       },
       Amount: {
         type: Sequelize.FLOAT,
@@ -26,22 +22,16 @@ module.exports = (sequelize, Sequelize) => {
           },
         },
       },
-      Discount: {
-        type: Sequelize.FLOAT,
-        allowNull: true,
+      PlannedDate: {
+        type: Sequelize.DATEONLY,
+        allowNull: false,
       },
     },
     {
-      indexes: [
-        {
-          unique: true,
-          fields: ["PatientProcedureId"],
-        },
-      ],
       timestamps: false,
-      tableName: "Invoice",
+      tableName: "PaymentPlan",
     }
   );
 
-  return Invoice;
+  return PaymentPlan;
 };

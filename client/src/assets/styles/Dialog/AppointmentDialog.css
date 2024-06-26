@@ -1,0 +1,7 @@
+.p-dialog-mask {
+  z-index: 1000 !important;
+}
+
+.picker-container {
+  z-index: 1001;
+}

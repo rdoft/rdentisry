@@ -17,7 +17,6 @@ function DatePicker({ value, onChange, minDate, ...props }) {
       onSelect={onChange}
       locale={tr}
       disabled={disabledDays}
-      defaultMonth={value}
       fixedWeeks
       styles={{
         caption: { color: "#333C5E" },

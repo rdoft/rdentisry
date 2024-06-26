@@ -9,7 +9,7 @@ function Pay({ label, onClick, ...props }) {
         text
         outlined
         size="small"
-        icon="pi pi-check-circle"
+        // icon="pi pi-check-circle"
         label={label}
         severity={props.severity || "success"}
         onClick={onClick}

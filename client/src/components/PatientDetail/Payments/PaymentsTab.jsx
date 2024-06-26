@@ -2,18 +2,23 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
-import { Grid } from "@mui/material";
+import { Grid, Tooltip } from "@mui/material";
 import { Timeline, ProgressBar } from "primereact";
+import { CardTitle } from "components/cards";
+import { PaymentDialog, PaymentPlanDialog } from "components/Dialog";
+import { NewItem } from "components/Button";
+import { NotFoundText } from "components/Text";
 import { calcProgress } from "utils";
-import { PaymentDialog } from "components/Dialog";
-import NotFoundText from "components/NotFoundText";
 import PaymentStatistic from "./PaymentStatistic";
 import PaymentMarker from "./PaymentMarker";
 import PaymentDateTag from "./PaymentDateTag";
 import PaymentContent from "./PaymentContent";
 
+// assets
+import "assets/styles/PatientDetail/PaymentsTab.css";
+
 // services
-import { PaymentService } from "services";
+import { PaymentService, VisitService } from "services";
 
 function PaymentsTab({
   patient,
@@ -26,17 +31,47 @@ function PaymentsTab({
   const navigate = useNavigate();
 
   // Set the default values
-  const [payments, setPayments] = useState([]);
+  const [total, setTotal] = useState(0);
   const [payment, setPayment] = useState(null);
+  const [payments, setPayments] = useState([]);
+  const [plannedPayments, setPlannedPayments] = useState([]);
 
   // Set the page on loading
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    PaymentService.getPayments(patient.id, { signal })
+    // Set the payments
+    PaymentService.getPayments(patient.id, false, { signal })
       .then((res) => {
         setPayments(res.data);
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
+    // Set planned payments
+    PaymentService.getPayments(patient.id, true, { signal })
+      .then((res) => {
+        setPlannedPayments(res.data);
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
+    // Set total payment
+    VisitService.getVisits(patient.id, true, { signal })
+      .then((res) => {
+        setTotal(
+          res.data.reduce(
+            (acc, visit) => acc + visit.price * ((100 - visit.discount) / 100),
+            0
+          )
+        );
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
@@ -50,23 +85,35 @@ function PaymentsTab({
   }, [navigate, patient]);
 
   // Calculate the payments percentage
-  const { progress, completedAmount, waitingAmount, overdueAmount } =
-    calcProgress(payments);
+  const {
+    progress,
+    completedAmount,
+    remainingAmount,
+    overdueAmount,
+    waitingAmount,
+    overpaidAmount,
+  } = calcProgress(payments, plannedPayments, total);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of payments of the patient and set payments value
   const getPayments = async (patientId) => {
     let response;
-    let payments;
+    let countPayment = { pending: 0, completed: 0 };
 
     try {
       response = await PaymentService.getPayments(patientId);
-      payments = response.data;
+      setPayments(response.data);
 
-      setPayments(payments);
+      response = await PaymentService.getPayments(patientId, true);
+      response.data.forEach((payment) => {
+        payment.paid === payment.amount
+          ? countPayment.completed++
+          : countPayment.pending++;
+      });
+      setPlannedPayments(response.data);
       setCounts({
         ...counts,
-        payment: payments.length,
+        payment: { ...countPayment },
       });
     } catch (error) {
       const { code, message } = errorHandler(error);
@@ -75,18 +122,16 @@ function PaymentsTab({
   };
 
   // Save payment (create/update)
-  const savePayment = async (payment, reduce) => {
+  const savePayment = async (payment) => {
     try {
+      const plan = payment.plannedDate ? true : false;
+
       // If update payment, then update and return
       if (payment.id) {
-        await PaymentService.updatePayment(payment.id, payment);
+        await PaymentService.updatePayment(payment.id, payment, plan);
       } else {
         // If create payment, then create payment
-        // and reduce from total incase of it is specified
-        if (reduce) {
-          await reducePayment(payment);
-        }
-        await PaymentService.savePayment(payment);
+        await PaymentService.savePayment(payment, plan);
       }
 
       // Get and set the updated list of payments
@@ -99,47 +144,30 @@ function PaymentsTab({
     }
   };
 
-  // Reduce payment
-  const reducePayment = async (payment) => {
-    let i;
-    let amount;
-    let _payments;
-
+  // Save payments (create)
+  const savePayments = async (payments) => {
     try {
-      // If payment is planned or actual date is not specified, then return
-      if (payment.id || payment.plannedDate || !payment.actualDate) {
-        return;
+      // Create all payments
+      for (let payment of payments) {
+        const plan = payment.plannedDate ? true : false;
+        await PaymentService.savePayment(payment, plan);
       }
 
-      amount = payment.amount;
-      _payments = payments.filter((_payment) => !_payment.actualDate);
-
-      i = 0;
-      while (amount > 0 && i < _payments.length) {
-        let currentPayment = _payments[i];
-        let currentAmount = currentPayment.amount;
-
-        // Delete planned payments and reduce paid amount until amount is zero
-        if (currentAmount <= amount) {
-          amount -= currentAmount;
-          await PaymentService.deletePayment(currentPayment.id);
-        } else {
-          currentPayment.amount -= amount;
-          amount = 0;
-          await PaymentService.updatePayment(currentPayment.id, currentPayment);
-        }
-
-        i++;
-      }
+      // Get and set the updated list of payments
+      getPayments(patient.id);
+      hideDialog();
+      setPayment(null);
     } catch (error) {
-      throw error;
+      const { code, message } = errorHandler(error);
+      code === 401 ? navigate(`/login`) : toast.error(message);
     }
   };
 
   //  Delete appointment
   const deletePayment = async (payment) => {
     try {
-      await PaymentService.deletePayment(payment.id);
+      const plan = payment.plannedDate ? true : false;
+      await PaymentService.deletePayment(payment.id, plan);
 
       // Get and set the updated list of payments
       getPayments(patient.id);
@@ -154,16 +182,26 @@ function PaymentsTab({
   // HANDLERS -----------------------------------------------------------------
   // onSelectEvent, get payment and show dialog
   const handleSelectPayment = async (event) => {
-    const _payment = payments.find((payment) => payment.id === event.id);
+    const _payment =
+      payments.find((payment) => payment.id === event.id) ||
+      plannedPayments.find((payment) => payment.id === event.id);
 
     setPayment(_payment);
-    setTimeout(showDialog, 100);
+    setTimeout(handlePaymentDialog, 100);
   };
 
   // onHide handler
   const handleHideDialog = () => {
     setPayment(null);
     hideDialog();
+  };
+
+  // onShowDialog handlers
+  const handlePaymentDialog = () => {
+    showDialog("payment");
+  };
+  const handlePlanDialog = () => {
+    showDialog("plan");
   };
 
   // TEMPLATES ----------------------------------------------------------------
@@ -181,12 +219,7 @@ function PaymentsTab({
 
   // Payment dates template
   const paymentDate = (payment) => {
-    return (
-      <PaymentDateTag
-        actual={payment.actualDate}
-        planned={payment.plannedDate}
-      />
-    );
+    return <PaymentDateTag payment={payment} />;
   };
 
   // Payment marker template
@@ -194,22 +227,42 @@ function PaymentsTab({
     return <PaymentMarker payment={payment} />;
   };
 
+  // Payment plan error tooltip
+  const paymentPlanTitle = () => {
+    let message;
+
+    if (waitingAmount > remainingAmount) {
+      message =
+        "Kalan tutardan fazla bekleyen ödeme planı tutarı bulunmaktadır. Lütfen ödeme planını kontrol edin.";
+    } else if (waitingAmount < remainingAmount || 0 < overpaidAmount) {
+      message =
+        "Eksik ödeme planı bulunmaktadır. Lütfen ödeme planını veya ödemeleri kontrol edin.";
+    }
+
+    return message ? (
+      <Tooltip title={message} placement="right">
+        <div>
+          Ödeme Planı
+          <i
+            className="pi pi-exclamation-triangle pl-3"
+            style={{ color: "#EF4444" }}
+          ></i>
+        </div>
+      </Tooltip>
+    ) : (
+      "Ödeme Planı"
+    );
+  };
+
   return (
-    <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
-      {payments.length === 0 ? (
-        <NotFoundText text="Ödeme yok" p={3} m={3} />
-      ) : (
-        <Grid
-          container
-          alignItems="center"
-          justifyContent="center"
-          mt={2}
-          pb={4}
-        >
+    <>
+      <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
+        <Grid container alignItems="center" justifyContent="center" mt={2}>
           {/* Statistics */}
           <PaymentStatistic
+            totalAmount={total}
             completedAmount={completedAmount}
-            waitingAmount={waitingAmount}
+            waitingAmount={remainingAmount}
             overdueAmount={overdueAmount}
           />
 
@@ -224,27 +277,89 @@ function PaymentsTab({
           </Grid>
 
           {/* Timeline */}
-          <Grid item md={8} xs={12}>
-            <Timeline
-              value={payments}
-              marker={paymentMarker}
-              content={paymentContent}
-              opposite={paymentDate}
-            />
+          <Grid container item md={10} xs={12} justifyContent="center">
+            {/* PaymentPlan Timeline */}
+            <Grid item md={5} xs={6} px={1} py={3}>
+              <CardTitle
+                style={{
+                  textAlign: "center",
+                  marginBottom: 5,
+                  marginX: 20,
+                }}
+              >
+                {paymentPlanTitle()}
+              </CardTitle>
+
+              {plannedPayments.length === 0 ? (
+                <NotFoundText
+                  text="Ödeme planı yok"
+                  style={{ backgroundColor: "#F5F5F5" }}
+                />
+              ) : (
+                <Timeline
+                  value={plannedPayments}
+                  marker={paymentMarker}
+                  content={paymentContent}
+                  opposite={paymentDate}
+                />
+              )}
+
+              {/* Add payment plan */}
+              <NewItem label="Ödeme Planı Ekle" onClick={handlePlanDialog} />
+            </Grid>
+
+            {/* Payment Timeline */}
+            <Grid item md={5} xs={6} px={1} py={3}>
+              <CardTitle
+                style={{ textAlign: "center", marginBottom: 5, marginX: 20 }}
+              >
+                Ödemeler
+              </CardTitle>
+
+              {payments.length === 0 ? (
+                <NotFoundText
+                  text="Ödeme yok"
+                  style={{ backgroundColor: "#F5F5F5" }}
+                />
+              ) : (
+                <Timeline
+                  value={payments}
+                  marker={paymentMarker}
+                  content={paymentContent}
+                  opposite={paymentDate}
+                />
+              )}
+
+              {/* Add payment */}
+              <NewItem label="Ödeme Ekle" onClick={handlePaymentDialog} />
+            </Grid>
           </Grid>
         </Grid>
-      )}
+      </div>
 
       {/* Payment dialog */}
-      {paymentDialog && (
+      {paymentDialog === "payment" && (
         <PaymentDialog
-          initPayment={payment ? payment : { patient }}
+          initPayment={payment ? payment : { patient, amount: remainingAmount }}
           onHide={handleHideDialog}
           onSubmit={savePayment}
           onDelete={payment && deletePayment}
         />
       )}
-    </div>
+
+      {/* Payment Plan Dialog */}
+      {paymentDialog === "plan" && (
+        <PaymentPlanDialog
+          patient={patient}
+          initAmount={Math.max(
+            0,
+            overpaidAmount + remainingAmount - waitingAmount
+          )}
+          onHide={handleHideDialog}
+          onSubmit={savePayments}
+        />
+      )}
+    </>
   );
 }
 

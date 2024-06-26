@@ -28,11 +28,13 @@ module.exports = (sequelize, Sequelize) => {
       },
       ActualDate: {
         type: Sequelize.DATEONLY,
-        allowNull: true,
+        allowNull: false,
+        defaultValue: new Date(),
       },
-      PlannedDate: {
-        type: Sequelize.DATEONLY,
-        allowNull: true,
+      IsPlanned: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
     },
     {

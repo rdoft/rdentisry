@@ -29,7 +29,7 @@ function AppointmentStatus({ appointment, onSubmit }) {
       status: "absent",
       label: "Gelmedi",
       bgColor: "#FFFADD",
-      color: "#FFD200",
+      color: "#A44800",
     },
   ];
 

@@ -1,13 +1,13 @@
 const { Sequelize } = require("../models");
 const db = require("../models");
 const Patient = db.patient;
-const Invoice = db.invoice;
+const Visit = db.visit;
 const Procedure = db.procedure;
 const PatientProcedure = db.patientProcedure;
 const ProcedureCategory = db.procedureCategory;
 
 /**
- * Get the procedures of the selected patient
+ * Get the procedures of the selected visit
  * @param patientId id of the patient
  * @query tooth: number of the tooth
  * @query completed: flag for completed/noncompleted
@@ -18,83 +18,76 @@ exports.getPatientProcedures = async (req, res) => {
   let { tooth, completed } = req.query;
   completed =
     completed === "true" ? true : completed === "false" ? false : null;
-  let patient;
+  let visits;
 
   try {
-    patient = await Patient.findOne({
+    visits = await PatientProcedure.findAll({
       attributes: [
-        ["PatientId", "id"],
-        ["IdNumber", "idNumber"],
-        ["Name", "name"],
-        ["Surname", "surname"],
-        ["BirthYear", "birthYear"],
-        ["Phone", "phone"],
+        ["PatientProcedureId", "id"],
+        ["VisitId", "visitId"],
+        ["ToothNumber", "toothNumber"],
+        ["CompletedDate", "completedDate"],
+        ["Price", "price"],
       ],
       where: {
-        PatientId: patientId,
-        UserId: userId,
+        ...(tooth && { ToothNumber: tooth }),
+        ...(completed === false && { CompletedDate: null }),
+        ...(completed === true && {
+          CompletedDate: { [Sequelize.Op.ne]: null },
+        }),
       },
       include: [
         {
-          model: PatientProcedure,
-          as: "patientProcedures",
+          model: Visit,
+          as: "visit",
           attributes: [
-            ["PatientProcedureId", "id"],
-            ["ToothNumber", "toothNumber"],
-            ["IsComplete", "isComplete"],
+            ["VisitId", "id"],
+            ["Title", "title"],
+            ["Description", "description"],
+            ["Discount", "discount"],
+            ["ApprovedDate", "approvedDate"],
           ],
-          where: {
-            ...(tooth && { ToothNumber: tooth }),
-            ...(completed && { IsComplete: completed }),
-          },
           include: [
             {
-              model: Procedure,
-              as: "procedure",
-              attributes: [
-                ["ProcedureId", "id"],
-                ["Code", "code"],
-                ["Name", "name"],
-                ["Price", "price"],
-              ],
-              include: [
-                {
-                  model: ProcedureCategory,
-                  as: "procedureCategory",
-                  attributes: [
-                    ["ProcedureCategoryId", "id"],
-                    ["Title", "title"],
-                  ],
-                },
-              ],
+              model: Patient,
+              as: "patient",
+              attributes: [],
+              where: {
+                UserId: userId,
+                ...(patientId && { PatientId: patientId }),
+              },
             },
+          ],
+          required: true,
+        },
+        {
+          model: Procedure,
+          as: "procedure",
+          attributes: [
+            ["ProcedureId", "id"],
+            ["Code", "code"],
+            ["Name", "name"],
+            ["Price", "price"],
+          ],
+          include: [
             {
-              model: Invoice,
-              as: "invoice",
+              model: ProcedureCategory,
+              as: "procedureCategory",
               attributes: [
-                ["InvoiceId", "id"],
-                ["Amount", "amount"],
-                ["Description", "description"],
-                ["Discount", "discount"],
+                ["ProcedureCategoryId", "id"],
+                ["Title", "title"],
               ],
             },
           ],
         },
       ],
       order: [
-        [
-          { model: PatientProcedure, as: "patientProcedures" },
-          "PatientProcedureId",
-          "ASC",
-        ],
+        ["VisitId", "ASC"],
+        ["PatientProcedureId", "ASC"],
       ],
     });
 
-    if (patient) {
-      res.status(200).send(patient.patientProcedures);
-    } else {
-      res.status(200).send([]);
-    }
+    res.status(200).send(visits);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -107,11 +100,11 @@ exports.getPatientProcedures = async (req, res) => {
 exports.savePatientProcedure = async (req, res) => {
   const { UserId: userId } = req.user;
   const { patientId } = req.params;
-  const { toothNumber, procedure, invoice } = req.body;
+  const { toothNumber, procedure, visit, price } = req.body;
   let patient;
   let procedure_;
   let patientProcedure;
-  let invoice_;
+  let visit_;
 
   try {
     // Validations
@@ -135,34 +128,39 @@ exports.savePatientProcedure = async (req, res) => {
       return res.status(404).send({ message: "Tedavi mevcut değil" });
     }
 
-    // Create patient procedure record
-    patientProcedure = await PatientProcedure.create({
-      PatientId: patientId,
-      ProcedureId: procedure.id,
-      ToothNumber: toothNumber,
-      IsComplete: false,
+    // Visit record will be created if it does not exist
+    [visit_] = await Visit.findOrCreate({
+      where: {
+        VisitId: visit?.id ?? null,
+      },
+      defaults: {
+        PatientId: patientId,
+      },
     });
 
-    // Create invoice record
-    invoice_ = await Invoice.create({
-      PatientProcedureId: patientProcedure.PatientProcedureId,
-      Amount: invoice.amount,
-      Description: invoice.description,
-      Discount: invoice.discount,
+    // Create patient procedure record
+    patientProcedure = await PatientProcedure.create({
+      VisitId: visit_.VisitId,
+      ProcedureId: procedure.id,
+      ToothNumber: toothNumber,
+      CompletedDate: null,
+      Price: price,
     });
 
     // Return the created patient procedure
     patientProcedure = {
       id: patientProcedure.PatientProcedureId,
-      patientId: patientProcedure.PatientId,
+      visitId: patientProcedure.VisitId,
       procedureId: patientProcedure.ProcedureId,
       toothNumber: patientProcedure.ToothNumber,
-      isComplete: patientProcedure.IsComplete,
-      invoice: {
-        id: invoice_.InvoiceId,
-        amount: invoice_.Amount,
-        description: invoice_.Description,
-        Discount: invoice_.Discount,
+      completedDate: patientProcedure.CompletedDate,
+      price: patientProcedure.Price,
+      visit: {
+        id: visit_.VisitId,
+        title: visit_.Title,
+        description: visit_.Description,
+        discount: visit_.Discount,
+        approvedDate: visit_.ApprovedDate,
       },
     };
     res.status(201).send(patientProcedure);
@@ -173,15 +171,15 @@ exports.savePatientProcedure = async (req, res) => {
 
 /**
  * Update a procedure of the patient
- * @param patientId id of the patient
  * @param patientProcedureId id of the patientprocedure
  * @body tooth and procedure informations
  */
 exports.updatePatientProcedure = async (req, res) => {
   const { UserId: userId } = req.user;
-  const { patientProcedureId } = req.params;
-  const { toothNumber, isComplete, invoice } = req.body;
+  const { patientProcedureId, patientId } = req.params;
+  const { toothNumber, completedDate, visit, price } = req.body;
   let patientProcedure;
+  let visit_;
 
   try {
     // Validations
@@ -199,40 +197,45 @@ exports.updatePatientProcedure = async (req, res) => {
           },
         },
         {
-          model: Patient,
-          as: "patient",
-          attributes: [],
-          where: {
-            UserId: userId,
-          },
-        }
+          model: Visit,
+          as: "visit",
+          attributes: ["VisitId", "ApprovedDate"],
+          include: [
+            {
+              model: Patient,
+              as: "patient",
+              attributes: ["PatientId"],
+              where: {
+                UserId: userId,
+              },
+            },
+          ],
+        },
       ],
     });
-    
+
     if (patientProcedure) {
+      // Visit record will be created if it does not exist
+      [visit_] = await Visit.findOrCreate({
+        where: {
+          VisitId: visit?.id ?? null,
+        },
+        defaults: {
+          PatientId: patientId,
+        },
+      });
+
       // Update patient procedure record
       await patientProcedure.update({
         ToothNumber: toothNumber,
-        IsComplete: isComplete || false,
+        VisitId: visit_.VisitId,
+        CompletedDate: completedDate ?? null,
+        Price: price,
       });
-
-      // Update invoice record
-      await Invoice.update(
-        {
-          Amount: invoice.amount,
-          Description: invoice.description,
-          Discount: invoice.discount,
-        },
-        {
-          where: {
-            PatientProcedureId: patientProcedureId,
-          },
-        }
-      );
 
       res.status(200).send({ id: patientProcedureId });
     } else {
-      res.status(404).send({ message: "Tedavi mevcut değil" });
+      res.status(404).send({ message: "Tedavi veya hasta mevcut değil" });
     }
   } catch (error) {
     res.status(500).send(error);
@@ -264,24 +267,30 @@ exports.deletePatientProcedure = async (req, res) => {
           },
         },
         {
-          model: Patient,
-          as: "patient",
-          attributes: [],
-          where: {
-            UserId: userId,
-          },
-        }
+          model: Visit,
+          as: "visit",
+          attributes: ["ApprovedDate"],
+          include: [
+            {
+              model: Patient,
+              as: "patient",
+              attributes: [],
+              where: {
+                UserId: userId,
+              },
+            },
+          ],
+        },
       ],
     });
 
-    // Delete the patientProcedure if it exists
-    if (patientProcedure) {
-      await patientProcedure.destroy();
-
-      res.status(200).send({ id: patientProcedureId });
-    } else {
-      res.status(404).send({ message: "Tedavi mevcut değil" });
+    // Delete the patientProcedure if it exists and visit is not approved
+    if (!patientProcedure) {
+      return res.status(404).send({ message: "Tedavi mevcut değil" });
     }
+    await patientProcedure.destroy();
+
+    res.status(200).send({ id: patientProcedureId });
   } catch (error) {
     res.status(500).send(error);
   }
