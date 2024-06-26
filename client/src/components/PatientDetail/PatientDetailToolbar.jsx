@@ -105,7 +105,7 @@ function PatientDetailToolbar({
 
   return (
     <>
-      <Toolbar className="mb-4 p-2" start={startContent} end={endContent} />
+      <Toolbar className="mb-3 p-2" start={startContent} end={endContent} />
       {patientDialog && (
         <PatientDialog onHide={hidePatientDialog} onSubmit={savePatient} />
       )}

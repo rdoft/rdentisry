@@ -12,6 +12,7 @@ import MonthEvent from "./MonthEvent";
 import DayHeader from "./DayHeader";
 import TimeGutter from "./TimeGutter";
 import TimeGutterHeader from "./TimeGutterHeader";
+import RBCToolbar from "./RBCToolbar";
 import CalendarToolbar from "./CalendarToolbar";
 
 // assets
@@ -202,6 +203,7 @@ const AppointmentCalendar = () => {
 
   // custom components
   const components = {
+    toolbar: RBCToolbar,
     header: DayHeader,
     timeGutterHeader: TimeGutterHeader,
     timeGutterWrapper: TimeGutter,

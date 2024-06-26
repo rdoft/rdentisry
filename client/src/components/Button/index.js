@@ -12,6 +12,8 @@ import NewItem from "./NewItem";
 import SplitItem from "./SplitItem";
 import Goto from "./Goto";
 import Reduce from "./Reduce";
+import Basic from "./Basic";
+import SelectButton from "./SelectButton";
 
 export {
   Add,
@@ -28,4 +30,6 @@ export {
   SplitItem,
   Goto,
   Reduce,
+  Basic,
+  SelectButton,
 };

@@ -36,7 +36,7 @@ function PatientTableToolbar({
   };
 
   return (
-    <Toolbar className="mb-4 p-2" start={actionButton} end={searchInput} />
+    <Toolbar className="mb-3 p-2" start={actionButton} end={searchInput} />
   );
 }
 
