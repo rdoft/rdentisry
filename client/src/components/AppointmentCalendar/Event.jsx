@@ -77,10 +77,10 @@ function Event({ event, step }) {
       >
         <Grid container>
           {/* Time */}
-          <Grid item xs={sm ? 6 : 12}>
+          <Grid item xs={sm ? 5 : 12}>
             <Box display="flex" gap={1} alignItems="center">
-              <Typography variant="h5">⏱️</Typography>
-              <Typography variant="caption" fontWeight="bolder">
+              {!sm && <Typography variant="h5">⏱️</Typography>}
+              <Typography variant="caption" fontWeight="bold">
                 {`${startHours}-${endHours}`}
               </Typography>
             </Box>
@@ -89,19 +89,25 @@ function Event({ event, step }) {
           {/* Patient */}
           <Grid
             item
-            xs={sm && 6}
+            xs={sm && 7}
             onClick={handleClick}
             onMouseEnter={handleMouseEnterPatient}
             onMouseLeave={handleMouseLeavePatient}
           >
             <Box display="flex" gap={1} alignItems="center">
-              <Avatar
-                alt="avatar"
-                src={patientAvatar}
-                shape="circle"
-                style={{ width: "18px", height: "18px", padding: "1px" }}
-              />
-              <Typography variant="h6" fontWeight="bolder" noWrap>
+              {!sm && (
+                <Avatar
+                  alt="avatar"
+                  src={patientAvatar}
+                  shape="circle"
+                  style={{ width: "18px", height: "18px", padding: "1px" }}
+                />
+              )}
+              <Typography
+                variant={!sm ? "h6" : "caption"}
+                fontWeight="bolder"
+                noWrap
+              >
                 {`${pname} ${psurname}`}
               </Typography>
 

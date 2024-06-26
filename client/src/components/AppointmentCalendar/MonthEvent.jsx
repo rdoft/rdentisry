@@ -100,7 +100,7 @@ function MonthEvent({ event }) {
             <Grid item>
               <Box display="flex" gap={1} alignItems="center">
                 <Typography variant="h5">⏱️</Typography>
-                <Typography variant="caption" fontWeight="bolder">
+                <Typography variant="caption" fontWeight="bold">
                   {`${startHours}-${endHours}`}
                 </Typography>
               </Box>
