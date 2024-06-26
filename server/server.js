@@ -83,13 +83,8 @@ cron.schedule("00 22 * * *", () => {
 // SERVER HTTPS
 // options for https server
 const options = {
-  key: fs.readFileSync("./app/certs/server.key"),
-  cert: fs.readFileSync("./app/certs/server.crt"),
-  ca: [
-    fs.readFileSync("./app/certs/gd1.crt"),
-    fs.readFileSync("./app/certs/gd2.crt"),
-    fs.readFileSync("./app/certs/gd3.crt"),
-  ],
+  key: fs.readFileSync("./server/app/certs/server.key"),
+  cert: fs.readFileSync("./server/app/certs/server.crt"),
 };
 
 // create https server

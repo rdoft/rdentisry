@@ -7,9 +7,11 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { getEventTime, setEventTime } from "utils";
 import { AppointmentDialog } from "components/Dialog";
 import moment from "moment";
-import DayHeader from "./DayHeader";
 import Event from "./Event";
 import MonthEvent from "./MonthEvent";
+import DayHeader from "./DayHeader";
+import TimeGutter from "./TimeGutter";
+import TimeGutterHeader from "./TimeGutterHeader";
 import CalendarToolbar from "./CalendarToolbar";
 
 // assets
@@ -200,7 +202,9 @@ const AppointmentCalendar = () => {
 
   // custom components
   const components = {
-    header: ({ date, label }) => <DayHeader date={date} label={label} />,
+    header: DayHeader,
+    timeGutterHeader: TimeGutterHeader,
+    timeGutterWrapper: TimeGutter,
     event: ({ event }) => <Event event={event} step={step.current} />,
     month: {
       event: MonthEvent,
