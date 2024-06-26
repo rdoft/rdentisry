@@ -80,7 +80,7 @@ function Event({ event, step }) {
           <Grid item xs={sm ? 5 : 12}>
             <Box display="flex" gap={1} alignItems="center">
               {!sm && <Typography variant="h5">⏱️</Typography>}
-              <Typography variant="caption" fontWeight="bold">
+              <Typography variant="caption">
                 {`${startHours}-${endHours}`}
               </Typography>
             </Box>
