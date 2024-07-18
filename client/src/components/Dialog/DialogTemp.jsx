@@ -1,5 +1,6 @@
 import React from "react";
 import { Dialog } from "primereact";
+import { ClickAwayListener } from "@mui/material";
 import { DialogFooter } from "components/DialogFooter";
 
 function DialogTemp({
@@ -38,25 +39,27 @@ function DialogTemp({
   };
 
   return (
-    <Dialog
-      visible
-      modal
-      className="p-fluid"
-      style={props.style}
-      header={props.header}
-      onHide={handleHide}
-      onKeyDown={handleKeyDown}
-      footer={
-        <DialogFooter
-          disabled={!isValid}
-          onHide={handleHide}
-          onSubmit={handleSubmit}
-          onDelete={onDelete && handleDelete}
-        />
-      }
-    >
-      {children}
-    </Dialog>
+    <ClickAwayListener onClickAway={handleHide}>
+      <Dialog
+        visible
+        modal
+        className="p-fluid"
+        style={props.style}
+        header={props.header}
+        onHide={handleHide}
+        onKeyDown={handleKeyDown}
+        footer={
+          <DialogFooter
+            disabled={!isValid}
+            onHide={handleHide}
+            onSubmit={handleSubmit}
+            onDelete={onDelete && handleDelete}
+          />
+        }
+      >
+        {children}
+      </Dialog>
+    </ClickAwayListener>
   );
 }
 
