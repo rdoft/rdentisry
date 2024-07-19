@@ -15,9 +15,6 @@ import { DropdownDoctor, DropdownPatient } from "components/Dropdown";
 import { DialogTemp, DoctorDialog, PatientDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
 
-// assets
-import "assets/styles/Dialog/AppointmentDialog.css";
-
 // schemas
 import schema from "schemas/appointment.schema";
 
@@ -157,22 +154,17 @@ function AppointmentDialog({
 
     switch (name) {
       case "startTime":
-        const start = new Date(0);
         const end = new Date(0);
-
-        start.setHours(value.hour());
-        start.setMinutes(value.minute());
-        value = start;
-
-        end.setHours(start.getHours());
+        
+        end.setHours(value.getHours());
         end.setMinutes(
-          start.getMinutes() + parseInt(_appointment.duration || 0)
+          value.getMinutes() + parseInt(_appointment.duration || 0)
         );
         _appointment.endTime = end;
         break;
 
       case "duration":
-        value = value || 0;
+        value = (value && value > 0) ? value : 0;
         _appointment.endTime = new Date(_appointment.startTime);
         _appointment.endTime.setMinutes(
           _appointment.endTime.getMinutes() + parseInt(value)

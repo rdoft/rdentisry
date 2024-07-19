@@ -38,8 +38,18 @@ function DialogTemp({
     onDelete();
   };
 
+  // onClickAway handler
+  const handleClickAway = () => {
+    onHide();
+  };
+
+  // mouseClick handler
+  const handleClick = (event) => {
+    event.stopPropagation();
+  };
+
   return (
-    <ClickAwayListener onClickAway={handleHide}>
+    <ClickAwayListener onClickAway={handleClickAway}>
       <Dialog
         visible
         modal
@@ -48,6 +58,7 @@ function DialogTemp({
         header={props.header}
         onHide={handleHide}
         onKeyDown={handleKeyDown}
+        onClick={handleClick}
         footer={
           <DialogFooter
             disabled={!isValid}
