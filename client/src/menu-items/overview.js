@@ -1,21 +1,13 @@
-// assets
-import { DashboardOutlined } from "@ant-design/icons";
-import { HomeOutlined } from "@ant-design/icons";
-import { AppstoreOutlined, ScheduleOutlined } from "@ant-design/icons";
+import { Avatar } from "@mui/material";
 
-// icons
-const icons = {
-  DashboardOutlined,
-  HomeOutlined,
-  AppstoreOutlined,
-  ScheduleOutlined
-};
+// assets
+import { CalendarActiveIcon, CalendarPassiveIcon } from "assets/images/icons";
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
 
 const overview = {
   id: "group-overview",
-  title: "Genel",
+  title: "GENEL",
   type: "group",
   children: [
     // {
@@ -31,7 +23,20 @@ const overview = {
       title: "Takvim",
       type: "item",
       url: "/calendar",
-      icon: icons.ScheduleOutlined,
+      iconActive: (
+        <Avatar
+          src={CalendarActiveIcon}
+          shape="circle"
+          style={{ width: "24px", height: "24px", padding: "1px" }}
+        />
+      ),
+      iconPassive: (
+        <Avatar
+          src={CalendarPassiveIcon}
+          shape="circle"
+          style={{ width: "24px", height: "24px", padding: "1px" }}
+        />
+      ),
       breadcrumbs: false,
     },
   ],

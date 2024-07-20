@@ -1,16 +1,18 @@
-// assets
-import { TeamOutlined } from "@ant-design/icons";
+import { Avatar } from "@mui/material";
 
-// icons
-const icons = {
-  TeamOutlined,
-};
+// assets
+import {
+  PatientListActiveIcon,
+  PatientListPassiveIcon,
+  ProcedureActiveIcon,
+  ProcedurePassiveIcon,
+} from "assets/images/icons";
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
 
 const patients = {
   id: "group-patients",
-  title: "Hasta",
+  title: "KLİNİK",
   type: "group",
   children: [
     {
@@ -18,7 +20,41 @@ const patients = {
       title: "Hastalar",
       type: "item",
       url: "/patients",
-      icon: icons.TeamOutlined,
+      iconActive: (
+        <Avatar
+          src={PatientListActiveIcon}
+          shape="circle"
+          style={{ width: "24px", height: "24px", padding: "1px" }}
+        />
+      ),
+      iconPassive: (
+        <Avatar
+          src={PatientListPassiveIcon}
+          shape="circle"
+          style={{ width: "24px", height: "24px", padding: "1px" }}
+        />
+      ),
+      breadcrumbs: false,
+    },
+    {
+      id: "procedures",
+      title: "Tedaviler",
+      type: "item",
+      url: "/procedures",
+      iconActive: (
+        <Avatar
+          src={ProcedureActiveIcon}
+          shape="circle"
+          style={{ width: "24px", height: "24px", padding: "1px" }}
+        />
+      ),
+      iconPassive: (
+        <Avatar
+          src={ProcedurePassiveIcon}
+          shape="circle"
+          style={{ width: "24px", height: "24px", padding: "1px" }}
+        />
+      ),
       breadcrumbs: false,
     },
   ],
