@@ -3,7 +3,7 @@ import { styled } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 
 // project import
-import { drawerWidth } from "config/theme.config";
+import { drawerWidth, drawerWidthMini } from "config/theme.config";
 
 // ==============================|| HEADER - APP BAR STYLED ||============================== //
 
@@ -15,14 +15,19 @@ const AppBarStyled = styled(AppBar, {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
+  ...(open
+    ? {
+        marginLeft: drawerWidth,
+        width: `calc(100% - ${drawerWidth}px)`,
+        transition: theme.transitions.create(["width", "margin"], {
+          easing: theme.transitions.easing.sharp,
+          duration: theme.transitions.duration.enteringScreen,
+        }),
+      }
+    : {
+        width: `calc(100% - ${drawerWidthMini}px)`,
+        marginLeft: drawerWidthMini,
+      }),
 }));
 
 export default AppBarStyled;

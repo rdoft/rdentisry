@@ -12,4 +12,5 @@ const config = {
 };
 
 export default config;
-export const drawerWidth = 260;
+export const drawerWidth = 200;
+export const drawerWidthMini= 200 / 3;
