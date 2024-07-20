@@ -22,7 +22,7 @@ const overview = {
       id: "calendar",
       title: "Takvim",
       type: "item",
-      url: "/calendar",
+      url: "/",
       iconActive: (
         <Avatar
           src={CalendarActiveIcon}

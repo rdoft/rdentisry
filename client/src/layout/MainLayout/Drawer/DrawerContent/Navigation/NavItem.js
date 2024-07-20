@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { forwardRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 // material-ui
@@ -20,6 +20,7 @@ import { activeItem } from "store/reducers/menu";
 // ==============================|| NAVIGATION - LIST ITEM ||============================== //
 
 const NavItem = ({ item, level }) => {
+  const location = useLocation();
   const theme = useTheme();
   const dispatch = useDispatch();
   const menu = useSelector((state) => state.menu);
@@ -48,15 +49,19 @@ const NavItem = ({ item, level }) => {
 
   // active menu item on page load
   useEffect(() => {
-    const currentIndex = document.location.pathname
-      .toString()
-      .split("/")
-      .findIndex((id) => id === item.id);
-    if (currentIndex > -1) {
-      dispatch(activeItem({ openItem: [item.id] }));
-    } 
+    if (document.location.pathname === "/") {
+      dispatch(activeItem({ openItem: ["calendar"] }));
+    } else {
+      const currentIndex = document.location.pathname
+        .toString()
+        .split("/")
+        .findIndex((id) => id === item.id);
+      if (currentIndex > -1) {
+        dispatch(activeItem({ openItem: [item.id] }));
+      }
+    }
     // eslint-disable-next-line
-  }, []);
+  }, [location]);
 
   const textColor = "text.primary";
   const iconSelectedColor = "primary.main";
@@ -74,10 +79,12 @@ const NavItem = ({ item, level }) => {
         ...(drawerOpen && {
           "&:hover": {
             bgcolor: "primary.lighter",
+            borderRadius: "10px",
           },
           "&.Mui-selected": {
             bgcolor: "primary.lighter",
             borderRight: `2px solid ${theme.palette.primary.main}`,
+            borderRadius: "10px",
             color: iconSelectedColor,
             "&:hover": {
               color: iconSelectedColor,

@@ -59,10 +59,6 @@ const MainRoutes = [
         element: <Patient />,
       },
       {
-        path: "/calendar",
-        element: <Calendar />,
-      },
-      {
         path: "/procedures",
         element: <Procedures />,
       },
