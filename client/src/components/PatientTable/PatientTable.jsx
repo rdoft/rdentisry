@@ -39,7 +39,11 @@ function PatientsTable() {
 
     PatientService.getPatients(true, { signal })
       .then((response) => {
-        setPatients(response.data);
+        const _patients = response.data.map((item) => ({
+          ...item,
+          fullName: `${item.name} ${item.surname}`,
+        }));
+        setPatients(_patients);
       })
       .catch((error) => {
         const { code, message } = errorHandler(error);
@@ -60,7 +64,10 @@ function PatientsTable() {
     try {
       // GET /patients
       response = await PatientService.getPatients(true);
-      patients = response.data;
+      patients = response.data.map((item) => ({
+        ...item,
+        fullName: `${item.name} ${item.surname}`,
+      }));
       // Set new patients
       setPatients(patients);
     } catch (error) {
@@ -348,17 +355,15 @@ function PatientsTable() {
           ></Column>
           {/* Name */}
           <Column
-            field="name"
-            header="Ad"
+            field="fullName"
+            header="Ad Soyad"
+            body={(patient) => (
+              <span>
+                <strong>{patient.name}</strong> {patient.surname}
+              </span>
+            )}
             sortable
-            style={{ width: "12rem" }}
-          ></Column>
-          {/* Surname */}
-          <Column
-            field="surname"
-            header="Soyad"
-            sortable
-            style={{ width: "12rem" }}
+            style={{ width: "18rem" }}
           ></Column>
           {/* Phone */}
           <Column
