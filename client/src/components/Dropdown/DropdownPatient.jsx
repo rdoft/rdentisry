@@ -4,6 +4,19 @@ import DropdownPatientItem from "./DropdownItem/DropdownPatientItem";
 import { Add } from "components/Button";
 
 function DropdownPatient({ value, options, onChange, onClickAdd }) {
+  const _options = options?.map((option) => {
+    return {
+      ...option,
+      fullName: `${option.name} ${option.surname}`,
+    };
+  });
+
+  const _value =  value && {
+    ...value,
+    fullName: `${value.name} ${value.surname}`,
+  };
+  
+  
   // TEMPLATES -----------------------------------------------------------------
   // Dropdown item template
   const patientDropdownItem = (option) => {
@@ -24,9 +37,9 @@ function DropdownPatient({ value, options, onChange, onClickAdd }) {
 
   return (
     <Dropdown
-      value={value}
+      value={_value}
       name="patient"
-      options={options}
+      options={_options}
       optionLabel="name"
       valueTemplate={patientDropdownItem}
       itemTemplate={patientDropdownItem}
@@ -34,7 +47,7 @@ function DropdownPatient({ value, options, onChange, onClickAdd }) {
       onChange={onChange}
       className="w-full"
       filter
-      filterBy="name,surname,phone"
+      filterBy="name,surname,phone,fullName"
       placeholder="Hasta seçiniz..."
       emptyMessage="Sonuç bulunamadı"
       emptyFilterMessage="Sonuç bulunamadı"
