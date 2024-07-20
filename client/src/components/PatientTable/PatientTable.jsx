@@ -338,6 +338,7 @@ function PatientsTable() {
           dragSelection={true}
           currentPageReportTemplate="({totalRecords} hasta)"
           emptyMessage="Hiçbir sonuç bulunamadı"
+          filterLocale="tr-TR"
         >
           {/* Checkbox */}
           <Column

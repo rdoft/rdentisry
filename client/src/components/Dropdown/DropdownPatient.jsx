@@ -48,6 +48,7 @@ function DropdownPatient({ value, options, onChange, onClickAdd }) {
       className="w-full"
       filter
       filterBy="name,surname,phone,fullName"
+      filterLocale="tr-TR"
       placeholder="Hasta seçiniz..."
       emptyMessage="Sonuç bulunamadı"
       emptyFilterMessage="Sonuç bulunamadı"

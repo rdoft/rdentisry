@@ -58,6 +58,7 @@ function DropdownDoctor({
       style={props?.style}
       filter
       filterBy="name,surname,fullName"
+      filterLocale="tr-TR"
       placeholder="Doktor seçiniz..."
       emptyMessage="Sonuç bulunamadı"
       emptyFilterMessage="Sonuç bulunamadı"
