@@ -439,11 +439,8 @@ function ProceduresTab({
       {/* Procedure Dialog */}
       {procedureDialog && (
         <ProcedureDialog
-          initPatientProcedure={{
-            patient,
-            visit:
-              recentVisit && !recentVisit.approvedDate ? recentVisit : null,
-          }}
+          initPatientProcedure={{ patient }}
+          visit={recentVisit && !recentVisit.approvedDate ? recentVisit : null}
           selectedTeeth={selectedTeeth}
           onChangeTeeth={handleChangeTeeth}
           onHide={hideProcedureDialog}
