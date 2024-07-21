@@ -277,58 +277,71 @@ function PaymentsTab({
           </Grid>
 
           {/* Timeline */}
-          <Grid container item md={10} xs={12} justifyContent="center">
+          <Grid container justifyContent="center" alignItems="start">
             {/* PaymentPlan Timeline */}
-            <Grid item md={5} xs={6} px={1} py={3}>
-              <CardTitle
-                style={{
-                  textAlign: "center",
-                  marginBottom: 5,
-                  marginX: 20,
-                }}
-              >
-                {paymentPlanTitle()}
-              </CardTitle>
-
-              {plannedPayments.length === 0 ? (
-                <NotFoundText
-                  text="Ödeme planı yok"
-                  style={{ backgroundColor: "#F5F5F5" }}
-                />
-              ) : (
-                <Timeline
-                  value={plannedPayments}
-                  marker={paymentMarker}
-                  content={paymentContent}
-                  opposite={paymentDate}
-                />
-              )}
-
+            <Grid
+              container
+              item
+              md={5}
+              xs={6}
+              px={1}
+              py={3}
+              justifyContent="center"
+            >
+              <Grid item xs="auto">
+                <CardTitle style={{ textAlign: "center", marginBottom: 5 }}>
+                  {paymentPlanTitle()}
+                </CardTitle>
+              </Grid>
+              <Grid item xs={12}>
+                {plannedPayments.length === 0 ? (
+                  <NotFoundText
+                    text="Ödeme planı yok"
+                    style={{ backgroundColor: "#F5F5F5" }}
+                  />
+                ) : (
+                  <Timeline
+                    value={plannedPayments}
+                    marker={paymentMarker}
+                    content={paymentContent}
+                    opposite={paymentDate}
+                  />
+                )}
+              </Grid>
               {/* Add payment plan */}
               <NewItem label="Ödeme Planı Ekle" onClick={handlePlanDialog} />
             </Grid>
 
             {/* Payment Timeline */}
-            <Grid item md={5} xs={6} px={1} py={3}>
-              <CardTitle
-                style={{ textAlign: "center", marginBottom: 5, marginX: 20 }}
-              >
-                Ödemeler
-              </CardTitle>
-
-              {payments.length === 0 ? (
-                <NotFoundText
-                  text="Ödeme yok"
-                  style={{ backgroundColor: "#F5F5F5" }}
-                />
-              ) : (
-                <Timeline
-                  value={payments}
-                  marker={paymentMarker}
-                  content={paymentContent}
-                  opposite={paymentDate}
-                />
-              )}
+            <Grid
+              container
+              item
+              md={5}
+              xs={6}
+              px={1}
+              py={3}
+              justifyContent="center"
+            >
+              <Grid item xs="auto">
+                <CardTitle style={{ textAlign: "center", marginBottom: 5 }}>
+                  Ödemeler
+                </CardTitle>
+              </Grid>
+              <Grid item xs={12}>
+                {payments.length === 0 ? (
+                  <NotFoundText
+                    text="Ödeme yok"
+                    style={{ backgroundColor: "#F5F5F5" }}
+                  />
+                ) : (
+                  <Timeline
+                    value={payments}
+                    marker={paymentMarker}
+                    content={paymentContent}
+                    opposite={paymentDate}
+                  />
+                )}
+              </Grid>
 
               {/* Add payment */}
               <NewItem label="Ödeme Ekle" onClick={handlePaymentDialog} />

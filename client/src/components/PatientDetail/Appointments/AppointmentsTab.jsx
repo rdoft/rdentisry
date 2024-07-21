@@ -159,7 +159,7 @@ function AppointmentsTab({
       <Grid container alignItems="start" justifyContent="space-between" mt={2}>
         {/* Active appointments */}
         <Grid container item md={6} xs={12} justifyContent="center" pr={2}>
-          <Grid item xs={1}>
+          <Grid item xs="auto">
             <CardTitle style={{ textAlign: "center", marginY: 2 }}>
               Aktif
             </CardTitle>
@@ -192,7 +192,7 @@ function AppointmentsTab({
 
         {/* Other appointments */}
         <Grid container item md={6} xs={12} justifyContent="center" pl={2}>
-          <Grid item xs={1}>
+          <Grid item xs="auto">
             <CardTitle style={{ textAlign: "center", marginY: 2 }}>
               Diğer
             </CardTitle>
