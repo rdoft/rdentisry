@@ -364,7 +364,7 @@ function PatientsTable() {
               </span>
             )}
             sortable
-            style={{ width: "18rem" }}
+            
           ></Column>
           {/* Phone */}
           <Column
@@ -390,6 +390,7 @@ function PatientsTable() {
                   />
                 ) : null
               }
+              style={{width: "10rem"}}
             ></Column>
           )}
           {/* Patient action buttons */}
@@ -402,7 +403,7 @@ function PatientsTable() {
                 </>
               ) : null
             }
-            style={{ width: "8rem" }}
+            style={{ width: "10rem" }}
           ></Column>
         </DataTable>
       </div>
