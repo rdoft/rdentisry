@@ -226,7 +226,7 @@ function ProcedureList({
         <Column
           field="status"
           header="Durum"
-          style={{ width: "10rem" }}
+          style={{ width: "8rem" }}
           body={(procedure) => (
             <StatusColumn procedure={procedure} onSubmit={handleSubmit} />
           )}
@@ -235,7 +235,7 @@ function ProcedureList({
         <Column
           field="procedure.name"
           header="İşlem"
-          style={{ minWidth: "25rem" }}
+          // style={{ minWidth: "10rem" }}
           body={(procedure) => name(procedure)}
         ></Column>
         {/* Price */}

@@ -102,12 +102,12 @@ function ProcedureListHeader({
         padding: "0 0.2rem",
       }}
     >
-      <Grid item xs={9}>
+      <Grid item xs={8}>
         {/* Title */}
         <VisitTitle visit={visit} onSubmit={handleTitleSubmit} />
         <VisitStatus visit={visit} onSubmit={handleStatusSubmit} />
       </Grid>
-      <Grid item xl={2} xs={3}>
+      <Grid item xl={3} xs={4}>
         {/* Discount */}
         <VisitDiscount visit={visit} onSubmit={handleDiscountSubmit} />
         {/* Total */}
