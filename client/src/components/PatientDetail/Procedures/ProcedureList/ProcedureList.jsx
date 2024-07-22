@@ -187,6 +187,22 @@ function ProcedureList({
     );
   };
 
+  const teeth = (procedure) => {
+    const occurrenceTracker = {};
+    return (
+      <div style={{ display: "flex", flexWrap: "wrap" }}>
+        {procedure.toothNumber.sort().map((num) => {
+          occurrenceTracker[num] = (occurrenceTracker[num] || 0) + 1;
+          const uniqueKey = `${num}-${occurrenceTracker[num]}`;
+
+          return (
+            <Tooth key={uniqueKey} number={num} style={{ margin: "0.1rem" }} />
+          );
+        })}
+      </div>
+    );
+  };
+
   return procedures?.length > 0 ? (
     <>
       <DataTable
@@ -221,13 +237,7 @@ function ProcedureList({
           field="toothNumber"
           header="Dişler"
           style={{ maxWidth: "11rem" }}
-          body={(procedure) => (
-            <div style={{ display: "flex", flexWrap: "wrap" }}>
-              {procedure.toothNumber.sort().map((num) => (
-                <Tooth key={num} number={num} style={{ margin: "0.1rem" }} />
-              ))}
-            </div>
-          )}
+          body={teeth}
         ></Column>
         {/* Status */}
         <Column
@@ -242,8 +252,7 @@ function ProcedureList({
         <Column
           field="procedure.name"
           header="İşlem"
-          // style={{ minWidth: "10rem" }}
-          body={(procedure) => name(procedure)}
+          body={name}
         ></Column>
         {/* Price */}
         <Column
