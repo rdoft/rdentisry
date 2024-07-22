@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
-import { Chip, Divider, InputNumber, Checkbox, Dropdown } from "primereact";
+import { Divider, InputNumber, Checkbox, Dropdown } from "primereact";
+import { Tooth } from "components/Button";
 import { DialogTemp } from "components/Dialog";
 import { DropdownPatient, DropdownProcedure } from "components/Dropdown";
 
@@ -241,16 +242,11 @@ function ProcedureDialog({
       <div className="flex grid align-items-center mb-4">
         <label className="col-12 md:col-3 font-bold">Dişler</label>
         {selectedTeeth.map((tooth) => (
-          <Chip
+          <Tooth
             key={tooth}
-            label={tooth ? "🦷 " + tooth : "Genel"}
+            number={tooth}
             removable={tooth !== 0}
             onRemove={() => handleRemoveTooth(tooth)}
-            style={{
-              backgroundColor: "transparent",
-              border: "1px solid #CED4D9",
-              margin: "0.3rem",
-            }}
           />
         ))}
         <Dropdown
@@ -263,9 +259,10 @@ function ProcedureDialog({
           style={{
             alignItems: "center",
             width: "7rem",
-            height: "40px",
+            height: "1.7rem",
             margin: "0.3rem",
-            borderRadius: "18px",
+            borderRadius: "0.5rem",
+            fontSize: "small",
           }}
           emptyMessage="Sonuç bulunamadı"
           emptyFilterMessage="Sonuç bulunamadı"

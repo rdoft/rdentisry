@@ -1,11 +1,12 @@
 import React from "react";
 import { Button } from "primereact";
 
-function Cancel({ label, onClick, ...props }) {
+function Cancel({ label, rounded, onClick, ...props }) {
   return (
     <Button
       text
       outlined
+      rounded={rounded}
       size="small"
       icon="pi pi-times"
       severity={props.severity || "secondary"}
