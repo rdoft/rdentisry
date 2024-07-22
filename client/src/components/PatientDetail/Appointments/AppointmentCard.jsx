@@ -42,11 +42,12 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
       <Grid
         container
         alignItems="center"
+        justifyContent="end"
         style={{ marginTop: "1em", marginBottom: "1em" }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <Grid item xs={9}>
+        <Grid item xs={7}>
           {/* Date */}
           <Box display="flex" alignItems="center">
             <Typography
@@ -100,17 +101,16 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
         </Grid>
 
         {/* Status */}
-        <Grid container item xs={2} justifyContent="flex-start">
+        <Grid item xl={2} xs={3} textAlign="end">
           <AppointmentStatus appointment={appointment} onSubmit={onSubmit} />
         </Grid>
 
         {/* Edit Button */}
-        {isHover && (
-          <Grid container item xs={1} justifyContent="flex-end">
-            <Edit onClick={handleClickEdit} />
-          </Grid>
-        )}
+        <Grid item xl={1} xs={1} textAlign="end" >
+          {isHover && <Edit onClick={handleClickEdit} />}
+        </Grid>
       </Grid>
+
       <Grid container>
         <Grid item xs={12}>
           <Divider style={{ margin: 0 }} />
