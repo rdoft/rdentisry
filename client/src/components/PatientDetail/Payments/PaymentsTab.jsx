@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
 import { Grid, Tooltip } from "@mui/material";
-import { Timeline, ProgressBar } from "primereact";
+import { Timeline } from "primereact";
 import { CardTitle } from "components/cards";
 import { PaymentDialog, PaymentPlanDialog } from "components/Dialog";
 import { NewItem } from "components/Button";
@@ -18,7 +18,11 @@ import PaymentContent from "./PaymentContent";
 import "assets/styles/PatientDetail/PaymentsTab.css";
 
 // services
-import { PaymentService, VisitService } from "services";
+import {
+  PaymentService,
+  VisitService,
+  PatientProcedureService,
+} from "services";
 
 function PaymentsTab({
   patient,
@@ -32,6 +36,7 @@ function PaymentsTab({
 
   // Set the default values
   const [total, setTotal] = useState(0);
+  const [completedTotal, setCompletedTotal] = useState(0);
   const [payment, setPayment] = useState(null);
   const [payments, setPayments] = useState([]);
   const [plannedPayments, setPlannedPayments] = useState([]);
@@ -79,6 +84,29 @@ function PaymentsTab({
         code === 401 ? navigate(`/login`) : toast.error(message);
       });
 
+    PatientProcedureService.getPatientProcedures(
+      { patientId: patient.id },
+      { signal }
+    )
+      .then((res) => {
+        setCompletedTotal(
+          res.data.reduce(
+            (acc, procedure) =>
+              acc +
+              (procedure.visit.approvedDate && procedure.completedDate
+                ? procedure.price
+                : 0) *
+                ((100 - procedure.visit.discount) / 100),
+            0
+          )
+        );
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
     return () => {
       controller.abort();
     };
@@ -86,13 +114,13 @@ function PaymentsTab({
 
   // Calculate the payments percentage
   const {
-    progress,
     completedAmount,
     remainingAmount,
     overdueAmount,
     waitingAmount,
     overpaidAmount,
-  } = calcProgress(payments, plannedPayments, total);
+    deptAmount,
+  } = calcProgress(payments, plannedPayments, total, completedTotal);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of payments of the patient and set payments value
@@ -260,21 +288,13 @@ function PaymentsTab({
         <Grid container alignItems="center" justifyContent="center" mt={2}>
           {/* Statistics */}
           <PaymentStatistic
-            totalAmount={total}
-            completedAmount={completedAmount}
-            waitingAmount={remainingAmount}
-            overdueAmount={overdueAmount}
+            total={total}
+            completedTotal={completedTotal}
+            completed={completedAmount}
+            waiting={remainingAmount}
+            overdue={overdueAmount}
+            dept={deptAmount}
           />
-
-          {/* Progressbar */}
-          <Grid item xs={8} pb={6}>
-            <ProgressBar
-              value={progress}
-              color="#22A06A"
-              className="border-round-2xl"
-              showValue={false}
-            ></ProgressBar>
-          </Grid>
 
           {/* Timeline */}
           <Grid container justifyContent="center" alignItems="start">
@@ -282,7 +302,7 @@ function PaymentsTab({
             <Grid
               container
               item
-              md={5}
+              xl={5}
               xs={6}
               px={1}
               py={3}
