@@ -46,7 +46,7 @@ function VisitStatus({ visit, onSubmit }) {
               <>
                 <ul>
                   <li>
-                    Tedavi planı onayı kaldırıldığında ücret ve indirim oranı
+                    Seans onayı kaldırıldığında ücret ve indirim oranı
                     üzerinde değişiklik yapılabilir
                   </li>
                   <li>Toplam tutar hasta borcundan eksiltilir</li>
@@ -60,7 +60,7 @@ function VisitStatus({ visit, onSubmit }) {
               <>
                 <ul>
                   <li>
-                    Tedavi planı onaylandığında ücret ve indirim oranı üzerinde
+                    Seans onaylandığında ücret ve indirim oranı üzerinde
                     değişiklik yapılamaz
                   </li>
                   <li>Toplam tutar hasta borcuna yansıtılır</li>

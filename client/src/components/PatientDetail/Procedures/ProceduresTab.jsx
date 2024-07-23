@@ -412,7 +412,7 @@ function ProceduresTab({
                   style={{ display: "flex", justifyContent: "start" }}
                 >
                   <SplitItem
-                    label="Tedavi Planı Ekle"
+                    label="Seans Ekle"
                     options={pendingVisits}
                     onClick={handleCreateVisit}
                     disabled={!(selectedProcedures?.length > 0)}

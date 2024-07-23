@@ -80,7 +80,7 @@ function VisitPrice({ visit, onSubmit }) {
     <Tooltip
       title={
         visit.approvedDate
-          ? "Tedavi planı onaylandı, toplam tutar değiştirilemez"
+          ? "Seans onaylandı, toplam tutar değiştirilemez"
           : "Tutarı düzenle"
       }
       placement="bottom-start"
