@@ -1,12 +1,12 @@
-.statusColumn .p-dropdown-label {
+.status-column .p-dropdown-label {
   padding: 0;
 }
 
-.statusColumn {
+.status-column {
   border: none;
 }
 
-.statusColumn .p-dropdown-trigger {
+.status-column .p-dropdown-trigger {
   color: inherit;
   width: 1.5rem;
 }

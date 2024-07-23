@@ -56,7 +56,9 @@ function StatusColumn({ procedure, onSubmit }) {
       valueTemplate={statusItemTemplate}
       itemTemplate={statusItemTemplate}
       onChange={handleChange}
-      className="statusColumn"
+      disabled={!procedure.visit.approvedDate}
+      dropdownIcon={!procedure.visit.approvedDate ? "pi pi-ban" : ""}
+      className="status-column"
       style={{ backgroundColor: status.bgColor, color: status.color }}
     />
   );
