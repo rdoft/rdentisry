@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
-import { Typography } from "@mui/material";
+import { Typography, Grid } from "@mui/material";
 import { DataTable, Column, Tag, ConfirmDialog } from "primereact";
 import { AppointmentDialog, PatientDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
@@ -39,7 +39,11 @@ function PatientsTable() {
 
     PatientService.getPatients(true, { signal })
       .then((response) => {
-        setPatients(response.data);
+        const _patients = response.data.map((item) => ({
+          ...item,
+          fullName: `${item.name} ${item.surname}`,
+        }));
+        setPatients(_patients);
       })
       .catch((error) => {
         const { code, message } = errorHandler(error);
@@ -60,7 +64,10 @@ function PatientsTable() {
     try {
       // GET /patients
       response = await PatientService.getPatients(true);
-      patients = response.data;
+      patients = response.data.map((item) => ({
+        ...item,
+        fullName: `${item.name} ${item.surname}`,
+      }));
       // Set new patients
       setPatients(patients);
     } catch (error) {
@@ -247,16 +254,47 @@ function PatientsTable() {
 
   // TEMPLATES -----------------------------------------------------------------
   // Payment status of the patient (overdue or not)
-  const status = (patient) =>
-    patient.overdue ? (
+  const status = (patient) => {
+    let value;
+    if (patient.overdue) {
+      value = (
+        <Typography variant="caption" fontWeight="bold">
+          Gecikmiş Taksit
+        </Typography>
+      );
+    } else if (patient.waiting) {
+      value = null;
+    } else if (patient.dept > 0) {
+      value = (
+        <Grid container alignItems="center" justifyContent="center">
+          <Grid item>
+            <Typography variant="caption" component="span">
+              ₺
+            </Typography>
+            <Typography variant="caption" component="span" fontWeight="bold">
+              {patient.dept.toLocaleString("tr-TR", {
+                style: "decimal",
+                maximumFractionDigits: 2,
+              })}
+            </Typography>
+          </Grid>
+        </Grid>
+      );
+    } else {
+      value = null;
+    }
+
+    return value ? (
       <Tag
-        value="Eksik Ödeme"
+        value={value}
         style={{
           backgroundColor: "#FFD2CB",
           color: "#EF4444",
+          padding: "0.1rem 0.5rem",
         }}
       />
     ) : null;
+  };
 
   // Delete patient dialog template
   const deletePatientDialog = (
@@ -326,11 +364,10 @@ function PatientsTable() {
           paginator
           rows={10}
           rowHover={true}
-          sortField="overdue"
-          sortOrder={-1}
           dragSelection={true}
           currentPageReportTemplate="({totalRecords} hasta)"
           emptyMessage="Hiçbir sonuç bulunamadı"
+          filterLocale="tr-TR"
         >
           {/* Checkbox */}
           <Column
@@ -348,17 +385,14 @@ function PatientsTable() {
           ></Column>
           {/* Name */}
           <Column
-            field="name"
-            header="Ad"
+            field="fullName"
+            header="Ad Soyad"
+            body={(patient) => (
+              <span>
+                <strong>{patient.name}</strong> {patient.surname}
+              </span>
+            )}
             sortable
-            style={{ width: "12rem" }}
-          ></Column>
-          {/* Surname */}
-          <Column
-            field="surname"
-            header="Soyad"
-            sortable
-            style={{ width: "12rem" }}
           ></Column>
           {/* Phone */}
           <Column
@@ -368,7 +402,7 @@ function PatientsTable() {
           ></Column>
           {/* Status tags */}
           <Column
-            field="overdue"
+            field="dept"
             body={status}
             sortable
             style={{ width: "10rem" }}
@@ -384,6 +418,7 @@ function PatientsTable() {
                   />
                 ) : null
               }
+              style={{ width: "10rem" }}
             ></Column>
           )}
           {/* Patient action buttons */}
@@ -396,7 +431,7 @@ function PatientsTable() {
                 </>
               ) : null
             }
-            style={{ width: "8rem" }}
+            style={{ width: "10rem" }}
           ></Column>
         </DataTable>
       </div>

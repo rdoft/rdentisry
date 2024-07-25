@@ -1,64 +1,51 @@
-const UPCOMMING = 2; // Days of upcoming payment
-
-// Process the payments of the patients
-const processPatientsPayments = (patients, payments, all = true) => {
+// Process payments and calc dept/overdue/upcoming status for patients
+const processPatientsPayments = (patients) => {
   const today = new Date();
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + UPCOMMING);
-  const paymentMap = {};
-  let totalPaid;
-
-  // Create a map of patientId to total planned payment amount
-  for (const payment of payments) {
-    paymentMap[payment.patientId] = payment.total;
-  }
 
   for (const patient of patients) {
-    totalPaid = paymentMap[patient.id] || 0;
+    let totalPaid = 0;
+    let totalPaidPlan = 0;
+    let completedTotal = 0;
+
+    // Create a map of totalPaidPlan amount for each patient
+    // and a map of totalPaid amount for each patient
+    patient.payments.map((payment) => {
+      totalPaid += payment.amount;
+      totalPaidPlan += payment.isPlanned ? payment.amount : 0;
+    });
+    // Create a map of completedPrice amount of procedure for each patient
+    patient.visits.map((visit) => {
+      visit.patientProcedures.map((procedure) => {
+        completedTotal += procedure.price * ((100 - visit.discount) / 100);
+      });
+    });
 
     // Reduce the paymentPlans as much as payments amount
-    for (let plan of patient.paymentPlans) {
-      if (plan.amount <= totalPaid) {
-        totalPaid -= plan.amount;
-        plan.paid = plan.amount;
-      } else {
-        plan.paid = totalPaid;
-        totalPaid = 0; // Fully reduced
-      }
-    }
+    patient.PaymentPlans = processPatientPayments(
+      patient.paymentPlans,
+      totalPaidPlan
+    );
 
-    // Set overdue status and upcoming status
-    if (all) {
-      patient.overdue = patient.paymentPlans.some(
-        (plan) =>
-          plan.amount - plan.paid > 0 &&
-          new Date(plan.plannedDate).setHours(0, 0, 0, 0) <
-            today.setHours(0, 0, 0, 0)
-      );
-      patient.upcoming = patient.paymentPlans.some(
-        (plan) =>
-          plan.amount - plan.paid > 0 &&
-          today.setHours(0, 0, 0, 0) <=
-            new Date(plan.plannedDate).setHours(0, 0, 0, 0) &&
-          new Date(plan.plannedDate).setHours(0, 0, 0, 0) <
-            tomorrow.setHours(0, 0, 0, 0)
-      );
-    } else {
-      patient.overdue = patient.paymentPlans.some(
-        (plan) =>
-          plan.amount - plan.paid > 0 &&
-          new Date(plan.plannedDate).setHours(0, 0, 0, 0) ===
-            today.setHours(0, 0, 0, 0)
-      );
-      patient.upcoming = patient.paymentPlans.some(
-        (plan) =>
-          plan.amount - plan.paid > 0 &&
-          today.setHours(0, 0, 0, 0) <=
-            new Date(plan.plannedDate).setHours(0, 0, 0, 0) &&
-          new Date(plan.plannedDate).setHours(0, 0, 0, 0) <
-            tomorrow.setHours(0, 0, 0, 0)
-      );
-    }
+    // Calculate overdue and waiting status
+    patient.overdue = patient.paymentPlans.some(
+      (plan) =>
+        plan.amount - plan.paid > 0 &&
+        new Date(plan.plannedDate).setHours(0, 0, 0, 0) <
+          today.setHours(0, 0, 0, 0)
+    );
+    patient.waiting = patient.paymentPlans.some(
+      (plan) =>
+        plan.amount - plan.paid > 0 &&
+        today.setHours(0, 0, 0, 0) <=
+          new Date(plan.plannedDate).setHours(0, 0, 0, 0)
+    );
+    // Calculate the dept of the patient
+    patient.dept =
+      !patient.overdue && !patient.waiting
+        ? completedTotal - totalPaid > 0
+          ? completedTotal - totalPaid
+          : 0
+        : -1;
   }
 
   return patients;

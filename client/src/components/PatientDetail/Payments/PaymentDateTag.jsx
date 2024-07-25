@@ -23,16 +23,16 @@ function PaymentDateTag({ payment }) {
       day: "numeric",
     });
   } else if (new Date(payment.plannedDate).getTime() < new Date().getTime()) {
-    color = "#EF4444";
-    bgColor = "#FFD2CB";
+    color = "#172B4D";
+    bgColor = "#F3F4F5";
     label = new Date(payment.plannedDate).toLocaleDateString("tr-TR", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
   } else {
-    color = "#1E7AFC";
-    bgColor = "#E8F0FF";
+    color = "#172B4D";
+    bgColor = "#F3F4F5";
     label = new Date(payment.plannedDate).toLocaleDateString("tr-TR", {
       year: "numeric",
       month: "long",

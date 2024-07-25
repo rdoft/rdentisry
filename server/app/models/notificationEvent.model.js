@@ -10,7 +10,7 @@ module.exports = (sequelize, Sequelize) => {
       Event: {
         type: Sequelize.ENUM,
         allowNull: false,
-        values: ["overdue", "upcoming"],
+        values: ["overdue", "upcoming", "dept"],
       },
       Type: {
         type: Sequelize.ENUM,

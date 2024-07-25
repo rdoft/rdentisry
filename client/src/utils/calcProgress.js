@@ -1,11 +1,11 @@
 // Calculate the progress of al payments
-const calcProgress = (payments, plannedPayments, total) => {
+const calcProgress = (payments, plannedPayments, total, completedTotal) => {
   let overdue = 0;
   let waiting = 0;
-  let progress = 0;
   let remaining = 0;
   let completed = 0;
   let overpaid = 0;
+  let dept = 0;
 
   // Calc completed payment
   completed = payments.reduce((acc, payment) => {
@@ -22,22 +22,21 @@ const calcProgress = (payments, plannedPayments, total) => {
     if (new Date(plannedPayment.plannedDate) < new Date()) {
       overdue += plannedPayment.amount - plannedPayment.paid;
     }
-    // Calc waiting payment
-    waiting += plannedPayment.amount - plannedPayment.paid;
+    // Calc remaining payment
+    remaining += plannedPayment.amount - plannedPayment.paid;
     overpaid -= plannedPayment.paid;
   }
 
-  remaining = total - completed > 0 ? total - completed : 0;
-  progress =
-    total > 0 ? Math.floor((completed / total) * 100) : completed > 0 ? 100 : 0;
+  dept = completedTotal - completed > 0 ? completedTotal - completed : 0;
+  waiting = total - completed > 0 ? total - completed : 0;
 
   return {
-    progress,
     completedAmount: completed,
     remainingAmount: remaining,
     overdueAmount: overdue,
     waitingAmount: waiting,
     overpaidAmount: overpaid,
+    deptAmount: dept,
   };
 };
 

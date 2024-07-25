@@ -389,33 +389,38 @@ function ProceduresTab({
           )}
 
           {/* Action buttons */}
-          <Grid container justifyContent="center">
-            {(selectedProcedures?.length > 0 || approvedVisits?.length > 0) &&
-              tabIndex === 1 && (
+          <Grid container spacing={1} justifyContent="center">
+            {tabIndex === 1 && (
+              <>
                 <Grid
-                  container
                   item
-                  xs={6}
-                  md={5}
-                  spacing={1}
-                  justifyContent="center"
+                  xs={3}
+                  style={{ display: "flex", justifyContent: "end" }}
                 >
-                  {approvedVisits?.length > 0 && (
-                    <SplitItem
-                      label="Randevu Ekle"
-                      options={approvedVisits}
-                      onClick={handleCreateAppointment}
-                    />
-                  )}
-                  {selectedProcedures?.length > 0 && (
-                    <SplitItem
-                      label="Tedavi Planı Ekle"
-                      options={pendingVisits}
-                      onClick={handleCreateVisit}
-                    />
-                  )}
+                  <SplitItem
+                    label="Randevu Ekle"
+                    options={approvedVisits}
+                    onClick={handleCreateAppointment}
+                    disabled={!(approvedVisits?.length > 0)}
+                    tooltip={!(approvedVisits?.length > 0) && "Randevu eklemek için en az bir seansı onaylayın"}
+
+                  />
                 </Grid>
-              )}
+                <Grid
+                  item
+                  xs={3}
+                  style={{ display: "flex", justifyContent: "start" }}
+                >
+                  <SplitItem
+                    label="Seans Ekle"
+                    options={pendingVisits}
+                    onClick={handleCreateVisit}
+                    disabled={!(selectedProcedures?.length > 0)}
+                    tooltip={!(selectedProcedures?.length > 0) && "Seans ekleme/düzenleme yapmak için tedavi seçin"}
+                  />
+                </Grid>
+              </>
+            )}
             <Grid item xs={6} md={5}>
               <NewItem label="Tedavi Ekle" onClick={showProcedureDialog} />
             </Grid>
@@ -439,11 +444,8 @@ function ProceduresTab({
       {/* Procedure Dialog */}
       {procedureDialog && (
         <ProcedureDialog
-          initPatientProcedure={{
-            patient,
-            visit:
-              recentVisit && !recentVisit.approvedDate ? recentVisit : null,
-          }}
+          initPatientProcedure={{ patient }}
+          visit={recentVisit && !recentVisit.approvedDate ? recentVisit : null}
           selectedTeeth={selectedTeeth}
           onChangeTeeth={handleChangeTeeth}
           onHide={hideProcedureDialog}

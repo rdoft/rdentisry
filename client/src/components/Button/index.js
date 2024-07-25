@@ -4,7 +4,6 @@ import More from "./More";
 import Delete from "./Delete";
 import Read from "./Read";
 import Pay from "./Pay";
-import CancelPay from "./CancelPay";
 import Next from "./Next";
 import Prev from "./Prev";
 import Cancel from "./Cancel";
@@ -14,6 +13,7 @@ import Goto from "./Goto";
 import Reduce from "./Reduce";
 import Basic from "./Basic";
 import SelectButton from "./SelectButton";
+import Tooth from "./Tooth";
 
 export {
   Add,
@@ -22,7 +22,6 @@ export {
   Delete,
   Read,
   Pay,
-  CancelPay,
   Next,
   Prev,
   Cancel,
@@ -32,4 +31,5 @@ export {
   Reduce,
   Basic,
   SelectButton,
+  Tooth,
 };

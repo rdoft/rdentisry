@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
 import { Grid, Tooltip } from "@mui/material";
-import { Timeline, ProgressBar } from "primereact";
+import { Timeline, Divider } from "primereact";
 import { CardTitle } from "components/cards";
 import { PaymentDialog, PaymentPlanDialog } from "components/Dialog";
 import { NewItem } from "components/Button";
@@ -18,7 +18,11 @@ import PaymentContent from "./PaymentContent";
 import "assets/styles/PatientDetail/PaymentsTab.css";
 
 // services
-import { PaymentService, VisitService } from "services";
+import {
+  PaymentService,
+  VisitService,
+  PatientProcedureService,
+} from "services";
 
 function PaymentsTab({
   patient,
@@ -32,6 +36,7 @@ function PaymentsTab({
 
   // Set the default values
   const [total, setTotal] = useState(0);
+  const [completedTotal, setCompletedTotal] = useState(0);
   const [payment, setPayment] = useState(null);
   const [payments, setPayments] = useState([]);
   const [plannedPayments, setPlannedPayments] = useState([]);
@@ -79,6 +84,29 @@ function PaymentsTab({
         code === 401 ? navigate(`/login`) : toast.error(message);
       });
 
+    PatientProcedureService.getPatientProcedures(
+      { patientId: patient.id },
+      { signal }
+    )
+      .then((res) => {
+        setCompletedTotal(
+          res.data.reduce(
+            (acc, procedure) =>
+              acc +
+              (procedure.visit.approvedDate && procedure.completedDate
+                ? procedure.price
+                : 0) *
+                ((100 - procedure.visit.discount) / 100),
+            0
+          )
+        );
+      })
+      .catch((error) => {
+        if (error.name === "CanceledError") return;
+        const { code, message } = errorHandler(error);
+        code === 401 ? navigate(`/login`) : toast.error(message);
+      });
+
     return () => {
       controller.abort();
     };
@@ -86,13 +114,13 @@ function PaymentsTab({
 
   // Calculate the payments percentage
   const {
-    progress,
     completedAmount,
     remainingAmount,
     overdueAmount,
     waitingAmount,
     overpaidAmount,
-  } = calcProgress(payments, plannedPayments, total);
+    deptAmount,
+  } = calcProgress(payments, plannedPayments, total, completedTotal);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of payments of the patient and set payments value
@@ -231,10 +259,10 @@ function PaymentsTab({
   const paymentPlanTitle = () => {
     let message;
 
-    if (waitingAmount > remainingAmount) {
+    if (remainingAmount > waitingAmount) {
       message =
-        "Kalan tutardan fazla bekleyen ödeme planı tutarı bulunmaktadır. Lütfen ödeme planını kontrol edin.";
-    } else if (waitingAmount < remainingAmount || 0 < overpaidAmount) {
+        "Fazla ödeme planı bulunmaktadır. Lütfen ödeme planını veya ödemeleri kontrol edin.";
+    } else if (remainingAmount < waitingAmount || 0 < overpaidAmount) {
       message =
         "Eksik ödeme planı bulunmaktadır. Lütfen ödeme planını veya ödemeleri kontrol edin.";
     }
@@ -260,75 +288,84 @@ function PaymentsTab({
         <Grid container alignItems="center" justifyContent="center" mt={2}>
           {/* Statistics */}
           <PaymentStatistic
-            totalAmount={total}
-            completedAmount={completedAmount}
-            waitingAmount={remainingAmount}
-            overdueAmount={overdueAmount}
+            total={total}
+            completedTotal={completedTotal}
+            completed={completedAmount}
+            waiting={waitingAmount}
+            overdue={overdueAmount}
+            dept={deptAmount}
           />
 
-          {/* Progressbar */}
-          <Grid item xs={8} pb={6}>
-            <ProgressBar
-              value={progress}
-              color="#22A06A"
-              className="border-round-2xl"
-              showValue={false}
-            ></ProgressBar>
-          </Grid>
-
           {/* Timeline */}
-          <Grid container item md={10} xs={12} justifyContent="center">
+          <Grid container justifyContent="center" alignItems="start">
+            <Grid item xs={9} m={1}>
+              <Divider />
+            </Grid>
+
             {/* PaymentPlan Timeline */}
-            <Grid item md={5} xs={6} px={1} py={3}>
-              <CardTitle
-                style={{
-                  textAlign: "center",
-                  marginBottom: 5,
-                  marginX: 20,
-                }}
-              >
-                {paymentPlanTitle()}
-              </CardTitle>
-
-              {plannedPayments.length === 0 ? (
-                <NotFoundText
-                  text="Ödeme planı yok"
-                  style={{ backgroundColor: "#F5F5F5" }}
-                />
-              ) : (
-                <Timeline
-                  value={plannedPayments}
-                  marker={paymentMarker}
-                  content={paymentContent}
-                  opposite={paymentDate}
-                />
-              )}
-
+            <Grid
+              container
+              item
+              xl={5}
+              xs={6}
+              px={1}
+              py={3}
+              justifyContent="center"
+            >
+              <Grid item xs="auto">
+                <CardTitle style={{ textAlign: "center", marginBottom: 5 }}>
+                  {paymentPlanTitle()}
+                </CardTitle>
+              </Grid>
+              <Grid item xs={12}>
+                {plannedPayments.length === 0 ? (
+                  <NotFoundText
+                    text="Ödeme planı yok"
+                    style={{ backgroundColor: "#F5F5F5" }}
+                  />
+                ) : (
+                  <Timeline
+                    value={plannedPayments}
+                    marker={paymentMarker}
+                    content={paymentContent}
+                    opposite={paymentDate}
+                  />
+                )}
+              </Grid>
               {/* Add payment plan */}
               <NewItem label="Ödeme Planı Ekle" onClick={handlePlanDialog} />
             </Grid>
 
             {/* Payment Timeline */}
-            <Grid item md={5} xs={6} px={1} py={3}>
-              <CardTitle
-                style={{ textAlign: "center", marginBottom: 5, marginX: 20 }}
-              >
-                Ödemeler
-              </CardTitle>
-
-              {payments.length === 0 ? (
-                <NotFoundText
-                  text="Ödeme yok"
-                  style={{ backgroundColor: "#F5F5F5" }}
-                />
-              ) : (
-                <Timeline
-                  value={payments}
-                  marker={paymentMarker}
-                  content={paymentContent}
-                  opposite={paymentDate}
-                />
-              )}
+            <Grid
+              container
+              item
+              md={5}
+              xs={6}
+              px={1}
+              py={3}
+              justifyContent="center"
+            >
+              <Grid item xs="auto">
+                <CardTitle style={{ textAlign: "center", marginBottom: 5 }}>
+                  Ödemeler
+                </CardTitle>
+              </Grid>
+              <Grid item xs={12}>
+                {payments.length === 0 ? (
+                  <NotFoundText
+                    text="Ödeme yok"
+                    style={{ backgroundColor: "#F5F5F5" }}
+                  />
+                ) : (
+                  <Timeline
+                    value={payments}
+                    marker={paymentMarker}
+                    content={paymentContent}
+                    opposite={paymentDate}
+                  />
+                )}
+              </Grid>
 
               {/* Add payment */}
               <NewItem label="Ödeme Ekle" onClick={handlePaymentDialog} />
@@ -340,7 +377,7 @@ function PaymentsTab({
       {/* Payment dialog */}
       {paymentDialog === "payment" && (
         <PaymentDialog
-          initPayment={payment ? payment : { patient, amount: remainingAmount }}
+          initPayment={payment ? payment : { patient, amount: waitingAmount }}
           onHide={handleHideDialog}
           onSubmit={savePayment}
           onDelete={payment && deletePayment}
@@ -353,7 +390,7 @@ function PaymentsTab({
           patient={patient}
           initAmount={Math.max(
             0,
-            overpaidAmount + remainingAmount - waitingAmount
+            overpaidAmount + waitingAmount - remainingAmount
           )}
           onHide={handleHideDialog}
           onSubmit={savePayments}

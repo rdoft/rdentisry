@@ -1,8 +1,8 @@
 import React from "react";
-import { Chip } from "primereact";
 import { Grid } from "@mui/material";
 import { CardTitle } from "components/cards";
 import { PressKeyText } from "components/Text";
+import { Tooth } from "components/Button";
 
 function ProcedureToolbar({ selectedTeeth, onChangeTeeth }) {
   // HANDLERS -----------------------------------------------------------------
@@ -33,16 +33,11 @@ function ProcedureToolbar({ selectedTeeth, onChangeTeeth }) {
           <Grid item xs={12}>
             {/* Tooth number */}
             {selectedTeeth.map((tooth) => (
-              <Chip
+              <Tooth
                 key={tooth}
-                label={tooth ? "🦷 " + tooth : "Genel"}
+                number={tooth}
                 removable
                 onRemove={() => handleRemoveTooth(tooth)}
-                style={{
-                  backgroundColor: "transparent",
-                  border: "1px solid #CED4D9",
-                  margin: "0.3rem",
-                }}
               />
             ))}
           </Grid>

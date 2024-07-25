@@ -45,6 +45,7 @@ function DropdownProcedure({ value, options, onChange, onClickOptions }) {
       scrollHeight="300px"
       filter
       filterBy="name,code,procedureCategory.title"
+      filterLocale="tr-TR"
       placeholder="Tedavi seçiniz..."
       emptyMessage="Sonuç bulunamadı"
       emptyFilterMessage="Sonuç bulunamadı"

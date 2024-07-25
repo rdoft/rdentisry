@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
-import { Chip, Divider, InputNumber, Checkbox, Dropdown } from "primereact";
+import { Divider, InputNumber, Checkbox, Dropdown } from "primereact";
+import { Tooth } from "components/Button";
 import { DialogTemp } from "components/Dialog";
 import { DropdownPatient, DropdownProcedure } from "components/Dropdown";
 
@@ -13,6 +14,7 @@ import { PatientService, ProcedureService } from "services";
 
 function ProcedureDialog({
   initPatientProcedure = {},
+  visit,
   onHide,
   onSubmit,
   selectedTeeth,
@@ -27,7 +29,6 @@ function ProcedureDialog({
   const [patientProcedure, setPatientProcedure] = useState({
     patient: null,
     procedure: null,
-    visit: null,
     ...initPatientProcedure,
   });
   // Validations
@@ -38,8 +39,8 @@ function ProcedureDialog({
   });
 
   const teeth = [
-    11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 27, 28, 31, 32,
-    33, 34, 35, 36, 37, 38, 41, 42, 43, 44, 45, 46, 47, 48,
+    11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33,
+    34, 35, 36, 37, 38, 41, 42, 43, 44, 45, 46, 47, 48,
   ]
     .filter((tooth) => !selectedTeeth.includes(tooth))
     .map((tooth) => ({
@@ -143,6 +144,7 @@ function ProcedureDialog({
         patientProcedures.push({
           ...patientProcedure,
           toothNumber: tooth,
+          visit: visit,
         });
       }
     }
@@ -240,16 +242,11 @@ function ProcedureDialog({
       <div className="flex grid align-items-center mb-4">
         <label className="col-12 md:col-3 font-bold">Dişler</label>
         {selectedTeeth.map((tooth) => (
-          <Chip
+          <Tooth
             key={tooth}
-            label={tooth ? "🦷 " + tooth : "Genel"}
+            number={tooth}
             removable={tooth !== 0}
             onRemove={() => handleRemoveTooth(tooth)}
-            style={{
-              backgroundColor: "transparent",
-              border: "1px solid #CED4D9",
-              margin: "0.3rem",
-            }}
           />
         ))}
         <Dropdown
@@ -262,9 +259,10 @@ function ProcedureDialog({
           style={{
             alignItems: "center",
             width: "7rem",
-            height: "40px",
+            height: "1.7rem",
             margin: "0.3rem",
-            borderRadius: "18px",
+            borderRadius: "0.5rem",
+            fontSize: "small",
           }}
           emptyMessage="Sonuç bulunamadı"
           emptyFilterMessage="Sonuç bulunamadı"

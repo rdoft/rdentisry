@@ -11,6 +11,18 @@ function DropdownDoctor({
   onClickDelete,
   ...props
 }) {
+  const _options = options?.map((option) => {
+    return {
+      ...option,
+      fullName: `${option.name} ${option.surname}`,
+    };
+  });
+
+  const _value = value && {
+    ...value,
+    fullName: `${value.name} ${value.surname}`,
+  };
+
   // TEMPLATES -----------------------------------------------------------------
   // Dropdown item template
   const doctorDropdownItem = (option) => {
@@ -34,9 +46,9 @@ function DropdownDoctor({
 
   return (
     <Dropdown
-      value={value}
+      value={_value}
       name="doctor"
-      options={options}
+      options={_options}
       optionLabel="name"
       valueTemplate={doctorDropdownValue}
       itemTemplate={doctorDropdownItem}
@@ -45,7 +57,8 @@ function DropdownDoctor({
       className={props?.className}
       style={props?.style}
       filter
-      filterBy="name,surname"
+      filterBy="name,surname,fullName"
+      filterLocale="tr-TR"
       placeholder="Doktor seçiniz..."
       emptyMessage="Sonuç bulunamadı"
       emptyFilterMessage="Sonuç bulunamadı"

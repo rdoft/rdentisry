@@ -4,6 +4,7 @@ import { Grid, Typography } from "@mui/material";
 import { Delete } from "components/Button";
 import { DialogFooter } from "components/DialogFooter";
 import { ProcedureCategory } from "components/ProcedureCategory";
+import { Tooth } from "components/Button";
 import NotFoundText from "components/Text/NotFoundText";
 import PriceColumn from "../PriceColumn";
 import StatusColumn from "../StatusColumn";
@@ -186,6 +187,22 @@ function ProcedureList({
     );
   };
 
+  const teeth = (procedure) => {
+    const occurrenceTracker = {};
+    return (
+      <div style={{ display: "flex", flexWrap: "wrap" }}>
+        {procedure.toothNumber.sort().map((num) => {
+          occurrenceTracker[num] = (occurrenceTracker[num] || 0) + 1;
+          const uniqueKey = `${num}-${occurrenceTracker[num]}`;
+
+          return (
+            <Tooth key={uniqueKey} number={num} style={{ margin: "0.1rem" }} />
+          );
+        })}
+      </div>
+    );
+  };
+
   return procedures?.length > 0 ? (
     <>
       <DataTable
@@ -210,23 +227,23 @@ function ProcedureList({
         emptyMessage="Hiçbir işlem bulunamadı"
       >
         {/* Checkbox */}
-        <Column selectionMode="multiple" exportable={false}></Column>
+        <Column
+          selectionMode="multiple"
+          bodyStyle={{ width: "2rem" }}
+          exportable={false}
+        ></Column>
         {/* Tooth Number */}
         <Column
           field="toothNumber"
           header="Dişler"
-          style={{ width: "8rem" }}
-          body={(procedure) =>
-            procedure.toothNumber
-              .map((num) => (num === 0 ? "Genel" : num))
-              .join(", ")
-          }
+          style={{ maxWidth: "11rem" }}
+          body={teeth}
         ></Column>
         {/* Status */}
         <Column
           field="status"
           header="Durum"
-          style={{ width: "10rem" }}
+          style={{ width: "8rem" }}
           body={(procedure) => (
             <StatusColumn procedure={procedure} onSubmit={handleSubmit} />
           )}
@@ -235,14 +252,13 @@ function ProcedureList({
         <Column
           field="procedure.name"
           header="İşlem"
-          style={{ minWidth: "25rem" }}
-          body={(procedure) => name(procedure)}
+          body={name}
         ></Column>
         {/* Price */}
         <Column
           field="price"
           header="Ücret"
-          style={{ width: "15rem", minWidth: "15rem" }}
+          style={{ width: "12rem", minWidth: "12rem" }}
           body={(procedure) => (
             <PriceColumn procedure={procedure} onSubmit={handleSubmit} />
           )}

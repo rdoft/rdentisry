@@ -65,6 +65,7 @@ exports.getPayments = async (req, res) => {
             attributes: [],
             where: {
               UserId: userId,
+              ...(patientId && { PatientId: patientId }),
             },
           },
         ],

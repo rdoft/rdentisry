@@ -13,8 +13,11 @@ import {
 import { Read } from "components/Button";
 
 // assets
-import { LiraDangerIcon } from "assets/images/icons";
-import { LiraWarningIcon } from "assets/images/icons";
+import {
+  LiraDangerIcon,
+  LiraWarningIcon,
+  LiraInfoIcon,
+} from "assets/images/icons";
 
 // services
 import { NotificationService } from "services";
@@ -33,10 +36,13 @@ function NotificationItem({ notification, getNotifications, onClose }) {
   let icon;
   switch (notification.notificationEvent.event) {
     case "overdue":
-      icon = LiraDangerIcon;
+      icon = LiraWarningIcon;
       break;
     case "upcoming":
-      icon = LiraWarningIcon;
+      icon = LiraInfoIcon;
+      break;
+    case "dept":
+      icon = LiraDangerIcon;
       break;
     default:
       break;

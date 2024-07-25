@@ -1,18 +1,23 @@
 const { Sequelize } = require("../models");
 const db = require("../models");
+const Visit = db.visit;
+const Patient = db.patient;
 const Payment = db.payment;
 const PaymentPlan = db.paymentPlan;
-const Patient = db.patient;
+const PatientProcedure = db.patientProcedure;
 const Notification = db.notification;
 const NotificationEvent = db.notificationEvent;
-
 const { processPatientsPayments } = require("../utils/payment.util");
 
+const PERIOD = 7;
 /**
  * Add notifications for upcoming and overdue payments of the patients
  */
 exports.run = async () => {
   try {
+    const recentPeriod = new Date();
+    recentPeriod.setDate(recentPeriod.getDate() - PERIOD);
+
     // Create notificationEvent if NOT payment type events exist
     const [overdueEvent] = await NotificationEvent.findOrCreate({
       where: {
@@ -20,9 +25,9 @@ exports.run = async () => {
         Type: "payment",
       },
     });
-    const [upcomingEvent] = await NotificationEvent.findOrCreate({
+    const [deptEvent] = await NotificationEvent.findOrCreate({
       where: {
-        Event: "upcoming",
+        Event: "dept",
         Type: "payment",
       },
     });
@@ -47,6 +52,46 @@ exports.run = async () => {
             ["Amount", "amount"],
             ["PlannedDate", "plannedDate"],
           ],
+          required: false,
+        },
+        {
+          model: Payment,
+          as: "payments",
+          attributes: [
+            ["PaymentId", "id"],
+            ["Amount", "amount"],
+            ["IsPlanned", "isPlanned"],
+          ],
+          required: false,
+        },
+        {
+          model: Visit,
+          as: "visits",
+          attributes: [
+            ["VisitId", "id"],
+            ["Discount", "discount"],
+          ],
+          where: {
+            ApprovedDate: {
+              [Sequelize.Op.ne]: null,
+            },
+          },
+          required: false,
+          include: [
+            {
+              model: PatientProcedure,
+              as: "patientProcedures",
+              attributes: [
+                ["PatientProcedureId", "id"],
+                ["Price", "price"],
+              ],
+              where: {
+                CompletedDate: {
+                  [Sequelize.Op.ne]: null,
+                },
+              },
+            },
+          ],
         },
       ],
       order: [
@@ -54,42 +99,48 @@ exports.run = async () => {
       ],
     });
 
-    // Query to find total planned payments per patient
-    const payments = await Payment.findAll({
-      attributes: [
-        ["PatientId", , "patientId"],
-        [Sequelize.fn("SUM", Sequelize.col("Amount")), "total"],
-      ],
-      where: {
-        IsPlanned: true,
-      },
-      group: [Sequelize.col("Payment.PatientId")],
-      raw: true,
-    });
-
     // Calculate overdue & upcoming status
-    patients = processPatientsPayments(patients, payments, false);
+    patients = patients.map((patient) => patient.toJSON());
+    patients = processPatientsPayments(patients);
 
     // Create notification for overdue payments
     for (let patient of patients) {
       if (patient.overdue) {
-        await Notification.create({
-          Message: `${patient.name} ${patient.surname} isimli hastanın vadesi geçen ödeme planı bulunmaktadır`,
-          Status: "sent",
-          PatientId: patient.id,
-          UserId: patient.userId,
-          NotificationEventId: overdueEvent.NotificationEventId,
+        const existingRecord = await Notification.findOne({
+          where: {
+            Message: `${patient.name} ${patient.surname} isimli hastanın vadesi geçen ödemesi bulunmaktadır`,
+            PatientId: patient.id,
+            UserId: patient.userId,
+            createdAt: { [Sequelize.Op.gte]: recentPeriod },
+          },
         });
+        !existingRecord &&
+          (await Notification.create({
+            Message: `${patient.name} ${patient.surname} isimli hastanın vadesi geçen ödemesi bulunmaktadır`,
+            Status: "sent",
+            PatientId: patient.id,
+            UserId: patient.userId,
+            NotificationEventId: overdueEvent.NotificationEventId,
+          }));
       }
 
-      if (patient.upcoming) {
-        await Notification.create({
-          Message: `${patient.name} ${patient.surname} isimli hastanın yaklaşan ödeme planı bulunmaktadır`,
-          Status: "sent",
-          PatientId: patient.id,
-          UserId: patient.userId,
-          NotificationEventId: upcomingEvent.NotificationEventId,
+      if (patient.dept > 0) {
+        const existingRecord = await Notification.findOne({
+          where: {
+            Message: `${patient.name} ${patient.surname} isimli hastanın ₺${patient.dept} borcu bulunmaktadır`,
+            PatientId: patient.id,
+            UserId: patient.userId,
+            createdAt: { [Sequelize.Op.gte]: recentPeriod },
+          },
         });
+        !existingRecord &&
+          (await Notification.create({
+            Message: `${patient.name} ${patient.surname} isimli hastanın ₺${patient.dept} borcu bulunmaktadır`,
+            Status: "sent",
+            PatientId: patient.id,
+            UserId: patient.userId,
+            NotificationEventId: deptEvent.NotificationEventId,
+          }));
       }
     }
   } catch (error) {

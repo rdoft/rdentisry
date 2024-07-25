@@ -271,6 +271,7 @@ function ProcedureTable() {
           dragSelection={true}
           currentPageReportTemplate="({totalRecords} tedavi)"
           emptyMessage="Hiçbir sonuç bulunamadı"
+          filterLocale="tr-TR"
         >
           {/* Checkbox */}
           <Column
