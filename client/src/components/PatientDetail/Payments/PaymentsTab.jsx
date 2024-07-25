@@ -259,10 +259,10 @@ function PaymentsTab({
   const paymentPlanTitle = () => {
     let message;
 
-    if (waitingAmount > remainingAmount) {
+    if (remainingAmount > waitingAmount) {
       message =
         "Fazla ödeme planı bulunmaktadır. Lütfen ödeme planını veya ödemeleri kontrol edin.";
-    } else if (waitingAmount < remainingAmount || 0 < overpaidAmount) {
+    } else if (remainingAmount < waitingAmount || 0 < overpaidAmount) {
       message =
         "Eksik ödeme planı bulunmaktadır. Lütfen ödeme planını veya ödemeleri kontrol edin.";
     }
@@ -291,7 +291,7 @@ function PaymentsTab({
             total={total}
             completedTotal={completedTotal}
             completed={completedAmount}
-            waiting={remainingAmount}
+            waiting={waitingAmount}
             overdue={overdueAmount}
             dept={deptAmount}
           />
@@ -373,7 +373,7 @@ function PaymentsTab({
       {/* Payment dialog */}
       {paymentDialog === "payment" && (
         <PaymentDialog
-          initPayment={payment ? payment : { patient, amount: remainingAmount }}
+          initPayment={payment ? payment : { patient, amount: waitingAmount }}
           onHide={handleHideDialog}
           onSubmit={savePayment}
           onDelete={payment && deletePayment}
@@ -386,7 +386,7 @@ function PaymentsTab({
           patient={patient}
           initAmount={Math.max(
             0,
-            overpaidAmount + remainingAmount - waitingAmount
+            overpaidAmount + waitingAmount - remainingAmount
           )}
           onHide={handleHideDialog}
           onSubmit={savePayments}

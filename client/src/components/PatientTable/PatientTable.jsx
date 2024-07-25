@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
-import { Typography } from "@mui/material";
+import { Typography, Grid } from "@mui/material";
 import { DataTable, Column, Tag, ConfirmDialog } from "primereact";
 import { AppointmentDialog, PatientDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
@@ -254,16 +254,47 @@ function PatientsTable() {
 
   // TEMPLATES -----------------------------------------------------------------
   // Payment status of the patient (overdue or not)
-  const status = (patient) =>
-    patient.overdue ? (
+  const status = (patient) => {
+    let value;
+    if (patient.overdue) {
+      value = (
+        <Typography variant="caption" fontWeight="bold">
+          Gecikmiş Taksit
+        </Typography>
+      );
+    } else if (patient.waiting) {
+      value = null;
+    } else if (patient.dept > 0) {
+      value = (
+        <Grid container alignItems="center" justifyContent="center">
+          <Grid item>
+            <Typography variant="caption" component="span">
+              ₺
+            </Typography>
+            <Typography variant="caption" component="span" fontWeight="bold">
+              {patient.dept.toLocaleString("tr-TR", {
+                style: "decimal",
+                maximumFractionDigits: 2,
+              })}
+            </Typography>
+          </Grid>
+        </Grid>
+      );
+    } else {
+      value = null;
+    }
+
+    return value ? (
       <Tag
-        value="Eksik Ödeme"
+        value={value}
         style={{
           backgroundColor: "#FFD2CB",
           color: "#EF4444",
+          padding: "0.1rem 0.5rem",
         }}
       />
     ) : null;
+  };
 
   // Delete patient dialog template
   const deletePatientDialog = (
@@ -364,7 +395,6 @@ function PatientsTable() {
               </span>
             )}
             sortable
-            
           ></Column>
           {/* Phone */}
           <Column
@@ -390,7 +420,7 @@ function PatientsTable() {
                   />
                 ) : null
               }
-              style={{width: "10rem"}}
+              style={{ width: "10rem" }}
             ></Column>
           )}
           {/* Patient action buttons */}

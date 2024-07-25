@@ -1,8 +1,10 @@
 const { Sequelize } = require("../models");
 const db = require("../models");
+const Visit = db.visit;
 const Patient = db.patient;
 const Payment = db.payment;
 const PaymentPlan = db.paymentPlan;
+const PatientProcedure = db.patientProcedure;
 
 const { processPatientsPayments } = require("../utils/payment.util");
 
@@ -38,6 +40,46 @@ exports.getPatients = async (req, res) => {
               ["Amount", "amount"],
               ["PlannedDate", "plannedDate"],
             ],
+            required: false,
+          },
+          {
+            model: Payment,
+            as: "payments",
+            attributes: [
+              ["PaymentId", "id"],
+              ["Amount", "amount"],
+              ["IsPlanned", "isPlanned"],
+            ],
+            required: false,
+          },
+          {
+            model: Visit,
+            as: "visits",
+            attributes: [
+              ["VisitId", "id"],
+              ["Discount", "discount"],
+            ],
+            where: {
+              ApprovedDate: {
+                [Sequelize.Op.ne]: null,
+              },
+            },
+            required: false,
+            include: [
+              {
+                model: PatientProcedure,
+                as: "patientProcedures",
+                attributes: [
+                  ["PatientProcedureId", "id"],
+                  ["Price", "price"],
+                ],
+                where: {
+                  CompletedDate: {
+                    [Sequelize.Op.ne]: null,
+                  },
+                },
+              },
+            ],
           },
         ],
         order: [
@@ -46,33 +88,10 @@ exports.getPatients = async (req, res) => {
           [{ model: PaymentPlan, as: "paymentPlans" }, "PlannedDate", "ASC"],
         ],
       });
-      patients = patients.map((patient) => patient.toJSON());
-
-      // Find total amount payments per patient
-      const payments = await Payment.findAll({
-        attributes: [
-          ["PatientId", "patientId"],
-          [Sequelize.fn("SUM", Sequelize.col("Amount")), "total"],
-        ],
-        where: {
-          IsPlanned: true,
-        },
-        include: [
-          {
-            model: Patient,
-            as: "patient",
-            attributes: [],
-            where: {
-              UserId: userId,
-            },
-          },
-        ],
-        group: [Sequelize.col("Payment.PatientId")],
-        raw: true,
-      });
 
       // Calculate overdue status
-      patients = processPatientsPayments(patients, payments);
+      patients = patients.map((patient) => patient.toJSON());
+      patients = processPatientsPayments(patients);
     } else {
       patients = await Patient.findAll({
         attributes: [

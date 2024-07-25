@@ -22,13 +22,13 @@ const calcProgress = (payments, plannedPayments, total, completedTotal) => {
     if (new Date(plannedPayment.plannedDate) < new Date()) {
       overdue += plannedPayment.amount - plannedPayment.paid;
     }
-    // Calc waiting payment
-    waiting += plannedPayment.amount - plannedPayment.paid;
+    // Calc remaining payment
+    remaining += plannedPayment.amount - plannedPayment.paid;
     overpaid -= plannedPayment.paid;
   }
 
   dept = completedTotal - completed > 0 ? completedTotal - completed : 0;
-  remaining = total - completed > 0 ? total - completed : 0;
+  waiting = total - completed > 0 ? total - completed : 0;
 
   return {
     completedAmount: completed,
