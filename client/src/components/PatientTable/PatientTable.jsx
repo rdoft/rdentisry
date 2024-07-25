@@ -364,8 +364,6 @@ function PatientsTable() {
           paginator
           rows={10}
           rowHover={true}
-          sortField="overdue"
-          sortOrder={-1}
           dragSelection={true}
           currentPageReportTemplate="({totalRecords} hasta)"
           emptyMessage="Hiçbir sonuç bulunamadı"
@@ -404,7 +402,7 @@ function PatientsTable() {
           ></Column>
           {/* Status tags */}
           <Column
-            field="overdue"
+            field="dept"
             body={status}
             sortable
             style={{ width: "10rem" }}
