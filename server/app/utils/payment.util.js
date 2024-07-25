@@ -40,11 +40,12 @@ const processPatientsPayments = (patients) => {
           new Date(plan.plannedDate).setHours(0, 0, 0, 0)
     );
     // Calculate the dept of the patient
-    patient.dept = !patient.overdue
-      ? completedTotal - totalPaid > 0
-        ? completedTotal - totalPaid
-        : 0
-      : -1;
+    patient.dept =
+      !patient.overdue && !patient.waiting
+        ? completedTotal - totalPaid > 0
+          ? completedTotal - totalPaid
+          : 0
+        : -1;
   }
 
   return patients;
