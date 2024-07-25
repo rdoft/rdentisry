@@ -261,7 +261,7 @@ function PaymentsTab({
 
     if (waitingAmount > remainingAmount) {
       message =
-        "Kalan tutardan fazla bekleyen ödeme planı tutarı bulunmaktadır. Lütfen ödeme planını kontrol edin.";
+        "Fazla ödeme planı bulunmaktadır. Lütfen ödeme planını veya ödemeleri kontrol edin.";
     } else if (waitingAmount < remainingAmount || 0 < overpaidAmount) {
       message =
         "Eksik ödeme planı bulunmaktadır. Lütfen ödeme planını veya ödemeleri kontrol edin.";
