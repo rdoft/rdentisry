@@ -150,43 +150,43 @@ function AppointmentDialog({
   // onChange handler
   const handleChange = (event) => {
     let { name, value } = event.target;
-    const _appointment = { ...appointment };
 
-    switch (name) {
-      case "startTime":
-        const end = new Date(0);
-        
-        end.setHours(value.getHours());
-        end.setMinutes(
-          value.getMinutes() + parseInt(_appointment.duration || 0)
-        );
-        _appointment.endTime = end;
-        break;
+    setAppointment((prev) => {
+      const _appointment = { ...prev };
+      switch (name) {
+        case "startTime":
+          const end = new Date(0);
+          end.setHours(value.getHours());
+          end.setMinutes(value.getMinutes() + parseInt(prev.duration || 0));
+          _appointment.endTime = end;
+          break;
 
-      case "duration":
-        value = (value && value > 0) ? value : 0;
-        _appointment.endTime = new Date(_appointment.startTime);
-        _appointment.endTime.setMinutes(
-          _appointment.endTime.getMinutes() + parseInt(value)
-        );
-        break;
+        case "duration":
+          value = value && value > 0 ? value : 0;
+          _appointment.endTime = new Date(prev.startTime);
+          _appointment.endTime.setMinutes(
+            _appointment.endTime.getMinutes() + parseInt(value)
+          );
+          break;
 
-      case "date":
-        value = new Date(
-          Date.UTC(value.getFullYear(), value.getMonth(), value.getDate())
-        );
-        break;
+        case "date":
+          value = new Date(
+            Date.UTC(value.getFullYear(), value.getMonth(), value.getDate())
+          );
+          break;
 
-      default:
-        break;
-    }
+        default:
+          break;
+      }
+      _appointment[name] = value;
 
-    _appointment[name] = value;
-    const _isValid = schema.appointment.validate(_appointment).error
-      ? false
-      : true;
-    setAppointment(_appointment);
-    setIsValid(_isValid);
+      const _isValid = schema.appointment.validate(_appointment).error
+        ? false
+        : true;
+      setIsValid(_isValid);
+
+      return _appointment;
+    });
   };
 
   // onHide handler
@@ -282,13 +282,6 @@ function AppointmentDialog({
 
         {/* Date */}
         <div className="flex grid align-items-center justify-content-center mb-3">
-          {/* <label
-            htmlFor="date"
-            className="col-12 md:col-2 font-bold text-right"
-          >
-            Tarih <small className="p-error">*</small>
-          </label> */}
-
           <DatePicker
             id="date"
             name="date"
@@ -300,6 +293,7 @@ function AppointmentDialog({
               handleChange({ target: { name: "date", value: event } })
             }
             defaultMonth={new Date(appointment.date)}
+            required
           />
         </div>
 
@@ -310,6 +304,8 @@ function AppointmentDialog({
           </label>
 
           <TimeRangePicker
+            id="startTime"
+            name="startTime"
             start={appointment.startTime}
             end={appointment.endTime}
             onChange={handleChange}

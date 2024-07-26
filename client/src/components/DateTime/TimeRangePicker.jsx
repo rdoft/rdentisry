@@ -1,48 +1,36 @@
 import React from "react";
 
 import dayjs from "dayjs";
-import { Dropdown, InputText } from "primereact";
-import { Height } from "../../../node_modules/@mui/icons-material/index";
+import { Calendar, InputText } from "primereact";
 
-function TimeRangePicker({ start, end, onChange }) {
-  const generateOptions = () => {
-    const times = [];
-    let startTime = dayjs().startOf("day");
-    for (let i = 0; i < 24 * 4; i++) {
-      times.push({
-        label: startTime.format("HH:mm"),
-        value: startTime.format("HH:mm"),
-      });
-      startTime = startTime.add(15, "minute");
-    }
-    return times;
-  };
-  const timeOptions = generateOptions();
-
+function TimeRangePicker({ start, end, onChange, ...props }) {
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
   const handleChange = (event) => {
-    let { name, value } = event.target;
+    const { name, value } = event.target;
+    if (value) {
+      const start = new Date(0);
+      start.setHours(value?.getHours() || 0);
+      start.setMinutes(value?.getMinutes() || 0);
 
-    const start = new Date(0);
-    const [hours, minutes] = value.split(":").map(Number);
-    start.setHours(hours);
-    start.setMinutes(minutes);
-    onChange({ target: { name, value: start } });
+      onChange({ target: { name, value: start } });
+    }
   };
 
   return (
     <>
       {/* Start */}
       <div className="col-6 md:col-4">
-        <Dropdown
+        <Calendar
           className="w-full"
-          name="startTime"
-          value={dayjs(start).format("HH:mm")}
-          options={timeOptions}
+          value={dayjs(start).toDate()}
           onChange={handleChange}
+          timeOnly
+          showOnFocus={false}
           placeholder="ss:dd"
+          mask="99:99"
           style={{ height: "3rem" }}
+          {...props}
         />
       </div>
 
@@ -52,7 +40,6 @@ function TimeRangePicker({ start, end, onChange }) {
       <div className="col-6 md:col-4">
         <InputText
           className="w-full"
-          name="endTime"
           value={dayjs(end).format("HH:mm")}
           disabled
           placeholder="ss:dd"
