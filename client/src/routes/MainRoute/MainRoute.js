@@ -17,7 +17,11 @@ const Procedures = Loadable(
 const Login = Loadable(lazy(() => import("pages/Auth/LoginPage")));
 const Register = Loadable(lazy(() => import("pages/Auth/RegisterPage")));
 const Forgot = Loadable(lazy(() => import("pages/Auth/ForgotPage")));
-const ResetPassword = Loadable(lazy(() => import("pages/Auth/ResetPasswordPage")));
+const ResetPassword = Loadable(
+  lazy(() => import("pages/Auth/ResetPasswordPage"))
+);
+const Privacy = Loadable(lazy(() => import("pages/Legal/PrivacyPage")));
+const Terms = Loadable(lazy(() => import("pages/Legal/TermsPage")));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -63,6 +67,14 @@ const MainRoutes = [
         element: <Procedures />,
       },
     ],
+  },
+  {
+    path: "/legal/privacy",
+    element: <Privacy />,
+  },
+  {
+    path: "/legal/terms",
+    element: <Terms />,
   },
   // {
   //   path: "/*",
