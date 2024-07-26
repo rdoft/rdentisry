@@ -107,6 +107,7 @@ function Register() {
   // onKeyDown handler
   const handleKeyDown = (event) => {
     if (isValid && event.key === "Enter") {
+      event.stopPropagation();
       handleRegister();
     }
   };

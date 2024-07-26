@@ -66,9 +66,10 @@ function DropdownDoctorItem({ option, onDelete }) {
       onMouseLeave={handleMouseLeave}
     >
       {/* Avatar icon */}
-      <Grid item xs={2} mr={1}>
+      <Grid item>
         <Avatar
           alt="avatar"
+          className="mr-2"
           src={doctorAvatar}
           shape="circle"
           sx={{ padding: "4px 8px 4px 0" }}
