@@ -14,6 +14,7 @@ import Reduce from "./Reduce";
 import Basic from "./Basic";
 import SelectButton from "./SelectButton";
 import Tooth from "./Tooth";
+import Print from "./Print";
 
 export {
   Add,
@@ -32,4 +33,5 @@ export {
   Basic,
   SelectButton,
   Tooth,
+  Print,
 };

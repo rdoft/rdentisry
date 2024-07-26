@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { errorHandler } from "utils";
 import { toast } from "react-hot-toast";
 import { Grid, Tabs, Tab, Avatar } from "@mui/material";
+import ReactToPrint from "react-to-print";
 import { ProcedureDialog } from "components/Dialog";
-import { NewItem, SplitItem } from "components/Button";
+import { NewItem, SplitItem, Print } from "components/Button";
 import { AppointmentDialog } from "components/Dialog";
 import ProcedureToolbar from "./ProcedureToolbar";
 import DentalChart from "./DentalChart";
@@ -13,6 +14,7 @@ import ProcedureList from "./ProcedureList/ProcedureList";
 // assets
 import "assets/styles/PatientDetail/ProceduresTab.css";
 import { ListIcon, TeethIcon } from "assets/images/icons";
+import { ReactComponent as Logo } from "assets/svg/dishekime/dishekime.svg";
 
 // services
 import {
@@ -32,6 +34,7 @@ function ProceduresTab({
   counts,
   setCounts,
 }) {
+  const dt = useRef(null);
   const navigate = useNavigate();
 
   const [tabIndex, setTabIndex] = useState(
@@ -367,14 +370,34 @@ function ProceduresTab({
             />
           )}
           {tabIndex === 1 && (
-            <Grid container item>
-              <Grid item xs={12} pb={3}>
+            <Grid
+              container
+              item
+              justifyContent="space-between"
+              alignItems="end"
+            >
+              <Grid item xs={10} pb={3}>
                 <ProcedureToolbar
                   selectedTeeth={selectedTeeth}
                   onChangeTeeth={handleChangeTeeth}
                 />
               </Grid>
-              <Grid item xs>
+              <Grid item alignItems="end" pb={1}>
+                <ReactToPrint
+                  trigger={() => <Print label="PDF" />}
+                  content={() => dt.current}
+                  pageStyle="@page { size: landscape, A4; margin: 0.7cm }"
+                />
+              </Grid>
+              <Grid item xs ref={dt}>
+                <Logo
+                  className="print-only"
+                  style={{
+                    width: "8%",
+                    marginBottom: "20px",
+                    display: "none",
+                  }}
+                />
                 <ProcedureList
                   patient={patient}
                   procedures={filteredProcedures}
@@ -402,8 +425,10 @@ function ProceduresTab({
                     options={approvedVisits}
                     onClick={handleCreateAppointment}
                     disabled={!(approvedVisits?.length > 0)}
-                    tooltip={!(approvedVisits?.length > 0) && "Randevu eklemek için en az bir seansı onaylayın"}
-
+                    tooltip={
+                      !(approvedVisits?.length > 0) &&
+                      "Randevu eklemek için en az bir seansı onaylayın"
+                    }
                   />
                 </Grid>
                 <Grid
@@ -416,7 +441,10 @@ function ProceduresTab({
                     options={pendingVisits}
                     onClick={handleCreateVisit}
                     disabled={!(selectedProcedures?.length > 0)}
-                    tooltip={!(selectedProcedures?.length > 0) && "Seans ekleme/düzenleme yapmak için tedavi seçin"}
+                    tooltip={
+                      !(selectedProcedures?.length > 0) &&
+                      "Seans ekleme/düzenleme yapmak için tedavi seçin"
+                    }
                   />
                 </Grid>
               </>

@@ -249,11 +249,7 @@ function ProcedureList({
           )}
         ></Column>
         {/* Name and Category */}
-        <Column
-          field="procedure.name"
-          header="İşlem"
-          body={name}
-        ></Column>
+        <Column field="procedure.name" header="İşlem" body={name}></Column>
         {/* Price */}
         <Column
           field="price"

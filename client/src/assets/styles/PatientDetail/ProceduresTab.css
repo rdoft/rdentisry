@@ -34,3 +34,9 @@
 .p-checkbox.p-component.p-disabled {
   visibility: hidden;
 }
+
+@media print {
+  .print-only {
+    display: block !important;
+  }
+}
