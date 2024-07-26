@@ -40,7 +40,9 @@ exports.saveDoctor = async (req, res) => {
 
   try {
     // Create doctor record
-    doctor = await Doctor.create(values);
+    [doctor, _] = await Doctor.findOrCreate({
+      where: values,
+    });
     doctor = {
       id: doctor.DoctorId,
       name: doctor.Name,
