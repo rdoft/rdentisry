@@ -134,7 +134,7 @@ function CalendarToolbar({
       onClickAdd={showDoctorDialog}
       onClickDelete={deleteDoctor}
       className={!doctor && "p-2"}
-      style={{ width: "20vw" }}
+      style={{ width: "22vw" }}
     />
   );
 

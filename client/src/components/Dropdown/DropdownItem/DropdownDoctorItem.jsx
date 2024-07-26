@@ -66,24 +66,24 @@ function DropdownDoctorItem({ option, onDelete }) {
       onMouseLeave={handleMouseLeave}
     >
       {/* Avatar icon */}
-      <Grid item xs={2}>
+      <Grid item xs={2} mr={1}>
         <Avatar
           alt="avatar"
-          className="mr-2 p-1"
           src={doctorAvatar}
           shape="circle"
+          sx={{ padding: "4px 8px 4px 0" }}
         />
       </Grid>
 
       {/* Option info */}
       <Grid item xs={8}>
-        <Typography variant="h5">
+        <Typography variant="h6" fontWeight="bold" noWrap>
           Dt. {option.name} {option.surname}
         </Typography>
       </Grid>
 
       {/* Delete icon */}
-      <Grid item xs={2}>
+      <Grid item xs={1}>
         {onDelete &&
           (isHover || window.matchMedia("(hover: none)").matches) && (
             <Delete onClick={handleDelete} />

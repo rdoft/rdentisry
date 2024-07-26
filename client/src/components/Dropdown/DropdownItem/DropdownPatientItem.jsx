@@ -11,14 +11,19 @@ function DropdownPatientItem({ option }) {
       {/* Avatar icon */}
       <Avatar
         alt="avatar"
-        className="mr-2 p-1"
+        className="mr-2"
         src={patientAvatar}
         shape="circle"
+        sx={{ padding: "4px 8px 4px 0" }}
       />
 
       {/* Option info */}
       <div className="flex flex-column align">
-        <Typography variant="h5">{`${option.name} ${option.surname}`}</Typography>
+        <Typography
+          variant="h6"
+          fontWeight="bold"
+          noWrap
+        >{`${option.name} ${option.surname}`}</Typography>
         {option.phone && (
           <Typography variant="body2">
             <PhoneOutlined /> {`${option.phone}`}
