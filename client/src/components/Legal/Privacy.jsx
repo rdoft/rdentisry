@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, Divider } from "@mui/material";
 
 // assets
 import { ReactComponent as Logo } from "assets/svg/dishekime/dishekime.svg";
@@ -12,9 +12,10 @@ function PrivacyPolicy() {
           {" "}
           <Logo style={{ width: "200px" }} />
         </div>{" "}
-        <Typography variant="h3" gutterBottom>
+        <Typography variant="h1" gutterBottom>
           Gizlilik Politikası
         </Typography>
+        <Divider style={{ marginBottom: "2rem" }} />
         <Typography variant="body1" paragraph>
           <strong>Güncelleme Tarihi: 26 Temmuz 2024</strong>
         </Typography>

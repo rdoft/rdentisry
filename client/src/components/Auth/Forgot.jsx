@@ -3,6 +3,7 @@ import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button } from "primereact";
+import { LegalFooter } from "components/Legal";
 
 // assets
 import { ReactComponent as Logo } from "assets/svg/dishekime/dishekime.svg";
@@ -145,6 +146,9 @@ function Forgot() {
           />
         </div>
       </Grid>
+
+      {/* Footer */}
+      <LegalFooter />
     </Grid>
   );
 }
