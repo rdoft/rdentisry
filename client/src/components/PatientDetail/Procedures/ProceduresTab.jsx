@@ -385,7 +385,7 @@ function ProceduresTab({
                 <ReactToPrint
                   trigger={() => <Print label="Yazdır" />}
                   content={() => dt.current}
-                  pageStyle="@page { size: landscape, A4; margin: 0.1cm 0.8cm; }"
+                  pageStyle="@page { size: landscape, A4; margin: 0.4cm 0.8cm; }"
                 />
               </Grid>
               <Grid item xs ref={dt}>

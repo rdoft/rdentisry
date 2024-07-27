@@ -18,3 +18,9 @@ a:visited {
   height: auto;
   font-size: 1rem;
 }
+
+@media print {
+  .print-only {
+    display: flex !important;
+  }
+}

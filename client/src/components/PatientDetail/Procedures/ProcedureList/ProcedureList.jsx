@@ -9,9 +9,9 @@ import NotFoundText from "components/Text/NotFoundText";
 import PriceColumn from "../PriceColumn";
 import StatusColumn from "../StatusColumn";
 import ProcedureListHeader from "./ProcedureListHeader";
+import PrintHeader from "components/PrintHeader";
 
 // assets
-import { ReactComponent as Logo } from "assets/svg/dishekime/dishekime.svg";
 import "assets/styles/PatientDetail/ProceduresTab.css";
 
 function ProcedureList({
@@ -206,15 +206,10 @@ function ProcedureList({
 
   return procedures?.length > 0 ? (
     <>
-      <Logo
-        className="print-only"
-        style={{
-          width: "8%",
-          marginBottom: "20px",
-          display: "none",
-        }}
-      />
+      {/* Print only */}
+      <PrintHeader patient={patient} />
 
+      {/* Procedure list */}
       <DataTable
         ref={dt}
         value={combinedProcedures}
