@@ -4,15 +4,14 @@ import { Tooltip } from "@mui/material";
 
 function Print({ label, onClick, ...props }) {
   return (
-    <Tooltip title="Dışa aktar" placement="bottom" enterDelay={750}>
+    <Tooltip title="PDF" placement="bottom" enterDelay={750}>
       <Button
-        text
         outlined
         size="small"
-        icon="pi pi-file-pdf"
+        icon="pi pi-print"
         label={label}
         onClick={onClick}
-        style={{ color: "#2644E1", ...props.style }}
+        style={{ color: "#2644E1", padding: "0.3rem", ...props.style }}
       />
     </Tooltip>
   );

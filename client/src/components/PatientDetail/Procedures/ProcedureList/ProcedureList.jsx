@@ -11,6 +11,7 @@ import StatusColumn from "../StatusColumn";
 import ProcedureListHeader from "./ProcedureListHeader";
 
 // assets
+import { ReactComponent as Logo } from "assets/svg/dishekime/dishekime.svg";
 import "assets/styles/PatientDetail/ProceduresTab.css";
 
 function ProcedureList({
@@ -205,6 +206,15 @@ function ProcedureList({
 
   return procedures?.length > 0 ? (
     <>
+      <Logo
+        className="print-only"
+        style={{
+          width: "8%",
+          marginBottom: "20px",
+          display: "none",
+        }}
+      />
+
       <DataTable
         ref={dt}
         value={combinedProcedures}

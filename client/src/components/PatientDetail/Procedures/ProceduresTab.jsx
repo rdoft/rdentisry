@@ -14,7 +14,6 @@ import ProcedureList from "./ProcedureList/ProcedureList";
 // assets
 import "assets/styles/PatientDetail/ProceduresTab.css";
 import { ListIcon, TeethIcon } from "assets/images/icons";
-import { ReactComponent as Logo } from "assets/svg/dishekime/dishekime.svg";
 
 // services
 import {
@@ -382,22 +381,14 @@ function ProceduresTab({
                   onChangeTeeth={handleChangeTeeth}
                 />
               </Grid>
-              <Grid item alignItems="end" pb={1}>
+              <Grid item alignItems="center" pb={3}>
                 <ReactToPrint
-                  trigger={() => <Print label="PDF" />}
+                  trigger={() => <Print label="Yazdır" />}
                   content={() => dt.current}
                   pageStyle="@page { size: landscape, A4; margin: 0.7cm }"
                 />
               </Grid>
               <Grid item xs ref={dt}>
-                <Logo
-                  className="print-only"
-                  style={{
-                    width: "8%",
-                    marginBottom: "20px",
-                    display: "none",
-                  }}
-                />
                 <ProcedureList
                   patient={patient}
                   procedures={filteredProcedures}
