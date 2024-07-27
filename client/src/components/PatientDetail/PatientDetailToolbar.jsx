@@ -70,8 +70,8 @@ function PatientDetailToolbar({
       setPatientDialog(false);
       navigate(`/patients/${patient.id}`);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 

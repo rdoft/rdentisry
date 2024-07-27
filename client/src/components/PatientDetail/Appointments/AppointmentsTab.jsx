@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
-import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import { AppointmentDialog } from "components/Dialog";
@@ -26,8 +25,6 @@ function AppointmentsTab({
   counts,
   setCounts,
 }) {
-  const navigate = useNavigate();
-
   // Set the default values
   const [appointments, setAppointments] = useState([]);
   const [appointment, setAppointment] = useState(null);
@@ -43,14 +40,14 @@ function AppointmentsTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     return () => {
       controller.abort();
     };
-  }, [navigate, patient]);
+  }, [patient]);
 
   // Divide the appointments based on its status
   let activeAppointments = [];
@@ -83,8 +80,8 @@ function AppointmentsTab({
         appointment: { ...countAppointment },
       });
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -102,8 +99,8 @@ function AppointmentsTab({
       hideDialog();
       setAppointment(null);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -117,8 +114,8 @@ function AppointmentsTab({
       hideDialog();
       setAppointment(null);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 

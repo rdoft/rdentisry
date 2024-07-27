@@ -119,8 +119,8 @@ const Profile = () => {
   //     userName = userName.length > 20 ? userName.slice(0, 20) + "..." : userName;
   //     setUserName(userName);
   //   } catch (error) {
-  //     const { code, message } = errorHandler(error);
-  //     code === 401 ? navigate(`/login`) : toast.error(message);
+  //     const { message } = errorHandler(error);
+  //     toast.error(message);
   //   }
   // };
 

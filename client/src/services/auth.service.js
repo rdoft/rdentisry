@@ -48,4 +48,11 @@ auth.control = (token, options = {}) => {
   return API.get(`/reset/${token}`, options);
 };
 
+/**
+ * Permission check
+ */
+auth.permission = (options = {}) => {
+  return API.get(`/permission`, options);
+};
+
 export default auth;

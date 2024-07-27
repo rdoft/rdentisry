@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { Typography } from "@mui/material";
@@ -16,8 +15,6 @@ import ProcedureTableToolbar from "./ProcedureTableToolbar";
 import { ProcedureService, ProcedureCategoryService } from "services";
 
 function ProcedureTable() {
-  const navigate = useNavigate();
-
   // Set the default valeus
   const dt = useRef(null);
   const [categories, setCategories] = useState(null);
@@ -43,8 +40,8 @@ function ProcedureTable() {
         setProcedures(res.data);
       })
       .catch((error) => {
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     // Get the list of the procedure categories
@@ -53,14 +50,14 @@ function ProcedureTable() {
         setCategories([...res.data, { id: null, title: null }]);
       })
       .catch((error) => {
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     return () => {
       controller.abort();
     };
-  }, [navigate]);
+  }, []);
 
   // SERVICES ---------------------------------------------------------
   // Get the list of the procedures
@@ -74,8 +71,8 @@ function ProcedureTable() {
 
       setProcedures(procedures);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -92,8 +89,8 @@ function ProcedureTable() {
       // Get and set the updated list of procedures
       getProcedures();
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -112,8 +109,8 @@ function ProcedureTable() {
       setSelectedProcedures(_selectedProcedures);
       setProcedure(null);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -138,8 +135,8 @@ function ProcedureTable() {
       getProcedures();
       setSelectedProcedures(null);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 

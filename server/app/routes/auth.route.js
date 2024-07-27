@@ -78,5 +78,12 @@ module.exports = function (app) {
      */
     .post(validate(schema.reset, "body"), controller.reset);
 
+  router
+    .route(`/permission`)
+    /**
+     * Check permission
+     */
+    .get(controller.permission);
+
   app.use(API_URL, router);
 };

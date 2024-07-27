@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { Divider, InputNumber } from "primereact";
@@ -13,8 +12,6 @@ import schema from "schemas/payment.schema";
 import { PatientService } from "services";
 
 function PaymentPlanDialog({ patient, initAmount = 0, onHide, onSubmit }) {
-  const navigate = useNavigate();
-
   const [patients, setPatients] = useState(null);
   const [instalment, setInstalment] = useState(1);
   const [amount, setAmount] = useState(initAmount);
@@ -38,14 +35,14 @@ function PaymentPlanDialog({ patient, initAmount = 0, onHide, onSubmit }) {
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     return () => {
       controller.abort();
     };
-  }, [navigate]);
+  }, []);
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler

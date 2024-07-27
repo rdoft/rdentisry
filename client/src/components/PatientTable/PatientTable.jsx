@@ -46,14 +46,14 @@ function PatientsTable() {
         setPatients(_patients);
       })
       .catch((error) => {
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     return () => {
       controller.abort();
     };
-  }, [navigate]);
+  }, []);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of patients and set patients value
@@ -71,8 +71,8 @@ function PatientsTable() {
       // Set new patients
       setPatients(patients);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -93,8 +93,8 @@ function PatientsTable() {
       getPatients();
       hidePatientDialog();
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -105,8 +105,8 @@ function PatientsTable() {
       hideAppointmentDialog();
       toast.success("Yeni randevu başarıyla eklendi");
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -127,8 +127,8 @@ function PatientsTable() {
       setPatients(_patients);
       setSelectedPatients(_selectedPatients);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
 
     // Close delete dialog and empty patient variable
@@ -160,8 +160,8 @@ function PatientsTable() {
       setPatients(_patients);
       setSelectedPatients(null);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
 
     // Close the dialog and set selec

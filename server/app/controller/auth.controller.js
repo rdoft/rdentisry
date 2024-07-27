@@ -236,3 +236,14 @@ exports.google = async (req, res) => {
   }
   res.status(200).send();
 };
+
+/**
+ * Permission check
+ */
+exports.permission = async (req, res) => {
+  if (req.user) {
+    res.status(200).send({ permission: true });
+  } else {
+    res.status(401).send({ permission: false });
+  }
+};

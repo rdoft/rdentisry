@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler, getTabCounts } from "utils";
 import { TabView, TabPanel } from "primereact";
@@ -19,7 +19,6 @@ import "assets/styles/PatientDetail/PatientDetail.css";
 import { PatientService } from "services";
 
 function PatientDetail() {
-  const navigate = useNavigate();
   // Get patient id
   const { id } = useParams();
 
@@ -57,14 +56,14 @@ function PatientDetail() {
         setPatient(res.data);
       })
       .catch((error) => {
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     return () => {
       controller.abort();
     };
-  }, [navigate, id]);
+  }, [id]);
 
   // HANDLERS -----------------------------------------------------------------
   // Show add appointment dialog

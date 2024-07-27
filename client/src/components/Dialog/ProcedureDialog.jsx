@@ -16,7 +16,6 @@ import DropdownTooth from "components/Dropdown/DropdownTooth";
 function ProcedureDialog({
   initPatientProcedure = {},
   visit,
-  adult,
   onHide,
   onSubmit,
   selectedTeeth,
@@ -82,8 +81,8 @@ function ProcedureDialog({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     ProcedureService.getProcedures(null, { signal })
@@ -92,14 +91,14 @@ function ProcedureDialog({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     return () => {
       controller.abort();
     };
-  }, [navigate]);
+  }, []);
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler

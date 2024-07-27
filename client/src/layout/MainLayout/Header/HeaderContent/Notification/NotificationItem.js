@@ -64,8 +64,8 @@ function NotificationItem({ notification, getNotifications, onClose }) {
       // Set the notifications list
       getNotifications();
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 

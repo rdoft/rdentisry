@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
-import { useNavigate } from "react-router-dom";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { getEventTime, setEventTime } from "utils";
@@ -29,8 +28,6 @@ const localizer = momentLocalizer(moment);
 const today = new Date();
 
 const AppointmentCalendar = () => {
-  const navigate = useNavigate();
-
   // Set the default values
   const step = useRef(30);
   const timeslots = useRef(2);
@@ -58,14 +55,14 @@ const AppointmentCalendar = () => {
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     return () => {
       controller.abort();
     };
-  }, [navigate]);
+  }, []);
 
   // And filter only active appointments if "show all" not selected
   // And filter by doctor if doctor selected
@@ -86,8 +83,8 @@ const AppointmentCalendar = () => {
       appointments = response.data;
       setAppointments(appointments);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -105,8 +102,8 @@ const AppointmentCalendar = () => {
       setAppointmentDialog(false);
       setAppointment(null);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -121,8 +118,8 @@ const AppointmentCalendar = () => {
       setAppointment(null);
     } catch (error) {
       // Set error status and show error toast message
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 

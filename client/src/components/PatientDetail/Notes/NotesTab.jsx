@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
-import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import { NewItem } from "components/Button";
@@ -23,8 +22,6 @@ function NotesTab({
   counts,
   setCounts,
 }) {
-  const navigate = useNavigate();
-
   const [isEdit, setEdit] = useState(false);
   const [notes, setNotes] = useState([]);
   const [note, setNote] = useState(null);
@@ -40,14 +37,14 @@ function NotesTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     return () => {
       controller.abort();
     };
-  }, [navigate, patient]);
+  }, [patient]);
 
   // Reset note when noteDialog becomes true
   useEffect(() => {
@@ -72,8 +69,8 @@ function NotesTab({
         note: { other: response.data.length },
       });
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -94,8 +91,8 @@ function NotesTab({
       hideDialog();
       setNote(note);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -110,8 +107,8 @@ function NotesTab({
         setNote(null);
       }
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { Typography } from "@mui/material";
@@ -23,8 +22,6 @@ function CalendarToolbar({
   setShowAll,
   onClickAddAppointment,
 }) {
-  const navigate = useNavigate();
-
   // Set the default values
   const [doctorDialog, setDoctorDialog] = useState(false);
 
@@ -75,8 +72,8 @@ function CalendarToolbar({
       setDoctor(doctor);
       localStorage.setItem("doctor", JSON.stringify(doctor));
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -93,8 +90,8 @@ function CalendarToolbar({
       setDoctor(null);
       localStorage.removeItem("doctor");
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 

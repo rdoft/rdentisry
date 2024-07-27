@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import { useTheme } from "@mui/material/styles";
@@ -49,8 +48,6 @@ const actionSX = {
 // ==============================|| HEADER CONTENT - NOTIFICATION ||============================== //
 
 const Notification = () => {
-  const navigate = useNavigate();
-
   const theme = useTheme();
   const matchesXs = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -75,7 +72,7 @@ const Notification = () => {
     return () => {
       controller.abort();
     };
-  }, [checked, navigate]);
+  }, [checked]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of notifications and set notifications value
@@ -93,8 +90,8 @@ const Notification = () => {
       notifications = response.data;
       setNotifications(notifications);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -110,8 +107,8 @@ const Notification = () => {
       // Set the notifications list
       getNotifications();
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 

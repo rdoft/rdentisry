@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
-import { useNavigate } from "react-router-dom";
 import { Grid, Tooltip } from "@mui/material";
 import { Timeline, Divider } from "primereact";
 import { CardTitle } from "components/cards";
@@ -32,8 +31,6 @@ function PaymentsTab({
   counts,
   setCounts,
 }) {
-  const navigate = useNavigate();
-
   // Set the default values
   const [total, setTotal] = useState(0);
   const [completedTotal, setCompletedTotal] = useState(0);
@@ -53,8 +50,8 @@ function PaymentsTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     // Set planned payments
@@ -64,8 +61,8 @@ function PaymentsTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     // Set total payment
@@ -80,8 +77,8 @@ function PaymentsTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     PatientProcedureService.getPatientProcedures(
@@ -103,14 +100,14 @@ function PaymentsTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     return () => {
       controller.abort();
     };
-  }, [navigate, patient]);
+  }, [patient]);
 
   // Calculate the payments percentage
   const {
@@ -144,8 +141,8 @@ function PaymentsTab({
         payment: { ...countPayment },
       });
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -167,8 +164,8 @@ function PaymentsTab({
       hideDialog();
       setPayment(null);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -186,8 +183,8 @@ function PaymentsTab({
       hideDialog();
       setPayment(null);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -202,8 +199,8 @@ function PaymentsTab({
       hideDialog();
       setPayment(null);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 

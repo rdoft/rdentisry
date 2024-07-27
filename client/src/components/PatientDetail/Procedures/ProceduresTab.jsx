@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { errorHandler } from "utils";
 import { toast } from "react-hot-toast";
 import { Grid, Tabs, Tab, Avatar } from "@mui/material";
@@ -34,7 +33,6 @@ function ProceduresTab({
   setCounts,
 }) {
   const dt = useRef(null);
-  const navigate = useNavigate();
 
   const [tabIndex, setTabIndex] = useState(
     localStorage.getItem("activeTabIndexProcedure")
@@ -85,8 +83,8 @@ function ProceduresTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     VisitService.getVisits(patient.id, null, { signal })
@@ -95,14 +93,14 @@ function ProceduresTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     return () => {
       controller.abort();
     };
-  }, [navigate, patient]);
+  }, [patient]);
 
   // Filter procedures based on selectedTeeth
   const filteredProcedures = procedures.filter(
@@ -135,8 +133,8 @@ function ProceduresTab({
         procedure: { ...countProcedure },
       });
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -173,8 +171,8 @@ function ProceduresTab({
       getProcedures(patient.id);
       getVisits(patient.id);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -209,8 +207,8 @@ function ProceduresTab({
       getProcedures(patient.id);
       getVisits(patient.id);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -225,8 +223,8 @@ function ProceduresTab({
 
       setVisits(visits);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -254,8 +252,8 @@ function ProceduresTab({
         appointment: { ...countAppointment },
       });
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 

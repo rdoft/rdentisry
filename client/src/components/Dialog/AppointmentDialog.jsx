@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
 import {
@@ -27,8 +26,6 @@ function AppointmentDialog({
   onSubmit,
   onDelete,
 }) {
-  const navigate = useNavigate();
-
   // Set the default values
   const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
@@ -57,8 +54,8 @@ function AppointmentDialog({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     DoctorService.getDoctors({ signal })
@@ -67,14 +64,14 @@ function AppointmentDialog({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { code, message } = errorHandler(error);
-        code === 401 ? navigate(`/login`) : toast.error(message);
+        const { message } = errorHandler(error);
+        toast.error(message);
       });
 
     return () => {
       controller.abort();
     };
-  }, [navigate]);
+  }, []);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of doctors and set doctors value
@@ -89,8 +86,8 @@ function AppointmentDialog({
       // Set new doctors
       setDoctors(doctors);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -123,8 +120,8 @@ function AppointmentDialog({
       setDoctorDialog(false);
       setAppointment({ ...appointment, doctor });
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
@@ -141,8 +138,8 @@ function AppointmentDialog({
       setPatientDialog(false);
       setAppointment({ ...appointment, patient });
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 

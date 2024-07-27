@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { errorHandler } from "utils";
 import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
@@ -18,8 +17,6 @@ function ProcedureListHeader({
   onUpdated,
   setSelectedProcedures,
 }) {
-  const navigate = useNavigate();
-
   const price = useRef(total);
   const [visit, setVisit] = useState({
     ...initVisit,
@@ -47,8 +44,8 @@ function ProcedureListHeader({
       setVisit(visit);
       onUpdated(patient.id);
     } catch (error) {
-      const { code, message } = errorHandler(error);
-      code === 401 ? navigate(`/login`) : toast.error(message);
+      const { message } = errorHandler(error);
+      toast.error(message);
     }
   };
 
