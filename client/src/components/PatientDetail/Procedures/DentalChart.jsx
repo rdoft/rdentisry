@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Badge, Divider, Skeleton } from "primereact";
 import { Grid, ImageList } from "@mui/material";
 import { PressKeyText } from "components/Text";
+import { SwitchTeeth } from "components/Button";
 import StatusBadge from "./StatusBadge";
 
 // assets
 import { upTeeth, downTeeth } from "assets/images/charts";
+import { childUpTeeth, childDownTeeth } from "assets/images/charts";
 
 function DentalChart({ procedures, selectedTeeth, onChangeTeeth }) {
   const [loading, setLoading] = useState(true);
+  const [adult, setAdult] = useState(true);
 
   // Load image on mount
   useEffect(() => {
@@ -24,8 +27,14 @@ function DentalChart({ procedures, selectedTeeth, onChangeTeeth }) {
 
     Promise.all(upTeeth.map((img) => loadImage(img.src)))
       .then(() => Promise.all(downTeeth.map((img) => loadImage(img.src))))
+      .then(() => Promise.all(childUpTeeth.map((img) => loadImage(img.src))))
+      .then(() => Promise.all(childDownTeeth.map((img) => loadImage(img.src))))
       .then(() => setLoading(false));
   }, []);
+
+  // Get the appropriate teeth based on the state
+  const upperTeeth = adult ? upTeeth : childUpTeeth;
+  const lowerTeeth = adult ? downTeeth : childDownTeeth;
 
   //FUNCTIONS -----------------------------------------------------------------
   // Group procedures by tooth number
@@ -47,6 +56,12 @@ function DentalChart({ procedures, selectedTeeth, onChangeTeeth }) {
     selectedTeeth.includes(tooth)
       ? onChangeTeeth(selectedTeeth.filter((number) => number !== tooth))
       : onChangeTeeth([...selectedTeeth, tooth]);
+  };
+
+  // onClick adult/child handler
+  const handleClickAdult = () => {
+    setAdult(!adult);
+    onChangeTeeth([]);
   };
 
   // TEMPLATES ----------------------------------------------------------------
@@ -94,8 +109,12 @@ function DentalChart({ procedures, selectedTeeth, onChangeTeeth }) {
       </Grid>
 
       {/* Up Teeth */}
-      <ImageList cols={16} gap={0}>
-        {upTeeth.map((tooth) => (
+      <ImageList
+        cols={adult ? 16 : 10}
+        gap={0}
+        sx={{ width: adult ? "100%" : "62.5%" }}
+      >
+        {upperTeeth.map((tooth) => (
           <Grid
             key={tooth.number}
             container
@@ -129,11 +148,20 @@ function DentalChart({ procedures, selectedTeeth, onChangeTeeth }) {
       </ImageList>
 
       {/* Divider */}
-      <Divider />
+      <Divider align="center" style={{ margin: 0 }}>
+        <SwitchTeeth
+          label={adult ? "Yetişkin" : "Çocuk"}
+          onClick={handleClickAdult}
+        />
+      </Divider>
 
       {/* Down Teeth */}
-      <ImageList cols={16} gap={0}>
-        {downTeeth.map((tooth) => (
+      <ImageList
+        cols={adult ? 16 : 10}
+        gap={0}
+        sx={{ width: adult ? "100%" : "62.5%" }}
+      >
+        {lowerTeeth.map((tooth) => (
           <Grid
             key={tooth.number}
             container

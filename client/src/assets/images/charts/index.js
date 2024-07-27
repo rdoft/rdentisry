@@ -69,4 +69,30 @@ const downTeeth = [
   { src: tooth38, number: 38 },
 ];
 
-export { upTeeth, downTeeth };
+const childUpTeeth = [
+  { src: tooth17, number: 55 },
+  { src: tooth16, number: 54 },
+  { src: tooth13, number: 53 },
+  { src: tooth12, number: 52 },
+  { src: tooth11, number: 51 },
+  { src: tooth21, number: 61 },
+  { src: tooth22, number: 62 },
+  { src: tooth23, number: 63 },
+  { src: tooth26, number: 64 },
+  { src: tooth27, number: 65 },
+];
+
+const childDownTeeth = [
+  { src: tooth47, number: 85 },
+  { src: tooth46, number: 84 },
+  { src: tooth43, number: 83 },
+  { src: tooth42, number: 82 },
+  { src: tooth41, number: 81 },
+  { src: tooth31, number: 71 },
+  { src: tooth32, number: 72 },
+  { src: tooth33, number: 73 },
+  { src: tooth36, number: 74 },
+  { src: tooth37, number: 75 },
+];
+
+export { upTeeth, downTeeth, childUpTeeth, childDownTeeth };

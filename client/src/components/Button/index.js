@@ -15,6 +15,7 @@ import Basic from "./Basic";
 import SelectButton from "./SelectButton";
 import Tooth from "./Tooth";
 import Print from "./Print";
+import SwitchTeeth from "./SwitchTeeth";
 
 export {
   Add,
@@ -34,4 +35,5 @@ export {
   SelectButton,
   Tooth,
   Print,
+  SwitchTeeth,
 };
