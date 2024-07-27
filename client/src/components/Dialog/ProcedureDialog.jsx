@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
-import { Divider, InputNumber, Checkbox, Dropdown } from "primereact";
+import { Divider, InputNumber, Checkbox } from "primereact";
 import { Tooth } from "components/Button";
 import { DialogTemp } from "components/Dialog";
 import { DropdownPatient, DropdownProcedure } from "components/Dropdown";
