@@ -46,6 +46,11 @@ function ProceduresTab({
   const [selectedProcedures, setSelectedProcedures] = useState(null);
   const [visits, setVisits] = useState([]);
   const [description, setDescription] = useState("");
+  const [adult, setAdult] = useState(
+    patient.birthYear && new Date().getFullYear() - patient.birthYear <= 12
+      ? false
+      : true
+  );
 
   // Add keydown event listener
   // when component mounts and remove it when unmounts
@@ -255,6 +260,12 @@ function ProceduresTab({
   };
 
   // HANDLERS -----------------------------------------------------------------
+  // onChangeAdult handler
+  const handleToggleType = () => {
+    setAdult(!adult);
+    setSelectedTeeth([0]);
+  };
+
   // onSelectTooth handler
   const handleChangeTeeth = (teeth) => {
     teeth = teeth?.filter((tooth) => tooth !== 0);
@@ -364,7 +375,9 @@ function ProceduresTab({
           {tabIndex === 0 && (
             <DentalChart
               procedures={procedures}
+              adult={adult}
               selectedTeeth={selectedTeeth}
+              onToggleType={handleToggleType}
               onChangeTeeth={handleChangeTeeth}
             />
           )}
@@ -382,13 +395,15 @@ function ProceduresTab({
                 />
               </Grid>
               <Grid item alignItems="center" pb={3}>
-                <ReactToPrint
-                  trigger={() => <Print label="Yazdır" />}
-                  content={() => dt.current}
-                  pageStyle="@page { size: landscape, A4; margin: 0.4cm 0.8cm; }"
-                />
+                {procedures?.length > 0 && (
+                  <ReactToPrint
+                    trigger={() => <Print label="Yazdır" />}
+                    content={() => dt.current}
+                    pageStyle="@page { size: landscape, A4; margin: 0.4cm 0.8cm; }"
+                  />
+                )}
               </Grid>
-              <Grid item xs ref={dt}>
+              <Grid item xs={12} ref={dt}>
                 <ProcedureList
                   patient={patient}
                   procedures={filteredProcedures}

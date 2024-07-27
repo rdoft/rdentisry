@@ -9,9 +9,14 @@ import StatusBadge from "./StatusBadge";
 import { upTeeth, downTeeth } from "assets/images/charts";
 import { childUpTeeth, childDownTeeth } from "assets/images/charts";
 
-function DentalChart({ procedures, selectedTeeth, onChangeTeeth }) {
+function DentalChart({
+  procedures,
+  adult,
+  selectedTeeth,
+  onToggleType,
+  onChangeTeeth,
+}) {
   const [loading, setLoading] = useState(true);
-  const [adult, setAdult] = useState(true);
 
   // Load image on mount
   useEffect(() => {
@@ -56,12 +61,6 @@ function DentalChart({ procedures, selectedTeeth, onChangeTeeth }) {
     selectedTeeth.includes(tooth)
       ? onChangeTeeth(selectedTeeth.filter((number) => number !== tooth))
       : onChangeTeeth([...selectedTeeth, tooth]);
-  };
-
-  // onClick adult/child handler
-  const handleClickAdult = () => {
-    setAdult(!adult);
-    onChangeTeeth([]);
   };
 
   // TEMPLATES ----------------------------------------------------------------
@@ -151,7 +150,7 @@ function DentalChart({ procedures, selectedTeeth, onChangeTeeth }) {
       <Divider align="center" style={{ margin: 0 }}>
         <SwitchTeeth
           label={adult ? "Yetişkin" : "Çocuk"}
-          onClick={handleClickAdult}
+          onClick={onToggleType}
         />
       </Divider>
 

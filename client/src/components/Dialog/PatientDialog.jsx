@@ -85,7 +85,7 @@ function PatientDialog({ initPatient = {}, onHide, onSubmit }) {
         </label>
         <InputText
           id="idNumber"
-          value={patient.idNumber}
+          value={patient.idNumber || ""}
           name="idNumber"
           onChange={handleChange}
           autoFocus
@@ -154,7 +154,7 @@ function PatientDialog({ initPatient = {}, onHide, onSubmit }) {
         </label>
         <InputText
           id="birthYear"
-          value={patient.birthYear}
+          value={patient.birthYear || ""}
           name="birthYear"
           onChange={handleChange}
           keyfilter="num"
