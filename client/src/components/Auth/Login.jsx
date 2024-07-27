@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider } from "primereact";
 import { LegalFooter } from "components/Legal";
+import { useAuth } from "routes/AuthProvider";
 
 // assets
 import svgGoogle from "assets/svg/google.svg";
@@ -16,6 +17,8 @@ import schema from "schemas/user.schema";
 
 function Login() {
   const navigate = useNavigate();
+  const { authenticated } = useAuth();
+  
   const GOOGLE_AUTH = process.env.REACT_APP_AUTH_URL
     ? `${process.env.REACT_APP_AUTH_URL}google`
     : "https://localhost:8080/auth/google";
@@ -35,6 +38,9 @@ function Login() {
 
     try {
       await AuthService.login(auth);
+
+      // Set Authenticated for all routes
+      authenticated();
       navigate("/");
     } catch (error) {
       const { code, message } = errorHandler(error);

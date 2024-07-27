@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { errorHandler } from "utils";
+import { useAuth } from "routes/AuthProvider";
 
 // material-ui
 // import { useTheme } from "@mui/material/styles";
@@ -65,8 +66,9 @@ TabPanel.propTypes = {
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
 const Profile = () => {
-  const navigate = useNavigate();
   // const theme = useTheme();
+  const navigate = useNavigate();
+  const { unauthenticated } = useAuth();
 
   const anchorRef = useRef(null);
   const open = useRef(false);
@@ -96,6 +98,9 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await AuthService.logout();
+
+      // Set Unauthenticated for all routes
+      unauthenticated();
       navigate(`/login`);
     } catch (error) {
       const { message } = errorHandler(error);

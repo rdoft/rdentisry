@@ -1,8 +1,7 @@
-import { lazy } from "react";
-
-// project import
+import React, { lazy } from "react";
 import { Loadable } from "components/Loadable";
 import { MainLayout } from "layout";
+import ProtectedRoute from "./ProtectedRoute";
 
 // render - pages
 // const Overview = Loadable(lazy(() => import("pages/Overview/OverviewPage")));
@@ -44,11 +43,11 @@ const MainRoutes = [
   },
   {
     path: "/",
-    element: <MainLayout />,
+    element: <ProtectedRoute element={MainLayout} />,
     children: [
       {
         path: "/",
-        element: <Calendar />,
+        element: <ProtectedRoute element={Calendar} />,
       },
       // {
       //   path: "/overview",
@@ -56,15 +55,15 @@ const MainRoutes = [
       // },
       {
         path: "patients",
-        element: <Patients />,
+        element: <ProtectedRoute element={Patients} />,
       },
       {
         path: "patients/:id",
-        element: <Patient />,
+        element: <ProtectedRoute element={Patient} />,
       },
       {
         path: "/procedures",
-        element: <Procedures />,
+        element: <ProtectedRoute element={Procedures} />,
       },
     ],
   },
