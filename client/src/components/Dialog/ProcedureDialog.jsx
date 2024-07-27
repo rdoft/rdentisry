@@ -11,10 +11,12 @@ import schema from "schemas/procedure.schema";
 
 // services
 import { PatientService, ProcedureService } from "services";
+import DropdownTooth from "components/Dropdown/DropdownTooth";
 
 function ProcedureDialog({
   initPatientProcedure = {},
   visit,
+  adult,
   onHide,
   onSubmit,
   selectedTeeth,
@@ -38,15 +40,36 @@ function ProcedureDialog({
     amount: false,
   });
 
-  const teeth = [
+  const adultTeeth = [
     11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33,
     34, 35, 36, 37, 38, 41, 42, 43, 44, 45, 46, 47, 48,
-  ]
-    .filter((tooth) => !selectedTeeth.includes(tooth))
-    .map((tooth) => ({
-      label: tooth ? tooth : "Genel",
-      value: tooth,
-    }));
+  ];
+  const childTeeth = [
+    51, 52, 53, 54, 55, 61, 62, 63, 64, 65, 71, 72, 73, 74, 75, 81, 82, 83, 84,
+    85,
+  ];
+  const teeth = [
+    {
+      label: "Yetişkin",
+      code: "A",
+      items: adultTeeth
+        .filter((tooth) => !selectedTeeth.includes(tooth))
+        .map((tooth) => ({
+          label: tooth ? tooth : "Genel",
+          value: tooth,
+        })),
+    },
+    {
+      label: "Çocuk",
+      code: "C",
+      items: childTeeth
+        .filter((tooth) => !selectedTeeth.includes(tooth))
+        .map((tooth) => ({
+          label: tooth ? tooth : "Genel",
+          value: tooth,
+        })),
+    },
+  ];
 
   // Set the doctors from dropdown on loading
   useEffect(() => {
@@ -249,12 +272,9 @@ function ProcedureDialog({
             onRemove={() => handleRemoveTooth(tooth)}
           />
         ))}
-        <Dropdown
-          name="teeth"
+
+        <DropdownTooth
           options={teeth}
-          filter
-          filterBy="label"
-          placeholder="Seç"
           onChange={(e) => handleAddTooth(e.value)}
           style={{
             alignItems: "center",
@@ -264,8 +284,6 @@ function ProcedureDialog({
             borderRadius: "0.5rem",
             fontSize: "small",
           }}
-          emptyMessage="Sonuç bulunamadı"
-          emptyFilterMessage="Sonuç bulunamadı"
         />
       </div>
 
