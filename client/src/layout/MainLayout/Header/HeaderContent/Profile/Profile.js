@@ -2,8 +2,7 @@ import PropTypes from "prop-types";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils";
-import { useAuth } from "routes/AuthProvider";
+import { useAuth } from "context/AuthProvider";
 
 // material-ui
 // import { useTheme } from "@mui/material/styles";
@@ -68,7 +67,7 @@ TabPanel.propTypes = {
 const Profile = () => {
   // const theme = useTheme();
   const navigate = useNavigate();
-  const { unauthenticated } = useAuth();
+  const { unauthenticate } = useAuth();
 
   const anchorRef = useRef(null);
   const open = useRef(false);
@@ -100,11 +99,10 @@ const Profile = () => {
       await AuthService.logout();
 
       // Set Unauthenticated for all routes
-      unauthenticated();
+      unauthenticate();
       navigate(`/login`);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -119,8 +117,7 @@ const Profile = () => {
   //     userName = userName.length > 20 ? userName.slice(0, 20) + "..." : userName;
   //     setUserName(userName);
   //   } catch (error) {
-  //     const { message } = errorHandler(error);
-  //     toast.error(message);
+  // toast.error(error.message);
   //   }
   // };
 

@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils";
 import { useTheme } from "@mui/material/styles";
 import {
   Badge,
@@ -90,8 +89,7 @@ const Notification = () => {
       notifications = response.data;
       setNotifications(notifications);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -107,8 +105,7 @@ const Notification = () => {
       // Set the notifications list
       getNotifications();
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 

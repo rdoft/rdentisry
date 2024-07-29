@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils";
 import { Typography } from "@mui/material";
 import { DataTable, Column, ConfirmDialog } from "primereact";
 import { BaseProcedureDialog } from "components/Dialog";
@@ -40,8 +39,7 @@ function ProcedureTable() {
         setProcedures(res.data);
       })
       .catch((error) => {
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     // Get the list of the procedure categories
@@ -50,8 +48,7 @@ function ProcedureTable() {
         setCategories([...res.data, { id: null, title: null }]);
       })
       .catch((error) => {
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     return () => {
@@ -71,8 +68,7 @@ function ProcedureTable() {
 
       setProcedures(procedures);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -84,13 +80,13 @@ function ProcedureTable() {
         await ProcedureService.updateProcedure(procedure);
       } else {
         await ProcedureService.saveProcedure(procedure);
+        toast.success("Yeni tedavi bilgileri başarıyla eklendi");
       }
 
       // Get and set the updated list of procedures
       getProcedures();
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -109,8 +105,7 @@ function ProcedureTable() {
       setSelectedProcedures(_selectedProcedures);
       setProcedure(null);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -135,8 +130,7 @@ function ProcedureTable() {
       getProcedures();
       setSelectedProcedures(null);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 

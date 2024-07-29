@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { getEventTime, setEventTime } from "utils";
@@ -55,8 +54,7 @@ const AppointmentCalendar = () => {
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     return () => {
@@ -83,8 +81,7 @@ const AppointmentCalendar = () => {
       appointments = response.data;
       setAppointments(appointments);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -102,8 +99,7 @@ const AppointmentCalendar = () => {
       setAppointmentDialog(false);
       setAppointment(null);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -117,9 +113,7 @@ const AppointmentCalendar = () => {
       setAppointmentDialog(false);
       setAppointment(null);
     } catch (error) {
-      // Set error status and show error toast message
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 

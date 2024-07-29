@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils";
 import { Divider, InputNumber, Checkbox } from "primereact";
 import { Tooth } from "components/Button";
 import { DialogTemp } from "components/Dialog";
@@ -81,8 +80,7 @@ function ProcedureDialog({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     ProcedureService.getProcedures(null, { signal })
@@ -91,8 +89,7 @@ function ProcedureDialog({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     return () => {

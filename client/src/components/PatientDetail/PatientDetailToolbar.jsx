@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils";
 import { useNavigate } from "react-router-dom";
 import { Toolbar } from "primereact";
 import { DropdownPatient } from "components/Dropdown";
@@ -70,8 +69,7 @@ function PatientDetailToolbar({
       setPatientDialog(false);
       navigate(`/patients/${patient.id}`);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 

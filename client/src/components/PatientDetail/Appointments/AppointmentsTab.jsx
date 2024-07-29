@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import { AppointmentDialog } from "components/Dialog";
@@ -40,8 +39,8 @@ function AppointmentsTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { message } = errorHandler(error);
-        toast.error(message);
+
+        toast.error(error.message);
       });
 
     return () => {
@@ -80,8 +79,7 @@ function AppointmentsTab({
         appointment: { ...countAppointment },
       });
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -99,8 +97,7 @@ function AppointmentsTab({
       hideDialog();
       setAppointment(null);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -114,8 +111,7 @@ function AppointmentsTab({
       hideDialog();
       setAppointment(null);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 

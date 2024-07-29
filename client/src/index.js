@@ -16,7 +16,7 @@ import { Provider as ReduxProvider } from "react-redux";
 // project import
 import App from "./App";
 import { store } from "store";
-import { AuthProvider } from "routes/AuthProvider";
+import { AuthProvider } from "context/AuthProvider";
 
 // ==============================|| MAIN - REACT DOM RENDER  ||============================== //
 

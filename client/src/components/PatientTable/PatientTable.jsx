@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils";
 import { Typography, Grid } from "@mui/material";
 import { DataTable, Column, Tag, ConfirmDialog } from "primereact";
 import { AppointmentDialog, PatientDialog } from "components/Dialog";
@@ -46,8 +45,7 @@ function PatientsTable() {
         setPatients(_patients);
       })
       .catch((error) => {
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     return () => {
@@ -71,8 +69,7 @@ function PatientsTable() {
       // Set new patients
       setPatients(patients);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -82,7 +79,6 @@ function PatientsTable() {
       if (patient.id) {
         // Update the patient
         await PatientService.updatePatient(patient);
-        toast.success("Hasta bilgileri başarıyla güncellendi");
       } else {
         // Create a new patient
         await PatientService.savePatient(patient);
@@ -93,8 +89,7 @@ function PatientsTable() {
       getPatients();
       hidePatientDialog();
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -105,8 +100,7 @@ function PatientsTable() {
       hideAppointmentDialog();
       toast.success("Yeni randevu başarıyla eklendi");
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -127,8 +121,7 @@ function PatientsTable() {
       setPatients(_patients);
       setSelectedPatients(_selectedPatients);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
 
     // Close delete dialog and empty patient variable
@@ -160,8 +153,7 @@ function PatientsTable() {
       setPatients(_patients);
       setSelectedPatients(null);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
 
     // Close the dialog and set selec

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils";
+
 import { Typography } from "@mui/material";
 import { Toolbar, InputSwitch } from "primereact";
 import { DropdownDoctor } from "components/Dropdown";
@@ -72,8 +72,7 @@ function CalendarToolbar({
       setDoctor(doctor);
       localStorage.setItem("doctor", JSON.stringify(doctor));
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -90,8 +89,7 @@ function CalendarToolbar({
       setDoctor(null);
       localStorage.removeItem("doctor");
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils";
 import { Grid, Tooltip } from "@mui/material";
 import { Timeline, Divider } from "primereact";
 import { CardTitle } from "components/cards";
@@ -50,8 +49,7 @@ function PaymentsTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     // Set planned payments
@@ -61,8 +59,7 @@ function PaymentsTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     // Set total payment
@@ -77,8 +74,7 @@ function PaymentsTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     PatientProcedureService.getPatientProcedures(
@@ -100,8 +96,7 @@ function PaymentsTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     return () => {
@@ -141,8 +136,7 @@ function PaymentsTab({
         payment: { ...countPayment },
       });
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -164,8 +158,7 @@ function PaymentsTab({
       hideDialog();
       setPayment(null);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -183,8 +176,7 @@ function PaymentsTab({
       hideDialog();
       setPayment(null);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -199,8 +191,7 @@ function PaymentsTab({
       hideDialog();
       setPayment(null);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 

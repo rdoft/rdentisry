@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler, getTabIndex } from "utils";
+import { getTabIndex } from "utils";
 import {
   Avatar,
   ListItemButton,
@@ -64,8 +64,7 @@ function NotificationItem({ notification, getNotifications, onClose }) {
       // Set the notifications list
       getNotifications();
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 

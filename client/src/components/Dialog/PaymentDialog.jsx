@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils";
 import { Divider, InputNumber, ConfirmDialog, confirmDialog } from "primereact";
 import { DropdownPatient } from "components/Dropdown";
 import { DialogTemp } from "components/Dialog";
@@ -43,8 +42,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     return () => {

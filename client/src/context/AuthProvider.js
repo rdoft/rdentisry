@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import API from "config/api.config";
 
 // services
 import { AuthService } from "services";
@@ -9,12 +10,12 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const authenticated = () => {
+  const authenticate = () => {
     setIsAuthenticated(true);
     setLoading(false);
   };
 
-  const unauthenticated = () => {
+  const unauthenticate = () => {
     setIsAuthenticated(false);
     setLoading(false);
   };
@@ -25,19 +26,30 @@ export const AuthProvider = ({ children }) => {
     const signal = controller.signal;
 
     AuthService.permission({ signal })
-      .then(() => authenticated())
-      .catch(() => unauthenticated());
+      .then(() => authenticate())
+      .catch(() => unauthenticate());
 
     return () => {
       controller.abort();
     };
   }, []);
 
+  // Check all api responses for 401 status and unauthenticate user
+  API.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.status === 401) {
+        unauthenticate();
+      }
+      return Promise.reject(error);
+    }
+  );
+
   return (
     <AuthContext.Provider
-      value={{ loading, isAuthenticated, authenticated, unauthenticated }}
+      value={{ loading, isAuthenticated, authenticate, unauthenticate }}
     >
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

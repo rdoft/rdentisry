@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { errorHandler } from "utils";
+import { handleError } from "utils";
 import { useNavigate } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button } from "primereact";
@@ -31,7 +31,7 @@ function Forgot() {
       await AuthService.forgot(auth);
       setSuccess(true);
     } catch (error) {
-      const { message } = errorHandler(error);
+      const { message } = handleError(error);
       setError(message);
     } finally {
       setLoading(false);

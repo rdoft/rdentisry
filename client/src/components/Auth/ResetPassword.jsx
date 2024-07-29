@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { errorHandler } from "utils";
+import { handleError } from "utils";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { Typography, Grid } from "@mui/material";
@@ -53,7 +53,7 @@ function ResetPassword() {
       toast.success("Şifreniz başarıyla yenilendi");
       navigate("/login");
     } catch (error) {
-      const { message } = errorHandler(error);
+      const { message } = handleError(error);
       setError(message);
     } finally {
       setLoading(false);

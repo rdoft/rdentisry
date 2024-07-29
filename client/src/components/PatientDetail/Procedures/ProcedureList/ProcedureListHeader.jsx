@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { errorHandler } from "utils";
 import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
 import VisitTitle from "./VisitTitle";
@@ -44,8 +43,7 @@ function ProcedureListHeader({
       setVisit(visit);
       onUpdated(patient.id);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 

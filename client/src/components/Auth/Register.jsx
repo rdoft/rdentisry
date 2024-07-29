@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { errorHandler } from "utils";
+import { handleError } from "utils";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider } from "primereact";
 import { LegalFooter } from "components/Legal";
@@ -40,7 +40,7 @@ function Register() {
       await AuthService.register(auth);
       navigate("/");
     } catch (error) {
-      const { message } = errorHandler(error);
+      const { message } = handleError(error);
       setError(message);
     } finally {
       setLoading(false);

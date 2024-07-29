@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import { NewItem } from "components/Button";
@@ -37,8 +36,7 @@ function NotesTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     return () => {
@@ -69,8 +67,7 @@ function NotesTab({
         note: { other: response.data.length },
       });
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -91,8 +88,7 @@ function NotesTab({
       hideDialog();
       setNote(note);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -107,8 +103,7 @@ function NotesTab({
         setNote(null);
       }
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 

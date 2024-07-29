@@ -14,13 +14,13 @@ const App = () => (
   <ThemeCustomization>
     <Toaster
       toastOptions={{
-        // Define default options
-        className: "",
-        duration: 3000,
+        duration: 5000,
         style: {
+          opacity: 0.8,
           borderRadius: "10px",
-          background: "rgba(51, 51, 51, 0.6)",
-          color: "#fff",
+          background: "#D7DAE4",
+          color: "#182A4C",
+          padding: "0.8rem",
         },
         position: "bottom-right",
       }}

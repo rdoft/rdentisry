@@ -1,7 +1,7 @@
 import React, { lazy } from "react";
 import { Loadable } from "components/Loadable";
 import { MainLayout } from "layout";
-import ProtectedRoute from "./ProtectedRoute";
+import ProtectedRoute from "routes/ProtectedRoute";
 
 // render - pages
 // const Overview = Loadable(lazy(() => import("pages/Overview/OverviewPage")));

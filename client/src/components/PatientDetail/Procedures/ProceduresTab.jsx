@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import { errorHandler } from "utils";
 import { toast } from "react-hot-toast";
 import { Grid, Tabs, Tab, Avatar } from "@mui/material";
 import ReactToPrint from "react-to-print";
@@ -83,8 +82,7 @@ function ProceduresTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     VisitService.getVisits(patient.id, null, { signal })
@@ -93,8 +91,7 @@ function ProceduresTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     return () => {
@@ -133,8 +130,7 @@ function ProceduresTab({
         procedure: { ...countProcedure },
       });
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -171,8 +167,7 @@ function ProceduresTab({
       getProcedures(patient.id);
       getVisits(patient.id);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -207,8 +202,7 @@ function ProceduresTab({
       getProcedures(patient.id);
       getVisits(patient.id);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -223,8 +217,7 @@ function ProceduresTab({
 
       setVisits(visits);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -252,8 +245,7 @@ function ProceduresTab({
         appointment: { ...countAppointment },
       });
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 

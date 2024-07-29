@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { errorHandler, getTabCounts } from "utils";
+import { getTabCounts } from "utils";
 import { TabView, TabPanel } from "primereact";
 import { Grid } from "@mui/material";
 import NotesTab from "./Notes/NotesTab";
@@ -56,8 +56,7 @@ function PatientDetail() {
         setPatient(res.data);
       })
       .catch((error) => {
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     return () => {

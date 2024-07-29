@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { errorHandler } from "utils";
 import {
   InputText,
   InputTextarea,
@@ -54,8 +53,7 @@ function AppointmentDialog({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     DoctorService.getDoctors({ signal })
@@ -64,8 +62,7 @@ function AppointmentDialog({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        const { message } = errorHandler(error);
-        toast.error(message);
+        toast.error(error.message);
       });
 
     return () => {
@@ -86,8 +83,7 @@ function AppointmentDialog({
       // Set new doctors
       setDoctors(doctors);
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -120,8 +116,7 @@ function AppointmentDialog({
       setDoctorDialog(false);
       setAppointment({ ...appointment, doctor });
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
@@ -138,8 +133,7 @@ function AppointmentDialog({
       setPatientDialog(false);
       setAppointment({ ...appointment, patient });
     } catch (error) {
-      const { message } = errorHandler(error);
-      toast.error(message);
+      toast.error(error.message);
     }
   };
 
