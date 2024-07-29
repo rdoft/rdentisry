@@ -23,9 +23,10 @@ function NotFound() {
         <Goto
           onClick={handleClick}
           label="Ana sayfa git"
+          severity="info"
           style={{
             color: "#FFFFFF",
-            backgroundColor: "#253237",
+            backgroundColor: "#3B5DBF",
             fontSize: "1.2rem",
           }}
         />
