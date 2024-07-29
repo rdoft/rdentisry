@@ -21,6 +21,7 @@ const ResetPassword = Loadable(
 );
 const Privacy = Loadable(lazy(() => import("pages/Legal/PrivacyPage")));
 const Terms = Loadable(lazy(() => import("pages/Legal/TermsPage")));
+const NotFound = Loadable(lazy(() => import("pages/Other/NotFoundPage")));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -75,10 +76,10 @@ const MainRoutes = [
     path: "/legal/terms",
     element: <Terms />,
   },
-  // {
-  //   path: "/*",
-  //   element: <NotFound />,
-  // },
+  {
+    path: "/*",
+    element: <NotFound />,
+  },
 ];
 
 export default MainRoutes;

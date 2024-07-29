@@ -1,3 +1,4 @@
 import Loading from "./Loading";
+import NotFound from "./NotFound";
 
-export { Loading };
+export { Loading, NotFound };
