@@ -43,8 +43,8 @@ function Login() {
       authenticate();
       navigate("/");
     } catch (error) {
-      const { code, message } = handleError(error);
-      code === 401
+      const { status, message } = handleError(error);
+      status === 401
         ? setError("Kullanıcı adı veya parola hatalı")
         : setError(message);
     } finally {
@@ -72,6 +72,7 @@ function Login() {
   // Login with google
   const handleLoginGoogle = () => {
     window.location.href = GOOGLE_AUTH;
+    authenticate();
   };
 
   // Login handler
