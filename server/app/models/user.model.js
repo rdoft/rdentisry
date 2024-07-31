@@ -22,10 +22,6 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      AccountExpiration: {
-        type: Sequelize.DATE,
-        allowNull: true,
-      },
     },
     {
       indexes: [

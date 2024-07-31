@@ -21,6 +21,8 @@ db.sequelize = sequelize;
 
 // Models
 db.user = require("./user.model")(sequelize, Sequelize);
+db.token = require("./token.model")(sequelize, Sequelize);
+db.subscription = require("./subscription.model")(sequelize, Sequelize);
 db.patient = require("./patient.model")(sequelize, Sequelize);
 db.doctor = require("./doctor.model")(sequelize, Sequelize);
 db.appointment = require("./appointment.model")(sequelize, Sequelize);
@@ -29,17 +31,16 @@ db.payment = require("./payment.model")(sequelize, Sequelize);
 db.paymentPlan = require("./paymentPlan.model")(sequelize, Sequelize);
 db.visit = require("./visit.model")(sequelize, Sequelize);
 db.procedure = require("./procedure.model")(sequelize, Sequelize);
+db.patientProcedure = require("./patientProcedure.model")(sequelize, Sequelize);
+db.notification = require("./notification.model")(sequelize, Sequelize);
 db.procedureCategory = require("./procedureCategory.model")(
   sequelize,
   Sequelize
 );
-db.patientProcedure = require("./patientProcedure.model")(sequelize, Sequelize);
 db.notificationEvent = require("./notificationEvent.model")(
   sequelize,
   Sequelize
 );
-db.notification = require("./notification.model")(sequelize, Sequelize);
-db.token = require("./token.model")(sequelize, Sequelize);
 
 // Relationships
 // patient - appointment (one to many)
@@ -208,6 +209,16 @@ db.token.belongsTo(db.user, {
   foreignKey: "UserId",
 });
 
+// User - Subscription
+db.user.hasOne(db.subscription, {
+  as: "subscription",
+  foreignKey: "UserId",
+});
+db.subscription.belongsTo(db.user, {
+  as: "user",
+  foreignKey: "UserId",
+});
+
 // HOOKS
 // Control If doctor has any appointments before destroy
 db.doctor.beforeDestroy(async (doctor) => {
@@ -314,10 +325,13 @@ db.user.beforeDestroy(async (user) => {
   }
 });
 
-// Create procedure when new user added
+// Create procedures ans subscription when new user added
 db.user.afterCreate(async (user) => {
   await createCategories();
   await createProcedures(user);
+  await db.subscription.create({
+    UserId: user.UserId,
+  });
 });
 
 // If procedure categories don't exist, then create new records from csv
