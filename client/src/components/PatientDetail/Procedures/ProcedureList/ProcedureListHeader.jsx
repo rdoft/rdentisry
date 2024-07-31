@@ -43,7 +43,7 @@ function ProcedureListHeader({
       setVisit(visit);
       onUpdated(patient.id);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 

@@ -89,7 +89,7 @@ const Notification = () => {
       notifications = response.data;
       setNotifications(notifications);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -105,7 +105,7 @@ const Notification = () => {
       // Set the notifications list
       getNotifications();
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 

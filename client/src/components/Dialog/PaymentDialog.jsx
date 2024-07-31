@@ -42,7 +42,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     return () => {

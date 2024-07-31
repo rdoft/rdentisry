@@ -3,6 +3,7 @@ import Routes from "routes";
 import ThemeCustomization from "themes";
 import ScrollTop from "components/ScrollTop";
 import { Toaster } from "react-hot-toast";
+import { PremiumDialog } from "components/Dialog/index";
 
 // assets
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -14,7 +15,6 @@ const App = () => (
   <ThemeCustomization>
     <Toaster
       toastOptions={{
-        duration: 5000,
         style: {
           opacity: 0.8,
           borderRadius: "10px",
@@ -22,9 +22,10 @@ const App = () => (
           color: "#182A4C",
           padding: "0.8rem",
         },
-        position: "bottom-right",
+        position: "bottom-center",
       }}
     />
+    <PremiumDialog />
     <ScrollTop>
       <Routes />
     </ScrollTop>

@@ -56,7 +56,7 @@ function PatientDetail() {
         setPatient(res.data);
       })
       .catch((error) => {
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     return () => {

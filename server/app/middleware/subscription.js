@@ -14,7 +14,7 @@ const isSubActive = async (req, res, next) => {
 
     // Send error if subscription inactive
     if (subscription.EndDate && new Date(subscription.EndDate) < new Date()) {
-      return res.status(403).send({
+      return res.status(402).send({
         message:
           "Aktif aboneliğiniz bulunmamaktadır. Lütfen aboneliğinizi yenileyin.",
       });
@@ -39,7 +39,7 @@ const checkLimitPatient = async (req, res, next) => {
 
     // Send error if exceeds patient limit
     if (patientCount >= subscription.MaxPatients) {
-      return res.status(403).send({
+      return res.status(402).send({
         message:
           "Maksimum hasta limitine ulaştınız. Lütfen aboneliğinizi yükseltin.",
       });
@@ -64,7 +64,7 @@ const checkLimitDoctor = async (req, res, next) => {
 
     // Send error if exceeds doctor limit
     if (doctorCount >= subscription.MaxDoctors) {
-      return res.status(403).send({
+      return res.status(402).send({
         message:
           "Maksimum doktor limitine ulaştınız. Lütfen aboneliğinizi yükseltin.",
       });

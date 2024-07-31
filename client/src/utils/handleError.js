@@ -9,6 +9,11 @@ const handleError = (error) => {
       status: 401,
       message: "Oturumunuzun süresi doldu, lütfen tekrar giriş yapınız",
     };
+  } else if (error.response.status === 402) {
+    return {
+      status: 402,
+      message: null,
+    };
   } else if (error.response.status === 403) {
     return {
       status: 403,

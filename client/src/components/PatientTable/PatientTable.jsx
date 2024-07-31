@@ -45,7 +45,7 @@ function PatientsTable() {
         setPatients(_patients);
       })
       .catch((error) => {
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     return () => {
@@ -69,7 +69,7 @@ function PatientsTable() {
       // Set new patients
       setPatients(patients);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -89,7 +89,7 @@ function PatientsTable() {
       getPatients();
       hidePatientDialog();
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -100,7 +100,7 @@ function PatientsTable() {
       hideAppointmentDialog();
       toast.success("Yeni randevu başarıyla eklendi");
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -121,7 +121,7 @@ function PatientsTable() {
       setPatients(_patients);
       setSelectedPatients(_selectedPatients);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
 
     // Close delete dialog and empty patient variable
@@ -153,7 +153,7 @@ function PatientsTable() {
       setPatients(_patients);
       setSelectedPatients(null);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
 
     // Close the dialog and set selec

@@ -36,7 +36,7 @@ function NotesTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     return () => {
@@ -67,7 +67,7 @@ function NotesTab({
         note: { other: response.data.length },
       });
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -88,7 +88,7 @@ function NotesTab({
       hideDialog();
       setNote(note);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -103,7 +103,7 @@ function NotesTab({
         setNote(null);
       }
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 

@@ -69,7 +69,7 @@ function PatientDetailToolbar({
       setPatientDialog(false);
       navigate(`/patients/${patient.id}`);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 

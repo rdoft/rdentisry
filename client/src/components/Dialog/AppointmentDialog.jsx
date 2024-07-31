@@ -53,7 +53,7 @@ function AppointmentDialog({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     DoctorService.getDoctors({ signal })
@@ -62,7 +62,7 @@ function AppointmentDialog({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     return () => {
@@ -83,7 +83,7 @@ function AppointmentDialog({
       // Set new doctors
       setDoctors(doctors);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -116,7 +116,7 @@ function AppointmentDialog({
       setDoctorDialog(false);
       setAppointment({ ...appointment, doctor });
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -133,7 +133,7 @@ function AppointmentDialog({
       setPatientDialog(false);
       setAppointment({ ...appointment, patient });
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 

@@ -5,6 +5,7 @@ import PaymentDialog from "./PaymentDialog";
 import PaymentPlanDialog from "./PaymentPlanDialog";
 import ProcedureDialog from "./ProcedureDialog";
 import BaseProcedureDialog from "./BaseProcedureDialog";
+import PremiumDialog from "./PremiumDialog";
 import DialogTemp from "./DialogTemp";
 
 export {
@@ -15,5 +16,6 @@ export {
   PaymentPlanDialog,
   ProcedureDialog,
   BaseProcedureDialog,
+  PremiumDialog,
   DialogTemp,
 };

@@ -80,7 +80,7 @@ function ProcedureDialog({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     ProcedureService.getProcedures(null, { signal })
@@ -89,7 +89,7 @@ function ProcedureDialog({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     return () => {

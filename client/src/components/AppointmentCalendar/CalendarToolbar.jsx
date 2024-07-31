@@ -72,7 +72,7 @@ function CalendarToolbar({
       setDoctor(doctor);
       localStorage.setItem("doctor", JSON.stringify(doctor));
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -89,7 +89,7 @@ function CalendarToolbar({
       setDoctor(null);
       localStorage.removeItem("doctor");
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 

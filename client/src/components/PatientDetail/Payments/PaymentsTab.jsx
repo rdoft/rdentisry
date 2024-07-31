@@ -49,7 +49,7 @@ function PaymentsTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     // Set planned payments
@@ -59,7 +59,7 @@ function PaymentsTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     // Set total payment
@@ -74,7 +74,7 @@ function PaymentsTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     PatientProcedureService.getPatientProcedures(
@@ -96,7 +96,7 @@ function PaymentsTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     return () => {
@@ -136,7 +136,7 @@ function PaymentsTab({
         payment: { ...countPayment },
       });
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -158,7 +158,7 @@ function PaymentsTab({
       hideDialog();
       setPayment(null);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -176,7 +176,7 @@ function PaymentsTab({
       hideDialog();
       setPayment(null);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -191,7 +191,7 @@ function PaymentsTab({
       hideDialog();
       setPayment(null);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 

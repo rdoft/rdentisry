@@ -64,7 +64,7 @@ function NotificationItem({ notification, getNotifications, onClose }) {
       // Set the notifications list
       getNotifications();
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 

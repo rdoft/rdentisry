@@ -102,7 +102,7 @@ const Profile = () => {
       unauthenticate();
       navigate(`/login`);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -117,7 +117,7 @@ const Profile = () => {
   //     userName = userName.length > 20 ? userName.slice(0, 20) + "..." : userName;
   //     setUserName(userName);
   //   } catch (error) {
-  // toast.error(error.message);
+  // error.message && toast.error(error.message);
   //   }
   // };
 

@@ -82,7 +82,7 @@ function ProceduresTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     VisitService.getVisits(patient.id, null, { signal })
@@ -91,7 +91,7 @@ function ProceduresTab({
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     return () => {
@@ -130,7 +130,7 @@ function ProceduresTab({
         procedure: { ...countProcedure },
       });
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -167,7 +167,7 @@ function ProceduresTab({
       getProcedures(patient.id);
       getVisits(patient.id);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -202,7 +202,7 @@ function ProceduresTab({
       getProcedures(patient.id);
       getVisits(patient.id);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -217,7 +217,7 @@ function ProceduresTab({
 
       setVisits(visits);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -245,7 +245,7 @@ function ProceduresTab({
         appointment: { ...countAppointment },
       });
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 

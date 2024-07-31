@@ -34,7 +34,7 @@ function PaymentPlanDialog({ patient, initAmount = 0, onHide, onSubmit }) {
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     return () => {

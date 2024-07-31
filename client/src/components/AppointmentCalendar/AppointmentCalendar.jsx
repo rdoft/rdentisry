@@ -54,7 +54,7 @@ const AppointmentCalendar = () => {
       })
       .catch((error) => {
         if (error.name === "CanceledError") return;
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     return () => {
@@ -81,7 +81,7 @@ const AppointmentCalendar = () => {
       appointments = response.data;
       setAppointments(appointments);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -99,7 +99,7 @@ const AppointmentCalendar = () => {
       setAppointmentDialog(false);
       setAppointment(null);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -113,7 +113,7 @@ const AppointmentCalendar = () => {
       setAppointmentDialog(false);
       setAppointment(null);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 

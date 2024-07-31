@@ -39,7 +39,7 @@ function ProcedureTable() {
         setProcedures(res.data);
       })
       .catch((error) => {
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     // Get the list of the procedure categories
@@ -48,7 +48,7 @@ function ProcedureTable() {
         setCategories([...res.data, { id: null, title: null }]);
       })
       .catch((error) => {
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     return () => {
@@ -68,7 +68,7 @@ function ProcedureTable() {
 
       setProcedures(procedures);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -86,7 +86,7 @@ function ProcedureTable() {
       // Get and set the updated list of procedures
       getProcedures();
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -105,7 +105,7 @@ function ProcedureTable() {
       setSelectedProcedures(_selectedProcedures);
       setProcedure(null);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -130,7 +130,7 @@ function ProcedureTable() {
       getProcedures();
       setSelectedProcedures(null);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 

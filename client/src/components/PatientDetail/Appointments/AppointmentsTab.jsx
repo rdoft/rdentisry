@@ -40,7 +40,7 @@ function AppointmentsTab({
       .catch((error) => {
         if (error.name === "CanceledError") return;
 
-        toast.error(error.message);
+        error.message && toast.error(error.message);
       });
 
     return () => {
@@ -79,7 +79,7 @@ function AppointmentsTab({
         appointment: { ...countAppointment },
       });
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -97,7 +97,7 @@ function AppointmentsTab({
       hideDialog();
       setAppointment(null);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
@@ -111,7 +111,7 @@ function AppointmentsTab({
       hideDialog();
       setAppointment(null);
     } catch (error) {
-      toast.error(error.message);
+      error.message && toast.error(error.message);
     }
   };
 
