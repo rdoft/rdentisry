@@ -19,7 +19,6 @@ module.exports = function (app) {
   });
 
   // Control user authentication
-  // TODO: Add control for routes that need isActive check
   router.use(isAuthenticated);
 
   router

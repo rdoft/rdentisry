@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
+const { isSubActive } = require("../middleware/subscription");
 
 // Visit specific imports
 const controller = require("../controller/visit.controller");
@@ -18,6 +19,7 @@ module.exports = function (app) {
     next();
   });
 
+  // Control user authentication
   router.use(isAuthenticated);
 
   router
@@ -31,7 +33,7 @@ module.exports = function (app) {
      * Add a new visit
      * @body Visit informations along with patientProcedures
      */
-    .post(controller.saveVisit);
+    .post(isSubActive, controller.saveVisit);
 
   router
     .route(`/patients/:patientId/visits/:visitId`)

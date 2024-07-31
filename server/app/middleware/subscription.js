@@ -1,12 +1,13 @@
 const db = require("../models");
 const Subscription = db.subscription;
 const Patient = db.patient;
+const Doctor = db.doctor;
 
 // Check if subscription is valid
 // There is 3 state: free, active, inactive
 const isSubActive = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.UserId;
     const subscription = await Subscription.findOne({
       where: { UserId: userId },
     });
@@ -26,9 +27,9 @@ const isSubActive = async (req, res, next) => {
 };
 
 // Check if user exceeds patient limit
-const patientLimit = async (req, res, next) => {
+const checkLimitPatient = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.UserId;
     const subscription = await Subscription.findOne({
       where: { UserId: userId },
     });
@@ -51,9 +52,9 @@ const patientLimit = async (req, res, next) => {
 };
 
 // Check if user exceeds doctor limit
-const doctorLimit = async (req, res, next) => {
+const checkLimitDoctor = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.UserId;
     const subscription = await Subscription.findOne({
       where: { UserId: userId },
     });
@@ -75,8 +76,28 @@ const doctorLimit = async (req, res, next) => {
   }
 };
 
+// Set a limit for the number of patients and doctors that can be list
+const setLimit = async (req, res, next) => {
+  try {
+    const userId = req.user.UserId;
+    const subscription = await Subscription.findOne({
+      where: { UserId: userId },
+    });
+
+    req.limit = {
+      maxPatients: subscription.MaxPatients,
+      maxDoctors: subscription.MaxDoctors,
+    };
+
+    next();
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+
 module.exports = {
   isSubActive,
-  patientLimit,
-  doctorLimit,
+  checkLimitPatient,
+  checkLimitDoctor,
+  setLimit,
 };

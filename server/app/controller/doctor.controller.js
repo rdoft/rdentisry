@@ -7,10 +7,11 @@ const Doctor = db.doctor;
  */
 exports.getDoctors = async (req, res) => {
   const { UserId: userId } = req.user;
+  const { maxDoctors } = req.limit;
   let doctors;
 
   try {
-    // Find patient list
+    // Find doctor list
     doctors = await Doctor.findAll({
       attributes: [
         ["DoctorId", "id"],
@@ -20,6 +21,7 @@ exports.getDoctors = async (req, res) => {
       where: {
         UserId: userId,
       },
+      limit: maxDoctors,
     });
 
     res.status(200).send(doctors);

@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
+const { isSubActive } = require("../middleware/subscription");
 
 // Procedure specific imports
 const controller = require("../controller/procedure.controller");
@@ -19,7 +20,6 @@ module.exports = function (app) {
   });
 
   // Control user authentication
-  // TODO: Add control for routes that need isActive check
   router.use(isAuthenticated);
 
   router
@@ -32,7 +32,11 @@ module.exports = function (app) {
      * Add a Procedure
      * @body Procedure information
      */
-    .post(validate(schema.procedure, "body"), controller.saveProcedure)
+    .post(
+      isSubActive,
+      validate(schema.procedure, "body"),
+      controller.saveProcedure
+    )
     /**
      * Delete procedures of the given Ids
      * If ids not given then delete all procedures

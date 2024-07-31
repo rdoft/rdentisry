@@ -1,6 +1,11 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
+const {
+  isSubActive,
+  checkLimitPatient,
+  setLimit,
+} = require("../middleware/subscription");
 
 // Patient specific imports
 const controller = require("../controller/patient.controller");
@@ -19,7 +24,6 @@ module.exports = function (app) {
   });
 
   // Control user authentication
-  // TODO: Add control for routes that need isActive check
   router.use(isAuthenticated);
 
   router
@@ -27,12 +31,17 @@ module.exports = function (app) {
     /**
      * Get patient list
      */
-    .get(controller.getPatients)
+    .get(setLimit, controller.getPatients)
     /**
      * Add a patient
      * @body Patient informations
      */
-    .post(validate(schema.patient, "body"), controller.savePatient)
+    .post(
+      isSubActive,
+      checkLimitPatient,
+      validate(schema.patient, "body"),
+      controller.savePatient
+    )
     /**
      * Delete patients of the given Ids
      * If patientIds not given then delete all patients

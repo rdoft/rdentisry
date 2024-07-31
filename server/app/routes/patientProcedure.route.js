@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { isAuthenticated } = require("../middleware/auth");
+const { isSubActive } = require("../middleware/subscription");
 
 // PatientProcedure specific imports
 const controller = require("../controller/patientProcedure.controller");
@@ -17,7 +18,6 @@ module.exports = function (app) {
   });
 
   // Control user authentication
-  // TODO: Add control for routes that need isActive check
   router.use(isAuthenticated);
 
   router
@@ -33,7 +33,7 @@ module.exports = function (app) {
      * Add a procedure to the patient
      * @body PatientProcedure informations
      */
-    .post(controller.savePatientProcedure);
+    .post(isSubActive, controller.savePatientProcedure);
 
   router
     .route(`/patients/:patientId/procedures/:patientProcedureId`)

@@ -14,6 +14,7 @@ const { processPatientsPayments } = require("../utils/payment.util");
 exports.getPatients = async (req, res) => {
   const { UserId: userId } = req.user;
   const { payments } = req.query;
+  const { maxPatients } = req.limit;
   let patients;
 
   try {
@@ -78,6 +79,7 @@ exports.getPatients = async (req, res) => {
                     [Sequelize.Op.ne]: null,
                   },
                 },
+                required: false,
               },
             ],
           },
@@ -85,8 +87,8 @@ exports.getPatients = async (req, res) => {
         order: [
           ["Name", "ASC"],
           ["Surname", "ASC"],
-          [{ model: PaymentPlan, as: "paymentPlans" }, "PlannedDate", "ASC"],
         ],
+        limit: maxPatients,
       });
 
       // Calculate overdue status
@@ -109,6 +111,7 @@ exports.getPatients = async (req, res) => {
           ["Name", "ASC"],
           ["Surname", "ASC"],
         ],
+        limit: maxPatients,
       });
     }
 

@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
+const { isSubActive } = require("../middleware/subscription");
 
 // Appointment specific imports
 const controller = require("../controller/note.controller");
@@ -19,7 +20,6 @@ module.exports = function (app) {
   });
 
   // Control user authentication
-  // TODO: Add control for routes that need isActive check
   router.use(isAuthenticated);
 
   router
@@ -28,14 +28,14 @@ module.exports = function (app) {
      * Get note list of the given patientId
      * @param {string} patientId id of the patient
      */
-    .get(controller.getNotes)
+    .get(controller.getNotes);
 
   router
     .route(`/notes`)
     /**
      * Add a note
      */
-    .post(validate(schema.note, "body"), controller.saveNote);
+    .post(isSubActive, validate(schema.note, "body"), controller.saveNote);
 
   router
     .route(`/notes/:noteId`)

@@ -1,6 +1,11 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
+const {
+  isSubActive,
+  checkLimitDoctor,
+  setLimit,
+} = require("../middleware/subscription");
 
 // Patient specific imports
 const controller = require("../controller/doctor.controller");
@@ -19,20 +24,25 @@ module.exports = function (app) {
   });
 
   // Control user authentication
-  // TODO: Add control for routes that need isActive check
   router.use(isAuthenticated);
 
   router
     .route(``)
     /**
      * Get doctor list
+     * Limited to the maxDoctors in the subscription
      */
-    .get(controller.getDoctors)
+    .get(setLimit, controller.getDoctors)
     /**
      * Add a doctor
      * @body Doctor informations
      */
-    .post(validate(schema.doctor, "body"), controller.saveDoctor);
+    .post(
+      isSubActive,
+      checkLimitDoctor,
+      validate(schema.doctor, "body"),
+      controller.saveDoctor
+    );
 
   router
     .route(`/:doctorId`)
