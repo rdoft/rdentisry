@@ -166,10 +166,10 @@ function PaymentPlanDialog({ patient, initAmount = 0, onHide, onSubmit }) {
       {/* Dropdown Patients */}
       <div className="field mb-4">
         <DropdownPatient
+          name="patient"
           value={patient}
           options={patients}
-          name="patient"
-          onChange={handleChange}
+          disabled
         />
       </div>
 

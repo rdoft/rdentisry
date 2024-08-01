@@ -104,12 +104,7 @@ function ProcedureDialog({
     let _isError = { ...isError };
     let _patientProcedure;
 
-    if (name === "patient") {
-      _patientProcedure = {
-        ...patientProcedure,
-        patient: value,
-      };
-    } else if (name === "procedure") {
+    if (name === "procedure") {
       _patientProcedure = {
         ...patientProcedure,
         procedure: value,
@@ -194,7 +189,6 @@ function ProcedureDialog({
         <DropdownPatient
           value={patientProcedure.patient}
           options={patients}
-          onChange={handleChange}
           disabled
         />
       </div>

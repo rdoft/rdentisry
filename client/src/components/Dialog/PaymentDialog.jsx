@@ -144,7 +144,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
             value={payment.patient}
             options={patients}
             name="patient"
-            onChange={handleChange}
+            disabled
           />
         </div>
 
