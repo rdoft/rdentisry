@@ -3,7 +3,7 @@ import { Dropdown, Divider } from "primereact";
 import DropdownPatientItem from "./DropdownItem/DropdownPatientItem";
 import { Add } from "components/Button";
 
-function DropdownPatient({ value, options, onChange, onClickAdd }) {
+function DropdownPatient({ value, options, onChange, onClickAdd, ...props }) {
   const _options = options?.map((option) => {
     return {
       ...option,
@@ -11,12 +11,11 @@ function DropdownPatient({ value, options, onChange, onClickAdd }) {
     };
   });
 
-  const _value =  value && {
+  const _value = value && {
     ...value,
     fullName: `${value.name} ${value.surname}`,
   };
-  
-  
+
   // TEMPLATES -----------------------------------------------------------------
   // Dropdown item template
   const patientDropdownItem = (option) => {
@@ -52,6 +51,7 @@ function DropdownPatient({ value, options, onChange, onClickAdd }) {
       placeholder="Hasta seçiniz..."
       emptyMessage="Sonuç bulunamadı"
       emptyFilterMessage="Sonuç bulunamadı"
+      disabled={props.disabled}
     />
   );
 }

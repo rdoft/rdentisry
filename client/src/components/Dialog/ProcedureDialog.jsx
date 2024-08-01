@@ -195,6 +195,7 @@ function ProcedureDialog({
           value={patientProcedure.patient}
           options={patients}
           onChange={handleChange}
+          disabled
         />
       </div>
 

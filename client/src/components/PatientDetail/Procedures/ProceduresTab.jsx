@@ -150,11 +150,11 @@ function ProceduresTab({
         procedure.id
           ? await PatientProcedureService.updatePatientProcedure({
               ...procedure,
-              patient: patient,
+              patient: procedure.patient,
             })
           : await PatientProcedureService.savePatientProcedure({
               ...procedure,
-              patient: patient,
+              patient: procedure.patient,
             });
       }
       // Create visit and create/update the procedures
