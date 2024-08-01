@@ -252,12 +252,14 @@ db.patient.beforeDestroy(async (patient) => {
   });
   const paymentCount = await patient.countPayments();
   const paymentPlanCount = await patient.countPaymentPlans();
+  const noteCount = await patient.countNotes();
 
   if (
     paymentCount > 0 ||
     paymentPlanCount > 0 ||
     visitCount > 0 ||
-    appointmentCount > 0
+    appointmentCount > 0 ||
+    noteCount > 0
   ) {
     throw new Sequelize.ValidationError(
       "Hastaya ait kayıtlar olduğundan işlem tamamlanamadı"
@@ -293,12 +295,18 @@ db.patient.beforeBulkDestroy(async (options) => {
       PatientId: patientId,
     },
   });
+  const noteCount = await db.note.count({
+    where: {
+      PatientId: patientId,
+    },
+  });
 
   if (
     paymentCount > 0 ||
     paymentPlanCount ||
     visitCount > 0 ||
-    appointmentCount > 0
+    appointmentCount > 0 ||
+    noteCount > 0
   ) {
     throw new Sequelize.ValidationError(
       "Hastalara ait kayıtlar olduğundan işlem tamamlanamadı"
