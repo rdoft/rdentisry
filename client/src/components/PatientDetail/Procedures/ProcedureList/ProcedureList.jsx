@@ -83,6 +83,7 @@ function ProcedureList({
         ...found,
         price: procedure.price,
         completedDate: procedure.completedDate,
+        patient: patient,
       });
     }
 

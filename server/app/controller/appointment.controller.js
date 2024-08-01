@@ -242,6 +242,28 @@ exports.updateAppointment = async (req, res) => {
   let appointment;
 
   try {
+    // Validations
+    const patientRecord = await Patient.findOne({
+      where: {
+        PatientId: patient.id,
+        UserId: userId,
+      },
+    });
+    const doctorRecord =
+      doctor &&
+      (await Doctor.findOne({
+        where: {
+          DoctorId: doctor.id,
+          UserId: userId,
+        },
+      }));
+
+    if (!patientRecord || (doctor && !doctorRecord)) {
+      return res.status(404).send({
+        message: "Güncellenen hasta veya doktor bilgisi mevcut değil",
+      });
+    }
+
     // Find Appointment
     appointment = await Appointment.findOne({
       where: {

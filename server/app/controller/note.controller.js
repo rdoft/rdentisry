@@ -162,8 +162,22 @@ exports.updateNote = async (req, res) => {
     Title: title,
   };
   let note;
+  let patientRecord;
 
   try {
+    // Validation
+    patientRecord = await Patient.findOne({
+      where: {
+        PatientId: patient.id,
+        UserId: userId,
+      },
+    });
+    if (!patientRecord) {
+      return res.status(404).send({
+        message: "Güncellenen hasta bilgisi mevcut değil",
+      });
+    }
+
     note = await Note.findOne({
       where: {
         NoteId: noteId,
@@ -180,14 +194,13 @@ exports.updateNote = async (req, res) => {
       ],
     });
 
-    if (note) {
-      // Update the note
-      await note.update(values);
-
-      res.status(200).send({ id: noteId });
-    } else {
-      res.status(404).send({ message: "Not mevcut değil" });
+    if (!note) {
+      return res.status(404).send({ message: "Not mevcut değil" });
     }
+
+    // Update the note
+    await note.update(values);
+    res.status(200).send({ id: noteId });
   } catch (error) {
     res.status(500).send(error);
   }

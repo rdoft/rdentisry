@@ -179,10 +179,18 @@ exports.updatePatientProcedure = async (req, res) => {
   const { patientProcedureId, patientId } = req.params;
   const { toothNumber, completedDate, visit, price } = req.body;
   let patientProcedure;
+  let patient;
   let visit_;
 
   try {
     // Validations
+    patient = await Patient.findOne({
+      where: {
+        PatientId: patientId,
+        UserId: userId,
+      },
+    });
+
     patientProcedure = await PatientProcedure.findOne({
       where: {
         PatientProcedureId: patientProcedureId,
@@ -214,7 +222,7 @@ exports.updatePatientProcedure = async (req, res) => {
       ],
     });
 
-    if (patientProcedure) {
+    if (patientProcedure && patient) {
       // Visit record will be created if it does not exist
       [visit_] = await Visit.findOrCreate({
         where: {
