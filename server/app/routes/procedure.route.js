@@ -39,7 +39,6 @@ module.exports = function (app) {
     )
     /**
      * Delete procedures of the given Ids
-     * If ids not given then delete all procedures
      * @query ids: Id list of procedures
      */
     .delete(validate(schema.ids, "query"), controller.deleteProcedures);

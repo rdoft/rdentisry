@@ -314,11 +314,13 @@ db.patient.beforeBulkDestroy(async (options) => {
   }
 });
 
-// Control If procedure has any patients before destroy
+// Control If procedure has been used before destroy
 db.procedure.beforeDestroy(async (procedure) => {
   const patientCount = await procedure.countPatientProcedures();
   if (patientCount > 0) {
-    throw new Sequelize.ForeignKeyConstraintError();
+    throw new Sequelize.ValidationError(
+      "Tedavi bazı hastalarınızda kullanılmış olduğundan işlem tamamlanamadı"
+    );
   }
 });
 
@@ -330,7 +332,9 @@ db.procedure.beforeBulkDestroy(async (options) => {
     },
   });
   if (patientCount > 0) {
-    throw new Sequelize.ForeignKeyConstraintError();
+    throw new Sequelize.ValidationError(
+      "Tedaviler bazı hastalarınızda kullanılmış olduğundan işlem tamamlanamadı"
+    );
   }
 });
 
@@ -381,7 +385,9 @@ db.user.beforeDestroy(async (user) => {
   const patientCount = await user.countPatients();
   const doctorCount = await user.countDoctors();
   if (patientCount > 0 || doctorCount > 0) {
-    throw new Sequelize.ForeignKeyConstraintError();
+    throw new Sequelize.ValidationError(
+      "Kullanıcıya ait hasta ve doktor kayıtları olduğundan işlem tamamlanamadı"
+    );
   }
 });
 

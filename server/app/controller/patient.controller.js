@@ -251,7 +251,6 @@ exports.updatePatient = async (req, res) => {
 
 /**
  * Delete patients of the given Ids
- * If patientIds not given then delete all patients
  * @query patientId: Id list of patients
  */
 exports.deletePatients = async (req, res) => {

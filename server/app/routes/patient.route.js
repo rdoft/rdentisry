@@ -44,7 +44,6 @@ module.exports = function (app) {
     )
     /**
      * Delete patients of the given Ids
-     * If patientIds not given then delete all patients
      * @query patientId: Id list of patients
      */
     .delete(validate(schema.ids, "query"), controller.deletePatients);

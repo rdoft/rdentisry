@@ -185,40 +185,33 @@ exports.updateProcedure = async (req, res) => {
 
 /**
  * Delete procedures of the given Ids
- * If ids not given then delete all procedures
  * @query ids: Id list of procedures
  */
 exports.deleteProcedures = async (req, res) => {
   const { UserId: userId } = req.user;
   const { procedureId } = req.query;
-  let procedureIds = procedureId ? procedureId.split(",") : [];
+  let procedureIds;
   let count = 0;
 
   try {
+    // Convert query string  to array
+    procedureIds = procedureId ? procedureId.split(",") : [];
     // Delete procedures
-    count = await Procedure.destroy({
-      where:
-        procedureIds.length > 0
-          ? {
-              UserId: userId,
-              ProcedureId: {
-                [Sequelize.Op.in]: procedureIds,
-              },
-            }
-          : {
-              UserId: userId,
-            },
-    });
+    if (procedureIds.length > 0) {
+      count = await Procedure.destroy({
+        where: {
+          UserId: userId,
+          ProcedureId: {
+            [Sequelize.Op.in]: procedureIds,
+          },
+        },
+      });
+    }
 
     res.status(200).send({ coun: count });
   } catch (error) {
     if (error instanceof Sequelize.ForeignKeyConstraintError) {
-      res
-        .status(400)
-        .send({
-          message:
-            "Silmek istediğiniz tedaviler bazı hastalarınızda kullanılmış olduğundan işlem tamamlanamadı",
-        });
+      res.status(400).send({ message: error.message });
     } else {
       res.status(500).send(error);
     }
@@ -252,13 +245,8 @@ exports.deleteProcedure = async (req, res) => {
       res.status(404).send({ message: "Tedavi mevcut değil" });
     }
   } catch (error) {
-    if (error instanceof Sequelize.ForeignKeyConstraintError) {
-      res
-        .status(400)
-        .send({
-          message:
-            "Silmek istediğiniz tedavi bazı hastalarınızda kullanılmış olduğundan işlem tamamlanamadı",
-        });
+    if (error instanceof Sequelize.ValidationError) {
+      res.status(400).send({ message: error.message });
     } else {
       res.status(500).send(error);
     }
