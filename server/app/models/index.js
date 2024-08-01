@@ -101,6 +101,8 @@ db.visit.belongsTo(db.patient, {
 db.doctor.hasMany(db.appointment, {
   as: "appointments",
   foreignKey: "DoctorId",
+  onDelete: "set null",
+  hooks: true,
 });
 db.appointment.belongsTo(db.doctor, {
   as: "doctor",
@@ -222,9 +224,15 @@ db.subscription.belongsTo(db.user, {
 // HOOKS
 // Control If doctor has any appointments before destroy
 db.doctor.beforeDestroy(async (doctor) => {
-  const appointmentCount = await doctor.countAppointments();
+  const appointmentCount = await doctor.countAppointments({
+    where: {
+      Status: "active",
+    },
+  });
   if (appointmentCount > 0) {
-    throw new Sequelize.ForeignKeyConstraintError();
+    throw new Sequelize.ValidationError(
+      "Doktora ait aktif randevular olduğundan işlem tamamlanamadı"
+    );
   }
 });
 

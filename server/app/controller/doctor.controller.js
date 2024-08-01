@@ -117,11 +117,8 @@ exports.deleteDoctor = async (req, res) => {
       res.status(404).send({ message: "Doktor mevcut değil" });
     }
   } catch (error) {
-    if (error instanceof Sequelize.ForeignKeyConstraintError) {
-      res.status(400).send({
-        message:
-          "Silmek istediğiniz doktora ait randevular olduğundan işlem tamamlanamadı",
-      });
+    if (error instanceof Sequelize.ValidationError) {
+      res.status(400).send({ message: error.message });
     } else {
       res.status(500).send(error);
     }
