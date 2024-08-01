@@ -11,6 +11,7 @@ function DialogFooter({ disabled, onHide, onSubmit, onDelete }) {
           size="small"
           className="p-button p-button-info"
           onClick={onSubmit}
+          autoFocus
         />
       )}
       {onDelete && (
@@ -19,6 +20,7 @@ function DialogFooter({ disabled, onHide, onSubmit, onDelete }) {
           size="small"
           className="p-button-danger"
           onClick={onDelete}
+          autoFocus={!onSubmit}
         />
       )}
       {onHide && (
