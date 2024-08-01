@@ -210,7 +210,7 @@ exports.deleteProcedures = async (req, res) => {
 
     res.status(200).send({ coun: count });
   } catch (error) {
-    if (error instanceof Sequelize.ForeignKeyConstraintError) {
+    if (error instanceof Sequelize.ValidationError) {
       res.status(400).send({ message: error.message });
     } else {
       res.status(500).send(error);

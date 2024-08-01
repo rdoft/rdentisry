@@ -9,7 +9,7 @@ import {
 const getTabCounts = async (patient) => {
   let counts = {
     appointment: { pending: 0, completed: 0 },
-    payment: { pending: 0, completed: 0 },
+    payment: { completed: 0 },
     note: { other: 0 },
     procedure: { pending: 0, completed: 0 },
   };
@@ -18,7 +18,7 @@ const getTabCounts = async (patient) => {
     const appointments = await AppointmentService.getAppointments({
       patientId: patient.id,
     });
-    const plannedPayments = await PaymentService.getPayments(patient.id, true);
+    const payments = await PaymentService.getPayments(patient.id);
     const notes = await NoteService.getNotes(patient.id);
     const procedures = await PatientProcedureService.getPatientProcedures({
       patientId: patient.id,
@@ -30,18 +30,14 @@ const getTabCounts = async (patient) => {
         ? counts.appointment.pending++
         : counts.appointment.completed++;
     });
-    // Count the payments based on its status
-    plannedPayments.data.forEach((payment) => {
-      payment.paid === payment.amount
-        ? counts.payment.completed++
-        : counts.payment.pending++;
-    });
     // Count the procedures based on its status
     procedures.data.forEach((procedure) => {
       procedure.completedDate
         ? counts.procedure.completed++
         : counts.procedure.pending++;
     });
+    // Count the payments
+    counts.payment.completed = payments.data.length ?? 0;
     // Count the notes
     counts.note.other = notes.data.length ?? 0;
 

@@ -138,13 +138,7 @@ exports.saveNote = async (req, res) => {
 
     res.status(200).send(note);
   } catch (error) {
-    if (error instanceof Sequelize.ForeignKeyConstraintError) {
-      res.status(400).send({
-        message: "Not eklenmek istenen hasta mevcut değil",
-      });
-    } else {
-      res.status(500).send(error);
-    }
+    res.status(500).send(error);
   }
 };
 

@@ -139,7 +139,9 @@ exports.savePayment = async (req, res) => {
       },
     });
     if (!patientRecord) {
-      return res.status(404).send({ message: "Hasta bulunamadı" });
+      return res
+        .status(404)
+        .send({ message: "Ödeme eklenmek istenen hasta mevcut değil" });
     }
 
     if (plan === "true") {
@@ -176,13 +178,7 @@ exports.savePayment = async (req, res) => {
 
     res.status(200).send(payment);
   } catch (error) {
-    if (error instanceof Sequelize.ForeignKeyConstraintError) {
-      res.status(400).send({
-        message: "Ödeme eklenmek istenen hasta mevcut değil",
-      });
-    } else {
-      res.status(500).send(error);
-    }
+    res.status(500).send(error);
   }
 };
 
