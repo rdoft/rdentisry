@@ -265,27 +265,21 @@ exports.deletePatients = async (req, res) => {
     patientIds = patientId ? patientId.split(",") : [];
 
     // Delete patient records
-    count = await Patient.destroy({
-      where:
-        patientIds.length > 0
-          ? {
-              UserId: userId,
-              PatientId: {
-                [Sequelize.Op.in]: patientIds,
-              },
-            }
-          : {
-              UserId: userId,
-            },
-    });
+    if (patientIds.length > 0) {
+      count = await Patient.destroy({
+        where: {
+          UserId: userId,
+          PatientId: {
+            [Sequelize.Op.in]: patientIds,
+          },
+        },
+      });
+    }
 
     res.status(200).send({ count: count });
   } catch (error) {
-    if (error instanceof Sequelize.ForeignKeyConstraintError) {
-      res.status(400).send({
-        message:
-          "Silmek istediğiniz hastalara ait ödeme kaydı olduğundan işlem tamamlanamadı",
-      });
+    if (error instanceof Sequelize.ValidationError) {
+      res.status(400).send({ message: error.message });
     } else {
       res.status(500).send(error);
     }
@@ -319,11 +313,8 @@ exports.deletePatient = async (req, res) => {
       res.status(404).send({ message: "Hasta mevcut değil" });
     }
   } catch (error) {
-    if (error instanceof Sequelize.ForeignKeyConstraintError) {
-      res.status(400).send({
-        message:
-          "Silmek istediğiniz hastaya ait ödeme kaydı olduğundan işlem tamamlanamadı",
-      });
+    if (error instanceof Sequelize.ValidationError) {
+      res.status(400).send({ message: error.message });
     } else {
       res.status(500).send(error);
     }

@@ -238,27 +238,71 @@ db.doctor.beforeDestroy(async (doctor) => {
 
 // Control If patient has any payments before destroy
 db.patient.beforeDestroy(async (patient) => {
+  const appointmentCount = await patient.countAppointments({
+    where: {
+      Status: "active",
+    },
+  });
+  const visitCount = await patient.countVisits({
+    where: {
+      ApprovedDate: {
+        [Sequelize.Op.ne]: null,
+      },
+    },
+  });
   const paymentCount = await patient.countPayments();
-  const visitCount = await patient.countVisits();
-  if (paymentCount > 0 || visitCount > 0) {
-    throw new Sequelize.ForeignKeyConstraintError();
+  const paymentPlanCount = await patient.countPaymentPlans();
+
+  if (
+    paymentCount > 0 ||
+    paymentPlanCount > 0 ||
+    visitCount > 0 ||
+    appointmentCount > 0
+  ) {
+    throw new Sequelize.ValidationError(
+      "Hastaya ait kayıtlar olduğundan işlem tamamlanamadı"
+    );
   }
 });
 
 // Control If patient has any appointments before bulk destroy
 db.patient.beforeBulkDestroy(async (options) => {
-  const paymentCount = await db.payment.count({
+  const patientId = options.where.PatientId;
+
+  const appointmentCount = await db.appointment.count({
     where: {
-      PatientId: options.where.PatientId,
+      PatientId: patientId,
+      Status: "active",
     },
   });
   const visitCount = await db.visit.count({
     where: {
-      PatientId: options.where.PatientId,
+      PatientId: patientId,
+      ApprovedDate: {
+        [Sequelize.Op.ne]: null,
+      },
     },
   });
-  if (paymentCount > 0 || visitCount > 0) {
-    throw new Sequelize.ForeignKeyConstraintError();
+  const paymentCount = await db.payment.count({
+    where: {
+      PatientId: patientId,
+    },
+  });
+  const paymentPlanCount = await db.paymentPlan.count({
+    where: {
+      PatientId: patientId,
+    },
+  });
+
+  if (
+    paymentCount > 0 ||
+    paymentPlanCount ||
+    visitCount > 0 ||
+    appointmentCount > 0
+  ) {
+    throw new Sequelize.ValidationError(
+      "Hastalara ait kayıtlar olduğundan işlem tamamlanamadı"
+    );
   }
 });
 
