@@ -35,7 +35,7 @@ function PrintHeader({ patient }) {
 
       <Grid item xs={6}>
         <Grid container item justifyContent="end">
-          <Logo style={{ width: "14%" }} />
+          <Logo style={{ width: "30%" }} />
         </Grid>
       </Grid>
     </Grid>

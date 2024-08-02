@@ -116,7 +116,7 @@ function Register() {
     <Grid container my={10} justifyContent="center" alignItems="center">
       <Grid item sm={9} md={4} lg={3} className="p-fluid">
         <div className="flex mb-7" style={{ justifyContent: "center" }}>
-          <Logo style={{ width: "40%" }} />
+          <Logo style={{ width: "85%" }} />
         </div>
 
         <div className="field mb-4">
