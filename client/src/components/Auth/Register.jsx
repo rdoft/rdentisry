@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { handleError } from "utils";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider } from "primereact";
-import { LegalFooter } from "components/Legal";
 
 // assets
 import { ReactComponent as Logo } from "assets/svg/dishekime/dishekime.svg";
@@ -234,9 +233,6 @@ function Register() {
           </div>
         </div>
       </Grid>
-
-      {/* Footer */}
-      <LegalFooter />
     </Grid>
   );
 }

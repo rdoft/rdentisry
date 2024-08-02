@@ -11,7 +11,7 @@ function PremiumDialog() {
   const { title, description } = {
     title: "Üyelik.",
     description:
-      "Üyelik planlarımızdan birine abone olarak daha fazla özelliğe erişin.",
+      "Üyelik planlarımızdan birine abone olarak daha fazla özelliğe erişin. İletişim: dishekime@gmail.com",
   };
 
   const featureBox1 = [

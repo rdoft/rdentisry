@@ -3,7 +3,6 @@ import { handleError } from "utils";
 import { useNavigate, Link } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider } from "primereact";
-import { LegalFooter } from "components/Legal";
 import { useAuth } from "context/AuthProvider";
 
 // assets
@@ -196,9 +195,6 @@ function Login() {
           </div>
         </div>
       </Grid>
-
-      {/* Footer */}
-      <LegalFooter />
     </Grid>
   );
 }
