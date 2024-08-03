@@ -5,7 +5,7 @@ ARG PORT_SERVER
 
 LABEL version=${VERSION}
 LABEL description="This is the dental management software aplication API"
-LABEL maintainer = ["abdullah.keskin1598@gmail.com", "r.cancorduk@gmail.com", "recepdemiric.14@gmail.com", "tnhnatalay@gmail.com"]
+LABEL maintainer = ["recepdemiric.14@gmail.com"]
 
 # Create app directory
 WORKDIR /usr/src/server
