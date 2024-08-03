@@ -2,7 +2,12 @@ import React from "react";
 import { Badge } from "primereact";
 import { Typography } from "@mui/material";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 function TabHeader({ label, badge, isActive, onClick }) {
+  const theme = useTheme();
+
   return (
     <div
       className="flex align-items-center px-4"
@@ -13,8 +18,10 @@ function TabHeader({ label, badge, isActive, onClick }) {
         <Typography
           mr={1}
           sx={{
-            fontWeight: "light",
-            color: isActive && "primary.main",
+            opacity: isActive ? 1 : 0.5,
+            color: isActive
+              ? theme.palette.text.secondary
+              : theme.palette.text.primary,
           }}
         >
           {label}
@@ -22,45 +29,17 @@ function TabHeader({ label, badge, isActive, onClick }) {
       </h4>
 
       {/* Badges */}
-      {badge.other >= 0 && (
+      {badge >= 0 && (
         <Badge
-          value={badge.other}
+          value={badge}
           className="ml-1"
           style={{
-            backgroundColor: "#F5F5F5",
-            color: "#172B4D",
-            fontSize: "0.75rem",
-            fontWeight: "600",
-            minWidth: "1.3rem",
-            height: "1rem",
-            lineHeight: "1rem",
-            borderRadius: "0.7rem",
-          }}
-        ></Badge>
-      )}
-      {badge.pending >= 0 && (
-        <Badge
-          value={badge.pending}
-          className="ml-1"
-          style={{
-            backgroundColor: "#1E7AFC",
-            color: "white",
-            fontSize: "0.75rem",
-            fontWeight: "600",
-            minWidth: "1.3rem",
-            height: "1rem",
-            lineHeight: "1rem",
-            borderRadius: "0.7rem",
-          }}
-        ></Badge>
-      )}
-      {badge.completed >= 0 && (
-        <Badge
-          value={badge.completed}
-          className="ml-1"
-          style={{
-            backgroundColor: "#F5F5F5",
-            color: "#172B4D",
+            backgroundColor: isActive
+              ? theme.palette.text.secondary
+              : theme.palette.background.primary,
+            color: isActive
+              ? theme.palette.common.white
+              : theme.palette.text.primary,
             fontSize: "0.75rem",
             fontWeight: "600",
             minWidth: "1.3rem",

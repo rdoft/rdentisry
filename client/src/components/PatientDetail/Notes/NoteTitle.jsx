@@ -3,7 +3,12 @@ import { Grid, Typography, ClickAwayListener } from "@mui/material";
 import { InputText } from "primereact";
 import { Cancel } from "components/Button";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 function NoteTitle({ note, onSubmit, onCancel, onEdit }) {
+  const theme = useTheme();
+
   const [title, setTitle] = useState(note.title);
   const [isEdit, setIsEdit] = useState(false);
 
@@ -65,7 +70,7 @@ function NoteTitle({ note, onSubmit, onCancel, onEdit }) {
                 variant="outlined"
                 autoFocus={true}
                 className="w-full font-bold text-2xl"
-                style={{ padding: "8px", color: "#182A4D" }}
+                style={{ padding: "8px", color: theme.palette.text.primary }}
                 onChange={handleChange}
               />
             </ClickAwayListener>
@@ -91,7 +96,7 @@ function NoteTitle({ note, onSubmit, onCancel, onEdit }) {
             variant="h3"
             sx={{
               fontWeight: "bolder",
-              color: "#182A4D",
+              color: theme.palette.text.primary,
             }}
             onClick={handleEdit}
           >

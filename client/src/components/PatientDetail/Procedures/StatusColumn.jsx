@@ -2,22 +2,25 @@ import React from "react";
 import { Dropdown, Tag } from "primereact";
 
 // assets
+import { useTheme } from "@mui/material/styles";
 import "assets/styles/PatientDetail/StatusColumn.css";
 
 function StatusColumn({ procedure, onSubmit }) {
+  const theme = useTheme();
+
   // Status items
   const statusItems = [
     {
       status: "active",
       label: "Bekleniyor",
-      bgColor: "#E8F0FF",
-      color: "#1E7AFC",
+      bgColor: theme.palette.background.info,
+      color: theme.palette.text.info,
     },
     {
       status: "completed",
       label: "Tamamlandı",
-      bgColor: "#DFFCF0",
-      color: "#22A069",
+      bgColor: theme.palette.background.success,
+      color: theme.palette.text.success,
     },
   ];
 

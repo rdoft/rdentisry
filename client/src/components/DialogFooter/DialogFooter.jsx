@@ -1,7 +1,12 @@
 import React from "react";
 import { Button } from "primereact";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 function DialogFooter({ disabled, onHide, onSubmit, onDelete }) {
+  const theme = useTheme();
+
   return (
     <>
       {onSubmit && (
@@ -12,6 +17,11 @@ function DialogFooter({ disabled, onHide, onSubmit, onDelete }) {
           className="p-button p-button-info"
           onClick={onSubmit}
           autoFocus
+          style={{
+            color: theme.palette.common.white,
+            backgroundColor: theme.palette.text.secondary,
+            borderColor: theme.palette.text.secondary,
+          }}
         />
       )}
       {onDelete && (
@@ -29,6 +39,9 @@ function DialogFooter({ disabled, onHide, onSubmit, onDelete }) {
           size="small"
           className="p-button-text p-button-secondary"
           onClick={onHide}
+          style={{
+            color: theme.palette.text.primary,
+          }}
         />
       )}
     </>

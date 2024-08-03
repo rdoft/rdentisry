@@ -7,9 +7,11 @@ import { Goto } from "components/Button";
 
 // assets
 import { patientAvatar } from "assets/images/avatars";
+import { useTheme } from "@mui/material/styles";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 function MonthEvent({ event }) {
+  const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -89,7 +91,7 @@ function MonthEvent({ event }) {
                 <Goto
                   severity="info"
                   style={{
-                    color: "#3B5DBF",
+                    color: theme.palette.text.event,
                     padding: "0.1rem",
                     width: "auto",
                   }}

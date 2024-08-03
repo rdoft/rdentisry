@@ -8,10 +8,10 @@ import {
 // Get all tabs counts based on the patient
 const getTabCounts = async (patient) => {
   let counts = {
-    appointment: { pending: 0, completed: 0 },
-    payment: { completed: 0 },
-    note: { other: 0 },
-    procedure: { pending: 0, completed: 0 },
+    appointment: 0,
+    payment: 0,
+    note: 0,
+    procedure: 0,
   };
 
   try {
@@ -26,20 +26,16 @@ const getTabCounts = async (patient) => {
 
     // Count the appointments based on its status
     appointments.data.forEach((appointment) => {
-      appointment.status === "active"
-        ? counts.appointment.pending++
-        : counts.appointment.completed++;
+      appointment.status === "active" && counts.appointment++;
     });
     // Count the procedures based on its status
     procedures.data.forEach((procedure) => {
-      procedure.completedDate
-        ? counts.procedure.completed++
-        : counts.procedure.pending++;
+      procedure.completedDate && counts.procedure++;
     });
     // Count the payments
-    counts.payment.completed = payments.data.length ?? 0;
+    counts.payment = payments.data.length ?? 0;
     // Count the notes
-    counts.note.other = notes.data.length ?? 0;
+    counts.note = notes.data.length ?? 0;
 
     return counts;
   } catch (error) {

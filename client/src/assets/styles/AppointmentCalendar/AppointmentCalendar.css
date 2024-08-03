@@ -9,20 +9,20 @@
 }
 
 .rbc-event {
-  background-color: #e8f0ff !important;
+  background-color: var(--palette-background-event) !important;
   border-width: 1px !important;
-  border-color: #fafafb !important;
-  color: #3b5dbf !important;
+  border-color: var(--palette-common-white) !important;
+  color: var(--palette-text-event) !important;
   transition: 0.3s;
   min-height: 2em !important;
 }
 
 .rbc-event:active,
 .rbc-event:focus {
-  background-color: #e8f0ff !important;
+  background-color: var(--palette-background-event) !important;
   border-width: 1px !important;
-  border-color: #fafafb !important;
-  color: #3b5dbf !important;
+  border-color: var(--palette-common-white) !important;
+  color: var(--palette-text-event) !important;
 }
 
 .rbc-event-label {
@@ -49,7 +49,7 @@
 }
 
 .rbc-current-time-indicator {
-  background-color: #3b5dbf;
+  background-color: var(--palette-text-event);
   width: 100%;
   height: 2px;
 }
@@ -57,14 +57,14 @@
 .rbc-toolbar-label {
   font-weight: 600;
   font-size: 1.4rem;
-  color: #333c5e;
+  color: var(--palette-text-event);
 }
 
 /* Slot when selected */
 .rbc-day-slot .rbc-slot-selection {
   opacity: 0.7;
-  background-color: #DFD8FD;
-  color: #776AC1;
+  background-color: var(--palette-background-secondary);
+  color: var(--palette-text-secondary);
   font-weight: 700;
   font-size: small;
   border-radius: 5px;

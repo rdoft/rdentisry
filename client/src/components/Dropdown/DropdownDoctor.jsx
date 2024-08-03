@@ -3,6 +3,9 @@ import { Dropdown, Divider } from "primereact";
 import { Add } from "components/Button";
 import DropdownDoctorItem from "./DropdownItem/DropdownDoctorItem";
 
+// assets
+import "assets/styles/Other/Dropdown.css";
+
 function DropdownDoctor({
   value,
   options,

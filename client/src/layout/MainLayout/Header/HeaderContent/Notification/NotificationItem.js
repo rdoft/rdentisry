@@ -18,11 +18,13 @@ import {
   LiraWarningIcon,
   LiraInfoIcon,
 } from "assets/images/icons";
+import { useTheme } from "@mui/material/styles";
 
 // services
 import { NotificationService } from "services";
 
 function NotificationItem({ notification, getNotifications, onClose }) {
+  const theme = useTheme();
   const navigate = useNavigate();
 
   // Date of the notificaiton
@@ -88,7 +90,10 @@ function NotificationItem({ notification, getNotifications, onClose }) {
       sx={{
         margin: "0.2rem",
         borderRadius: "10px",
-        bgcolor: notification.status === "sent" ? "#EEF6FF" : "transparent",
+        bgcolor:
+          notification.status === "sent"
+            ? theme.palette.background.secondary
+            : "transparent",
       }}
       onClick={handleClickNotification}
     >

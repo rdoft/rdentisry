@@ -3,6 +3,9 @@ import { Dropdown, Divider } from "primereact";
 import DropdownPatientItem from "./DropdownItem/DropdownPatientItem";
 import { Add } from "components/Button";
 
+// assets
+import "assets/styles/Other/Dropdown.css";
+
 function DropdownPatient({ value, options, onChange, onClickAdd, ...props }) {
   const _options = options?.map((option) => {
     return {

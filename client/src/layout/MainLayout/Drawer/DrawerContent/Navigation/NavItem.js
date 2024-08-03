@@ -63,9 +63,6 @@ const NavItem = ({ item, level }) => {
     // eslint-disable-next-line
   }, [location]);
 
-  const textColor = "text.primary";
-  const iconSelectedColor = "primary.main";
-
   return (
     <ListItemButton
       {...listItemProps}
@@ -78,17 +75,17 @@ const NavItem = ({ item, level }) => {
         py: !drawerOpen && level === 1 ? 1.25 : 1,
         ...(drawerOpen && {
           "&:hover": {
-            bgcolor: "primary.lighter",
+            bgcolor: theme.palette.background.secondary,
             borderRadius: "10px",
           },
           "&.Mui-selected": {
-            bgcolor: "primary.lighter",
-            borderRight: `2px solid ${theme.palette.primary.main}`,
+            bgcolor: theme.palette.background.secondary,
+            borderRight: `2px solid ${theme.palette.text.secondary}`,
             borderRadius: "10px",
-            color: iconSelectedColor,
+            color: theme.palette.text.secondary,
             "&:hover": {
-              color: iconSelectedColor,
-              bgcolor: "primary.lighter",
+              color: theme.palette.text.secondary,
+              bgcolor: theme.palette.background.secondary,
             },
           },
         }),
@@ -109,7 +106,9 @@ const NavItem = ({ item, level }) => {
         <ListItemIcon
           sx={{
             minWidth: 28,
-            color: isSelected ? iconSelectedColor : textColor,
+            color: isSelected
+              ? theme.palette.text.secondary
+              : theme.palette.text.primary,
             ...(!drawerOpen && {
               borderRadius: 1.5,
               width: 36,
@@ -122,9 +121,9 @@ const NavItem = ({ item, level }) => {
             }),
             ...(!drawerOpen &&
               isSelected && {
-                bgcolor: "primary.lighter",
+                bgcolor: theme.palette.background.secondary,
                 "&:hover": {
-                  bgcolor: "primary.lighter",
+                  bgcolor: theme.palette.background.secondary,
                 },
               }),
           }}
@@ -138,7 +137,9 @@ const NavItem = ({ item, level }) => {
             <Typography
               variant="h6"
               sx={{
-                color: isSelected ? iconSelectedColor : textColor,
+                color: isSelected
+                  ? theme.palette.text.secondary
+                  : theme.palette.text.primary,
                 paddingLeft: "10px",
               }}
             >

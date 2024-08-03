@@ -13,6 +13,7 @@ import PaymentDateTag from "./PaymentDateTag";
 import PaymentContent from "./PaymentContent";
 
 // assets
+import { useTheme } from "@mui/material/styles";
 import "assets/styles/PatientDetail/PaymentsTab.css";
 
 // services
@@ -30,6 +31,8 @@ function PaymentsTab({
   counts,
   setCounts,
 }) {
+  const theme = useTheme();
+
   // Set the default values
   const [total, setTotal] = useState(0);
   const [completedTotal, setCompletedTotal] = useState(0);
@@ -118,22 +121,16 @@ function PaymentsTab({
   // Get the list of payments of the patient and set payments value
   const getPayments = async (patientId) => {
     let response;
-    let countPayment = { completed: 0 };
 
     try {
       response = await PaymentService.getPayments(patientId);
       setPayments(response.data);
       setCounts({
         ...counts,
-        payment: { completed: response.data.length },
+        payment: response.data.length,
       });
 
       response = await PaymentService.getPayments(patientId, true);
-      response.data.forEach((payment) => {
-        payment.paid === payment.amount
-          ? countPayment.completed++
-          : countPayment.pending++;
-      });
       setPlannedPayments(response.data);
     } catch (error) {
       error.message && toast.error(error.message);
@@ -261,7 +258,7 @@ function PaymentsTab({
           Ödeme Planı
           <i
             className="pi pi-exclamation-triangle pl-3"
-            style={{ color: "#EF4444" }}
+            style={{ color: theme.palette.text.error }}
           ></i>
         </div>
       </Tooltip>
@@ -309,7 +306,9 @@ function PaymentsTab({
                 {plannedPayments.length === 0 ? (
                   <NotFoundText
                     text="Ödeme planı yok"
-                    style={{ backgroundColor: "#F5F5F5" }}
+                    style={{
+                      backgroundColor: theme.palette.background.primary,
+                    }}
                   />
                 ) : (
                   <Timeline
@@ -343,7 +342,9 @@ function PaymentsTab({
                 {payments.length === 0 ? (
                   <NotFoundText
                     text="Ödeme yok"
-                    style={{ backgroundColor: "#F5F5F5" }}
+                    style={{
+                      backgroundColor: theme.palette.background.primary,
+                    }}
                   />
                 ) : (
                   <Timeline

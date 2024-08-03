@@ -1,5 +1,5 @@
 .p-progressbar {
-  background: #e7f0ff;
+  background: var(--palette-background-event);
 }
 
 .p-timeline {

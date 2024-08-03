@@ -12,6 +12,7 @@ import ProcedureListHeader from "./ProcedureListHeader";
 import PrintHeader from "components/PrintHeader";
 
 // assets
+import { useTheme } from "@mui/material/styles";
 import "assets/styles/PatientDetail/ProceduresTab.css";
 
 function ProcedureList({
@@ -23,6 +24,8 @@ function ProcedureList({
   onDelete,
   onUpdated,
 }) {
+  const theme = useTheme();
+
   const dt = useRef(null);
   const [procedure, setProcedure] = useState(null);
   const [rowIndex, setRowIndex] = useState(null);
@@ -280,7 +283,10 @@ function ProcedureList({
       {deleteDialog}
     </>
   ) : (
-    <NotFoundText text="Tedavi yok" style={{ backgroundColor: "#F5F5F5" }} />
+    <NotFoundText
+      text="Tedavi yok"
+      style={{ backgroundColor: theme.palette.background.primary }}
+    />
   );
 }
 

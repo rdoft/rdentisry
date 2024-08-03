@@ -181,10 +181,9 @@ const Notification = () => {
     <Box sx={{ flexShrink: 0, ml: 0.75 }}>
       <IconButton
         disableRipple
-        color="secondary"
         sx={{
-          color: "text.primary",
-          bgcolor: open ? "grey.300" : null,
+          color: theme.palette.text.primary,
+          bgcolor: open ? theme.palette.background.primary : null,
         }}
         aria-label="open profile"
         ref={anchorRef}
@@ -192,7 +191,15 @@ const Notification = () => {
         aria-haspopup="true"
         onClick={handleToggle}
       >
-        <Badge badgeContent={getSentCount() || null} color="primary">
+        <Badge
+          badgeContent={getSentCount() || null}
+          sx={{
+            "& .MuiBadge-badge": {
+              backgroundColor: theme.palette.text.secondary,
+              color: "white",
+            },
+          }}
+        >
           <BellOutlined />
         </Badge>
       </IconButton>
@@ -247,13 +254,19 @@ const Notification = () => {
                         <Read onClick={handleClickRead} />
                       </Grid>
                       <Grid item xs={5}>
-                        <Typography variant="caption">
+                        <Typography
+                          variant="caption"
+                          sx={{ color: theme.palette.text.primary }}
+                        >
                           Hepsini okundu olarak işaretle
                         </Typography>
                       </Grid>
                       {/* Show unread */}
                       <Grid container item xs={4} justifyContent="end">
-                        <Typography variant="caption">
+                        <Typography
+                          variant="caption"
+                          sx={{ color: theme.palette.text.primary }}
+                        >
                           Okunanları göster
                         </Typography>
                       </Grid>

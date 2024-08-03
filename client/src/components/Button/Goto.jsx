@@ -7,7 +7,6 @@ function Goto({ label, onClick, tooltip, ...props }) {
     <Tooltip title={tooltip} placement="bottom" enterDelay={750}>
       <Button
         text
-        outlined
         size="small"
         icon="pi pi-arrow-circle-right"
         severity={props.severity || "secondary"}

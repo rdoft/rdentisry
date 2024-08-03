@@ -113,21 +113,19 @@ function ProceduresTab({
   // Get the list of the procedures of the patient and set procedures value
   const getProcedures = async (patientId) => {
     let response;
-    let countProcedure = { pending: 0, completed: 0 };
+    let countProcedure = 0;
 
     try {
       response = await PatientProcedureService.getPatientProcedures({
         patientId,
       });
       response.data.forEach((procedure) => {
-        procedure.completedDate
-          ? countProcedure.completed++
-          : countProcedure.pending++;
+        procedure.completedDate && countProcedure++;
       });
       setProcedures(response.data);
       setCounts({
         ...counts,
-        procedure: { ...countProcedure },
+        procedure: countProcedure,
       });
     } catch (error) {
       error.message && toast.error(error.message);
@@ -223,7 +221,7 @@ function ProceduresTab({
 
   // Save appointment (create/update)
   const saveAppointment = async (appointment) => {
-    let countAppointment = { pending: 0, completed: 0 };
+    let countAppointment = 0;
     let response;
 
     try {
@@ -236,13 +234,11 @@ function ProceduresTab({
         patientId: patient.id,
       });
       response.data.forEach((appointment) => {
-        appointment.status === "active"
-          ? countAppointment.pending++
-          : countAppointment.completed++;
+        appointment.status === "active" && countAppointment++;
       });
       setCounts({
         ...counts,
-        appointment: { ...countAppointment },
+        appointment: countAppointment,
       });
     } catch (error) {
       error.message && toast.error(error.message);
@@ -359,7 +355,7 @@ function ProceduresTab({
         container
         mt={2}
         justifyContent="center"
-        sx={{ borderRadius: 2, backgroundColor: "#FFFFFF" }}
+        sx={{ borderRadius: 2, backgroundColor: "white" }}
       >
         <Grid container item xl={11} xs={10} py={3} justifyContent="center">
           {tabIndex === 0 && (

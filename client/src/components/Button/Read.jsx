@@ -2,7 +2,12 @@ import React from "react";
 import { Button } from "primereact";
 import { Tooltip } from "@mui/material";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 function Read({ label, onClick, ...props }) {
+  const theme = useTheme();
+
   return (
     <Tooltip title="Okundu" placement="bottom" enterDelay={500}>
       <Button
@@ -13,7 +18,10 @@ function Read({ label, onClick, ...props }) {
         label={label}
         severity={props.severity || "secondary"}
         onClick={onClick}
-        style={props.style}
+        style={{
+          color: theme.palette.text.secondary,
+          ...props.style,
+        }}
       />
     </Tooltip>
   );

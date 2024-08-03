@@ -1,7 +1,12 @@
 import React from "react";
 import { Typography } from "@mui/material";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 function PressKeyText({ text, keypad }) {
+  const theme = useTheme();
+
   const splitted = text.split(keypad);
 
   return !keypad ? (
@@ -16,8 +21,8 @@ function PressKeyText({ text, keypad }) {
           padding: "0.3rem",
           borderRadius: "8px",
           fontWeight: "bolder",
-          color: "#182A4D",
-          backgroundColor: "#F5F5F5",
+          color: theme.palette.text.primary,
+          backgroundColor: theme.palette.background.primary,
         }}
       >
         {keypad}

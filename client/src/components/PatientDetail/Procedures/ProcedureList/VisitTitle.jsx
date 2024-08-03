@@ -3,7 +3,12 @@ import { Grid, Typography, Tooltip, ClickAwayListener } from "@mui/material";
 import { InputText } from "primereact";
 import { Cancel } from "components/Button";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 function VisitTitle({ visit, onSubmit }) {
+  const theme = useTheme();
+
   const prevTitle = useRef(visit.title);
   const [title, setTitle] = useState(visit.title);
   const [isEdit, setIsEdit] = useState(false);
@@ -87,7 +92,7 @@ function VisitTitle({ visit, onSubmit }) {
         sx={{
           borderRadius: "8px",
           "&:hover": {
-            backgroundColor: "#f5f5f5",
+            backgroundColor: theme.palette.background.primary,
           },
         }}
       >

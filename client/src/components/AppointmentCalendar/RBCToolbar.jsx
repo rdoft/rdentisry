@@ -2,7 +2,12 @@ import React from "react";
 import { Grid, Typography, Box } from "@mui/material";
 import { Next, Prev, Basic, SelectButton } from "components/Button";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 const CalendarToolbar = ({ date, label, view, views, onNavigate, onView }) => {
+  const theme = useTheme();
+
   const options = views.map((item) => {
     switch (item) {
       case "month":
@@ -50,7 +55,11 @@ const CalendarToolbar = ({ date, label, view, views, onNavigate, onView }) => {
       </Grid>
 
       <Grid item xs={6} textAlign="center">
-        <Typography variant="h3" fontWeight="bolder" sx={{ color: "#182A4C" }}>
+        <Typography
+          variant="h3"
+          fontWeight="bolder"
+          sx={{ color: theme.palette.text.primary }}
+        >
           {label}
         </Typography>
       </Grid>

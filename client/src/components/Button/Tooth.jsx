@@ -4,8 +4,11 @@ import { Cancel } from "components/Button";
 
 // assets
 import toothSvg from "assets/svg/tooth/tooth.svg";
+import { useTheme } from "@mui/material/styles";
 
 function Tooth({ number, removable, onRemove, ...props }) {
+  const theme = useTheme();
+
   const template = (
     <>
       <img
@@ -15,7 +18,7 @@ function Tooth({ number, removable, onRemove, ...props }) {
       />
       <span
         style={{
-          color: "#2644E1",
+          color: theme.palette.text.secondary,
           fontSize: "small",
           fontWeight: "bold",
           paddingRight: "0.6rem",
@@ -27,7 +30,7 @@ function Tooth({ number, removable, onRemove, ...props }) {
         <Cancel
           onClick={onRemove}
           style={{
-            color: "#2644E1",
+            color: theme.palette.text.secondary,
             width: "18px",
             height: "18px",
             paddingLeft: "0.5rem",
@@ -43,7 +46,7 @@ function Tooth({ number, removable, onRemove, ...props }) {
       template={template}
       style={{
         backgroundColor: "transparent",
-        border: "1px solid #2644E1",
+        border: "1px solid var(--palette-text-secondary)",
         borderRadius: "0.5rem",
         margin: "0.3rem",
         paddingRight: 0,

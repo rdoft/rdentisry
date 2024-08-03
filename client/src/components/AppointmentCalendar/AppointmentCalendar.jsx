@@ -15,6 +15,7 @@ import CalendarToolbar from "./CalendarToolbar";
 
 // assets
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { useTheme } from "@mui/material/styles";
 import "assets/styles/AppointmentCalendar/AppointmentCalendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 
@@ -27,7 +28,8 @@ const localizer = momentLocalizer(moment);
 const today = new Date();
 
 const AppointmentCalendar = () => {
-  // Set the default values
+  const theme = useTheme();
+
   const step = useRef(30);
   const timeslots = useRef(2);
 
@@ -187,7 +189,7 @@ const AppointmentCalendar = () => {
   const dayPropGetter = (date) => ({
     ...(today.toLocaleDateString() === date.toLocaleDateString() && {
       style: {
-        backgroundColor: "#EBEFF4",
+        backgroundColor: theme.palette.background.today,
       },
     }),
   });

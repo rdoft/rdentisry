@@ -2,34 +2,37 @@ import React from "react";
 import { Tag, Dropdown } from "primereact";
 
 // assets
+import { useTheme } from "@mui/material/styles";
 import "assets/styles/PatientDetail/AppointmentStatus.css";
 
 function AppointmentStatus({ appointment, onSubmit }) {
+  const theme = useTheme();
+
   // Status items
   const statusItems = [
     {
       status: "active",
       label: "Bekleniyor",
-      bgColor: "#E8F0FF",
-      color: "#1E7AFC",
+      bgColor: theme.palette.background.info,
+      color: theme.palette.text.info,
     },
     {
       status: "completed",
       label: "Tamamlandı",
-      bgColor: "#DFFCF0",
-      color: "#22A069",
+      bgColor: theme.palette.background.success,
+      color: theme.palette.text.success,
     },
     {
       status: "canceled",
       label: "İptal Edildi",
-      bgColor: "#FFD2CB",
-      color: "#EF4444",
+      bgColor: theme.palette.background.error,
+      color: theme.palette.text.error,
     },
     {
       status: "absent",
       label: "Gelmedi",
-      bgColor: "#FFFADD",
-      color: "#A44800",
+      bgColor: theme.palette.background.warning,
+      color: theme.palette.text.warning,
     },
   ];
 

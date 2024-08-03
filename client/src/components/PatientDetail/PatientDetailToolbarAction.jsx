@@ -2,6 +2,9 @@ import React, { useRef } from "react";
 import { Menu } from "primereact";
 import { Add, Goto, More } from "components/Button";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 function PatientDetailToolbarAction({
   activeIndex,
   onTabChange,
@@ -10,6 +13,7 @@ function PatientDetailToolbarAction({
   showNoteDialog,
   showProcedureDialog,
 }) {
+  const theme = useTheme();
   const menuLeft = useRef(null);
 
   // on payment plan handler
@@ -68,6 +72,10 @@ function PatientDetailToolbarAction({
             label="Ödeme Planına Git"
             default={true}
             onClick={() => handleTabChange(1)}
+            style={{
+              color: theme.palette.text.secondary,
+              borderColor: theme.palette.text.secondary,
+            }}
           />
         </>
       );

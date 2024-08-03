@@ -6,10 +6,6 @@
   padding: 0;
 }
 
-.p-scrollpanel .p-scrollpanel-bar {
-  background: #c1c1c1;
-}
-
 .procedure-list .p-datascroller-content {
   padding: 0 !important;
 }
@@ -27,11 +23,10 @@
 } */
 
 .splitbutton-custom .p-button {
-  color: #182a4d !important;
-  border-color: #182a4d !important;
+  color: var(--palette-text-secondary) !important;
+  border-color: var(--palette-text-secondary) !important;
 }
 
 .p-checkbox.p-component.p-disabled {
   visibility: hidden;
 }
-

@@ -3,7 +3,12 @@ import { Grid, Typography, ClickAwayListener } from "@mui/material";
 import { InputTextarea } from "primereact";
 import { Cancel } from "components/Button";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 function NoteDetail({ note, onSubmit, onCancel, onEdit }) {
+  const theme = useTheme();
+
   const [detail, setDetail] = useState(note.detail);
   const [isEdit, setIsEdit] = useState(false);
 
@@ -65,7 +70,7 @@ function NoteDetail({ note, onSubmit, onCancel, onEdit }) {
                 autoResize="true"
                 autoFocus={true}
                 className="w-full font-light text-sm line-height-3"
-                style={{ padding: "8px", color: "#182A4D" }}
+                style={{ padding: "8px", color: theme.palette.text.primary }}
                 onChange={handleChange}
               />
             </ClickAwayListener>

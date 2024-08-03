@@ -1,7 +1,12 @@
 import React from "react";
 import { Typography } from "@mui/material";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 function DayHeader({ date, label }) {
+  const theme = useTheme();
+
   const splitted = label.split(" ");
   let dayNumber;
   let dayName;
@@ -15,20 +20,29 @@ function DayHeader({ date, label }) {
 
   return dayNumber ? (
     <>
-      <Typography variant="h4" pt={1} sx={{ color: "#182A4C" }}>
+      <Typography
+        variant="h4"
+        pt={1}
+        sx={{ color: theme.palette.text.primary }}
+      >
         {dayNumber}
       </Typography>
       <Typography
         variant="h5"
         fontWeight="light"
         pb={1}
-        sx={{ color: "#182A4C" }}
+        sx={{ color: theme.palette.text.primary }}
       >
         {dayName}
       </Typography>
     </>
   ) : (
-    <Typography variant="h5" fontWeight="light" p={2} sx={{ color: "#182A4C" }}>
+    <Typography
+      variant="h5"
+      fontWeight="light"
+      p={2}
+      sx={{ color: theme.palette.text.primary }}
+    >
       {dayName}
     </Typography>
   );

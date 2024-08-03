@@ -3,6 +3,9 @@ import { ProgressBar } from "primereact";
 import { Grid } from "@mui/material";
 import { StatisticCard } from "components/cards";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 function PaymentStatistic({
   total,
   completedTotal,
@@ -11,6 +14,8 @@ function PaymentStatistic({
   overdue,
   dept,
 }) {
+  const theme = useTheme();
+
   // Calculate progress
   const totalProgress =
     total > 0 ? Math.floor((completed / total) * 100) : completed > 0 ? 100 : 0;
@@ -29,16 +34,16 @@ function PaymentStatistic({
           <ProgressBar
             value={totalProgress}
             showValue={false}
-            style={{ height: "8px", backgroundColor: "#1E7AFC" }}
-            color="#22A06A"
+            style={{ height: "8px", backgroundColor: theme.palette.text.info }}
+            color={theme.palette.text.success}
           />
         </Grid>
         <Grid item xs={6}>
           <StatisticCard
             label={"TÜM TEDAVİ"}
             amount={total}
-            backgroundColor="#F5F5F5"
-            color="#182A4C"
+            backgroundColor={theme.palette.background.primary}
+            color={theme.palette.text.primary}
             sm
           ></StatisticCard>
         </Grid>
@@ -46,8 +51,8 @@ function PaymentStatistic({
           <StatisticCard
             label={"BEKLEYEN"}
             amount={waiting}
-            backgroundColor="#E8F0FF"
-            color="#1E7AFC"
+            backgroundColor={theme.palette.background.info}
+            color={theme.palette.text.info}
             sm
           ></StatisticCard>
         </Grid>
@@ -56,16 +61,16 @@ function PaymentStatistic({
           <ProgressBar
             value={completedProgress}
             showValue={false}
-            style={{ height: "8px", backgroundColor: "#EF4444" }}
-            color="#22A06A"
+            style={{ height: "8px", backgroundColor: theme.palette.text.error }}
+            color={theme.palette.text.success}
           />
         </Grid>
         <Grid item xs={6}>
           <StatisticCard
             label={"TAMAMLANAN TEDAVİ"}
             amount={completedTotal}
-            backgroundColor="#F5F5F5"
-            color="#182A4C"
+            backgroundColor={theme.palette.background.primary}
+            color={theme.palette.text.primary}
             sm
           ></StatisticCard>
         </Grid>
@@ -73,19 +78,18 @@ function PaymentStatistic({
           <StatisticCard
             label={"BORÇ"}
             amount={dept}
-            backgroundColor="#FFD2CB"
-            color="#EF4444"
+            backgroundColor={theme.palette.background.error}
+            color={theme.palette.text.error}
             sm
           ></StatisticCard>
         </Grid>
-        
       </Grid>
 
       <Grid item xs={4}>
         <StatisticCard
           label={"ÖDENEN"}
           amount={completed}
-          color="#182A4C"
+          color={theme.palette.text.primary}
         ></StatisticCard>
       </Grid>
     </Grid>

@@ -5,8 +5,10 @@ import { Goto } from "components/Button";
 
 // assets
 import svg404 from "assets/svg/404.svg";
+import { useTheme } from "@mui/material/styles";
 
 function NotFound() {
+  const theme = useTheme();
   const navigate = useNavigate();
 
   // onClick handler
@@ -25,8 +27,8 @@ function NotFound() {
           label="Ana sayfa git"
           severity="info"
           style={{
-            color: "#FFFFFF",
-            backgroundColor: "#3B5DBF",
+            color: theme.palette.common.white,
+            backgroundColor: theme.palette.text.event,
             fontSize: "1.2rem",
           }}
         />

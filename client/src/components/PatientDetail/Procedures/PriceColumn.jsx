@@ -3,7 +3,12 @@ import { Grid, Typography, Tooltip, ClickAwayListener } from "@mui/material";
 import { InputNumber } from "primereact";
 import { Cancel } from "components/Button";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 function PriceColumn({ procedure, onSubmit }) {
+  const theme = useTheme();
+
   const prevPrice = useRef(procedure.price);
   const [isEdit, setIsEdit] = useState(false);
   const [price, setPrice] = useState(procedure.price);
@@ -100,7 +105,7 @@ function PriceColumn({ procedure, onSubmit }) {
           "&:hover": {
             backgroundColor: procedure.visit.approvedDate
               ? "inherit"
-              : "#f5f5f5",
+              : theme.palette.background.primary,
           },
         }}
       >

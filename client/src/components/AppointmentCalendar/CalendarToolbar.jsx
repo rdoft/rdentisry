@@ -142,7 +142,10 @@ function CalendarToolbar({
       <InputSwitch
         checked={showAll}
         onChange={handleChangeSwitch}
-        style={{ margin: 5, transform: "scale(0.8)" }}
+        style={{
+          margin: 5,
+          transform: "scale(0.8)",
+        }}
       />
     </>
   );

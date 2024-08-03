@@ -2,3 +2,11 @@
   padding-top: 0;
   padding-bottom: 0;
 }
+
+.p-inputswitch .p-inputswitch-slider {
+  background-color: var(--palette-text-primary) !important;
+}
+
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+  background-color: var(--palette-text-secondary) !important;
+}

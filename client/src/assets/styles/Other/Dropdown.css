@@ -1,0 +1,17 @@
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  color: var(--palette-text-primary);
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item:hover {
+  color: var(--palette-text-primary) !important;
+  background-color: var(--palette-background-primary) !important;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  color: var(--palette-text-secondary);
+  background-color: var(--palette-background-secondary);
+}
+
+.p-dropdown-label {
+  color: var(--palette-text-primary);
+}

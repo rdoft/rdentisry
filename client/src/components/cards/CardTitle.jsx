@@ -1,7 +1,12 @@
 import React from "react";
 import { Typography } from "@mui/material";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 function CardTitle({ children, ...props }) {
+  const theme = useTheme();
+
   return (
     <Typography
       variant={props.variant || "h5"}
@@ -9,8 +14,8 @@ function CardTitle({ children, ...props }) {
         padding: 1,
         borderRadius: "8px",
         fontWeight: "bolder",
-        color: "#182A4D",
-        backgroundColor: "#F5F5F5",
+        color: theme.palette.text.primary,
+        backgroundColor: theme.palette.background.primary,
         ...props.style,
       }}
     >

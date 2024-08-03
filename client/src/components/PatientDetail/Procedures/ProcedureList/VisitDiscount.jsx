@@ -3,7 +3,12 @@ import { Grid, Typography, Tooltip, ClickAwayListener } from "@mui/material";
 import { InputNumber } from "primereact";
 import { Cancel } from "components/Button";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 function VisitDiscount({ visit, onSubmit }) {
+  const theme = useTheme();
+
   const prevDiscount = useRef(visit.discount);
   const [discount, setDiscount] = useState(visit.discount);
   const [isEdit, setIsEdit] = useState(false);
@@ -102,17 +107,23 @@ function VisitDiscount({ visit, onSubmit }) {
         m={-1}
         sx={{
           cursor: visit.approvedDate ? "default" : "pointer",
-          color: visit.approvedDate ? "#22A069" : "inherit",
+          color: visit.approvedDate ? theme.palette.text.success : "inherit",
           borderRadius: "8px",
           "&:hover": {
-            backgroundColor: visit.approvedDate ? "inherit" : "#f5f5f5",
+            backgroundColor: visit.approvedDate
+              ? "inherit"
+              : theme.palette.background.primary,
           },
         }}
       >
         {visit.approvedDate && (
           <i
             className="pi pi-check-circle"
-            style={{ color: "#22A069", marginRight: "5px", fontSize: "0.7rem"}}
+            style={{
+              color: theme.palette.text.success,
+              marginRight: "5px",
+              fontSize: "0.7rem",
+            }}
           ></i>
         )}
         <Typography variant="caption">

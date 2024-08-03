@@ -8,6 +8,7 @@ import NoteCard from "./NoteCard";
 import Note from "./Note";
 
 // assets
+import { useTheme } from "@mui/material/styles";
 import "assets/styles/PatientDetail/NotesTab.css";
 
 // services
@@ -21,6 +22,8 @@ function NotesTab({
   counts,
   setCounts,
 }) {
+  const theme = useTheme();
+
   const [isEdit, setEdit] = useState(false);
   const [notes, setNotes] = useState([]);
   const [note, setNote] = useState(null);
@@ -64,7 +67,7 @@ function NotesTab({
       setNotes(response.data);
       setCounts({
         ...counts,
-        note: { other: response.data.length },
+        note: response.data.length,
       });
     } catch (error) {
       error.message && toast.error(error.message);
@@ -134,12 +137,12 @@ function NotesTab({
           xs={4}
           px={1}
           py={3}
-          sx={{ borderRadius: 2, backgroundColor: "white" }}
+          sx={{ borderRadius: 2, backgroundColor: theme.palette.common.white }}
         >
           {notes.length === 0 ? (
             <NotFoundText
               text="Not yok"
-              style={{ backgroundColor: "#F5F5F5" }}
+              style={{ backgroundColor: theme.palette.background.primary }}
             />
           ) : (
             <DataScroller
@@ -160,9 +163,11 @@ function NotesTab({
           px={3}
           sx={{
             borderRadius: 2,
-            backgroundColor: "#f5f5f5",
+            backgroundColor: theme.palette.background.primary,
             border: "1px solid",
-            borderColor: noteDialog ? "#333C5E" : "transparent",
+            borderColor: noteDialog
+              ? theme.palette.text.primary
+              : "transparent",
           }}
         >
           <Note

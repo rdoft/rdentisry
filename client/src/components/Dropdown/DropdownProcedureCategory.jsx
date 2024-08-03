@@ -2,6 +2,9 @@ import React from "react";
 import { Dropdown, Button, Divider } from "primereact";
 import DropdownProcedureCategoryItem from "./DropdownItem/DropdownProcedureCategoryItem";
 
+// assets
+import "assets/styles/Other/Dropdown.css";
+
 function DropdownProcedureCategory({ value, options, onChange, onClickAdd }) {
   // TEMPLATES -----------------------------------------------------------------
   // Dropdown item template

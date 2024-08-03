@@ -2,6 +2,9 @@ import React from "react";
 import { Dropdown } from "primereact";
 import DropdownToothItem from "./DropdownItem/DropdownToothItem";
 
+// assets
+import "assets/styles/Other/Dropdown.css";
+
 function DropdownTooth({ options, onChange, ...props }) {
   // TEMPLATES -----------------------------------------------------------------
   // Dropdown item template

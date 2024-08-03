@@ -18,3 +18,7 @@
 .rounded-tabview .p-tabview-panels {
   border-radius: 8px;
 }
+
+.p-tabview-ink-bar {
+  background-color: var(--palette-text-secondary) !important;
+}

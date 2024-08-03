@@ -3,22 +3,25 @@ import { Dropdown, Tag } from "primereact";
 import { Tooltip } from "@mui/material";
 
 // assets
+import { useTheme } from "@mui/material/styles";
 import "assets/styles/PatientDetail/VisitStatus.css";
 
 function VisitStatus({ visit, onSubmit }) {
+  const theme = useTheme();
+
   // Status items
   const statusItems = [
     {
       status: "pending",
       label: "Bekleniyor",
       bgColor: "transparent",
-      color: "#B1AFB0",
+      color: theme.palette.text.info,
     },
     {
       status: "approved",
       label: "Onaylandı",
       bgColor: "transparent",
-      color: "#22A069",
+      color: theme.palette.text.success,
     },
   ];
 
@@ -46,8 +49,8 @@ function VisitStatus({ visit, onSubmit }) {
               <>
                 <ul>
                   <li>
-                    Seans onayı kaldırıldığında ücret ve indirim oranı
-                    üzerinde değişiklik yapılabilir
+                    Seans onayı kaldırıldığında ücret ve indirim oranı üzerinde
+                    değişiklik yapılabilir
                   </li>
                   <li>Toplam tutar hasta borcundan eksiltilir</li>
                   <li>

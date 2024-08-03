@@ -2,7 +2,12 @@ import React from "react";
 import { Button } from "primereact";
 import { Tooltip } from "@mui/material";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 function Reduce({ isReduce, onClick }) {
+  const theme = useTheme();
+
   return (
     <Tooltip
       title={
@@ -19,7 +24,11 @@ function Reduce({ isReduce, onClick }) {
         outlined
         onClick={onClick}
         className="flex align-items-center justify-content-center border-circle z-1"
-        style={{ color: "#172B4D", width: "1.6rem", height: "1.6rem" }}
+        style={{
+          color: theme.palette.text.primary,
+          width: "1.6rem",
+          height: "1.6rem",
+        }}
       />
     </Tooltip>
   );

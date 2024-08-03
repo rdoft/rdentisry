@@ -9,12 +9,14 @@ import { Add, Edit, Delete } from "components/Button";
 import PatientTableToolbar from "./PatientTableToolbar";
 
 // assets
+import { useTheme } from "@mui/material/styles";
 import "assets/styles/PatientTable/PatientTable.css";
 
 // services
 import { PatientService, AppointmentService } from "services";
 
 function PatientsTable() {
+  const theme = useTheme();
   const navigate = useNavigate();
 
   // Set the default values
@@ -280,8 +282,8 @@ function PatientsTable() {
       <Tag
         value={value}
         style={{
-          backgroundColor: "#FFD2CB",
-          color: "#EF4444",
+          backgroundColor: theme.palette.background.error,
+          color: theme.palette.text.error,
           padding: "0.1rem 0.5rem",
         }}
       />

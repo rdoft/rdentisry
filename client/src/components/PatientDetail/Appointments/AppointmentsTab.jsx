@@ -9,6 +9,7 @@ import NotFoundText from "components/Text/NotFoundText";
 import AppointmentCard from "./AppointmentCard";
 
 // assets
+import { useTheme } from "@mui/material/styles";
 import "assets/styles/PatientDetail/AppointmentsTab.css";
 
 // services
@@ -24,6 +25,8 @@ function AppointmentsTab({
   counts,
   setCounts,
 }) {
+  const theme = useTheme();
+
   // Set the default values
   const [appointments, setAppointments] = useState([]);
   const [appointment, setAppointment] = useState(null);
@@ -63,20 +66,18 @@ function AppointmentsTab({
   // Get the list of appointments of the patient and set appointmets value
   const getAppointments = async (patientId) => {
     let response;
-    let countAppointment = { pending: 0, completed: 0 };
+    let countAppointment = 0;
 
     try {
       response = await AppointmentService.getAppointments({ patientId });
       // appointments = response.data.reverse();
       response.data.forEach((appointment) => {
-        appointment.status === "active"
-          ? countAppointment.pending++
-          : countAppointment.completed++;
+        appointment.status === "active" && countAppointment++;
       });
       setAppointments(response.data);
       setCounts({
         ...counts,
-        appointment: { ...countAppointment },
+        appointment: countAppointment,
       });
     } catch (error) {
       error.message && toast.error(error.message);
@@ -168,7 +169,7 @@ function AppointmentsTab({
             {activeAppointments.length === 0 ? (
               <NotFoundText
                 text="Aktif randevu yok"
-                style={{ backgroundColor: "#F5F5F5" }}
+                style={{ backgroundColor: theme.palette.background.primary }}
               />
             ) : (
               <DataScroller
@@ -201,7 +202,7 @@ function AppointmentsTab({
             {otherAppointments.length === 0 ? (
               <NotFoundText
                 text="Diğer randevu yok"
-                style={{ backgroundColor: "#F5F5F5" }}
+                style={{ backgroundColor: theme.palette.background.primary }}
               />
             ) : (
               <DataScroller

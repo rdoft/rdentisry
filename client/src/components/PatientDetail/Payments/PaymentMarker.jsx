@@ -1,22 +1,27 @@
 import { React } from "react";
 
+// assets
+import { useTheme } from "@mui/material/styles";
+
 function PaymentMarker({ payment }) {
+  const theme = useTheme();
+
   let color;
   let bcolor;
   let icon;
 
   if (payment.actualDate) {
-    bcolor = "#22A06A";
-    color = "white"
+    bcolor = theme.palette.text.success;
+    color = "white";
     icon = "pi pi-circle-fill";
   } else if (payment.amount === payment.paid) {
-    color = "#172B4D";
+    color = theme.palette.text.primary;
     icon = "pi pi-check";
   } else if (new Date(payment.plannedDate).getTime() < new Date().getTime()) {
-    color = "#172B4D";
+    color = theme.palette.text.primary;
     icon = "pi pi-times";
   } else {
-    color = "#172B4D";
+    color = theme.palette.text.primary;
     icon = "pi pi-stopwatch";
   }
 

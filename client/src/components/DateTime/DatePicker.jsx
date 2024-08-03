@@ -3,9 +3,12 @@ import { tr } from "date-fns/locale";
 import { DayPicker } from "react-day-picker";
 
 // assets
+import { useTheme } from "@mui/material/styles";
 import "react-day-picker/dist/style.css";
 
 function DatePicker({ value, onChange, minDate, ...props }) {
+  const theme = useTheme();
+
   const from = new Date(0);
   const to = minDate ? minDate : new Date(0);
   const disabledDays = [{ from: from, to: to }];
@@ -19,10 +22,10 @@ function DatePicker({ value, onChange, minDate, ...props }) {
       disabled={disabledDays}
       fixedWeeks
       styles={{
-        caption: { color: "#333C5E" },
+        caption: { color: theme.palette.text.primary },
       }}
       modifiersStyles={{
-        selected: { backgroundColor: "#21273D" },
+        selected: { backgroundColor: theme.palette.text.event },
       }}
       {...props}
     />
