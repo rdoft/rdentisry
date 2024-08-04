@@ -17,7 +17,6 @@ import { Provider as ReduxProvider } from "react-redux";
 import App from "./App";
 import { store } from "store";
 import { AuthProvider } from "context/AuthProvider";
-import { PremiumProvider } from "context/PremiumProvider";
 
 // ==============================|| MAIN - REACT DOM RENDER  ||============================== //
 
@@ -27,9 +26,7 @@ root.render(
   <ReduxProvider store={store}>
     <BrowserRouter basename="/">
       <AuthProvider>
-        <PremiumProvider>
-          <App />
-        </PremiumProvider>
+        <App />
       </AuthProvider>
     </BrowserRouter>
   </ReduxProvider>

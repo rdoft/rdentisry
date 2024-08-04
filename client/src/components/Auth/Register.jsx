@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { handleError } from "utils";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider } from "primereact";
+import { useAuth } from "context/AuthProvider";
 
 // assets
+import svgGoogle from "assets/svg/google.svg";
 import { ReactComponent as Logo } from "assets/svg/dishekime/dishekime.svg";
 
 // services
@@ -14,6 +16,11 @@ import schema from "schemas/user.schema";
 
 function Register() {
   const navigate = useNavigate();
+  const { authenticate } = useAuth();
+
+  const GOOGLE_AUTH = process.env.REACT_APP_AUTH_URL
+    ? `${process.env.REACT_APP_AUTH_URL}google`
+    : "https://localhost:8080/auth/google";
 
   const [user, setUser] = useState({
     name: "",
@@ -93,6 +100,12 @@ function Register() {
     setIsError(_isError);
     setIsValid(_isValid);
     setError(null);
+  };
+
+  // Register with google
+  const handleRegisterGoogle = () => {
+    window.location.href = GOOGLE_AUTH;
+    authenticate();
   };
 
   // Register handler
@@ -213,6 +226,21 @@ function Register() {
               disabled={!isValid}
             />
           )}
+        </div>
+
+        <div className="field mb-3" align="center">
+          <Typography variant="caption">veya</Typography>
+        </div>
+
+        <div className="field mb-4">
+          <Button
+            className="flex p-text p-button-outlined p-button-secondary"
+            style={{ justifyContent: "center" }}
+            onClick={handleRegisterGoogle}
+          >
+            <img src={svgGoogle} alt="Google" style={{ width: "25px" }} />
+            <span className="px-3">Google ile devam et</span>
+          </Button>
         </div>
 
         <Divider className="field mt-5" />

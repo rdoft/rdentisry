@@ -1,3 +1,5 @@
+const PRICE_URL = `https://disheki.me/pricing`;
+
 const handleError = (error) => {
   if (!error.response || error.response.status === 500) {
     return {
@@ -10,6 +12,7 @@ const handleError = (error) => {
       message: "Oturumunuzun süresi doldu, lütfen tekrar giriş yapınız",
     };
   } else if (error.response.status === 402) {
+    window.open(PRICE_URL, "_blank");
     return {
       status: 402,
       message: null,

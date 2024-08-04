@@ -3,7 +3,6 @@ import Routes from "routes";
 import ThemeCustomization from "themes";
 import ScrollTop from "components/ScrollTop";
 import { Toaster } from "react-hot-toast";
-import { PremiumDialog } from "components/Dialog/index";
 
 // assets
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -25,7 +24,6 @@ const App = () => (
         position: "bottom-center",
       }}
     />
-    <PremiumDialog />
     <ScrollTop>
       <Routes />
     </ScrollTop>
