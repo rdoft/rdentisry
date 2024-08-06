@@ -6,6 +6,14 @@ import DropdownProcedureItem from "./DropdownItem/DropdownProcedureItem";
 import "assets/styles/Other/Dropdown.css";
 
 function DropdownProcedure({ value, options, onChange, onClickOptions }) {
+  // HANDLERS ------------------------------------------------------------------
+  // onKeyDown handler
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.stopPropagation();
+    }
+  };
+
   // TEMPLATES -----------------------------------------------------------------
   // Dropdown item template
   const procedureDropdownItem = (option) => {
@@ -44,6 +52,7 @@ function DropdownProcedure({ value, options, onChange, onClickOptions }) {
       valueTemplate={procedureDropdownValue}
       itemTemplate={procedureDropdownItem}
       panelFooterTemplate={procedureDropdownFooter}
+      onKeyDown={handleKeyDown}
       onChange={onChange}
       scrollHeight="300px"
       filter

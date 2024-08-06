@@ -19,6 +19,14 @@ function DropdownPatient({ value, options, onChange, onClickAdd, ...props }) {
     fullName: `${value.name} ${value.surname}`,
   };
 
+  // HANDLERS ------------------------------------------------------------------
+  // onKeyDown handler
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.stopPropagation();
+    }
+  };
+
   // TEMPLATES -----------------------------------------------------------------
   // Dropdown item template
   const patientDropdownItem = (option) => {
@@ -46,6 +54,7 @@ function DropdownPatient({ value, options, onChange, onClickAdd, ...props }) {
       valueTemplate={patientDropdownItem}
       itemTemplate={patientDropdownItem}
       panelFooterTemplate={patientDropdownFooter}
+      onKeyDown={handleKeyDown}
       onChange={onChange}
       className="w-full"
       filter

@@ -135,7 +135,7 @@ function ProcedureDialog({
 
   // onAddTeeth handler
   const handleAddTooth = (tooth) => {
-    if (!selectedTeeth.includes(tooth)) {
+    if (!selectedTeeth.includes(tooth) && tooth) {
       onChangeTeeth([...selectedTeeth, tooth]);
     }
   };

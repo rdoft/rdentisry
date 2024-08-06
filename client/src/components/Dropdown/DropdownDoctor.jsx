@@ -26,6 +26,14 @@ function DropdownDoctor({
     fullName: `${value.name} ${value.surname}`,
   };
 
+  // HANDLERS ------------------------------------------------------------------
+  // onKeyDown handler
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.stopPropagation();
+    }
+  };
+
   // TEMPLATES -----------------------------------------------------------------
   // Dropdown item template
   const doctorDropdownItem = (option) => {
@@ -56,6 +64,7 @@ function DropdownDoctor({
       valueTemplate={doctorDropdownValue}
       itemTemplate={doctorDropdownItem}
       panelFooterTemplate={doctorDropdownFooter}
+      onKeyDown={handleKeyDown}
       onChange={onChange}
       className={props?.className}
       style={props?.style}
