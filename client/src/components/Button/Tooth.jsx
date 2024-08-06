@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Chip } from "primereact";
 import { Cancel } from "components/Button";
 
@@ -6,9 +6,11 @@ import { Cancel } from "components/Button";
 import toothSvg from "assets/svg/tooth/tooth.svg";
 import { useTheme } from "@mui/material/styles";
 
-function Tooth({ number, removable, onRemove, ...props }) {
+function Tooth({ number, removable, onClick, onRemove, ...props }) {
   const theme = useTheme();
+  const [isHover, setIsHover] = useState(false);
 
+  // TEMPLATES ---------------------------------------------------------
   const template = (
     <>
       <img
@@ -44,13 +46,20 @@ function Tooth({ number, removable, onRemove, ...props }) {
   return (
     <Chip
       template={template}
+      onClick={onClick && onClick}
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
       style={{
-        backgroundColor: "transparent",
+        backgroundColor:
+          onClick && isHover && number
+            ? "var(--palette-background-secondary)"
+            : "transparent",
         border: "1px solid var(--palette-text-secondary)",
         borderRadius: "0.5rem",
         margin: "0.3rem",
         paddingRight: 0,
         paddingLeft: "1rem",
+        cursor: onClick && number ? "pointer" : "default",
         ...props.style,
       }}
     />

@@ -20,6 +20,8 @@ function ProcedureList({
   procedures,
   selectedProcedures,
   setSelectedProcedures,
+  selectedTeeth,
+  onChangeTeeth,
   onSubmit,
   onDelete,
   onUpdated,
@@ -137,6 +139,13 @@ function ProcedureList({
   const isRowSelectable = (event) =>
     event.data.visit.approvedDate ? false : true;
 
+  // onClick tooth handler
+  const handleSelectTooth = (tooth) => {
+    selectedTeeth.includes(tooth)
+      ? onChangeTeeth(selectedTeeth.filter((number) => number !== tooth))
+      : onChangeTeeth([...selectedTeeth, tooth]);
+  };
+
   // TEMPLATES ----------------------------------------------------------------
   // Delete confirm dialog
   const deleteDialog = (
@@ -201,7 +210,12 @@ function ProcedureList({
           const uniqueKey = `${num}-${occurrenceTracker[num]}`;
 
           return (
-            <Tooth key={uniqueKey} number={num} style={{ margin: "0.1rem" }} />
+            <Tooth
+              key={uniqueKey}
+              number={num}
+              onClick={() => handleSelectTooth(num)}
+              style={{ margin: "0.1rem" }}
+            />
           );
         })}
       </div>

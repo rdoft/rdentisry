@@ -395,6 +395,8 @@ function ProceduresTab({
                   procedures={filteredProcedures}
                   selectedProcedures={selectedProcedures}
                   setSelectedProcedures={setSelectedProcedures}
+                  selectedTeeth={selectedTeeth}
+                  onChangeTeeth={handleChangeTeeth}
                   onSubmit={saveProcedures}
                   onDelete={deleteProcedure}
                   onUpdated={handleUpdated}
