@@ -2,6 +2,7 @@ import React, { lazy } from "react";
 import { Loadable } from "components/Loadable";
 import { MainLayout } from "layout";
 import ProtectedRoute from "routes/ProtectedRoute";
+import PublicRoute from "routes/PublicRoute";
 
 // render - pages
 // const Overview = Loadable(lazy(() => import("pages/Overview/OverviewPage")));
@@ -26,11 +27,11 @@ const NotFound = Loadable(lazy(() => import("pages/Other/NotFoundPage")));
 const MainRoutes = [
   {
     path: "/login",
-    element: <Login />,
+    element: <PublicRoute element={Login} />,
   },
   {
     path: "/register",
-    element: <Register />,
+    element: <PublicRoute element={Register} />,
   },
   {
     path: "/forgot",
