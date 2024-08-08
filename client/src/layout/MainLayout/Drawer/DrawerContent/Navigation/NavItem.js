@@ -45,7 +45,6 @@ const NavItem = ({ item, level }) => {
   };
 
   const isSelected = openItem.findIndex((id) => id === item.id) > -1;
-  const itemIcon = isSelected ? item.iconActive : item.iconPassive;
 
   // active menu item on page load
   useEffect(() => {
@@ -102,35 +101,38 @@ const NavItem = ({ item, level }) => {
         }),
       }}
     >
-      {itemIcon && (
-        <ListItemIcon
-          sx={{
-            minWidth: 28,
-            color: isSelected
-              ? theme.palette.text.secondary
-              : theme.palette.text.primary,
-            ...(!drawerOpen && {
-              borderRadius: 1.5,
-              width: 36,
-              height: 36,
-              alignItems: "center",
-              justifyContent: "center",
+      <ListItemIcon
+        sx={{
+          minWidth: 28,
+          color: isSelected
+            ? theme.palette.text.secondary
+            : theme.palette.text.primary,
+          ...(!drawerOpen && {
+            borderRadius: 1.5,
+            width: 36,
+            height: 36,
+            alignItems: "center",
+            justifyContent: "center",
+            "&:hover": {
+              bgcolor: "secondary.lighter",
+            },
+          }),
+          ...(!drawerOpen &&
+            isSelected && {
+              bgcolor: theme.palette.background.secondary,
               "&:hover": {
-                bgcolor: "secondary.lighter",
+                bgcolor: theme.palette.background.secondary,
               },
             }),
-            ...(!drawerOpen &&
-              isSelected && {
-                bgcolor: theme.palette.background.secondary,
-                "&:hover": {
-                  bgcolor: theme.palette.background.secondary,
-                },
-              }),
-          }}
-        >
-          {itemIcon}
-        </ListItemIcon>
-      )}
+        }}
+      >
+        <Avatar
+          src={item.icon}
+          shape="circle"
+          style={{ width: "24px", height: "24px", padding: "1px" }}
+        />
+      </ListItemIcon>
+
       {(drawerOpen || (!drawerOpen && level !== 1)) && (
         <ListItemText
           primary={

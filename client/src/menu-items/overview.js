@@ -1,7 +1,9 @@
-import { Avatar } from "@mui/material";
+import { cacheImages } from "utils";
 
 // assets
-import { CalendarActiveIcon, CalendarPassiveIcon } from "assets/images/icons";
+import { CalendarActiveIcon } from "assets/images/icons";
+
+cacheImages([CalendarActiveIcon]);
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
 
@@ -23,20 +25,7 @@ const overview = {
       title: "Takvim",
       type: "item",
       url: "/",
-      iconActive: (
-        <Avatar
-          src={CalendarActiveIcon}
-          shape="circle"
-          style={{ width: "24px", height: "24px", padding: "1px" }}
-        />
-      ),
-      iconPassive: (
-        <Avatar
-          src={CalendarPassiveIcon}
-          shape="circle"
-          style={{ width: "24px", height: "24px", padding: "1px" }}
-        />
-      ),
+      icon: CalendarActiveIcon,
       breadcrumbs: false,
     },
   ],
