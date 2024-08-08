@@ -1,17 +1,25 @@
 const PRICE_URL = `https://disheki.me/pricing`;
 
 const handleError = (error) => {
-  if (!error.response || error.response.status === 500) {
+  if (error.name === "CanceledError") {
+    return {
+      status: 0,
+      message: null,
+    };
+  } else if (!error.response || error.response.status === 500) {
     return {
       status: 500,
-      message: "Sunucuya bağlanılamadı, daha sonra tekrar deneyiniz",
+      message:
+        "Bağlantı hatası! İnternet bağlantınızı kontrol edin ve daha sonra tekrar deneyiniz",
     };
   } else if (error.response.status === 401) {
+    // If the status is 401, show a session expired message or redirect to the pricing page
     return {
       status: 401,
       message: "Oturumunuzun süresi doldu, lütfen tekrar giriş yapınız",
     };
   } else if (error.response.status === 402) {
+    // If the status is 402, redirect to the pricing page
     window.open(PRICE_URL, "_blank");
     return {
       status: 402,
