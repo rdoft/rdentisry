@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Grid, Typography, Tooltip } from "@mui/material";
+import { SkeletonCategory } from "components/Skeleton";
+import { cacheImages } from "utils";
 
 // assets
 import {
@@ -16,9 +18,30 @@ import {
 } from "assets/images/icons";
 
 function ProcedureCategory({ category, isLabel = true }) {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadIcons = async () => {
+      await cacheImages([
+        DiagnosisIcon,
+        CleaningIcon,
+        FillingIcon,
+        RootCanalIcon,
+        BridgeIcon,
+        VeneerIcon,
+        ExtractionIcon,
+        ImplantIcon,
+        SurgeryIcon,
+        EmptyToothIcon,
+      ]);
+      setLoading(false);
+    };
+
+    loadIcons();
+  }, []);
+
   let icon;
   let label;
-
   switch (category) {
     case "Muayene":
       icon = DiagnosisIcon;
@@ -74,12 +97,18 @@ function ProcedureCategory({ category, isLabel = true }) {
       break;
   }
 
+  if (loading) {
+    return <SkeletonCategory isLabel={isLabel} />;
+  }
   return (
     <>
       {isLabel ? (
         <Grid container alignItems="center">
           <Grid item>
-            <Avatar src={icon} />
+            <Avatar
+              src={icon}
+              sx={{ width: "2rem !important", height: "2rem !important" }}
+            />
           </Grid>
           <Grid item pl={2}>
             <Typography variant="h5" fontWeight="regular">
@@ -89,7 +118,10 @@ function ProcedureCategory({ category, isLabel = true }) {
         </Grid>
       ) : (
         <Tooltip title={label} placement="left">
-          <Avatar src={icon} className="mr-2 p-1" />
+          <Avatar
+            src={icon}
+            className="mr-2 p-1"
+          />
         </Tooltip>
       )}
     </>

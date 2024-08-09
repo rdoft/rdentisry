@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dropdown } from "primereact";
 import { ProcedureCategory } from "components/ProcedureCategory";
 
@@ -7,10 +7,13 @@ import "assets/styles/ProceedureTable/CategoryColumn.css";
 
 // Create a component for category column that is dropdown menu and save the changes
 function CategoryColumn({ procedure, categories, onSubmit }) {
+  const [category, setCategory] = useState(procedure.procedureCategory);
+
   // HANDLERS -----------------------------------------------------------------
   // onChange handler and set the category of the procedure
   const handleChange = (event) => {
     const value = event.target.value;
+    setCategory(value);
     onSubmit({
       ...procedure,
       procedureCategory: value,
@@ -25,7 +28,7 @@ function CategoryColumn({ procedure, categories, onSubmit }) {
 
   return (
     <Dropdown
-      value={procedure.procedureCategory}
+      value={category}
       options={categories}
       optionLabel="title"
       valueTemplate={categoryItemTemplate}

@@ -57,8 +57,8 @@ function BaseProcedureDialog({
   };
 
   // onSubmit handler
-  const handleSubmit = () => {
-    onSubmit(procedure);
+  const handleSubmit = async () => {
+    await onSubmit(procedure);
     !isAnother && onHide();
   };
 
@@ -142,9 +142,9 @@ function BaseProcedureDialog({
             locale="tr-TR"
           />
         </div>
-          {isError.price && (
-            <small className="ml-3 p-error font-light">Zorunlu</small>
-          )}
+        {isError.price && (
+          <small className="ml-3 p-error font-light">Zorunlu</small>
+        )}
       </div>
 
       {/* Create another procedure */}

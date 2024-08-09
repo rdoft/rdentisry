@@ -5,15 +5,28 @@ import { DataTable, Column, ConfirmDialog } from "primereact";
 import { BaseProcedureDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
 import { Delete } from "components/Button";
+import { SkeletonDataTable } from "components/Skeleton";
+import { useLoading } from "context/LoadingProvider";
 import PriceColumn from "./PriceColumn";
 import CategoryColumn from "./CategoryColumn";
 import NameColumn from "./NameColumn";
 import ProcedureTableToolbar from "./ProcedureTableToolbar";
 
+// TODO: quickswitch between tables
 // services
 import { ProcedureService, ProcedureCategoryService } from "services";
 
 function ProcedureTable() {
+  const {
+    loading,
+    startFetch,
+    stopFetch,
+    startSave,
+    stopSave,
+    startDelete,
+    stopDelete,
+  } = useLoading();
+
   // Set the default valeus
   const dt = useRef(null);
   const [categories, setCategories] = useState(null);
@@ -33,6 +46,7 @@ function ProcedureTable() {
     const controller = new AbortController();
     const signal = controller.signal;
 
+    startFetch();
     // Get the list of the procedures
     ProcedureService.getProcedures(null, { signal })
       .then((res) => {
@@ -40,6 +54,9 @@ function ProcedureTable() {
       })
       .catch((error) => {
         error.message && toast.error(error.message);
+      })
+      .finally(() => {
+        stopFetch();
       });
 
     // Get the list of the procedure categories
@@ -54,7 +71,7 @@ function ProcedureTable() {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [startFetch, stopFetch]);
 
   // SERVICES ---------------------------------------------------------
   // Get the list of the procedures
@@ -75,18 +92,20 @@ function ProcedureTable() {
   // Save the procedure
   const saveProcedure = async (procedure) => {
     try {
+      startSave();
       // Update or create the procedure
       if (procedure.id) {
         await ProcedureService.updateProcedure(procedure);
       } else {
         await ProcedureService.saveProcedure(procedure);
-        toast.success("Yeni tedavi bilgileri başarıyla eklendi");
       }
 
       // Get and set the updated list of procedures
-      getProcedures();
+      await getProcedures();
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopSave();
     }
   };
 
@@ -95,18 +114,23 @@ function ProcedureTable() {
     let _selectedProcedures;
 
     try {
+      startDelete();
       await ProcedureService.deleteProcedure(procedure.id);
 
       _selectedProcedures = selectedProcedures
         ? selectedProcedures.filter((item) => item.id !== procedure.id)
         : null;
       // Set the updated list of procedures and the selected procedures
-      getProcedures();
+      await getProcedures();
       setSelectedProcedures(_selectedProcedures);
       setProcedure(null);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopDelete();
     }
+
+    hideDeleteProcedureDialog();
   };
 
   // Delete the selected procedures
@@ -117,21 +141,20 @@ function ProcedureTable() {
     selectedIds = selectedProcedures.map((item) => item.id);
 
     try {
+      startDelete();
       // Delete the procedures
       await ProcedureService.deleteProcedures(selectedIds);
 
-      if (selectedIds.length > 1) {
-        toast.success("Seçili tedaviler başarıyla silindi");
-      } else {
-        toast.success("Seçili tedavi başarıyla silindi");
-      }
-
       // Get and set the updated list of procedures
-      getProcedures();
+      await getProcedures();
       setSelectedProcedures(null);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopDelete();
     }
+
+    hideDeleteProceduresDialog();
   };
 
   // HANDLERS -----------------------------------------------------------------
@@ -158,7 +181,6 @@ function ProcedureTable() {
   // onDelete handler for confirm delete procedures dialog
   const handleDeleteProceduresConfirm = () => {
     deleteProcedures(selectedProcedures);
-    hideDeleteProceduresDialog();
   };
 
   // Show confirm delete procedure dialog
@@ -175,7 +197,6 @@ function ProcedureTable() {
   // onDelete handler for confirm delete procedure dialog
   const handleDeleteProcedureConfirm = () => {
     deleteProcedure();
-    hideDeleteProcedureDialog();
   };
 
   // onInput handler for search
@@ -241,86 +262,91 @@ function ProcedureTable() {
           onClickDelete={showDeleteProceduresDialog}
           onInput={handleInputSearch}
         />
-
-        <DataTable
-          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-          ref={dt}
-          value={procedures}
-          globalFilter={globalFilter}
-          selection={selectedProcedures}
-          onSelectionChange={handleChangeSelection}
-          onRowMouseEnter={handleRowMouseEnter}
-          onRowMouseLeave={handleRowMouseLeave}
-          selectionMode="checkbox"
-          responsiveLayout="scroll"
-          dataKey="id"
-          paginator
-          rows={10}
-          rowHover={true}
-          sortField="code"
-          size="small"
-          dragSelection={true}
-          currentPageReportTemplate="({totalRecords} tedavi)"
-          emptyMessage="Hiçbir sonuç bulunamadı"
-          filterLocale="tr-TR"
-        >
-          {/* Checkbox */}
-          <Column
-            selectionMode="multiple"
-            headerStyle={{ width: "3rem" }}
-            bodyStyle={{ height: "4.5rem" }}
-            exportable={false}
-          ></Column>
-          {/* Code */}
-          <Column
-            header="Kod"
-            field="code"
-            sortable
-            style={{ width: "12rem" }}
-          ></Column>
-          {/* Name */}
-          <Column
-            header="Ad"
-            field="name"
-            sortable
-            body={(procedure) => (
-              <NameColumn procedure={procedure} onSubmit={saveProcedure} />
-            )}
-          ></Column>
-          {/* Price */}
-          <Column
-            header="Fiyat"
-            style={{ width: "18rem" }}
-            sortable
-            field="price"
-            body={(procedure) => (
-              <PriceColumn procedure={procedure} onSubmit={saveProcedure} />
-            )}
-          ></Column>
-          {/* Category */}
-          <Column
-            header="Kategori"
-            style={{ width: "16rem" }}
-            sortable
-            field="procedureCategory.title"
-            body={(procedure) => (
-              <CategoryColumn
-                procedure={procedure}
-                categories={categories}
-                onSubmit={saveProcedure}
-              />
-            )}
-          ></Column>
-          {/* Procedure action buttons */}
-          <Column
-            body={(procedure) =>
-              procedure.id === rowIndex ? (
-                <Delete onClick={() => showDeleteProcedureDialog(procedure)} />
-              ) : null
-            }
-            style={{ width: "8rem" }}
-          ></Column>
-        </DataTable>
+        {loading.fetch ? (
+          <SkeletonDataTable />
+        ) : (
+          <DataTable
+            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+            ref={dt}
+            value={procedures}
+            globalFilter={globalFilter}
+            selection={selectedProcedures}
+            onSelectionChange={handleChangeSelection}
+            onRowMouseEnter={handleRowMouseEnter}
+            onRowMouseLeave={handleRowMouseLeave}
+            selectionMode="checkbox"
+            responsiveLayout="scroll"
+            dataKey="id"
+            paginator
+            rows={10}
+            rowHover={true}
+            sortField="code"
+            size="small"
+            dragSelection={true}
+            currentPageReportTemplate="({totalRecords} tedavi)"
+            emptyMessage="Hiçbir sonuç bulunamadı"
+            filterLocale="tr-TR"
+          >
+            {/* Checkbox */}
+            <Column
+              selectionMode="multiple"
+              headerStyle={{ width: "3rem" }}
+              bodyStyle={{ height: "4.5rem" }}
+              exportable={false}
+            ></Column>
+            {/* Code */}
+            <Column
+              header="Kod"
+              field="code"
+              sortable
+              style={{ width: "12rem" }}
+            ></Column>
+            {/* Name */}
+            <Column
+              header="Ad"
+              field="name"
+              sortable
+              body={(procedure) => (
+                <NameColumn procedure={procedure} onSubmit={saveProcedure} />
+              )}
+            ></Column>
+            {/* Price */}
+            <Column
+              header="Fiyat"
+              style={{ width: "18rem" }}
+              sortable
+              field="price"
+              body={(procedure) => (
+                <PriceColumn procedure={procedure} onSubmit={saveProcedure} />
+              )}
+            ></Column>
+            {/* Category */}
+            <Column
+              header="Kategori"
+              style={{ width: "16rem" }}
+              sortable
+              field="procedureCategory.title"
+              body={(procedure) => (
+                <CategoryColumn
+                  procedure={procedure}
+                  categories={categories}
+                  onSubmit={saveProcedure}
+                />
+              )}
+            ></Column>
+            {/* Procedure action buttons */}
+            <Column
+              body={(procedure) =>
+                procedure.id === rowIndex ? (
+                  <Delete
+                    onClick={() => showDeleteProcedureDialog(procedure)}
+                  />
+                ) : null
+              }
+              style={{ width: "8rem" }}
+            ></Column>
+          </DataTable>
+        )}
       </div>
 
       {/* Add procedure dialog */}

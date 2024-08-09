@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useCallback, useContext, useState } from "react";
 
 const LoadingContext = createContext();
 
@@ -9,8 +9,14 @@ export const LoadingProvider = ({ children }) => {
     delete: false,
   });
 
-  const startFetch = () => setLoading({ ...loading, fetch: true });
-  const stopFetch = () => setLoading({ ...loading, fetch: false });
+  const startFetch = useCallback(
+    () => setLoading((prev) => ({ ...prev, fetch: true })),
+    []
+  );
+  const stopFetch = useCallback(
+    () => setLoading((prev) => ({ ...prev, fetch: false })),
+    []
+  );
 
   const startSave = () => setLoading({ ...loading, save: true });
   const stopSave = () => setLoading({ ...loading, save: false });
