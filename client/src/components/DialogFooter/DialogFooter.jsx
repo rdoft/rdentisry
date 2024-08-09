@@ -1,18 +1,22 @@
 import React from "react";
 import { Button } from "primereact";
+import { useLoading } from "context/LoadingProvider";
 
 // assets
 import { useTheme } from "@mui/material/styles";
 
 function DialogFooter({ disabled, onHide, onSubmit, onDelete }) {
   const theme = useTheme();
+  const { loading } = useLoading();
 
   return (
     <>
       {onSubmit && (
         <Button
-          disabled={disabled}
-          label="Kaydet"
+          disabled={disabled || loading.save}
+          label={
+            loading.save ? <i className="pi pi-spin pi-spinner" /> : "Kaydet"
+          }
           size="small"
           className="p-button p-button-info"
           onClick={onSubmit}
@@ -26,7 +30,10 @@ function DialogFooter({ disabled, onHide, onSubmit, onDelete }) {
       )}
       {onDelete && (
         <Button
-          label="Sil"
+          disabled={loading.delete}
+          label={
+            loading.delete ? <i className="pi pi-spin pi-spinner" /> : "Sil"
+          }
           size="small"
           className="p-button-danger"
           onClick={onDelete}

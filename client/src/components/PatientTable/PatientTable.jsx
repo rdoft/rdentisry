@@ -6,6 +6,8 @@ import { DataTable, Column, Tag, ConfirmDialog } from "primereact";
 import { AppointmentDialog, PatientDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
 import { Add, Edit, Delete } from "components/Button";
+import { SkeletonDataTable } from "components/Skeleton";
+import { useLoading } from "context/LoadingProvider";
 import PatientTableToolbar from "./PatientTableToolbar";
 
 // assets
@@ -18,6 +20,15 @@ import { PatientService, AppointmentService } from "services";
 function PatientsTable() {
   const theme = useTheme();
   const navigate = useNavigate();
+  const {
+    loading,
+    startFetch,
+    stopFetch,
+    startSave,
+    stopSave,
+    startDelete,
+    stopDelete,
+  } = useLoading();
 
   // Set the default values
   const dt = useRef(null);
@@ -38,6 +49,7 @@ function PatientsTable() {
     const controller = new AbortController();
     const signal = controller.signal;
 
+    startFetch();
     PatientService.getPatients(true, { signal })
       .then((response) => {
         const _patients = response.data.map((item) => ({
@@ -48,12 +60,13 @@ function PatientsTable() {
       })
       .catch((error) => {
         error.message && toast.error(error.message);
-      });
+      })
+      .finally(() => stopFetch());
 
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [startFetch, stopFetch]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of patients and set patients value
@@ -62,7 +75,6 @@ function PatientsTable() {
     let patients;
 
     try {
-      // GET /patients
       response = await PatientService.getPatients(true);
       patients = response.data.map((item) => ({
         ...item,
@@ -78,31 +90,36 @@ function PatientsTable() {
   // Save patient (create/update)
   const savePatient = async (patient) => {
     try {
+      startSave();
       if (patient.id) {
         // Update the patient
         await PatientService.updatePatient(patient);
       } else {
         // Create a new patient
         await PatientService.savePatient(patient);
-        toast.success("Yeni hasta başarıyla eklendi");
       }
 
       // Set the patients and close the dialog
-      getPatients();
+      await getPatients();
       hidePatientDialog();
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopSave();
     }
   };
 
   // save appointment
   const saveAppointment = async (appointment) => {
     try {
+      startSave();
       await AppointmentService.saveAppointment(appointment);
       hideAppointmentDialog();
       toast.success("Yeni randevu başarıyla eklendi");
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopSave();
     }
   };
 
@@ -112,6 +129,7 @@ function PatientsTable() {
     let _selectedPatients;
 
     try {
+      startDelete();
       await PatientService.deletePatient(patient.id);
 
       // Remove deleted patient from patients and selectedPatients
@@ -124,6 +142,8 @@ function PatientsTable() {
       setSelectedPatients(_selectedPatients);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopDelete();
     }
 
     // Close delete dialog and empty patient variable
@@ -140,7 +160,7 @@ function PatientsTable() {
     selectedIds = selectedPatients.map((item) => item.id);
 
     try {
-      // DELETE /patients?patientId=
+      startDelete();
       await PatientService.deletePatients(selectedIds);
 
       // Remove deleted patients from the patients
@@ -156,6 +176,8 @@ function PatientsTable() {
       setSelectedPatients(null);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopDelete();
     }
 
     // Close the dialog and set selec
@@ -342,92 +364,96 @@ function PatientsTable() {
           onInput={handleInputSearch}
         />
 
-        <DataTable
-          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-          ref={dt}
-          value={patients}
-          globalFilter={globalFilter}
-          selection={selectedPatients}
-          onSelectionChange={handleChangeSelection}
-          onRowMouseEnter={handleRowMouseEnter}
-          onRowMouseLeave={handleRowMouseLeave}
-          onRowClick={handleRowClick}
-          selectionMode="checkbox"
-          responsiveLayout="scroll"
-          dataKey="id"
-          paginator
-          rows={10}
-          rowHover={true}
-          dragSelection={true}
-          currentPageReportTemplate="({totalRecords} hasta)"
-          emptyMessage="Hiçbir sonuç bulunamadı"
-          filterLocale="tr-TR"
-        >
-          {/* Checkbox */}
-          <Column
-            selectionMode="multiple"
-            headerStyle={{ width: "3rem" }}
-            bodyStyle={{ height: "4.5rem" }}
-            exportable={false}
-          ></Column>
-          {/* TC */}
-          <Column
-            field="idNumber"
-            header="Kimlik Numarası"
-            sortable
-            style={{ width: "12rem" }}
-          ></Column>
-          {/* Name */}
-          <Column
-            field="fullName"
-            header="Ad Soyad"
-            body={(patient) => (
-              <span>
-                <strong>{patient.name}</strong> {patient.surname}
-              </span>
+        {loading.fetch ? (
+          <SkeletonDataTable />
+        ) : (
+          <DataTable
+            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+            ref={dt}
+            value={patients}
+            globalFilter={globalFilter}
+            selection={selectedPatients}
+            onSelectionChange={handleChangeSelection}
+            onRowMouseEnter={handleRowMouseEnter}
+            onRowMouseLeave={handleRowMouseLeave}
+            onRowClick={handleRowClick}
+            selectionMode="checkbox"
+            responsiveLayout="scroll"
+            dataKey="id"
+            paginator
+            rows={10}
+            rowHover={true}
+            dragSelection={true}
+            currentPageReportTemplate="({totalRecords} hasta)"
+            emptyMessage="Hiçbir sonuç bulunamadı"
+            filterLocale="tr-TR"
+          >
+            {/* Checkbox */}
+            <Column
+              selectionMode="multiple"
+              headerStyle={{ width: "3rem" }}
+              bodyStyle={{ height: "4.5rem" }}
+              exportable={false}
+            ></Column>
+            {/* TC */}
+            <Column
+              field="idNumber"
+              header="Kimlik Numarası"
+              sortable
+              style={{ width: "12rem" }}
+            ></Column>
+            {/* Name */}
+            <Column
+              field="fullName"
+              header="Ad Soyad"
+              body={(patient) => (
+                <span>
+                  <strong>{patient.name}</strong> {patient.surname}
+                </span>
+              )}
+              sortable
+            ></Column>
+            {/* Phone */}
+            <Column
+              field="phone"
+              header="Telefon"
+              style={{ width: "10rem" }}
+            ></Column>
+            {/* Status tags */}
+            <Column
+              field="dept"
+              body={status}
+              sortable
+              style={{ width: "10rem" }}
+            ></Column>
+            {/* Action buttons */}
+            {!window.matchMedia("(hover: none)").matches && (
+              <Column
+                body={(patient) =>
+                  patient.id === rowIndex ? (
+                    <Add
+                      label="Randevu"
+                      onClick={(e) => handleAddAppointment(e, patient)}
+                    />
+                  ) : null
+                }
+                style={{ width: "10rem" }}
+              ></Column>
             )}
-            sortable
-          ></Column>
-          {/* Phone */}
-          <Column
-            field="phone"
-            header="Telefon"
-            style={{ width: "10rem" }}
-          ></Column>
-          {/* Status tags */}
-          <Column
-            field="dept"
-            body={status}
-            sortable
-            style={{ width: "10rem" }}
-          ></Column>
-          {/* Action buttons */}
-          {!window.matchMedia("(hover: none)").matches && (
+            {/* Patient action buttons */}
             <Column
               body={(patient) =>
                 patient.id === rowIndex ? (
-                  <Add
-                    label="Randevu"
-                    onClick={(e) => handleAddAppointment(e, patient)}
-                  />
+                  <>
+                    <Edit onClick={() => showPatientDialog(patient)} />
+                    <Delete onClick={() => showDeletePatientDialog(patient)} />
+                  </>
                 ) : null
               }
               style={{ width: "10rem" }}
             ></Column>
-          )}
-          {/* Patient action buttons */}
-          <Column
-            body={(patient) =>
-              patient.id === rowIndex ? (
-                <>
-                  <Edit onClick={() => showPatientDialog(patient)} />
-                  <Delete onClick={() => showDeletePatientDialog(patient)} />
-                </>
-              ) : null
-            }
-            style={{ width: "10rem" }}
-          ></Column>
-        </DataTable>
+          </DataTable>
+        )}
       </div>
 
       {/* Patient information  */}
