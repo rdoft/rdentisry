@@ -5,7 +5,7 @@ import { Tag, Dropdown } from "primereact";
 import { useTheme } from "@mui/material/styles";
 import "assets/styles/PatientDetail/AppointmentStatus.css";
 
-function AppointmentStatus({ appointment, onSubmit }) {
+function AppointmentStatus({ initStatus, onChange }) {
   const theme = useTheme();
 
   // Status items
@@ -36,17 +36,14 @@ function AppointmentStatus({ appointment, onSubmit }) {
     },
   ];
 
-  // Set status of the appointment
-  const status = statusItems.find((item) => item.status === appointment.status);
+  // Set status
+  const status = statusItems.find((item) => item.status === initStatus);
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler and set the status of the appointment
-  const handleChange = (event) => {
+  const handleChange = async (event) => {
     const { value } = event.target;
-    onSubmit({
-      ...appointment,
-      status: value.status,
-    });
+    onChange(value.status);
   };
 
   // TEMPLATES -----------------------------------------------------------------

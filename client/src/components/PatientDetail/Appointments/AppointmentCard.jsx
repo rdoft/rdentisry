@@ -8,6 +8,7 @@ import AppointmentStatus from "./AppointmentStatus";
 import { doctorAvatar } from "assets/images/avatars";
 
 function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
+  const [loading, setLoading] = useState(false);
   const [isHover, setIsHover] = useState(false);
 
   // Set values as desired format
@@ -35,6 +36,16 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
   // onClickEdit handler
   const handleClickEdit = () => {
     onClickEdit(appointment);
+  };
+
+  // handleChangeStatus handler
+  const handleChangeStatus = async (status) => {
+    setLoading(true);
+    await onSubmit({
+      ...appointment,
+      status,
+    });
+    setLoading(false);
   };
 
   return (
@@ -101,12 +112,22 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
         </Grid>
 
         {/* Status */}
-        <Grid item xl={2} xs={3} textAlign="end">
-          <AppointmentStatus appointment={appointment} onSubmit={onSubmit} />
+        <Grid item xl={2} xs={3} textAlign="center">
+          {loading ? (
+            <i
+              className="pi pi-spin pi-spinner"
+              style={{ textAlign: "center" }}
+            />
+          ) : (
+            <AppointmentStatus
+              initStatus={appointment.status}
+              onChange={handleChangeStatus}
+            />
+          )}
         </Grid>
 
         {/* Edit Button */}
-        <Grid item xl={1} xs={1} textAlign="end" >
+        <Grid item xl={1} xs={1} textAlign="end">
           {isHover && <Edit onClick={handleClickEdit} />}
         </Grid>
       </Grid>

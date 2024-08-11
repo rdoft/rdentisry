@@ -5,6 +5,9 @@ import { DataScroller } from "primereact";
 import { AppointmentDialog } from "components/Dialog";
 import { CardTitle } from "components/cards";
 import { NewItem } from "components/Button";
+import { SkeletonCard } from "components/Skeleton";
+import { useLoading } from "context/LoadingProvider";
+
 import NotFoundText from "components/Text/NotFoundText";
 import AppointmentCard from "./AppointmentCard";
 
@@ -26,6 +29,7 @@ function AppointmentsTab({
   setCounts,
 }) {
   const theme = useTheme();
+  const { loading, startLoading, stopLoading } = useLoading();
 
   // Set the default values
   const [appointments, setAppointments] = useState([]);
@@ -36,18 +40,20 @@ function AppointmentsTab({
     const controller = new AbortController();
     const signal = controller.signal;
 
+    startLoading("AppointmentsTab");
     AppointmentService.getAppointments({ patientId: patient.id }, { signal })
       .then((res) => {
         setAppointments(res.data);
       })
       .catch((error) => {
         error.message && toast.error(error.message);
-      });
+      })
+      .finally(() => stopLoading("AppointmentsTab"));
 
     return () => {
       controller.abort();
     };
-  }, [patient]);
+  }, [patient, startLoading, stopLoading]);
 
   // Divide the appointments based on its status
   let activeAppointments = [];
@@ -85,6 +91,7 @@ function AppointmentsTab({
   // Save appointment (create/update)
   const saveAppointment = async (appointment) => {
     try {
+      startLoading("save");
       if (appointment.id) {
         await AppointmentService.updateAppointment(appointment.id, appointment);
       } else {
@@ -92,25 +99,30 @@ function AppointmentsTab({
       }
 
       // Get and set the updated list of appointments
-      getAppointments(patient.id);
+      await getAppointments(patient.id);
       hideDialog();
       setAppointment(null);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("save");
     }
   };
 
   //  Delete appointment
   const deleteAppointment = async (appointment) => {
     try {
+      startLoading("delete");
       await AppointmentService.deleteAppointment(appointment.id);
 
       // Get and set the updated list of appointments
-      getAppointments(patient.id);
+      await getAppointments(patient.id);
       hideDialog();
       setAppointment(null);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("delete");
     }
   };
 
@@ -164,7 +176,9 @@ function AppointmentsTab({
             py={3}
             sx={{ backgroundColor: "white", borderRadius: "8px" }}
           >
-            {activeAppointments.length === 0 ? (
+            {loading["AppointmentsTab"] ? (
+              <SkeletonCard />
+            ) : activeAppointments.length === 0 ? (
               <NotFoundText
                 text="Aktif randevu yok"
                 style={{ backgroundColor: theme.palette.background.primary }}
@@ -197,7 +211,9 @@ function AppointmentsTab({
             py={3}
             sx={{ backgroundColor: "white", borderRadius: "8px" }}
           >
-            {otherAppointments.length === 0 ? (
+            {loading["AppointmentsTab"] ? (
+              <SkeletonCard />
+            ) : otherAppointments.length === 0 ? (
               <NotFoundText
                 text="Diğer randevu yok"
                 style={{ backgroundColor: theme.palette.background.primary }}
