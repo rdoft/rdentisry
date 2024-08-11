@@ -81,7 +81,6 @@ function ProceduresTab({
         setProcedures(res.data);
       })
       .catch((error) => {
-        if (error.name === "CanceledError") return;
         error.message && toast.error(error.message);
       });
 
@@ -90,7 +89,6 @@ function ProceduresTab({
         setVisits(res.data);
       })
       .catch((error) => {
-        if (error.name === "CanceledError") return;
         error.message && toast.error(error.message);
       });
 

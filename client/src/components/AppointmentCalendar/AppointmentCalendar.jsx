@@ -55,7 +55,6 @@ const AppointmentCalendar = () => {
         setAppointments(res.data);
       })
       .catch((error) => {
-        if (error.name === "CanceledError") return;
         error.message && toast.error(error.message);
       });
 

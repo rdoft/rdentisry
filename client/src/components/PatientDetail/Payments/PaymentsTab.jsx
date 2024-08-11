@@ -51,7 +51,6 @@ function PaymentsTab({
         setPayments(res.data);
       })
       .catch((error) => {
-        if (error.name === "CanceledError") return;
         error.message && toast.error(error.message);
       });
 
@@ -61,7 +60,6 @@ function PaymentsTab({
         setPlannedPayments(res.data);
       })
       .catch((error) => {
-        if (error.name === "CanceledError") return;
         error.message && toast.error(error.message);
       });
 
@@ -76,7 +74,6 @@ function PaymentsTab({
         );
       })
       .catch((error) => {
-        if (error.name === "CanceledError") return;
         error.message && toast.error(error.message);
       });
 
@@ -98,7 +95,6 @@ function PaymentsTab({
         );
       })
       .catch((error) => {
-        if (error.name === "CanceledError") return;
         error.message && toast.error(error.message);
       });
 
