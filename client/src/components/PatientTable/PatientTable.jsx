@@ -20,15 +20,7 @@ import { PatientService, AppointmentService } from "services";
 function PatientsTable() {
   const theme = useTheme();
   const navigate = useNavigate();
-  const {
-    loading,
-    startFetch,
-    stopFetch,
-    startSave,
-    stopSave,
-    startDelete,
-    stopDelete,
-  } = useLoading();
+  const { loading, startLoading, stopLoading } = useLoading();
 
   // Set the default values
   const dt = useRef(null);
@@ -49,7 +41,7 @@ function PatientsTable() {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    startFetch();
+    startLoading("PatientTable");
     PatientService.getPatients(true, { signal })
       .then((response) => {
         const _patients = response.data.map((item) => ({
@@ -61,12 +53,12 @@ function PatientsTable() {
       .catch((error) => {
         error.message && toast.error(error.message);
       })
-      .finally(() => stopFetch());
+      .finally(() => stopLoading("PatientTable"));
 
     return () => {
       controller.abort();
     };
-  }, [startFetch, stopFetch]);
+  }, [startLoading, stopLoading]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of patients and set patients value
@@ -90,7 +82,7 @@ function PatientsTable() {
   // Save patient (create/update)
   const savePatient = async (patient) => {
     try {
-      startSave();
+      startLoading("save");
       if (patient.id) {
         // Update the patient
         await PatientService.updatePatient(patient);
@@ -105,21 +97,21 @@ function PatientsTable() {
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
-      stopSave();
+      stopLoading("save");
     }
   };
 
   // save appointment
   const saveAppointment = async (appointment) => {
     try {
-      startSave();
+      startLoading("save");
       await AppointmentService.saveAppointment(appointment);
       hideAppointmentDialog();
       toast.success("Yeni randevu başarıyla eklendi");
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
-      stopSave();
+      stopLoading("save");
     }
   };
 
@@ -129,7 +121,7 @@ function PatientsTable() {
     let _selectedPatients;
 
     try {
-      startDelete();
+      startLoading("delete");
       await PatientService.deletePatient(patient.id);
 
       // Remove deleted patient from patients and selectedPatients
@@ -143,7 +135,7 @@ function PatientsTable() {
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
-      stopDelete();
+      stopLoading("delete");
     }
 
     // Close delete dialog and empty patient variable
@@ -160,7 +152,7 @@ function PatientsTable() {
     selectedIds = selectedPatients.map((item) => item.id);
 
     try {
-      startDelete();
+      startLoading("delete");
       await PatientService.deletePatients(selectedIds);
 
       // Remove deleted patients from the patients
@@ -177,7 +169,7 @@ function PatientsTable() {
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
-      stopDelete();
+      stopLoading("delete");
     }
 
     // Close the dialog and set selec
@@ -364,7 +356,7 @@ function PatientsTable() {
           onInput={handleInputSearch}
         />
 
-        {loading.fetch ? (
+        {loading["PatientTable"] ? (
           <SkeletonDataTable />
         ) : (
           <DataTable

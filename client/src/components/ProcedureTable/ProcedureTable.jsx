@@ -12,20 +12,11 @@ import CategoryColumn from "./CategoryColumn";
 import NameColumn from "./NameColumn";
 import ProcedureTableToolbar from "./ProcedureTableToolbar";
 
-// TODO: quickswitch between tables
 // services
 import { ProcedureService, ProcedureCategoryService } from "services";
 
 function ProcedureTable() {
-  const {
-    loading,
-    startFetch,
-    stopFetch,
-    startSave,
-    stopSave,
-    startDelete,
-    stopDelete,
-  } = useLoading();
+  const { loading, startLoading, stopLoading } = useLoading();
 
   // Set the default valeus
   const dt = useRef(null);
@@ -46,7 +37,7 @@ function ProcedureTable() {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    startFetch();
+    startLoading("ProcedureTable");
     // Get the list of the procedures
     ProcedureService.getProcedures(null, { signal })
       .then((res) => {
@@ -55,9 +46,7 @@ function ProcedureTable() {
       .catch((error) => {
         error.message && toast.error(error.message);
       })
-      .finally(() => {
-        stopFetch();
-      });
+      .finally(() => stopLoading("ProcedureTable"));
 
     // Get the list of the procedure categories
     ProcedureCategoryService.getProcedureCategories({ signal })
@@ -71,7 +60,7 @@ function ProcedureTable() {
     return () => {
       controller.abort();
     };
-  }, [startFetch, stopFetch]);
+  }, [startLoading, stopLoading]);
 
   // SERVICES ---------------------------------------------------------
   // Get the list of the procedures
@@ -92,7 +81,7 @@ function ProcedureTable() {
   // Save the procedure
   const saveProcedure = async (procedure) => {
     try {
-      startSave();
+      startLoading("save");
       // Update or create the procedure
       if (procedure.id) {
         await ProcedureService.updateProcedure(procedure);
@@ -105,7 +94,7 @@ function ProcedureTable() {
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
-      stopSave();
+      stopLoading("save");
     }
   };
 
@@ -114,7 +103,7 @@ function ProcedureTable() {
     let _selectedProcedures;
 
     try {
-      startDelete();
+      startLoading("delete");
       await ProcedureService.deleteProcedure(procedure.id);
 
       _selectedProcedures = selectedProcedures
@@ -127,7 +116,7 @@ function ProcedureTable() {
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
-      stopDelete();
+      stopLoading("delete");
     }
 
     hideDeleteProcedureDialog();
@@ -141,7 +130,7 @@ function ProcedureTable() {
     selectedIds = selectedProcedures.map((item) => item.id);
 
     try {
-      startDelete();
+      startLoading("delete");
       // Delete the procedures
       await ProcedureService.deleteProcedures(selectedIds);
 
@@ -151,7 +140,7 @@ function ProcedureTable() {
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
-      stopDelete();
+      stopLoading("delete");
     }
 
     hideDeleteProceduresDialog();
@@ -262,7 +251,7 @@ function ProcedureTable() {
           onClickDelete={showDeleteProceduresDialog}
           onInput={handleInputSearch}
         />
-        {loading.fetch ? (
+        {loading["ProcedureTable"] ? (
           <SkeletonDataTable />
         ) : (
           <DataTable
