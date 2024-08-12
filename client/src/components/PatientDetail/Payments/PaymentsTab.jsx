@@ -7,6 +7,8 @@ import { PaymentDialog, PaymentPlanDialog } from "components/Dialog";
 import { NewItem } from "components/Button";
 import { NotFoundText } from "components/Text";
 import { calcProgress } from "utils";
+import { useLoading } from "context/LoadingProvider";
+import { SkeletonStatistic, SkeletonTimeline } from "components/Skeleton";
 import PaymentStatistic from "./PaymentStatistic";
 import PaymentMarker from "./PaymentMarker";
 import PaymentDateTag from "./PaymentDateTag";
@@ -32,6 +34,7 @@ function PaymentsTab({
   setCounts,
 }) {
   const theme = useTheme();
+  const { loading, startLoading, stopLoading } = useLoading();
 
   // Set the default values
   const [total, setTotal] = useState(0);
@@ -45,45 +48,38 @@ function PaymentsTab({
     const controller = new AbortController();
     const signal = controller.signal;
 
-    // Set the payments
-    PaymentService.getPayments(patient.id, false, { signal })
-      .then((res) => {
-        setPayments(res.data);
-      })
-      .catch((error) => {
-        error.message && toast.error(error.message);
-      });
+    // Set data on loading
+    const fetchAll = async () => {
+      startLoading("PaymentsTab");
+      try {
+        const _payments = await PaymentService.getPayments(patient.id, false, {
+          signal,
+        });
+        setPayments(_payments.data);
 
-    // Set planned payments
-    PaymentService.getPayments(patient.id, true, { signal })
-      .then((res) => {
-        setPlannedPayments(res.data);
-      })
-      .catch((error) => {
-        error.message && toast.error(error.message);
-      });
+        const _plannedPayments = await PaymentService.getPayments(
+          patient.id,
+          true,
+          { signal }
+        );
+        setPlannedPayments(_plannedPayments.data);
 
-    // Set total payment
-    VisitService.getVisits(patient.id, true, { signal })
-      .then((res) => {
+        const _visits = await VisitService.getVisits(patient.id, true, {
+          signal,
+        });
         setTotal(
-          res.data.reduce(
+          _visits.data.reduce(
             (acc, visit) => acc + visit.price * ((100 - visit.discount) / 100),
             0
           )
         );
-      })
-      .catch((error) => {
-        error.message && toast.error(error.message);
-      });
 
-    PatientProcedureService.getPatientProcedures(
-      { patientId: patient.id },
-      { signal }
-    )
-      .then((res) => {
+        const _procedures = await PatientProcedureService.getPatientProcedures(
+          { patientId: patient.id },
+          { signal }
+        );
         setCompletedTotal(
-          res.data.reduce(
+          _procedures.data.reduce(
             (acc, procedure) =>
               acc +
               (procedure.visit.approvedDate && procedure.completedDate
@@ -93,15 +89,18 @@ function PaymentsTab({
             0
           )
         );
-      })
-      .catch((error) => {
+      } catch (error) {
         error.message && toast.error(error.message);
-      });
+      } finally {
+        stopLoading("PaymentsTab");
+      }
+    };
+    fetchAll();
 
     return () => {
       controller.abort();
     };
-  }, [patient]);
+  }, [patient, startLoading, stopLoading]);
 
   // Calculate the payments percentage
   const {
@@ -136,6 +135,7 @@ function PaymentsTab({
   // Save payment (create/update)
   const savePayment = async (payment) => {
     try {
+      startLoading("save");
       const plan = payment.plannedDate ? true : false;
 
       // If update payment, then update and return
@@ -152,12 +152,15 @@ function PaymentsTab({
       setPayment(null);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("save");
     }
   };
 
   // Save payments (create)
   const savePayments = async (payments) => {
     try {
+      startLoading("save");
       // Create all payments
       for (let payment of payments) {
         const plan = payment.plannedDate ? true : false;
@@ -170,12 +173,15 @@ function PaymentsTab({
       setPayment(null);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("save");
     }
   };
 
   //  Delete appointment
   const deletePayment = async (payment) => {
     try {
+      startLoading("delete");
       const plan = payment.plannedDate ? true : false;
       await PaymentService.deletePayment(payment.id, plan);
 
@@ -185,6 +191,8 @@ function PaymentsTab({
       setPayment(null);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("delete");
     }
   };
 
@@ -268,14 +276,18 @@ function PaymentsTab({
       <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
         <Grid container alignItems="center" justifyContent="center" mt={2}>
           {/* Statistics */}
-          <PaymentStatistic
-            total={total}
-            completedTotal={completedTotal}
-            completed={completedAmount}
-            waiting={waitingAmount}
-            overdue={overdueAmount}
-            dept={deptAmount}
-          />
+          {loading["PaymentsTab"] ? (
+            <SkeletonStatistic />
+          ) : (
+            <PaymentStatistic
+              total={total}
+              completedTotal={completedTotal}
+              completed={completedAmount}
+              waiting={waitingAmount}
+              overdue={overdueAmount}
+              dept={deptAmount}
+            />
+          )}
 
           {/* Timeline */}
           <Grid container justifyContent="center" alignItems="start">
@@ -299,7 +311,9 @@ function PaymentsTab({
                 </CardTitle>
               </Grid>
               <Grid item xs={12}>
-                {plannedPayments.length === 0 ? (
+                {loading["PaymentsTab"] ? (
+                  <SkeletonTimeline />
+                ) : plannedPayments.length === 0 ? (
                   <NotFoundText
                     text="Ödeme planı yok"
                     style={{
@@ -335,7 +349,9 @@ function PaymentsTab({
                 </CardTitle>
               </Grid>
               <Grid item xs={12}>
-                {payments.length === 0 ? (
+                {loading["PaymentsTab"] ? (
+                  <SkeletonTimeline />
+                ) : payments.length === 0 ? (
                   <NotFoundText
                     text="Ödeme yok"
                     style={{
