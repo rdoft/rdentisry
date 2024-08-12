@@ -26,8 +26,8 @@ function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
   };
 
   // onClickPay handler
-  const handlePay = () => {
-    onSubmit({
+  const handlePay = async () => {
+    await onSubmit({
       patient: payment.patient,
       amount: payment.amount - payment.paid,
       actualDate: new Date(),
@@ -49,8 +49,8 @@ function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
   };
 
   // onConfirmDelete handler
-  const handleDeleteConfirm = () => {
-    onDelete(payment);
+  const handleDeleteConfirm = async () => {
+    await onDelete(payment);
     setIsDelete(false);
   };
 

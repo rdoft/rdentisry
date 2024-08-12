@@ -147,7 +147,7 @@ function PaymentsTab({
       }
 
       // Get and set the updated list of payments
-      getPayments(patient.id);
+      await getPayments(patient.id);
       hideDialog();
       setPayment(null);
     } catch (error) {
@@ -168,7 +168,7 @@ function PaymentsTab({
       }
 
       // Get and set the updated list of payments
-      getPayments(patient.id);
+      await getPayments(patient.id);
       hideDialog();
       setPayment(null);
     } catch (error) {
@@ -186,7 +186,7 @@ function PaymentsTab({
       await PaymentService.deletePayment(payment.id, plan);
 
       // Get and set the updated list of payments
-      getPayments(patient.id);
+      await getPayments(patient.id);
       hideDialog();
       setPayment(null);
     } catch (error) {
