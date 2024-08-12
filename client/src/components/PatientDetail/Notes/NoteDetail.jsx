@@ -67,7 +67,7 @@ function NoteDetail({ note, onSubmit, onCancel, onEdit }) {
                 name="detail"
                 value={detail}
                 variant="outlined"
-                autoResize="true"
+                autoResize={true}
                 autoFocus={true}
                 className="w-full font-light text-sm line-height-3"
                 style={{ padding: "8px", color: theme.palette.text.primary }}

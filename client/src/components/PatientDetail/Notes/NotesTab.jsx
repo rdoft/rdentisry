@@ -4,6 +4,8 @@ import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import { NewItem } from "components/Button";
 import { NotFoundText } from "components/Text";
+import { useLoading } from "context/LoadingProvider";
+import { SkeletonCard } from "components/Skeleton";
 import NoteCard from "./NoteCard";
 import Note from "./Note";
 
@@ -23,6 +25,7 @@ function NotesTab({
   setCounts,
 }) {
   const theme = useTheme();
+  const { loading, startLoading, stopLoading } = useLoading();
 
   const [isEdit, setEdit] = useState(false);
   const [notes, setNotes] = useState([]);
@@ -33,18 +36,20 @@ function NotesTab({
     const controller = new AbortController();
     const signal = controller.signal;
 
+    startLoading("NotesTab");
     NoteService.getNotes(patient.id, { signal })
       .then((res) => {
         setNotes(res.data);
       })
       .catch((error) => {
         error.message && toast.error(error.message);
-      });
+      })
+      .finally(() => stopLoading("NotesTab"));
 
     return () => {
       controller.abort();
     };
-  }, [patient]);
+  }, [patient, startLoading, stopLoading]);
 
   // Reset note when noteDialog becomes true
   useEffect(() => {
@@ -78,6 +83,7 @@ function NotesTab({
     let response;
 
     try {
+      startLoading("save");
       if (note.id) {
         await NoteService.updateNote(note.id, note);
       } else {
@@ -86,11 +92,13 @@ function NotesTab({
         note = { id, patient, title, detail, date };
       }
 
-      getNotes(patient.id);
+      await getNotes(patient.id);
       hideDialog();
       setNote(note);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("save");
     }
   };
 
@@ -98,14 +106,17 @@ function NotesTab({
   const deleteNote = async (note) => {
     try {
       if (!isEdit) {
+        startLoading("delete");
         await NoteService.deleteNote(note.id);
 
-        getNotes(patient.id);
+        await getNotes(patient.id);
         hideDialog();
         setNote(null);
       }
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("delete");
     }
   };
 
@@ -138,7 +149,9 @@ function NotesTab({
           py={3}
           sx={{ borderRadius: 2, backgroundColor: theme.palette.common.white }}
         >
-          {notes.length === 0 ? (
+          {loading["NotesTab"] ? (
+            <SkeletonCard />
+          ) : notes.length === 0 ? (
             <NotFoundText
               text="Not yok"
               style={{ backgroundColor: theme.palette.background.primary }}
@@ -149,6 +162,12 @@ function NotesTab({
               itemTemplate={noteTemplate}
               rows={10}
             ></DataScroller>
+          )}
+
+          {loading.save && (
+            <Grid item xs={12} style={{ textAlign: "center" }}>
+              <i className="pi pi-spin pi-spinner" />
+            </Grid>
           )}
 
           {/* Add note */}

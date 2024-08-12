@@ -46,8 +46,8 @@ function Note({ initNote, onSubmit, setEdit, onDelete }) {
   };
 
   // onConfirmDelete handler
-  const handleDeleteConfirm = () => {
-    onDelete(note);
+  const handleDeleteConfirm = async () => {
+    await onDelete(note);
     setIsDelete(false);
   };
 
