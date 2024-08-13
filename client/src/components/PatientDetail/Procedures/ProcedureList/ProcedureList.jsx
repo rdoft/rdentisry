@@ -5,6 +5,8 @@ import { Delete } from "components/Button";
 import { DialogFooter } from "components/DialogFooter";
 import { ProcedureCategory } from "components/ProcedureCategory";
 import { Tooth } from "components/Button";
+import { SkeletonList } from "components/Skeleton";
+import { useLoading } from "context/LoadingProvider";
 import NotFoundText from "components/Text/NotFoundText";
 import PriceColumn from "../PriceColumn";
 import StatusColumn from "../StatusColumn";
@@ -27,6 +29,7 @@ function ProcedureList({
   onUpdated,
 }) {
   const theme = useTheme();
+  const { loading } = useLoading();
 
   const dt = useRef(null);
   const [procedure, setProcedure] = useState(null);
@@ -79,7 +82,7 @@ function ProcedureList({
 
   // HANDLERS -----------------------------------------------------------------
   // onSubmit handler for each procedure
-  const handleSubmit = (procedure) => {
+  const handleSubmit = async (procedure) => {
     const updatedProcedures = [];
     // Find the procedures that will be updated and update them
     for (let i = 0; i < procedure.ids.length; i++) {
@@ -92,7 +95,7 @@ function ProcedureList({
       });
     }
 
-    onSubmit(updatedProcedures);
+    await onSubmit(updatedProcedures);
   };
 
   // onDelete handler
@@ -102,7 +105,7 @@ function ProcedureList({
   };
 
   // onConfirmDelete handler
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     const deletedProcedures = [];
     // Find the procedures that will be deleted and delete them
     for (let i = 0; i < procedure.ids.length; i++) {
@@ -112,7 +115,7 @@ function ProcedureList({
       });
     }
 
-    onDelete(deletedProcedures);
+    await onDelete(deletedProcedures);
     setIsDelete(false);
   };
 
@@ -222,7 +225,9 @@ function ProcedureList({
     );
   };
 
-  return procedures?.length > 0 ? (
+  return loading["ProcedureList"] ? (
+    <SkeletonList />
+  ) : procedures?.length > 0 ? (
     <>
       {/* Print only */}
       <PrintHeader patient={patient} />

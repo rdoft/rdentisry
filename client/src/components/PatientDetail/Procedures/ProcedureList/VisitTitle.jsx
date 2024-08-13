@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Grid, Typography, Tooltip, ClickAwayListener } from "@mui/material";
 import { InputText } from "primereact";
 import { Cancel } from "components/Button";
+import { LoadingIcon } from "components/Other";
 
 // assets
 import { useTheme } from "@mui/material/styles";
@@ -12,6 +13,7 @@ function VisitTitle({ visit, onSubmit }) {
   const prevTitle = useRef(visit.title);
   const [title, setTitle] = useState(visit.title);
   const [isEdit, setIsEdit] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Update component state when visit prop changes
   useEffect(() => {
@@ -33,14 +35,16 @@ function VisitTitle({ visit, onSubmit }) {
   };
 
   // onSave handler, to save changes
-  const handleSave = () => {
+  const handleSave = async () => {
+    setIsEdit(false);
     if (!title.trim()) {
       setTitle(prevTitle.current);
     } else {
       prevTitle.current = title;
-      onSubmit(title);
+      setLoading(true);
+      await onSubmit(title);
+      setLoading(false);
     }
-    setIsEdit(false);
   };
 
   // onCancel handler, discard changes to title
@@ -82,23 +86,30 @@ function VisitTitle({ visit, onSubmit }) {
     </Grid>
   ) : (
     <Tooltip title="Başlığı düzenle" placement="bottom-start" enterDelay={500}>
-      <Grid
-        container
-        item
-        onClick={handleEdit}
-        xs={6}
-        p={1}
-        m={-1}
-        sx={{
-          borderRadius: "8px",
-          "&:hover": {
-            backgroundColor: theme.palette.background.primary,
-          },
-        }}
-      >
-        <Typography variant="h5" fontWeight="bolder">
-          {title || "-"}
-        </Typography>
+      <Grid container alignItems="center">
+        <Grid
+          container
+          item
+          onClick={handleEdit}
+          xs={6}
+          p={1}
+          m={-1}
+          sx={{
+            borderRadius: "8px",
+            "&:hover": {
+              backgroundColor: theme.palette.background.primary,
+            },
+          }}
+        >
+          <Typography variant="h5" fontWeight="bolder">
+            {title || "-"}
+          </Typography>
+        </Grid>
+        {loading && (
+          <Grid item px={4}>
+            <LoadingIcon />
+          </Grid>
+        )}
       </Grid>
     </Tooltip>
   );

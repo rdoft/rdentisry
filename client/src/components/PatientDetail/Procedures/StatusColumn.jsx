@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dropdown, Tag } from "primereact";
+import { LoadingIcon } from "components/Other";
 
 // assets
 import { useTheme } from "@mui/material/styles";
@@ -7,6 +8,8 @@ import "assets/styles/PatientDetail/StatusColumn.css";
 
 function StatusColumn({ procedure, onSubmit }) {
   const theme = useTheme();
+
+  const [loading, setLoading] = useState(false);
 
   // Status items
   const statusItems = [
@@ -29,11 +32,13 @@ function StatusColumn({ procedure, onSubmit }) {
 
   // HANDLERS -----------------------------------------------------------------
   // onChangeStatus handler
-  const handleChange = () => {
-    onSubmit({
+  const handleChange = async () => {
+    setLoading(true);
+    await onSubmit({
       ...procedure,
       completedDate: procedure.completedDate ? null : new Date(),
     });
+    setLoading(false);
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -51,7 +56,9 @@ function StatusColumn({ procedure, onSubmit }) {
     );
   };
 
-  return (
+  return loading ? (
+    <LoadingIcon />
+  ) : (
     <Dropdown
       value={status}
       options={statusItems}

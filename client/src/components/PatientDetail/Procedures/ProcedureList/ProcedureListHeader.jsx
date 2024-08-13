@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
+import { useLoading } from "context/LoadingProvider";
 import VisitTitle from "./VisitTitle";
 import VisitDiscount from "./VisitDiscount";
 import VisitPrice from "./VisitPrice";
@@ -16,6 +17,8 @@ function ProcedureListHeader({
   onUpdated,
   setSelectedProcedures,
 }) {
+  const { startLoading, stopLoading } = useLoading();
+
   const price = useRef(total);
   const [visit, setVisit] = useState({
     ...initVisit,
@@ -34,6 +37,7 @@ function ProcedureListHeader({
   // Save the visit
   const updateVisit = async (visit) => {
     try {
+      startLoading("save");
       await VisitService.updateVisit({
         ...visit,
         patient: patient,
@@ -41,21 +45,23 @@ function ProcedureListHeader({
 
       // Set the updated visit
       setVisit(visit);
-      onUpdated(patient.id);
+      await onUpdated(patient.id);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("save");
     }
   };
 
   // HANDLERS -----------------------------------------------------------------
   // onTitleSubmit handler
-  const handleTitleSubmit = (value) => {
-    updateVisit({ ...visit, title: value });
+  const handleTitleSubmit = async (value) => {
+    await updateVisit({ ...visit, title: value });
   };
 
   // onDiscountSubmit handler
-  const handleDiscountSubmit = (value) => {
-    updateVisit({
+  const handleDiscountSubmit = async (value) => {
+    await updateVisit({
       ...visit,
       discount: value,
       price: price.current * ((100 - value) / 100),
@@ -63,7 +69,7 @@ function ProcedureListHeader({
   };
 
   // onPriceSubmit handler
-  const handlePriceSubmit = (value) => {
+  const handlePriceSubmit = async (value) => {
     // Calculate the discount
     let discount = 0;
     if (value > price.current || price.current === 0) {
@@ -73,7 +79,7 @@ function ProcedureListHeader({
       discount = (1 - value / price.current) * 100;
     }
 
-    updateVisit({
+    await updateVisit({
       ...visit,
       discount: discount,
       price: value,
@@ -81,9 +87,9 @@ function ProcedureListHeader({
   };
 
   // onStatusSubmit handler
-  const handleStatusSubmit = (value) => {
+  const handleStatusSubmit = async (value) => {
     setSelectedProcedures(null);
-    updateVisit({
+    await updateVisit({
       ...visit,
       approvedDate: value,
     });

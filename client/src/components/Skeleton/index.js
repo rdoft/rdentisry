@@ -3,6 +3,8 @@ import SkeletonCategory from "./SkeletonCategory";
 import SkeletonCard from "./SkeletonCard";
 import SkeletonStatistic from "./SkeletonStatistic";
 import SkeletonTimeline from "./SkeletonTimeline";
+import SkeletonList from "./SkeletonList";
+import SkeletonDentalChart from "./SkeletonDentalChart";
 
 export {
   SkeletonDataTable,
@@ -10,4 +12,6 @@ export {
   SkeletonCard,
   SkeletonStatistic,
   SkeletonTimeline,
+  SkeletonList,
+  SkeletonDentalChart,
 };

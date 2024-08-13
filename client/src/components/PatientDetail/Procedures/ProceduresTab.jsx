@@ -5,13 +5,15 @@ import ReactToPrint from "react-to-print";
 import { ProcedureDialog } from "components/Dialog";
 import { NewItem, SplitItem, Print } from "components/Button";
 import { AppointmentDialog } from "components/Dialog";
+import { useLoading } from "context/LoadingProvider";
 import ProcedureToolbar from "./ProcedureToolbar";
 import DentalChart from "./DentalChart";
 import ProcedureList from "./ProcedureList/ProcedureList";
 
 // assets
 import "assets/styles/PatientDetail/ProceduresTab.css";
-import { ListIcon, TeethIcon } from "assets/images/icons";
+import teethSvg from "assets/svg/tab/teeth.svg";
+import listSvg from "assets/svg/tab/list.svg";
 
 // services
 import {
@@ -31,6 +33,7 @@ function ProceduresTab({
   counts,
   setCounts,
 }) {
+  const { startLoading, stopLoading } = useLoading();
   const dt = useRef(null);
 
   const [tabIndex, setTabIndex] = useState(
@@ -73,29 +76,32 @@ function ProceduresTab({
     const controller = new AbortController();
     const signal = controller.signal;
 
-    PatientProcedureService.getPatientProcedures(
-      { patientId: patient.id },
-      { signal }
-    )
-      .then((res) => {
-        setProcedures(res.data);
-      })
-      .catch((error) => {
-        error.message && toast.error(error.message);
-      });
+    // Set data on loading
+    const fetchAll = async () => {
+      startLoading("ProcedureList");
+      try {
+        const _procedures = await PatientProcedureService.getPatientProcedures(
+          { patientId: patient.id },
+          { signal }
+        );
+        setProcedures(_procedures.data);
 
-    VisitService.getVisits(patient.id, null, { signal })
-      .then((res) => {
-        setVisits(res.data);
-      })
-      .catch((error) => {
+        const _visits = await VisitService.getVisits(patient.id, null, {
+          signal,
+        });
+        setVisits(_visits.data);
+      } catch (error) {
         error.message && toast.error(error.message);
-      });
+      } finally {
+        stopLoading("ProcedureList");
+      }
+    };
+    fetchAll();
 
     return () => {
       controller.abort();
     };
-  }, [patient]);
+  }, [patient, startLoading, stopLoading]);
 
   // Filter procedures based on selectedTeeth
   const filteredProcedures = procedures.filter(
@@ -133,6 +139,7 @@ function ProceduresTab({
   // Save the procedure (update or create)
   const saveProcedures = async (procedures) => {
     try {
+      startLoading("save");
       // Separate procedures based on whether visit is null or not
       const withVisit = procedures.filter(
         (procedure) => procedure.visit !== null
@@ -160,10 +167,12 @@ function ProceduresTab({
       }
 
       // Get and set the updated list of procedures
-      getProcedures(patient.id);
-      getVisits(patient.id);
+      await getProcedures(patient.id);
+      await getVisits(patient.id);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("save");
     }
   };
 
@@ -172,6 +181,7 @@ function ProceduresTab({
     let _selectedProcedures;
 
     try {
+      startLoading("delete");
       if (Array.isArray(procedure)) {
         for (let p of procedure) {
           await PatientProcedureService.deletePatientProcedure(
@@ -195,10 +205,12 @@ function ProceduresTab({
       }
 
       setSelectedProcedures(_selectedProcedures);
-      getProcedures(patient.id);
-      getVisits(patient.id);
+      await getProcedures(patient.id);
+      await getVisits(patient.id);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("delete");
     }
   };
 
@@ -223,6 +235,7 @@ function ProceduresTab({
     let response;
 
     try {
+      startLoading("save");
       // Save the appointment
       await AppointmentService.saveAppointment(appointment);
       hideAppointmentDialog();
@@ -240,6 +253,8 @@ function ProceduresTab({
       });
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("save");
     }
   };
 
@@ -262,9 +277,9 @@ function ProceduresTab({
   };
 
   // onUpdated handler
-  const handleUpdated = (patientId) => {
-    getProcedures(patientId);
-    getVisits(patientId);
+  const handleUpdated = async (patientId) => {
+    await getProcedures(patientId);
+    await getVisits(patientId);
   };
 
   // onChange handler for the tabs
@@ -384,6 +399,12 @@ function ProceduresTab({
                     trigger={() => <Print label="Yazdır" />}
                     content={() => dt.current}
                     pageStyle="@page { size: landscape, A4; margin: 0.4cm 0.8cm; }"
+                    onBeforeGetContent={() => {
+                      startLoading("print");
+                    }}
+                    onAfterPrint={() => {
+                      stopLoading("print");
+                    }}
                   />
                 )}
               </Grid>
@@ -455,8 +476,8 @@ function ProceduresTab({
             centered
             orientation="vertical"
           >
-            <Tab value={0} icon={<Avatar src={TeethIcon} />} disableRipple />
-            <Tab value={1} icon={<Avatar src={ListIcon} />} disableRipple />
+            <Tab value={0} icon={<Avatar src={teethSvg} />} disableRipple />
+            <Tab value={1} icon={<Avatar src={listSvg} />} disableRipple />
           </Tabs>
         </Grid>
       </Grid>

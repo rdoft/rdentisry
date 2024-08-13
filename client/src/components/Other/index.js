@@ -1,4 +1,5 @@
 import Loading from "./Loading";
 import NotFound from "./NotFound";
+import LoadingIcon from "./LoadingIcon";
 
-export { Loading, NotFound };
+export { Loading, LoadingIcon, NotFound };

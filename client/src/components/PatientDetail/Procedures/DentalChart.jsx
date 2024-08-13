@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Badge, Divider, Skeleton } from "primereact";
+import { Badge, Divider } from "primereact";
 import { Grid, ImageList } from "@mui/material";
 import { PressKeyText } from "components/Text";
 import { SwitchTeeth } from "components/Button";
+import { SkeletonDentalChart } from "components/Skeleton";
+import { cacheImages } from "utils";
 import StatusBadge from "./StatusBadge";
 
 // assets
@@ -20,21 +22,18 @@ function DentalChart({
 
   // Load image on mount
   useEffect(() => {
-    const loadImage = (src) => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-
-        img.src = src;
-        img.onload = resolve();
-        img.onerror = reject();
-      });
+    setLoading(true);
+    const loadImages = async () => {
+      await cacheImages([
+        ...upTeeth.map((img) => img.src),
+        ...downTeeth.map((img) => img.src),
+        ...childUpTeeth.map((img) => img.src),
+        ...childDownTeeth.map((img) => img.src),
+      ]);
+      setLoading(false);
     };
 
-    Promise.all(upTeeth.map((img) => loadImage(img.src)))
-      .then(() => Promise.all(downTeeth.map((img) => loadImage(img.src))))
-      .then(() => Promise.all(childUpTeeth.map((img) => loadImage(img.src))))
-      .then(() => Promise.all(childDownTeeth.map((img) => loadImage(img.src))))
-      .then(() => setLoading(false));
+    loadImages();
   }, []);
 
   // Get the appropriate teeth based on the state
@@ -66,16 +65,13 @@ function DentalChart({
   // TEMPLATES ----------------------------------------------------------------
   // Tooth item template
   const toothItem = (tooth) => (
-    <>
-      {loading && <Skeleton width="65%" height="8vw"></Skeleton>}
-      <img
-        visiblity={loading ? "hidden" : "visible"}
-        srcSet={tooth.src}
-        src={tooth.src}
-        alt={tooth.number}
-        style={{ width: "65%", minWidth: 45 }}
-      />
-    </>
+    <img
+      visiblity={loading ? "hidden" : "visible"}
+      srcSet={tooth.src}
+      src={tooth.src}
+      alt={tooth.number}
+      style={{ width: "65%", minWidth: 45 }}
+    />
   );
 
   // Number item template
@@ -93,7 +89,9 @@ function DentalChart({
     ></Badge>
   );
 
-  return (
+  return loading ? (
+    <SkeletonDentalChart adult={adult} />
+  ) : (
     <Grid container justifyContent="center">
       <Grid item xs={12} textAlign="center">
         {/* Information note */}

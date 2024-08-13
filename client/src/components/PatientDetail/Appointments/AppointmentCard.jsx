@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Divider } from "primereact";
 import { Grid, Typography, Box, Avatar } from "@mui/material";
 import { Edit } from "components/Button";
+import { LoadingIcon } from "components/Other";
 import AppointmentStatus from "./AppointmentStatus";
 
 // assets
@@ -114,10 +115,7 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
         {/* Status */}
         <Grid item xl={2} xs={3} textAlign="center">
           {loading ? (
-            <i
-              className="pi pi-spin pi-spinner"
-              style={{ textAlign: "center" }}
-            />
+            <LoadingIcon />
           ) : (
             <AppointmentStatus
               initStatus={appointment.status}

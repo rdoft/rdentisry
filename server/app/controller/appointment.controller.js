@@ -70,6 +70,10 @@ exports.getAppointments = async (req, res) => {
       ],
       raw: true,
       nest: true,
+      order: [
+        ["Date", "ASC"],
+        ["StartTime", "ASC"],
+      ],
     });
 
     let appointments_ = [];

@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Grid, Typography, Tooltip, ClickAwayListener } from "@mui/material";
 import { InputNumber } from "primereact";
 import { Cancel } from "components/Button";
+import { LoadingIcon } from "components/Other";
 
 // assets
 import { useTheme } from "@mui/material/styles";
@@ -12,6 +13,7 @@ function PriceColumn({ procedure, onSubmit }) {
   const prevPrice = useRef(procedure.price);
   const [isEdit, setIsEdit] = useState(false);
   const [price, setPrice] = useState(procedure.price);
+  const [loading, setLoading] = useState(false);
 
   // HANDLERS -----------------------------------------------------------------
   // onEdit handler
@@ -26,13 +28,15 @@ function PriceColumn({ procedure, onSubmit }) {
   };
 
   // onSave handler, to save changes
-  const handleSave = () => {
+  const handleSave = async () => {
     prevPrice.current = price;
     setIsEdit(false);
-    onSubmit({
+    setLoading(true);
+    await onSubmit({
       ...procedure,
       price: price,
     });
+    setLoading(false);
   };
 
   // onCancel handler, discard changes to amount
@@ -92,30 +96,37 @@ function PriceColumn({ procedure, onSubmit }) {
       placement="bottom-start"
       enterDelay={500}
     >
-      <Grid
-        container
-        item
-        onClick={!procedure.visit.approvedDate ? handleEdit : undefined}
-        xs={10}
-        py={0.5}
-        pl={1}
-        m={-1}
-        sx={{
-          borderRadius: "8px",
-          "&:hover": {
-            backgroundColor: procedure.visit.approvedDate
-              ? "inherit"
-              : theme.palette.background.primary,
-          },
-        }}
-      >
-        <Typography variant="h6">₺</Typography>
-        <Typography variant="h5">
-          {price.toLocaleString("tr-TR", {
-            style: "decimal",
-            maximumFractionDigits: 2,
-          })}
-        </Typography>
+      <Grid container alignItems="center" justifyContent="space-between">
+        <Grid
+          container
+          item
+          onClick={!procedure.visit.approvedDate ? handleEdit : undefined}
+          xs={10}
+          py={0.5}
+          pl={1}
+          m={-1}
+          sx={{
+            borderRadius: "8px",
+            "&:hover": {
+              backgroundColor: procedure.visit.approvedDate
+                ? "inherit"
+                : theme.palette.background.primary,
+            },
+          }}
+        >
+          <Typography variant="h6">₺</Typography>
+          <Typography variant="h5">
+            {price.toLocaleString("tr-TR", {
+              style: "decimal",
+              maximumFractionDigits: 2,
+            })}
+          </Typography>
+        </Grid>
+        {loading && (
+          <Grid item xs={2}>
+            <LoadingIcon />
+          </Grid>
+        )}
       </Grid>
     </Tooltip>
   );

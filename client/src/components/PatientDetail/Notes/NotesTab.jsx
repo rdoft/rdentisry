@@ -6,6 +6,7 @@ import { NewItem } from "components/Button";
 import { NotFoundText } from "components/Text";
 import { useLoading } from "context/LoadingProvider";
 import { SkeletonCard } from "components/Skeleton";
+import { LoadingIcon } from "components/Other";
 import NoteCard from "./NoteCard";
 import Note from "./Note";
 
@@ -164,11 +165,7 @@ function NotesTab({
             ></DataScroller>
           )}
 
-          {loading.save && (
-            <Grid item xs={12} style={{ textAlign: "center" }}>
-              <i className="pi pi-spin pi-spinner" />
-            </Grid>
-          )}
+          {loading.save && <LoadingIcon />}
 
           {/* Add note */}
           <NewItem label="Not Ekle" onClick={showDialog} />

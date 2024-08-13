@@ -149,7 +149,7 @@ function ProcedureDialog({
   };
 
   // onSubmit handler
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     let patientProcedures = [];
     for (let i = 0; i < quantity; i++) {
       for (let tooth of selectedTeeth) {
@@ -161,7 +161,7 @@ function ProcedureDialog({
       }
     }
 
-    onSubmit(patientProcedures);
+    await onSubmit(patientProcedures);
     // Close the dialog unless isAnother selected
     !isAnother && onHide();
   };

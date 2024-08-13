@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dropdown, Tag } from "primereact";
 import { Tooltip } from "@mui/material";
+import { LoadingIcon } from "components/Other";
 
 // assets
 import { useTheme } from "@mui/material/styles";
@@ -8,6 +9,8 @@ import "assets/styles/PatientDetail/VisitStatus.css";
 
 function VisitStatus({ visit, onSubmit }) {
   const theme = useTheme();
+
+  const [loading, setLoading] = useState(false);
 
   // Status items
   const statusItems = [
@@ -30,8 +33,10 @@ function VisitStatus({ visit, onSubmit }) {
 
   // HANDLERS -----------------------------------------------------------------
   // onChangeStatus handler
-  const handleChange = () => {
-    onSubmit(visit.approvedDate ? null : new Date());
+  const handleChange = async () => {
+    setLoading(true);
+    await onSubmit(visit.approvedDate ? null : new Date());
+    setLoading(false);
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -109,7 +114,15 @@ function VisitStatus({ visit, onSubmit }) {
     );
   };
 
-  return (
+  return loading ? (
+    <LoadingIcon
+      style={{
+        padding: "0.35rem",
+        marginTop: "0.8rem",
+        justifyContent: "start",
+      }}
+    />
+  ) : (
     <Dropdown
       value={status}
       options={statusItems}

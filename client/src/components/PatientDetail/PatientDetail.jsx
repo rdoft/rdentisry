@@ -4,6 +4,8 @@ import { toast } from "react-hot-toast";
 import { getTabCounts } from "utils";
 import { TabView, TabPanel } from "primereact";
 import { Grid } from "@mui/material";
+import { useLoading } from "context/LoadingProvider";
+import { Loader } from "components/Loadable";
 import NotesTab from "./Notes/NotesTab";
 import PaymentsTab from "./Payments/PaymentsTab";
 import ProceduresTab from "./Procedures/ProceduresTab";
@@ -19,6 +21,8 @@ import "assets/styles/PatientDetail/PatientDetail.css";
 import { PatientService } from "services";
 
 function PatientDetail() {
+  const { loading } = useLoading();
+
   // Get patient id
   const { id } = useParams();
   // Set the default values
@@ -137,6 +141,9 @@ function PatientDetail() {
   return (
     patient && (
       <Grid container item rowSpacing={4.5} columnSpacing={2.75}>
+        {/* Loading */}
+        {Object.values(loading).some((value) => value === true) && <Loader />}
+
         <Grid item xs={12}>
           {/* Toolbar */}
           <PatientDetailToolbar

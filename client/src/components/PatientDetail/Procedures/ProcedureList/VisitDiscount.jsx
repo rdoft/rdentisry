@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Grid, Typography, Tooltip, ClickAwayListener } from "@mui/material";
 import { InputNumber } from "primereact";
 import { Cancel } from "components/Button";
+import { LoadingIcon } from "components/Other";
 
 // assets
 import { useTheme } from "@mui/material/styles";
@@ -12,6 +13,7 @@ function VisitDiscount({ visit, onSubmit }) {
   const prevDiscount = useRef(visit.discount);
   const [discount, setDiscount] = useState(visit.discount);
   const [isEdit, setIsEdit] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Update component state when visit prop changes
   useEffect(() => {
@@ -33,10 +35,12 @@ function VisitDiscount({ visit, onSubmit }) {
   };
 
   // onSave handler, to save changes
-  const handleSave = () => {
+  const handleSave = async () => {
     prevDiscount.current = discount;
     setIsEdit(false);
-    onSubmit(discount);
+    setLoading(true);
+    await onSubmit(discount);
+    setLoading(false);
   };
 
   // onCancel handler, discard changes to amount
@@ -96,45 +100,52 @@ function VisitDiscount({ visit, onSubmit }) {
       placement="bottom-start"
       enterDelay={500}
     >
-      <Grid
-        container
-        item
-        onClick={!visit.approvedDate ? handleEdit : undefined}
-        justifyContent="end"
-        alignItems="center"
-        xs={10}
-        p={1}
-        m={-1}
-        sx={{
-          cursor: visit.approvedDate ? "default" : "pointer",
-          color: visit.approvedDate ? theme.palette.text.success : "inherit",
-          borderRadius: "8px",
-          "&:hover": {
-            backgroundColor: visit.approvedDate
-              ? "inherit"
-              : theme.palette.background.primary,
-          },
-        }}
-      >
-        {visit.approvedDate && (
-          <i
-            className="pi pi-check-circle"
-            style={{
-              color: theme.palette.text.success,
-              marginRight: "5px",
-              fontSize: "0.7rem",
-            }}
-          ></i>
+      <Grid container alignItems="center" mb={1}>
+        <Grid
+          container
+          item
+          onClick={!visit.approvedDate ? handleEdit : undefined}
+          justifyContent="end"
+          alignItems="center"
+          xs={10}
+          p={1}
+          m={-1}
+          sx={{
+            cursor: visit.approvedDate ? "default" : "pointer",
+            color: visit.approvedDate ? theme.palette.text.success : "inherit",
+            borderRadius: "8px",
+            "&:hover": {
+              backgroundColor: visit.approvedDate
+                ? "inherit"
+                : theme.palette.background.primary,
+            },
+          }}
+        >
+          {visit.approvedDate && (
+            <i
+              className="pi pi-check-circle"
+              style={{
+                color: theme.palette.text.success,
+                marginRight: "5px",
+                fontSize: "0.7rem",
+              }}
+            ></i>
+          )}
+          <Typography variant="caption">
+            İndirim: %{" "}
+            {discount
+              ? discount.toLocaleString("tr-TR", {
+                  style: "decimal",
+                  maximumFractionDigits: 2,
+                })
+              : 0}
+          </Typography>
+        </Grid>
+        {loading && (
+          <Grid item xs={2}>
+            <LoadingIcon />
+          </Grid>
         )}
-        <Typography variant="caption">
-          İndirim: %{" "}
-          {discount
-            ? discount.toLocaleString("tr-TR", {
-                style: "decimal",
-                maximumFractionDigits: 2,
-              })
-            : 0}
-        </Typography>
       </Grid>
     </Tooltip>
   );

@@ -1,14 +1,12 @@
 import React from "react";
 import { Button } from "primereact";
 import { Tooltip } from "@mui/material";
-import { useLoading } from "context/LoadingProvider";
 
 // assets
 import { useTheme } from "@mui/material/styles";
 
 function Reduce({ isReduce, onClick }) {
   const theme = useTheme();
-  const { loading } = useLoading();
 
   return (
     <Tooltip
@@ -24,11 +22,10 @@ function Reduce({ isReduce, onClick }) {
         icon={isReduce ? "pi pi-check" : "pi pi-circle-fill"}
         rounded
         outlined
-        loading={loading.save}
         onClick={onClick}
         className="flex align-items-center justify-content-center border-circle z-1"
         style={{
-          color: theme.palette.text.primary,
+          color: theme.palette.text.secondary,
           width: "1.6rem",
           height: "1.6rem",
         }}
