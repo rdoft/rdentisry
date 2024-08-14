@@ -1,17 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dropdown, Divider, Button } from "primereact";
+import { useLoading } from "context/LoadingProvider";
+import { SkeletonDropdown } from "components/Skeleton";
 import DropdownProcedureItem from "./DropdownItem/DropdownProcedureItem";
 
 // assets
 import "assets/styles/Other/Dropdown.css";
 
 function DropdownProcedure({ value, options, onChange, onClickOptions }) {
+  const { loading } = useLoading();
+
+  const [procedure, setProcedure] = useState(value);
+
   // HANDLERS ------------------------------------------------------------------
   // onKeyDown handler
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       event.stopPropagation();
     }
+  };
+
+  // onChange handler
+  const handleChange = (event) => {
+    const { value } = event.target;
+    setProcedure(value);
+    onChange(event);
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -22,7 +35,11 @@ function DropdownProcedure({ value, options, onChange, onClickOptions }) {
 
   // Dropdown value template
   const procedureDropdownValue = (option) => {
-    return <DropdownProcedureItem option={option} isValue={true} />;
+    return loading.procedures ? (
+      <SkeletonDropdown />
+    ) : (
+      <DropdownProcedureItem option={option} isValue={true} />
+    );
   };
 
   // Dropdown panel footer
@@ -45,7 +62,7 @@ function DropdownProcedure({ value, options, onChange, onClickOptions }) {
 
   return (
     <Dropdown
-      value={value}
+      value={procedure}
       name="procedure"
       options={options}
       optionLabel="name"
@@ -53,7 +70,7 @@ function DropdownProcedure({ value, options, onChange, onClickOptions }) {
       itemTemplate={procedureDropdownItem}
       panelFooterTemplate={procedureDropdownFooter}
       onKeyDown={handleKeyDown}
-      onChange={onChange}
+      onChange={handleChange}
       scrollHeight="300px"
       filter
       filterBy="name,code,procedureCategory.title"

@@ -87,13 +87,15 @@ function ProcedureDialog({
       })
       .finally(() => stopLoading("patients"));
 
+    startLoading("procedures");
     ProcedureService.getProcedures(null, { signal })
       .then((res) => {
         setProcedures(res.data);
       })
       .catch((error) => {
         error.message && toast.error(error.message);
-      });
+      })
+      .finally(() => stopLoading("procedures"));
 
     return () => {
       controller.abort();
@@ -200,6 +202,7 @@ function ProcedureDialog({
       {/* Dropdown Procedures */}
       <div className="field mb-4">
         <DropdownProcedure
+          key={patientProcedure.procedure?.id}
           value={patientProcedure.procedure}
           options={procedures}
           onChange={handleChange}

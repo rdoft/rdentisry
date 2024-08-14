@@ -12,7 +12,7 @@ const SkeletonDropdown = () => {
         ></Skeleton>
       </Grid>
       <Grid item pl={2}>
-        <Skeleton width="4rem" />
+        <Skeleton width="6rem" />
       </Grid>
     </Grid>
   );

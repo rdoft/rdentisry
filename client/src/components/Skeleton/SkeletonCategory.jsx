@@ -13,7 +13,7 @@ const SkeletonCategory = ({ isLabel }) => {
       </Grid>
     </Grid>
   ) : (
-    <Skeleton shape="circle" size="2rem" className="m-1 pr-2"></Skeleton>
+    <Skeleton shape="circle" size="2rem" className="mr-3 my-1 p-1"></Skeleton>
   );
 };
 
