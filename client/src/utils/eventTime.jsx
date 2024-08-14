@@ -37,11 +37,11 @@ function getEventTime({ start, end }) {
  * @returns start, end, and other properties
  */
 function setEventTime({ date, startTime, endTime, ...event }) {
-  const year = date.slice(0, 4);
-  const month = date.slice(5, 7);
-  const day = date.slice(8, 10);
-  const start = new Date(startTime);
-  const end = new Date(endTime);
+  const year = date instanceof Date ? date.getFullYear() : date.slice(0, 4);
+  const month = date instanceof Date ? date.getMonth() + 1 : date.slice(5, 7);
+  const day = date instanceof Date ? date.getDate() : date.slice(8, 10);
+  const start = startTime instanceof Date ? startTime : new Date(startTime);
+  const end = endTime instanceof Date ? endTime : new Date(endTime);
 
   start.setFullYear(year);
   start.setMonth(month - 1);

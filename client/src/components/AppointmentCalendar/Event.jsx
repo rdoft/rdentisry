@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { activeItem } from "store/reducers/menu";
 import { Grid, Typography, Box, Avatar, Tooltip } from "@mui/material";
 import { Goto } from "components/Button";
+import { LoadingIcon } from "components/Other";
 
 // assets
 import { doctorAvatar, patientAvatar } from "assets/images/avatars";
@@ -18,9 +19,13 @@ function Event({ event, step }) {
   const [isHover, setIsHover] = useState(false);
   const [isHoverName, setIsHoverName] = useState(false);
 
-  const { description, start, end } = event;
-  const { id, name: pname, surname: psurname } = event.patient;
+  const { description, start, end, temp } = event;
   const { name: dname = "", surname: dsurname = "" } = event.doctor || {};
+  const {
+    id = null,
+    name: pname = "",
+    surname: psurname = "",
+  } = event.patient || {};
 
   const startHours = start.toLocaleTimeString("tr-TR", {
     hour: "2-digit",
@@ -59,11 +64,13 @@ function Event({ event, step }) {
   const handleClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    navigate(`/patients/${id}`);
+    id && navigate(`/patients/${id}`);
     dispatch(activeItem({ openItem: ["patients"] }));
   };
 
-  return (
+  return temp ? (
+    <LoadingIcon style={{ height: "100%", alignItems: "center" }} />
+  ) : (
     <Tooltip
       title={isHoverName ? "Hastaya git" : "Görüntüle / Düzenle"}
       placement="bottom"

@@ -4,6 +4,8 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { getEventTime, setEventTime } from "utils";
 import { AppointmentDialog } from "components/Dialog";
+import { useLoading } from "context/LoadingProvider";
+import { Loader } from "components/Loadable";
 import moment from "moment";
 import Event from "./Event";
 import MonthEvent from "./MonthEvent";
@@ -29,6 +31,7 @@ const today = new Date();
 
 const AppointmentCalendar = () => {
   const theme = useTheme();
+  const { loading, startLoading, stopLoading } = useLoading();
 
   const step = useRef(30);
   const timeslots = useRef(2);
@@ -50,18 +53,20 @@ const AppointmentCalendar = () => {
     const controller = new AbortController();
     const signal = controller.signal;
 
+    startLoading("AppointmentCalendar");
     AppointmentService.getAppointments({}, { signal })
       .then((res) => {
         setAppointments(res.data);
       })
       .catch((error) => {
         error.message && toast.error(error.message);
-      });
+      })
+      .finally(() => stopLoading("AppointmentCalendar"));
 
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [startLoading, stopLoading]);
 
   // And filter only active appointments if "show all" not selected
   // And filter by doctor if doctor selected
@@ -89,32 +94,37 @@ const AppointmentCalendar = () => {
   // Save appointment (create/update)
   const saveAppointment = async (appointment) => {
     try {
+      startLoading("save");
       if (appointment.id) {
         await AppointmentService.updateAppointment(appointment.id, appointment);
       } else {
         await AppointmentService.saveAppointment(appointment);
       }
-
-      // Get and set the updated list of appointments
-      getAppointments();
-      setAppointmentDialog(false);
-      setAppointment(null);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      // Get and set the list of appointments
+      await getAppointments();
+      setAppointmentDialog(false);
+      setAppointment(null);
+      stopLoading("save");
     }
   };
 
   //  Delete appointment
   const deleteAppointment = async (appointment) => {
     try {
+      startLoading("delete");
       await AppointmentService.deleteAppointment(appointment.id);
 
       // Get and set the updated list of appointments
-      getAppointments();
+      await getAppointments();
       setAppointmentDialog(false);
       setAppointment(null);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("delete");
     }
   };
 
@@ -161,7 +171,20 @@ const AppointmentCalendar = () => {
   // onEventResize handler for update appointment
   const handleResizeEvent = async ({ event, start, end }) => {
     // Set start-end time and duration
-    const { startTime, endTime, duration } = getEventTime({ start, end });
+    const { date, startTime, endTime, duration } = getEventTime({ start, end });
+    // Add temp event to appointments
+    setAppointments((prev) => [
+      ...prev.map((appointment) =>
+        appointment.id === event.id
+          ? {
+              temp: true,
+              date: date,
+              startTime: startTime,
+              endTime: endTime,
+            }
+          : appointment
+      ),
+    ]);
     saveAppointment({
       ...event,
       startTime,
@@ -174,6 +197,20 @@ const AppointmentCalendar = () => {
   const handleDropEvent = async ({ event, start, end }) => {
     // Set date, start-end time and duration
     const { date, startTime, endTime, duration } = getEventTime({ start, end });
+    // Add temp event to appointments
+    setAppointments((prev) => [
+      ...prev.map((appointment) =>
+        appointment.id === event.id
+          ? {
+              temp: true,
+              date: date,
+              startTime: startTime,
+              endTime: endTime,
+            }
+          : appointment
+      ),
+    ]);
+    // Save appointment
     saveAppointment({
       ...event,
       date,
@@ -260,6 +297,9 @@ const AppointmentCalendar = () => {
 
   return (
     <>
+      {/* Loading */}
+      {Object.values(loading).some((value) => value === true) && <Loader />}
+
       <CalendarToolbar
         showAll={showAll}
         doctor={doctor}
