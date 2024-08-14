@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dropdown, Divider } from "primereact";
 import { Add } from "components/Button";
+import { useLoading } from "context/LoadingProvider";
+import { SkeletonDropdown } from "components/Skeleton";
 import DropdownDoctorItem from "./DropdownItem/DropdownDoctorItem";
 
 // assets
@@ -14,17 +16,21 @@ function DropdownDoctor({
   onClickDelete,
   ...props
 }) {
-  const _options = options?.map((option) => {
+  const { loading } = useLoading();
+
+  const [doctor, setDoctor] = useState(
+    value && {
+      ...value,
+      fullName: `${value.name} ${value.surname}`,
+    }
+  );
+
+  const doctors = options?.map((option) => {
     return {
       ...option,
       fullName: `${option.name} ${option.surname}`,
     };
   });
-
-  const _value = value && {
-    ...value,
-    fullName: `${value.name} ${value.surname}`,
-  };
 
   // HANDLERS ------------------------------------------------------------------
   // onKeyDown handler
@@ -32,6 +38,13 @@ function DropdownDoctor({
     if (event.key === "Enter") {
       event.stopPropagation();
     }
+  };
+
+  // onChange handler
+  const handleChange = (event) => {
+    const { value } = event.target;
+    setDoctor(value);
+    onChange(event);
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -42,7 +55,11 @@ function DropdownDoctor({
 
   // Dropdown value template
   const doctorDropdownValue = (option) => {
-    return <DropdownDoctorItem option={option} />;
+    return loading.doctors ? (
+      <SkeletonDropdown />
+    ) : (
+      <DropdownDoctorItem option={option} />
+    );
   };
 
   // Dropdown panel footer
@@ -57,15 +74,15 @@ function DropdownDoctor({
 
   return (
     <Dropdown
-      value={_value}
+      value={doctor}
       name="doctor"
-      options={_options}
+      options={doctors}
       optionLabel="name"
       valueTemplate={doctorDropdownValue}
       itemTemplate={doctorDropdownItem}
       panelFooterTemplate={doctorDropdownFooter}
       onKeyDown={handleKeyDown}
-      onChange={onChange}
+      onChange={handleChange}
       className={props?.className}
       style={props?.style}
       filter

@@ -5,7 +5,7 @@ import { DialogFooter } from "components/DialogFooter";
 import { Delete } from "components/Button";
 
 // assets
-import { doctorAvatar } from "assets/images/avatars";
+import { doctorAvatar } from "assets/svg/avatars";
 
 function DropdownDoctorItem({ option, onDelete }) {
   const [isHover, setIsHover] = useState(false);
@@ -29,8 +29,9 @@ function DropdownDoctorItem({ option, onDelete }) {
   };
 
   // onConfirmDelete handler
-  const handleDeleteConfirm = () => {
-    onDelete(option);
+  const handleDeleteConfirm = async (event) => {
+    event.stopPropagation();
+    await onDelete(option);
     setIsDelete(false);
   };
 

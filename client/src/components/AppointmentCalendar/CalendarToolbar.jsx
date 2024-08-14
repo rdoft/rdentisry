@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-
 import { Typography } from "@mui/material";
 import { Toolbar, InputSwitch } from "primereact";
 import { DropdownDoctor } from "components/Dropdown";
 import { DoctorDialog } from "components/Dialog";
 import { Add } from "components/Button";
+import { useLoading } from "context/LoadingProvider";
 
 // services
 import { DoctorService } from "services";
@@ -22,6 +22,8 @@ function CalendarToolbar({
   setShowAll,
   onClickAddAppointment,
 }) {
+  const { startLoading, stopLoading } = useLoading();
+
   // Set the default values
   const [doctorDialog, setDoctorDialog] = useState(false);
 
@@ -30,16 +32,18 @@ function CalendarToolbar({
     const controller = new AbortController();
     const signal = controller.signal;
 
+    startLoading("doctors");
     DoctorService.getDoctors({ signal })
       .then((res) => {
         setDoctors(res.data);
       })
-      .catch((error) => {});
+      .catch((error) => {})
+      .finally(() => stopLoading("doctors"));
 
     return () => {
       controller.abort();
     };
-  }, [setDoctors]);
+  }, [setDoctors, startLoading, stopLoading]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of doctors and set doctors value
@@ -63,16 +67,19 @@ function CalendarToolbar({
     let response;
 
     try {
+      startLoading("save");
       response = await DoctorService.saveDoctor(doctor);
       doctor = response.data;
 
       // Get and set the updated list of doctors
-      getDoctors();
+      await getDoctors();
       setDoctorDialog(false);
       setDoctor(doctor);
       localStorage.setItem("doctor", JSON.stringify(doctor));
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("save");
     }
   };
 
@@ -81,15 +88,18 @@ function CalendarToolbar({
     let response;
 
     try {
+      startLoading("delete");
       response = await DoctorService.deleteDoctor(doctor.id);
       doctor = response.data;
 
       // Get and set the updated list of doctors
-      getDoctors();
+      await getDoctors();
       setDoctor(null);
       localStorage.removeItem("doctor");
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("delete");
     }
   };
 
@@ -123,6 +133,7 @@ function CalendarToolbar({
   // Get doctor dropdown
   const centerContent = () => (
     <DropdownDoctor
+      key={doctor?.id}
       value={doctor}
       options={doctors}
       onChange={handleChangeDropdown}

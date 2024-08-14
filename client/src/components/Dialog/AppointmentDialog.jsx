@@ -59,13 +59,15 @@ function AppointmentDialog({
       })
       .finally(() => stopLoading("patients"));
 
+    startLoading("doctors");
     DoctorService.getDoctors({ signal })
       .then((res) => {
         setDoctors(res.data);
       })
       .catch((error) => {
         error.message && toast.error(error.message);
-      });
+      })
+      .finally(() => stopLoading("doctors"));
 
     return () => {
       controller.abort();
@@ -110,15 +112,18 @@ function AppointmentDialog({
     let response;
 
     try {
+      startLoading("save");
       response = await DoctorService.saveDoctor(doctor);
       doctor = response.data;
 
       // Get and set the updated list of doctors
-      getDoctors();
+      await getDoctors();
       setDoctorDialog(false);
       setAppointment({ ...appointment, doctor });
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("save");
     }
   };
 
@@ -258,6 +263,7 @@ function AppointmentDialog({
         {/* Dropdown Doctors */}
         <div className="field mb-3">
           <DropdownDoctor
+            key={appointment.doctor?.id}
             value={appointment.doctor}
             options={doctors}
             onChange={handleChange}
