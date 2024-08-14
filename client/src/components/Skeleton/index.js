@@ -5,6 +5,7 @@ import SkeletonStatistic from "./SkeletonStatistic";
 import SkeletonTimeline from "./SkeletonTimeline";
 import SkeletonList from "./SkeletonList";
 import SkeletonDentalChart from "./SkeletonDentalChart";
+import SkeletonDropdown from "./SkeletonDropdown";
 
 export {
   SkeletonDataTable,
@@ -14,4 +15,5 @@ export {
   SkeletonTimeline,
   SkeletonList,
   SkeletonDentalChart,
+  SkeletonDropdown,
 };

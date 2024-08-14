@@ -21,7 +21,7 @@ import "assets/styles/PatientDetail/PatientDetail.css";
 import { PatientService } from "services";
 
 function PatientDetail() {
-  const { loading } = useLoading();
+  const { loading, startLoading, stopLoading } = useLoading();
 
   // Get patient id
   const { id } = useParams();
@@ -52,6 +52,7 @@ function PatientDetail() {
     const signal = controller.signal;
 
     const patientId = Number.isInteger(parseInt(id)) ? parseInt(id) : null;
+    startLoading("PatientDetail");
     PatientService.getPatient(patientId, { signal })
       .then(async (res) => {
         const _counts = await getTabCounts(res.data);
@@ -60,12 +61,13 @@ function PatientDetail() {
       })
       .catch((error) => {
         error.message && toast.error(error.message);
-      });
+      })
+      .finally(() => stopLoading("PatientDetail"));
 
     return () => {
       controller.abort();
     };
-  }, [id]);
+  }, [id, startLoading, stopLoading]);
 
   // HANDLERS -----------------------------------------------------------------
   // Show add appointment dialog

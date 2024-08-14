@@ -5,6 +5,7 @@ import { DropdownPatient } from "components/Dropdown";
 import { DialogTemp } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
 import { DatePicker } from "components/DateTime";
+import { useLoading } from "context/LoadingProvider";
 import PaymentType from "components/PatientDetail/Payments/PaymentType";
 
 import schema from "schemas/payment.schema";
@@ -13,6 +14,8 @@ import schema from "schemas/payment.schema";
 import { PatientService } from "services";
 
 function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
+  const { startLoading, stopLoading } = useLoading();
+
   const [patients, setPatients] = useState(null);
   const [payment, setPayment] = useState({
     patient: null,
@@ -36,18 +39,20 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
     const controller = new AbortController();
     const signal = controller.signal;
 
+    startLoading("patients");
     PatientService.getPatients(null, { signal })
       .then((res) => {
         setPatients(res.data);
       })
       .catch((error) => {
         error.message && toast.error(error.message);
-      });
+      })
+      .finally(() => stopLoading("patients"));
 
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [startLoading, stopLoading]);
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
@@ -140,6 +145,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
         {/* Dropdown Patients */}
         <div className="field mb-4">
           <DropdownPatient
+            key={payment.patient?.id}
             value={payment.patient}
             options={patients}
             name="patient"

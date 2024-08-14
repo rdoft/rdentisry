@@ -7,7 +7,7 @@ import {
   ConfirmDialog,
   confirmDialog,
 } from "primereact";
-
+import { useLoading } from "context/LoadingProvider";
 import { DatePicker, TimeRangePicker } from "components/DateTime";
 import { DropdownDoctor, DropdownPatient } from "components/Dropdown";
 import { DialogTemp, DoctorDialog, PatientDialog } from "components/Dialog";
@@ -25,6 +25,8 @@ function AppointmentDialog({
   onSubmit,
   onDelete,
 }) {
+  const { startLoading, stopLoading } = useLoading();
+
   // Set the default values
   const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
@@ -47,13 +49,15 @@ function AppointmentDialog({
     const controller = new AbortController();
     const signal = controller.signal;
 
+    startLoading("patients");
     PatientService.getPatients(null, { signal })
       .then((res) => {
         setPatients(res.data);
       })
       .catch((error) => {
         error.message && toast.error(error.message);
-      });
+      })
+      .finally(() => stopLoading("patients"));
 
     DoctorService.getDoctors({ signal })
       .then((res) => {
@@ -66,7 +70,7 @@ function AppointmentDialog({
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [startLoading, stopLoading]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of doctors and set doctors value
@@ -123,15 +127,18 @@ function AppointmentDialog({
     let response;
 
     try {
+      startLoading("save");
       response = await PatientService.savePatient(patient);
       patient = response.data;
 
       // Get and setthe updated list of patients
-      getPatients();
+      await getPatients();
       setPatientDialog(false);
       setAppointment({ ...appointment, patient });
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("save");
     }
   };
 
@@ -240,6 +247,7 @@ function AppointmentDialog({
         {/* Dropdown Patients */}
         <div className="field mb-3">
           <DropdownPatient
+            key={appointment.patient?.id}
             value={appointment.patient}
             options={patients}
             onChange={handleChange}

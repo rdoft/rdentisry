@@ -4,13 +4,17 @@ import { Divider, InputNumber } from "primereact";
 import { DropdownPatient } from "components/Dropdown";
 import { DialogTemp } from "components/Dialog";
 import { DatePicker } from "components/DateTime";
+import { useLoading } from "context/LoadingProvider";
 
+// schemas
 import schema from "schemas/payment.schema";
 
 // services
 import { PatientService } from "services";
 
 function PaymentPlanDialog({ patient, initAmount = 0, onHide, onSubmit }) {
+  const { startLoading, stopLoading } = useLoading();
+
   const [patients, setPatients] = useState(null);
   const [instalment, setInstalment] = useState(1);
   const [amount, setAmount] = useState(initAmount);
@@ -28,18 +32,20 @@ function PaymentPlanDialog({ patient, initAmount = 0, onHide, onSubmit }) {
     const controller = new AbortController();
     const signal = controller.signal;
 
+    startLoading("patients");
     PatientService.getPatients(null, { signal })
       .then((res) => {
         setPatients(res.data);
       })
       .catch((error) => {
         error.message && toast.error(error.message);
-      });
+      })
+      .finally(() => stopLoading("patients"));
 
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [startLoading, stopLoading]);
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
@@ -165,6 +171,7 @@ function PaymentPlanDialog({ patient, initAmount = 0, onHide, onSubmit }) {
       {/* Dropdown Patients */}
       <div className="field mb-4">
         <DropdownPatient
+          key={patient?.id}
           name="patient"
           value={patient}
           options={patients}

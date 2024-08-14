@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Toolbar } from "primereact";
 import { DropdownPatient } from "components/Dropdown";
 import { PatientDialog } from "components/Dialog";
+import { useLoading } from "context/LoadingProvider";
 
 // assets
 import "assets/styles/PatientDetail/PatientDetailToolbar.css";
@@ -18,6 +19,7 @@ function PatientDetailToolbar({
   startContent,
 }) {
   const navigate = useNavigate();
+  const { startLoading, stopLoading } = useLoading();
 
   // Set the default values
   const [patientDialog, setPatientDialog] = useState(false);
@@ -27,16 +29,18 @@ function PatientDetailToolbar({
     const controller = new AbortController();
     const signal = controller.signal;
 
+    startLoading("patients");
     PatientService.getPatients(null, { signal })
       .then((res) => {
         setPatients(res.data);
       })
-      .catch((error) => {});
+      .catch((error) => {})
+      .finally(() => stopLoading("patients"));
 
     return () => {
       controller.abort();
     };
-  }, [setPatients]);
+  }, [setPatients, startLoading, stopLoading]);
 
   // SERVICES -----------------------------------------------------------------
   // Get the list of patients and set patients value
@@ -60,16 +64,19 @@ function PatientDetailToolbar({
     let response;
 
     try {
+      startLoading("save");
       // Create a new patient
       response = await PatientService.savePatient(patient);
       patient = response.data;
 
       // Set the patients and close the dialog
-      getPatients();
+      await getPatients();
       setPatientDialog(false);
       navigate(`/patients/${patient.id}`);
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("save");
     }
   };
 
@@ -94,6 +101,7 @@ function PatientDetailToolbar({
   // Toolbar content thats are on left
   const endContent = (
     <DropdownPatient
+      key={patient?.id}
       value={patient}
       options={patients}
       onChange={handleChange}

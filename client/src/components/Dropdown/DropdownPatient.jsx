@@ -1,23 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dropdown, Divider } from "primereact";
-import DropdownPatientItem from "./DropdownItem/DropdownPatientItem";
 import { Add } from "components/Button";
+import { useLoading } from "context/LoadingProvider";
+import { SkeletonDropdown } from "components/Skeleton";
+import DropdownPatientItem from "./DropdownItem/DropdownPatientItem";
 
 // assets
 import "assets/styles/Other/Dropdown.css";
 
 function DropdownPatient({ value, options, onChange, onClickAdd, ...props }) {
-  const _options = options?.map((option) => {
+  const { loading } = useLoading();
+
+  const [patient, setPatient] = useState(
+    value && {
+      ...value,
+      fullName: `${value.name} ${value.surname}`,
+    }
+  );
+
+  const patients = options?.map((option) => {
     return {
       ...option,
       fullName: `${option.name} ${option.surname}`,
     };
   });
-
-  const _value = value && {
-    ...value,
-    fullName: `${value.name} ${value.surname}`,
-  };
 
   // HANDLERS ------------------------------------------------------------------
   // onKeyDown handler
@@ -27,10 +33,21 @@ function DropdownPatient({ value, options, onChange, onClickAdd, ...props }) {
     }
   };
 
+  // onChange handler
+  const handleChange = (event) => {
+    const { value } = event.target;
+    setPatient(value);
+    onChange(event);
+  };
+
   // TEMPLATES -----------------------------------------------------------------
   // Dropdown item template
   const patientDropdownItem = (option) => {
-    return <DropdownPatientItem option={option} />;
+    return loading.patients ? (
+      <SkeletonDropdown />
+    ) : (
+      <DropdownPatientItem option={option} />
+    );
   };
 
   // Dropdown panel footer
@@ -47,15 +64,15 @@ function DropdownPatient({ value, options, onChange, onClickAdd, ...props }) {
 
   return (
     <Dropdown
-      value={_value}
+      value={patient}
       name="patient"
-      options={_options}
+      options={patients}
       optionLabel="name"
       valueTemplate={patientDropdownItem}
       itemTemplate={patientDropdownItem}
       panelFooterTemplate={patientDropdownFooter}
       onKeyDown={handleKeyDown}
-      onChange={onChange}
+      onChange={handleChange}
       className="w-full"
       filter
       filterBy="name,surname,phone,fullName"

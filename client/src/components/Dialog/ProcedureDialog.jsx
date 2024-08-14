@@ -5,7 +5,9 @@ import { Divider, InputNumber, Checkbox } from "primereact";
 import { Tooth } from "components/Button";
 import { DialogTemp } from "components/Dialog";
 import { DropdownPatient, DropdownProcedure } from "components/Dropdown";
+import { useLoading } from "context/LoadingProvider";
 
+// schemas
 import schema from "schemas/procedure.schema";
 
 // services
@@ -21,6 +23,7 @@ function ProcedureDialog({
   onChangeTeeth,
 }) {
   const navigate = useNavigate();
+  const { startLoading, stopLoading } = useLoading();
 
   const [patients, setPatients] = useState([]);
   const [procedures, setProcedures] = useState([]);
@@ -74,13 +77,15 @@ function ProcedureDialog({
     const controller = new AbortController();
     const signal = controller.signal;
 
+    startLoading("patients");
     PatientService.getPatients(null, { signal })
       .then((res) => {
         setPatients(res.data);
       })
       .catch((error) => {
         error.message && toast.error(error.message);
-      });
+      })
+      .finally(() => stopLoading("patients"));
 
     ProcedureService.getProcedures(null, { signal })
       .then((res) => {
@@ -93,7 +98,7 @@ function ProcedureDialog({
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [startLoading, stopLoading]);
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
@@ -185,6 +190,7 @@ function ProcedureDialog({
       {/* Dropdown Patients */}
       <div className="field mb-3">
         <DropdownPatient
+          key={patientProcedure.patient?.id}
           value={patientProcedure.patient}
           options={patients}
           disabled

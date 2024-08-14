@@ -3,7 +3,7 @@ import { Typography, Avatar } from "@mui/material";
 
 // assets
 import { PhoneOutlined } from "@ant-design/icons";
-import { patientAvatar } from "assets/images/avatars";
+import { patientAvatar } from "assets/svg/avatars";
 
 function DropdownPatientItem({ option }) {
   return option ? (
