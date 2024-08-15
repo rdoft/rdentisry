@@ -150,6 +150,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
             options={patients}
             name="patient"
             disabled
+            style={{ alignItems: "center", height: "3rem" }}
           />
         </div>
 

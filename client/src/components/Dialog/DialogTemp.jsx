@@ -54,6 +54,7 @@ function DialogTemp({
         visible
         modal
         className="p-fluid"
+        position="bottom-right"
         style={props.style}
         header={props.header}
         onHide={handleHide}

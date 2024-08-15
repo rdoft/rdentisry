@@ -139,8 +139,7 @@ function CalendarToolbar({
       onChange={handleChangeDropdown}
       onClickAdd={showDoctorDialog}
       onClickDelete={deleteDoctor}
-      className={!doctor && "p-2"}
-      style={{ width: "22vw" }}
+      style={{ alignItems: "center", width: "22vw", height: "2.5rem" }}
     />
   );
 

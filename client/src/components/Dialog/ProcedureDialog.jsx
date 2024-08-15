@@ -196,6 +196,7 @@ function ProcedureDialog({
           value={patientProcedure.patient}
           options={patients}
           disabled
+          style={{ alignItems: "center", height: "3rem" }}
         />
       </div>
 
@@ -207,6 +208,7 @@ function ProcedureDialog({
           options={procedures}
           onChange={handleChange}
           onClickOptions={handleClickProcedureOptions}
+          style={{ alignItems: "center", height: "3rem" }}
         />
       </div>
 

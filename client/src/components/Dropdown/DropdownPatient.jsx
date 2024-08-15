@@ -74,6 +74,7 @@ function DropdownPatient({ value, options, onChange, onClickAdd, ...props }) {
       onKeyDown={handleKeyDown}
       onChange={handleChange}
       className="w-full"
+      style={props?.style}
       filter
       filterBy="name,surname,phone,fullName"
       filterLocale="tr-TR"

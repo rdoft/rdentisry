@@ -106,12 +106,13 @@ function PatientDetailToolbar({
       options={patients}
       onChange={handleChange}
       onClickAdd={showPatientDialog}
+      style={{ alignItems: "center", height: "3rem" }}
     />
   );
 
   return (
     <>
-      <Toolbar className="mb-3 p-2" start={startContent} end={endContent} />
+      <Toolbar className="mb-3 p-1" start={startContent} end={endContent} />
       {patientDialog && (
         <PatientDialog onHide={hidePatientDialog} onSubmit={savePatient} />
       )}

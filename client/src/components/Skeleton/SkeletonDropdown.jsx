@@ -2,13 +2,13 @@ import React from "react";
 import { Skeleton } from "primereact";
 import { Grid } from "@mui/material";
 
-const SkeletonDropdown = () => {
+const SkeletonDropdown = (props) => {
   return (
-    <Grid container alignItems="center">
-      <Grid item sx={{ padding: "4px 8px 4px 0" }}>
+    <Grid container alignItems="center" sx={{ ...props?.style }}>
+      <Grid item>
         <Skeleton
           shape="circle"
-          size="2rem"
+          size="1.6rem"
         ></Skeleton>
       </Grid>
       <Grid item pl={2}>

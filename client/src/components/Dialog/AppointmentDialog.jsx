@@ -257,6 +257,7 @@ function AppointmentDialog({
             options={patients}
             onChange={handleChange}
             onClickAdd={showPatientDialog}
+            style={{ alignItems: "center", height: "3rem" }}
           />
         </div>
 
@@ -268,6 +269,7 @@ function AppointmentDialog({
             options={doctors}
             onChange={handleChange}
             onClickAdd={showDoctorDialog}
+            style={{ alignItems: "center", height: "3rem" }}
           />
         </div>
 

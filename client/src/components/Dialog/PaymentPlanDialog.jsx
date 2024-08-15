@@ -176,6 +176,7 @@ function PaymentPlanDialog({ patient, initAmount = 0, onHide, onSubmit }) {
           value={patient}
           options={patients}
           disabled
+          style={{ alignItems: "center", height: "3rem" }}
         />
       </div>
 

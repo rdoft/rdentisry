@@ -7,7 +7,13 @@ import DropdownProcedureItem from "./DropdownItem/DropdownProcedureItem";
 // assets
 import "assets/styles/Other/Dropdown.css";
 
-function DropdownProcedure({ value, options, onChange, onClickOptions }) {
+function DropdownProcedure({
+  value,
+  options,
+  onChange,
+  onClickOptions,
+  ...props
+}) {
   const { loading } = useLoading();
 
   const [procedure, setProcedure] = useState(value);
@@ -72,6 +78,7 @@ function DropdownProcedure({ value, options, onChange, onClickOptions }) {
       onKeyDown={handleKeyDown}
       onChange={handleChange}
       scrollHeight="300px"
+      style={props?.style}
       filter
       filterBy="name,code,procedureCategory.title"
       filterLocale="tr-TR"

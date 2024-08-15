@@ -5,7 +5,13 @@ import DropdownProcedureCategoryItem from "./DropdownItem/DropdownProcedureCateg
 // assets
 import "assets/styles/Other/Dropdown.css";
 
-function DropdownProcedureCategory({ value, options, onChange, onClickAdd }) {
+function DropdownProcedureCategory({
+  value,
+  options,
+  onChange,
+  onClickAdd,
+  ...props
+}) {
   // TEMPLATES -----------------------------------------------------------------
   // Dropdown item template
   const procedureCategoryDropdownItem = (option) => {
@@ -40,6 +46,7 @@ function DropdownProcedureCategory({ value, options, onChange, onClickAdd }) {
       valueTemplate={procedureCategoryDropdownItem}
       panelFooterTemplate={procedureCategoryDropdownFooter}
       onChange={onChange}
+      style={props?.style}
       placeholder="Kategori seçiniz..."
     />
   );
