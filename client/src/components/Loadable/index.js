@@ -1,5 +1,5 @@
 import Loadable from "./Loadable";
 import Loader from "./Loader";
-import LoadController from "./LoadController";
+import LoadingController from "./LoadingController";
 
-export { Loadable, Loader, LoadController };
+export { Loadable, Loader, LoadingController };

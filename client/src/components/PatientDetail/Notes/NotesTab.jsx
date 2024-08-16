@@ -6,7 +6,7 @@ import { NewItem } from "components/Button";
 import { NotFoundText } from "components/Text";
 import { LoadingIcon } from "components/Other";
 import { useLoading } from "context/LoadingProvider";
-import { LoadController } from "components/Loadable";
+import { LoadingController } from "components/Loadable";
 import { SkeletonNotesTab } from "components/Skeleton";
 import NoteCard from "./NoteCard";
 import Note from "./Note";
@@ -141,7 +141,7 @@ function NotesTab({
   };
 
   return (
-    <LoadController name="NotesTab" skeleton={<SkeletonNotesTab />}>
+    <LoadingController name="NotesTab" skeleton={<SkeletonNotesTab />}>
       <Grid container justifyContent="space-between" mt={2}>
         {/* Note list */}
         <Grid
@@ -193,7 +193,7 @@ function NotesTab({
           />
         </Grid>
       </Grid>
-    </LoadController>
+    </LoadingController>
   );
 }
 

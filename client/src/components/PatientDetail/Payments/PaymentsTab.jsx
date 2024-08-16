@@ -8,7 +8,7 @@ import { NewItem } from "components/Button";
 import { NotFoundText } from "components/Text";
 import { calcProgress } from "utils";
 import { useLoading } from "context/LoadingProvider";
-import { LoadController } from "components/Loadable";
+import { LoadingController } from "components/Loadable";
 import { SkeletonPaymentsTab } from "components/Skeleton";
 import PaymentStatistic from "./PaymentStatistic";
 import PaymentMarker from "./PaymentMarker";
@@ -273,7 +273,7 @@ function PaymentsTab({
   };
 
   return (
-    <LoadController name="PaymentsTab" skeleton={<SkeletonPaymentsTab />}>
+    <LoadingController name="PaymentsTab" skeleton={<SkeletonPaymentsTab />}>
       <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
         <Grid container alignItems="center" justifyContent="center" mt={2}>
           {/* Statistics */}
@@ -390,7 +390,7 @@ function PaymentsTab({
           onSubmit={savePayments}
         />
       )}
-    </LoadController>
+    </LoadingController>
   );
 }
 

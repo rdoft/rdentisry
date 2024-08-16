@@ -6,7 +6,7 @@ import { ProcedureDialog } from "components/Dialog";
 import { NewItem, SplitItem, Print } from "components/Button";
 import { AppointmentDialog } from "components/Dialog";
 import { useLoading } from "context/LoadingProvider";
-import { LoadController } from "components/Loadable";
+import { LoadingController } from "components/Loadable";
 import { SkeletonProceduresTab } from "components/Skeleton";
 import ProcedureToolbar from "./ProcedureToolbar";
 import DentalChart from "./DentalChart";
@@ -365,7 +365,7 @@ function ProceduresTab({
     }));
 
   return (
-    <LoadController
+    <LoadingController
       name="ProceduresTab"
       skeleton={<SkeletonProceduresTab tabIndex={tabIndex} />}
     >
@@ -507,7 +507,7 @@ function ProceduresTab({
           onHide={hideAppointmentDialog}
         />
       )}
-    </LoadController>
+    </LoadingController>
   );
 }
 

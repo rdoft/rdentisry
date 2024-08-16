@@ -6,7 +6,7 @@ import { AppointmentDialog } from "components/Dialog";
 import { CardTitle } from "components/cards";
 import { NewItem } from "components/Button";
 import { useLoading } from "context/LoadingProvider";
-import { LoadController } from "components/Loadable";
+import { LoadingController } from "components/Loadable";
 import { SkeletonAppointmentsTab } from "components/Skeleton";
 
 import NotFoundText from "components/Text/NotFoundText";
@@ -160,7 +160,7 @@ function AppointmentsTab({
   };
 
   return (
-    <LoadController
+    <LoadingController
       name="AppointmentsTab"
       skeleton={<SkeletonAppointmentsTab />}
     >
@@ -245,7 +245,7 @@ function AppointmentsTab({
           onDelete={appointment && deleteAppointment}
         />
       )}
-    </LoadController>
+    </LoadingController>
   );
 }
 

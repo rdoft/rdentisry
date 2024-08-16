@@ -6,7 +6,7 @@ import { BaseProcedureDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
 import { Delete } from "components/Button";
 import { useLoading } from "context/LoadingProvider";
-import { LoadController } from "components/Loadable";
+import { LoadingController } from "components/Loadable";
 import { SkeletonDataTable } from "components/Skeleton";
 import PriceColumn from "./PriceColumn";
 import CategoryColumn from "./CategoryColumn";
@@ -252,7 +252,7 @@ function ProcedureTable() {
           onClickDelete={showDeleteProceduresDialog}
           onInput={handleInputSearch}
         />
-        <LoadController name="ProcedureTable" skeleton={<SkeletonDataTable />}>
+        <LoadingController name="ProcedureTable" skeleton={<SkeletonDataTable />}>
           <DataTable
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
             ref={dt}
@@ -334,7 +334,7 @@ function ProcedureTable() {
               style={{ width: "8rem" }}
             ></Column>
           </DataTable>
-        </LoadController>
+        </LoadingController>
       </div>
 
       {/* Add procedure dialog */}
