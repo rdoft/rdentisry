@@ -8,7 +8,8 @@ import { NewItem } from "components/Button";
 import { NotFoundText } from "components/Text";
 import { calcProgress } from "utils";
 import { useLoading } from "context/LoadingProvider";
-import { SkeletonStatistic, SkeletonTimeline } from "components/Skeleton";
+import { LoadController } from "components/Loadable";
+import { SkeletonPaymentsTab } from "components/Skeleton";
 import PaymentStatistic from "./PaymentStatistic";
 import PaymentMarker from "./PaymentMarker";
 import PaymentDateTag from "./PaymentDateTag";
@@ -34,7 +35,7 @@ function PaymentsTab({
   setCounts,
 }) {
   const theme = useTheme();
-  const { loading, startLoading, stopLoading } = useLoading();
+  const { startLoading, stopLoading } = useLoading();
 
   // Set the default values
   const [total, setTotal] = useState(0);
@@ -272,22 +273,18 @@ function PaymentsTab({
   };
 
   return (
-    <>
+    <LoadController name="PaymentsTab" skeleton={<SkeletonPaymentsTab />}>
       <div style={{ backgroundColor: "white", borderRadius: "8px" }}>
         <Grid container alignItems="center" justifyContent="center" mt={2}>
           {/* Statistics */}
-          {loading["PaymentsTab"] ? (
-            <SkeletonStatistic />
-          ) : (
-            <PaymentStatistic
-              total={total}
-              completedTotal={completedTotal}
-              completed={completedAmount}
-              waiting={waitingAmount}
-              overdue={overdueAmount}
-              dept={deptAmount}
-            />
-          )}
+          <PaymentStatistic
+            total={total}
+            completedTotal={completedTotal}
+            completed={completedAmount}
+            waiting={waitingAmount}
+            overdue={overdueAmount}
+            dept={deptAmount}
+          />
 
           {/* Timeline */}
           <Grid container justifyContent="center" alignItems="start">
@@ -311,9 +308,7 @@ function PaymentsTab({
                 </CardTitle>
               </Grid>
               <Grid item xs={12}>
-                {loading["PaymentsTab"] ? (
-                  <SkeletonTimeline />
-                ) : plannedPayments.length === 0 ? (
+                {plannedPayments.length === 0 ? (
                   <NotFoundText
                     text="Ödeme planı yok"
                     style={{
@@ -349,9 +344,7 @@ function PaymentsTab({
                 </CardTitle>
               </Grid>
               <Grid item xs={12}>
-                {loading["PaymentsTab"] ? (
-                  <SkeletonTimeline />
-                ) : payments.length === 0 ? (
+                {payments.length === 0 ? (
                   <NotFoundText
                     text="Ödeme yok"
                     style={{
@@ -397,7 +390,7 @@ function PaymentsTab({
           onSubmit={savePayments}
         />
       )}
-    </>
+    </LoadController>
   );
 }
 

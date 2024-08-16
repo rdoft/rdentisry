@@ -5,8 +5,9 @@ import { DataTable, Column, ConfirmDialog } from "primereact";
 import { BaseProcedureDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
 import { Delete } from "components/Button";
-import { SkeletonDataTable } from "components/Skeleton";
 import { useLoading } from "context/LoadingProvider";
+import { LoadController } from "components/Loadable";
+import { SkeletonDataTable } from "components/Skeleton";
 import PriceColumn from "./PriceColumn";
 import CategoryColumn from "./CategoryColumn";
 import NameColumn from "./NameColumn";
@@ -16,7 +17,7 @@ import ProcedureTableToolbar from "./ProcedureTableToolbar";
 import { ProcedureService, ProcedureCategoryService } from "services";
 
 function ProcedureTable() {
-  const { loading, startLoading, stopLoading } = useLoading();
+  const { startLoading, stopLoading } = useLoading();
 
   // Set the default valeus
   const dt = useRef(null);
@@ -251,9 +252,7 @@ function ProcedureTable() {
           onClickDelete={showDeleteProceduresDialog}
           onInput={handleInputSearch}
         />
-        {loading["ProcedureTable"] ? (
-          <SkeletonDataTable />
-        ) : (
+        <LoadController name="ProcedureTable" skeleton={<SkeletonDataTable />}>
           <DataTable
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
             ref={dt}
@@ -335,7 +334,7 @@ function ProcedureTable() {
               style={{ width: "8rem" }}
             ></Column>
           </DataTable>
-        )}
+        </LoadController>
       </div>
 
       {/* Add procedure dialog */}

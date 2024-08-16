@@ -5,8 +5,6 @@ import { Delete } from "components/Button";
 import { DialogFooter } from "components/DialogFooter";
 import { ProcedureCategory } from "components/ProcedureCategory";
 import { Tooth } from "components/Button";
-import { SkeletonList } from "components/Skeleton";
-import { useLoading } from "context/LoadingProvider";
 import NotFoundText from "components/Text/NotFoundText";
 import PriceColumn from "../PriceColumn";
 import StatusColumn from "../StatusColumn";
@@ -29,7 +27,6 @@ function ProcedureList({
   onUpdated,
 }) {
   const theme = useTheme();
-  const { loading } = useLoading();
 
   const dt = useRef(null);
   const [procedure, setProcedure] = useState(null);
@@ -225,9 +222,7 @@ function ProcedureList({
     );
   };
 
-  return loading["ProcedureList"] ? (
-    <SkeletonList />
-  ) : procedures?.length > 0 ? (
+  return procedures?.length > 0 ? (
     <>
       {/* Print only */}
       <PrintHeader patient={patient} />

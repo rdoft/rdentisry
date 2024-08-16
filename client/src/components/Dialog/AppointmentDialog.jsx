@@ -332,6 +332,7 @@ function AppointmentDialog({
               name="duration"
               className="w-full"
               placeholder={"dk"}
+              autoComplete="off"
               value={appointment.duration}
               onChange={handleChange}
             />

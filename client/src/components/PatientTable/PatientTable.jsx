@@ -6,8 +6,9 @@ import { DataTable, Column, Tag, ConfirmDialog } from "primereact";
 import { AppointmentDialog, PatientDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
 import { Add, Edit, Delete } from "components/Button";
-import { SkeletonDataTable } from "components/Skeleton";
 import { useLoading } from "context/LoadingProvider";
+import { LoadController } from "components/Loadable";
+import { SkeletonDataTable } from "components/Skeleton";
 import PatientTableToolbar from "./PatientTableToolbar";
 
 // assets
@@ -20,7 +21,7 @@ import { PatientService, AppointmentService } from "services";
 function PatientsTable() {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { loading, startLoading, stopLoading } = useLoading();
+  const { startLoading, stopLoading } = useLoading();
 
   // Set the default values
   const dt = useRef(null);
@@ -356,9 +357,7 @@ function PatientsTable() {
           onInput={handleInputSearch}
         />
 
-        {loading["PatientTable"] ? (
-          <SkeletonDataTable />
-        ) : (
+        <LoadController name="PatientTable" skeleton={<SkeletonDataTable />}>
           <DataTable
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
             ref={dt}
@@ -445,7 +444,7 @@ function PatientsTable() {
               style={{ width: "10rem" }}
             ></Column>
           </DataTable>
-        )}
+        </LoadController>
       </div>
 
       {/* Patient information  */}

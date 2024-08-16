@@ -6,6 +6,8 @@ import { ProcedureDialog } from "components/Dialog";
 import { NewItem, SplitItem, Print } from "components/Button";
 import { AppointmentDialog } from "components/Dialog";
 import { useLoading } from "context/LoadingProvider";
+import { LoadController } from "components/Loadable";
+import { SkeletonProceduresTab } from "components/Skeleton";
 import ProcedureToolbar from "./ProcedureToolbar";
 import DentalChart from "./DentalChart";
 import ProcedureList from "./ProcedureList/ProcedureList";
@@ -78,7 +80,7 @@ function ProceduresTab({
 
     // Set data on loading
     const fetchAll = async () => {
-      startLoading("ProcedureList");
+      startLoading("ProceduresTab");
       try {
         const _procedures = await PatientProcedureService.getPatientProcedures(
           { patientId: patient.id },
@@ -93,7 +95,7 @@ function ProceduresTab({
       } catch (error) {
         error.message && toast.error(error.message);
       } finally {
-        stopLoading("ProcedureList");
+        stopLoading("ProceduresTab");
       }
     };
     fetchAll();
@@ -363,7 +365,10 @@ function ProceduresTab({
     }));
 
   return (
-    <>
+    <LoadController
+      name="ProceduresTab"
+      skeleton={<SkeletonProceduresTab tabIndex={tabIndex} />}
+    >
       <Grid
         container
         mt={2}
@@ -502,7 +507,7 @@ function ProceduresTab({
           onHide={hideAppointmentDialog}
         />
       )}
-    </>
+    </LoadController>
   );
 }
 

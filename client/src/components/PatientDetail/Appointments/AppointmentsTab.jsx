@@ -5,8 +5,9 @@ import { DataScroller } from "primereact";
 import { AppointmentDialog } from "components/Dialog";
 import { CardTitle } from "components/cards";
 import { NewItem } from "components/Button";
-import { SkeletonCard } from "components/Skeleton";
 import { useLoading } from "context/LoadingProvider";
+import { LoadController } from "components/Loadable";
+import { SkeletonAppointmentsTab } from "components/Skeleton";
 
 import NotFoundText from "components/Text/NotFoundText";
 import AppointmentCard from "./AppointmentCard";
@@ -29,7 +30,7 @@ function AppointmentsTab({
   setCounts,
 }) {
   const theme = useTheme();
-  const { loading, startLoading, stopLoading } = useLoading();
+  const { startLoading, stopLoading } = useLoading();
 
   // Set the default values
   const [appointments, setAppointments] = useState([]);
@@ -159,7 +160,10 @@ function AppointmentsTab({
   };
 
   return (
-    <>
+    <LoadController
+      name="AppointmentsTab"
+      skeleton={<SkeletonAppointmentsTab />}
+    >
       <Grid container alignItems="start" justifyContent="space-between" mt={2}>
         {/* Active appointments */}
         <Grid container item md={6} xs={12} justifyContent="center" pr={2}>
@@ -176,9 +180,7 @@ function AppointmentsTab({
             py={3}
             sx={{ backgroundColor: "white", borderRadius: "8px" }}
           >
-            {loading["AppointmentsTab"] ? (
-              <SkeletonCard />
-            ) : activeAppointments.length === 0 ? (
+            {activeAppointments.length === 0 ? (
               <NotFoundText
                 text="Aktif randevu yok"
                 style={{ backgroundColor: theme.palette.background.primary }}
@@ -211,9 +213,7 @@ function AppointmentsTab({
             py={3}
             sx={{ backgroundColor: "white", borderRadius: "8px" }}
           >
-            {loading["AppointmentsTab"] ? (
-              <SkeletonCard />
-            ) : otherAppointments.length === 0 ? (
+            {otherAppointments.length === 0 ? (
               <NotFoundText
                 text="Diğer randevu yok"
                 style={{ backgroundColor: theme.palette.background.primary }}
@@ -245,7 +245,7 @@ function AppointmentsTab({
           onDelete={appointment && deleteAppointment}
         />
       )}
-    </>
+    </LoadController>
   );
 }
 

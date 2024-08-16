@@ -7,6 +7,11 @@ import SkeletonList from "./SkeletonList";
 import SkeletonDentalChart from "./SkeletonDentalChart";
 import SkeletonDropdown from "./SkeletonDropdown";
 
+import SkeletonAppointmentsTab from "./SkeletonAppointmentsTab";
+import SkeletonNotesTab from "./SkeletonNotesTab";
+import SkeletonPaymentsTab from "./SkeletonPaymentsTab";
+import SkeletonProceduresTab from "./SkeletonProceduresTab";
+
 export {
   SkeletonDataTable,
   SkeletonCategory,
@@ -16,4 +21,8 @@ export {
   SkeletonList,
   SkeletonDentalChart,
   SkeletonDropdown,
+  SkeletonAppointmentsTab,
+  SkeletonNotesTab,
+  SkeletonPaymentsTab,
+  SkeletonProceduresTab,
 };

@@ -4,9 +4,10 @@ import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import { NewItem } from "components/Button";
 import { NotFoundText } from "components/Text";
-import { useLoading } from "context/LoadingProvider";
-import { SkeletonCard } from "components/Skeleton";
 import { LoadingIcon } from "components/Other";
+import { useLoading } from "context/LoadingProvider";
+import { LoadController } from "components/Loadable";
+import { SkeletonNotesTab } from "components/Skeleton";
 import NoteCard from "./NoteCard";
 import Note from "./Note";
 
@@ -140,7 +141,7 @@ function NotesTab({
   };
 
   return (
-    <>
+    <LoadController name="NotesTab" skeleton={<SkeletonNotesTab />}>
       <Grid container justifyContent="space-between" mt={2}>
         {/* Note list */}
         <Grid
@@ -150,9 +151,7 @@ function NotesTab({
           py={3}
           sx={{ borderRadius: 2, backgroundColor: theme.palette.common.white }}
         >
-          {loading["NotesTab"] ? (
-            <SkeletonCard />
-          ) : notes.length === 0 ? (
+          {notes.length === 0 ? (
             <NotFoundText
               text="Not yok"
               style={{ backgroundColor: theme.palette.background.primary }}
@@ -165,7 +164,7 @@ function NotesTab({
             ></DataScroller>
           )}
 
-          {loading.save && <LoadingIcon />}
+          {loading.save && <LoadingIcon style={{ padding: "2rem" }} />}
 
           {/* Add note */}
           <NewItem label="Not Ekle" onClick={showDialog} />
@@ -194,7 +193,7 @@ function NotesTab({
           />
         </Grid>
       </Grid>
-    </>
+    </LoadController>
   );
 }
 
