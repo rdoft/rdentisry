@@ -3,13 +3,7 @@ import { Typography, Box } from "@mui/material";
 
 function TimeGutter({ slotMetrics, children }) {
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      gap={2}
-      mt={-1}
-      sx={{ width: "60px" }}
-    >
+    <Box display="flex" flexDirection="column" gap={2} mt={-1} width="4rem">
       {slotMetrics.groups.map(([start, end], index) => (
         <Box
           key={index}

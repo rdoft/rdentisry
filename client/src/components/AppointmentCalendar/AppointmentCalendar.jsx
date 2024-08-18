@@ -311,8 +311,7 @@ const AppointmentCalendar = () => {
       />
       <DnDCalendar
         style={{
-          height: "calc(100vh - 190px)",
-          // marginTop: "20px",
+          height: "calc(100vh - 12rem)",
         }}
         messages={messages}
         localizer={localizer}
