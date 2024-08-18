@@ -61,7 +61,9 @@ function PaymentPlanDialog({ patient, initAmount = 0, onHide, onSubmit }) {
       case "plannedDate":
         value.map(
           (date) =>
-            new Date(date.getFullYear(), date.getMonth(), date.getDate())
+            new Date(
+              Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+            )
         );
         _dates = value;
 
