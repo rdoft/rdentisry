@@ -70,7 +70,7 @@ function DentalChart({
       srcSet={tooth.src}
       src={tooth.src}
       alt={tooth.number}
-      style={{ width: "65%", minWidth: 45 }}
+      style={{ width: "65%", minWidth: 45, maxWidth: 70 }}
     />
   );
 
@@ -137,7 +137,7 @@ function DentalChart({
             </Grid>
 
             {/* Teeth */}
-            <Grid item xs={5} textAlign="center">
+            <Grid container item xs justifyContent="center">
               {toothItem(tooth)}
             </Grid>
           </Grid>
@@ -173,7 +173,7 @@ function DentalChart({
             }}
           >
             {/* Teeth */}
-            <Grid item xs={5} textAlign="center">
+            <Grid container item xs justifyContent="center">
               {toothItem(tooth)}
             </Grid>
 
