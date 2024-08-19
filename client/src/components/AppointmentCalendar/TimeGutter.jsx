@@ -4,11 +4,15 @@ import { Typography, Box } from "@mui/material";
 function TimeGutter({ slotMetrics, children }) {
   return (
     <Box
+      className="time-gutter"
       display="flex"
+      flex="none"
       flexDirection="column"
-      gap="16px"
       mt="-8px"
-      width="64px"
+      sx={{
+        width: "64px",
+        minHeight: "100%",
+      }}
     >
       {slotMetrics.groups.map(([start, end], index) => (
         <Box
@@ -18,10 +22,11 @@ function TimeGutter({ slotMetrics, children }) {
           justifyContent="center"
           gap="1.6px"
           px="16px"
-          pb="32px"
-          pt={0}
           mt={index === 0 && 1}
           mb={index === 0 && -1}
+          sx={{
+            minHeight: "70px",
+          }}
         >
           <Typography variant="body1" fontWeight="bold">
             {start.toLocaleTimeString("tr-TR", {

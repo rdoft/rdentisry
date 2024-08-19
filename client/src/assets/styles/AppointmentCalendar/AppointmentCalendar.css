@@ -36,6 +36,9 @@
 .rbc-timeslot-group {
   min-height: 70px;
 }
+.rbc-time-header .rbc-label {
+  padding: 0;
+}
 
 .rbc-time-slot {
   border: 1px solid transparent !important;
