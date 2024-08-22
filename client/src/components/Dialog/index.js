@@ -1,3 +1,4 @@
+import DialogTemp from "./DialogTemp";
 import AppointmentDialog from "./AppointmentDialog";
 import DoctorDialog from "./DoctorDialog";
 import PatientDialog from "./PatientDialog";
@@ -5,9 +6,10 @@ import PaymentDialog from "./PaymentDialog";
 import PaymentPlanDialog from "./PaymentPlanDialog";
 import ProcedureDialog from "./ProcedureDialog";
 import BaseProcedureDialog from "./BaseProcedureDialog";
-import DialogTemp from "./DialogTemp";
+import UserAgreementDialog from "./UserAgreementDialog";
 
 export {
+  DialogTemp,
   AppointmentDialog,
   DoctorDialog,
   PatientDialog,
@@ -15,5 +17,5 @@ export {
   PaymentPlanDialog,
   ProcedureDialog,
   BaseProcedureDialog,
-  DialogTemp,
+  UserAgreementDialog,
 };

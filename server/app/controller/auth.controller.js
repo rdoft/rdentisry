@@ -12,7 +12,7 @@ const HOST = HOSTNAME || HOST_SERVER || "localhost";
 const PORT_CLIENT = PORT || 3000;
 
 exports.login = async (req, res) => {
-  res.status(200).send();
+  res.status(200).send({ agreement: req.user.Agreement });
 };
 
 exports.logout = async (req, res, next) => {
@@ -242,8 +242,34 @@ exports.google = async (req, res) => {
  */
 exports.permission = async (req, res) => {
   if (req.user) {
-    res.status(200).send({ permission: true });
+    res.status(200).send({ permission: true, agreement: req.user.Agreement });
   } else {
     res.status(401).send({ permission: false });
+  }
+};
+
+/**
+ * Agreement accept
+ * @body aggreement
+ */
+exports.agree = async (req, res) => {
+  const { UserId: userId } = req.user;
+  const { agreement } = req.body;
+
+  try {
+    await User.update(
+      {
+        Agreement: agreement,
+      },
+      {
+        where: {
+          UserId: userId,
+        },
+      }
+    );
+
+    res.status(200).send();
+  } catch (error) {
+    res.status(500).send(error);
   }
 };

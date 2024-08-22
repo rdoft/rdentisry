@@ -5,7 +5,15 @@ import { useLoading } from "context/LoadingProvider";
 // assets
 import { useTheme } from "@mui/material/styles";
 
-function DialogFooter({ disabled, onHide, onSubmit, onDelete }) {
+function DialogFooter({
+  disabled,
+  labelSubmit = "Kaydet",
+  labelHide = "İptal",
+  labelDelete = "Sil",
+  onHide,
+  onSubmit,
+  onDelete,
+}) {
   const theme = useTheme();
   const { loading } = useLoading();
 
@@ -15,7 +23,7 @@ function DialogFooter({ disabled, onHide, onSubmit, onDelete }) {
         <Button
           disabled={disabled || loading.save}
           label={
-            loading.save ? <i className="pi pi-spin pi-spinner" /> : "Kaydet"
+            loading.save ? <i className="pi pi-spin pi-spinner" /> : labelSubmit
           }
           size="small"
           className="p-button p-button-info"
@@ -32,7 +40,11 @@ function DialogFooter({ disabled, onHide, onSubmit, onDelete }) {
         <Button
           disabled={loading.delete}
           label={
-            loading.delete ? <i className="pi pi-spin pi-spinner" /> : "Sil"
+            loading.delete ? (
+              <i className="pi pi-spin pi-spinner" />
+            ) : (
+              labelDelete
+            )
           }
           size="small"
           className="p-button-danger"
@@ -42,7 +54,7 @@ function DialogFooter({ disabled, onHide, onSubmit, onDelete }) {
       )}
       {onHide && (
         <Button
-          label="İptal"
+          label={labelHide}
           size="small"
           className="p-button-text p-button-secondary"
           onClick={onHide}

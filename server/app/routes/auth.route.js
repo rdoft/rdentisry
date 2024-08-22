@@ -85,5 +85,13 @@ module.exports = function (app) {
      */
     .get(controller.permission);
 
+  router
+    .route(`/agree`)
+    /**
+     * Agree to terms
+     * @body User agreement
+     */
+    .put(controller.agree);
+
   app.use(API_URL, router);
 };

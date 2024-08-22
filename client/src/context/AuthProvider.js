@@ -9,14 +9,17 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [agreement, setAgreement] = useState(false);
 
-  const authenticate = () => {
+  const authenticate = ({ agreement }) => {
     setIsAuthenticated(true);
+    setAgreement(agreement);
     setLoading(false);
   };
 
   const unauthenticate = () => {
     setIsAuthenticated(false);
+    setAgreement(false);
     setLoading(false);
   };
 
@@ -26,7 +29,7 @@ export const AuthProvider = ({ children }) => {
     const signal = controller.signal;
 
     AuthService.permission({ signal })
-      .then(() => authenticate())
+      .then((res) => authenticate(res.data))
       .catch(() => unauthenticate());
 
     return () => {
@@ -47,7 +50,13 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ loading, isAuthenticated, authenticate, unauthenticate }}
+      value={{
+        loading,
+        isAuthenticated,
+        agreement,
+        authenticate,
+        unauthenticate,
+      }}
     >
       {children}
     </AuthContext.Provider>

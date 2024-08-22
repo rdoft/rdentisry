@@ -36,10 +36,10 @@ function Login() {
     setError(null);
 
     try {
-      await AuthService.login(auth);
+      const res = await AuthService.login(auth);
 
       // Set isAuthenticated for all routes
-      authenticate();
+      authenticate(res.data);
       navigate("/");
     } catch (error) {
       const { status, message } = handleError(error);
@@ -71,7 +71,6 @@ function Login() {
   // Login with google
   const handleLoginGoogle = () => {
     window.location.href = GOOGLE_AUTH;
-    authenticate();
   };
 
   // Login handler

@@ -55,4 +55,12 @@ auth.permission = (options = {}) => {
   return API.get(`/permission`, options);
 };
 
+/**
+ * Aggree to terms
+ * @body User informations
+ */
+auth.agree = (agreement) => {
+  return API.put(`/agree`, agreement);
+};
+
 export default auth;
