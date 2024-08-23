@@ -16,11 +16,36 @@ function UserAgreementDialog() {
   const { authenticate, unauthenticate } = useAuth();
 
   const [agreement, setAgreement] = useState(false);
+  const [message, setMessage] = useState(false);
+
+  // Get client info
+  const getClientInfo = async () => {
+    let response;
+    let data;
+
+    try {
+      response = await fetch("https://api.ipify.org/?format=json");
+      data = await response.json();
+    } catch (error) {
+      data.ip = null;
+    }
+
+    return {
+      ip: data.ip || null,
+      agent: navigator.userAgent || null,
+      device: navigator.userAgentData?.platform || null,
+      isMobile: navigator.userAgentData?.mobile || null,
+    };
+  };
 
   // HANDLERS -----------------------------------------------------------------
   // onSubmit handler
   const handleAccept = async () => {
-    await AuthService.agree({ agreement: true });
+    const clientInfo = await getClientInfo();
+
+    await AuthService.agree({
+      ...clientInfo,
+    });
     authenticate({ agreement: true });
   };
 
@@ -39,7 +64,7 @@ function UserAgreementDialog() {
       style={{ width: "85vw" }}
       footer={
         <DialogFooter
-          disabled={!agreement}
+          disabled={!agreement || !message}
           labelSubmit="Kabul et"
           labelHide="Reddet"
           onSubmit={handleAccept}
@@ -720,6 +745,12 @@ function UserAgreementDialog() {
           checked={agreement}
           onChange={(e) => setAgreement(e.value)}
         />
+      </div>
+      <div className="flex grid align-items-center  justify-content-end mb-1">
+        <label htmlFor="message" className="col-3 md:6 mr-2 text-right">
+          Elektronik İleti gönderilmesini onaylıyorum. <br />
+        </label>
+        <InputSwitch checked={message} onChange={(e) => setMessage(e.value)} />
       </div>
     </Dialog>
   );

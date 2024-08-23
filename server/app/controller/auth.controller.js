@@ -2,6 +2,7 @@ const { Sequelize } = require("../models");
 const db = require("../models");
 const User = db.user;
 const Token = db.token;
+const Agreement = db.agreement;
 
 const { sendResetPassword } = require("../utils/mail.util");
 const crypto = require("crypto");
@@ -254,12 +255,25 @@ exports.permission = async (req, res) => {
  */
 exports.agree = async (req, res) => {
   const { UserId: userId } = req.user;
-  const { agreement } = req.body;
+  const { ip, device, agent, isMobile } = req.body;
 
   try {
+    await Agreement.findOrCreate({
+      where: {
+        UserId: userId,
+      },
+      defaults: {
+        UserId: userId,
+        IP: ip,
+        Device: device,
+        Agent: agent,
+        IsMobile: isMobile,
+      },
+    });
+
     await User.update(
       {
-        Agreement: agreement,
+        Agreement: true,
       },
       {
         where: {

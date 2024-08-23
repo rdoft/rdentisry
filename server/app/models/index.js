@@ -23,6 +23,7 @@ db.sequelize = sequelize;
 db.user = require("./user.model")(sequelize, Sequelize);
 db.token = require("./token.model")(sequelize, Sequelize);
 db.subscription = require("./subscription.model")(sequelize, Sequelize);
+db.agreement = require("./agreement.model")(sequelize, Sequelize);
 db.patient = require("./patient.model")(sequelize, Sequelize);
 db.doctor = require("./doctor.model")(sequelize, Sequelize);
 db.appointment = require("./appointment.model")(sequelize, Sequelize);
@@ -217,6 +218,16 @@ db.user.hasOne(db.subscription, {
   foreignKey: "UserId",
 });
 db.subscription.belongsTo(db.user, {
+  as: "user",
+  foreignKey: "UserId",
+});
+
+// User - Agreement
+db.user.hasOne(db.agreement, {
+  as: "agreement",
+  foreignKey: "UserId",
+});
+db.agreement.belongsTo(db.user, {
   as: "user",
   foreignKey: "UserId",
 });
