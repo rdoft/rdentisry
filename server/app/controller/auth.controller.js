@@ -5,6 +5,7 @@ const Token = db.token;
 const Agreement = db.agreement;
 
 const { sendResetPassword } = require("../utils/mail.util");
+const dns = require("dns").promises;
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 
@@ -28,6 +29,8 @@ exports.logout = async (req, res, next) => {
 exports.register = async (req, res) => {
   const { name, email, password } = req.body;
   let user;
+  let domain;
+  let addr;
 
   try {
     // Generate a salt
@@ -43,6 +46,17 @@ exports.register = async (req, res) => {
     });
     if (user && user.Password) {
       return res.status(400).send({ message: "Mail adresi zaten kayıtlıdır" });
+    }
+
+    // Control if email dns is valid
+    domain = email.split("@")[1];
+    try {
+      addr = await dns.resolve(domain);
+      if (!addr.length) {
+        return res.status(400).send({ message: "Mail adresinizi kontrol edin" });
+      }
+    } catch (error) {
+      return res.status(400).send({ message: "Mail adresinizi kontrol edin" });
     }
 
     // Create user record

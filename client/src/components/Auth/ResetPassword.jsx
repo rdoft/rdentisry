@@ -117,6 +117,17 @@ function ResetPassword() {
     }
   };
 
+  // TEMPLATES -------------------------------------------------------
+  const passwordFooter = (
+    <>
+      <ul className="pl-2 ml-2 mt-0 line-height-3">
+        <li>8 veya daha fazla karakter</li>
+        <li>Büyük ve küçük harf</li>
+        <li>En az bir rakam</li>
+      </ul>
+    </>
+  );
+
   return (
     <Grid container my={10} justifyContent="center" alignItems="center">
       <Grid item sm={9} md={4} lg={3} className="p-fluid">
@@ -146,16 +157,17 @@ function ResetPassword() {
             placeholder="Parola *"
             value={user.password}
             toggleMask
-            feedback={false}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             required
+            maxLength={20}
+            weakLabel="Zayıf"
+            mediumLabel="Orta"
+            strongLabel="Güçlü"
+            promptLabel="Parolanız şunları içermelidir:"
+            footer={passwordFooter}
+            {...(isError.password && { className: "p-invalid" })}
           />
-          {isError.password && (
-            <small id="password-help" className="p-error">
-              Parola en az 8 karakterden oluşmalıdır
-            </small>
-          )}
         </div>
 
         <div className="field mb-4">
@@ -170,6 +182,8 @@ function ResetPassword() {
             onPaste={(e) => e.preventDefault()}
             onKeyDown={handleKeyDown}
             required
+            maxLength={20}
+            {...(isError.confirmPassword && { className: "p-invalid" })}
           />
           {isError.confirmPassword && (
             <small id="repassword-help" className="p-error">

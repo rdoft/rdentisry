@@ -3,7 +3,15 @@ const Joi = require("joi");
 const register = Joi.object({
   name: Joi.string().trim().default("").allow(""),
   email: Joi.string().trim().empty("").email({ tlds: false }).required(),
-  password: Joi.string().trim().empty("").min(8).required(),
+  password: Joi.string()
+    .trim()
+    .min(8)
+    .max(20)
+    .regex(/[a-z]/, "küçük harf")
+    .regex(/[A-Z]/, "büyük harf")
+    .regex(/\d/, "rakam")
+    .regex(/[@$!%*?&#.^()_+\-={};':"|,.<>?]/, "özel karakter")
+    .required(),
 });
 
 const login = Joi.object({
@@ -16,7 +24,15 @@ const forgot = Joi.object({
 });
 
 const reset = Joi.object({
-  password: Joi.string().trim().empty("").min(8).required(),
+  password: Joi.string()
+    .trim()
+    .min(8)
+    .max(20)
+    .regex(/[a-z]/, "küçük harf")
+    .regex(/[A-Z]/, "büyük harf")
+    .regex(/\d/, "rakam")
+    .regex(/[@$!%*?&#.^()_+\-={};':"|,.<>?]/, "özel karakter")
+    .required(),
 });
 
 const id = Joi.object({
@@ -24,7 +40,15 @@ const id = Joi.object({
 });
 
 const email = Joi.string().trim().empty("").email({ tlds: false }).required();
-const password = Joi.string().trim().empty("").min(8).required();
+const password = Joi.string()
+  .trim()
+  .min(8)
+  .max(20)
+  .regex(/[a-z]/, "küçük harf")
+  .regex(/[A-Z]/, "büyük harf")
+  .regex(/\d/, "rakam")
+  .regex(/[@$!%*?&#.^()_+\-={};':"|,.<>?]/, "özel karakter")
+  .required();
 
 module.exports = {
   login,
