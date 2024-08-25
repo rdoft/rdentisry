@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { handleError } from "utils";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider } from "primereact";
+import { useAuth } from "context/AuthProvider";
 
 // assets
 import svgGoogle from "assets/svg/google.svg";
@@ -15,6 +16,7 @@ import schema from "schemas/user.schema";
 
 function Register() {
   const navigate = useNavigate();
+  const { authenticate } = useAuth();
 
   const GOOGLE_AUTH = process.env.REACT_APP_AUTH_URL
     ? `${process.env.REACT_APP_AUTH_URL}google`
@@ -42,6 +44,7 @@ function Register() {
 
     try {
       await AuthService.register(auth);
+      authenticate({ agreement: false });
       navigate("/");
     } catch (error) {
       const { message } = handleError(error);

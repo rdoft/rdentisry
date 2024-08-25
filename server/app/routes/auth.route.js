@@ -59,6 +59,15 @@ module.exports = function (app) {
     .get(passport.authenticate("google"), controller.google);
 
   router
+    .route(`/tokens/:token`)
+    /**
+     * Control the token for the given type
+     * @param token
+     * @query type
+     */
+    .get(controller.controlToken);
+
+  router
     .route(`/forgot`)
     /**
      * Forgot password
@@ -69,14 +78,24 @@ module.exports = function (app) {
   router
     .route(`/reset/:token`)
     /**
-     * Reset password token verify
-     */
-    .get(controller.resetVerify)
-    /**
      * Reset password
      * @body User password
      */
     .post(validate(schema.reset, "body"), controller.reset);
+
+  router
+    .route(`/verify`)
+    /**
+     * Init verify for email
+     */
+    .post(controller.initVerify);
+
+  router
+    .route(`/verify/:token`)
+    /**
+     * Complete the email verification
+     */
+    .post(controller.completeVerify);
 
   router
     .route(`/permission`)

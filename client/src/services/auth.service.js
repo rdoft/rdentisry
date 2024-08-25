@@ -26,6 +26,14 @@ auth.logout = () => {
 };
 
 /**
+ * Control reset token
+ * @param token
+ */
+auth.controlToken = (token, type, options = {}) => {
+  return API.get(`/tokens/${token}?type=${type}`, options);
+};
+
+/**
  * Send mail to reset password
  */
 auth.forgot = (email) => {
@@ -41,11 +49,17 @@ auth.reset = (token, auth) => {
 };
 
 /**
- * Control reset token
- * @param token
+ * Init verify for email
  */
-auth.control = (token, options = {}) => {
-  return API.get(`/reset/${token}`, options);
+auth.initVerify = () => {
+  return API.post(`/verify`);
+};
+
+/**
+ * Complete the email verification
+ */
+auth.completeVerify = (token, options = {}) => {
+  return API.post(`/verify/${token}`);
 };
 
 /**

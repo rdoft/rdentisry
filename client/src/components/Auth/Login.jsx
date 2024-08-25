@@ -40,7 +40,7 @@ function Login() {
 
       // Set isAuthenticated for all routes
       authenticate(res.data);
-      navigate("/");
+      res.data.verified ? navigate("/") : navigate("/verify");
     } catch (error) {
       const { status, message } = handleError(error);
       status === 401

@@ -19,8 +19,19 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.DATE,
         allowNull: false,
       },
+      Type: {
+        type: Sequelize.ENUM,
+        allowNull: false,
+        values: ["email", "reset"],
+      },
     },
     {
+      indexes: [
+        {
+          unique: true,
+          fields: ["UserId", "Type"],
+        },
+      ],
       timestamps: false,
       tableName: "Token",
     }

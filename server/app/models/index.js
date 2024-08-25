@@ -203,8 +203,8 @@ db.notification.belongsTo(db.user, {
 });
 
 // User - Token
-db.user.hasOne(db.token, {
-  as: "token",
+db.user.hasMany(db.token, {
+  as: "tokens",
   foreignKey: "UserId",
 });
 db.token.belongsTo(db.user, {

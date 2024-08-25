@@ -4,7 +4,7 @@ const User = db.user;
 const Token = db.token;
 const Agreement = db.agreement;
 
-const { sendResetPassword } = require("../utils/mail.util");
+const { sendResetMail, sendVerifyMail } = require("../utils/mail.util");
 const dns = require("dns").promises;
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
@@ -14,7 +14,10 @@ const HOST = HOSTNAME || HOST_SERVER || "localhost";
 const PORT_CLIENT = PORT || 3000;
 
 exports.login = async (req, res) => {
-  res.status(200).send({ agreement: req.user.Agreement });
+  res.status(200).send({
+    agreement: req.user.Agreement,
+    verified: req.user.Verified,
+  });
 };
 
 exports.logout = async (req, res, next) => {
@@ -53,7 +56,9 @@ exports.register = async (req, res) => {
     try {
       addr = await dns.resolve(domain);
       if (!addr.length) {
-        return res.status(400).send({ message: "Mail adresinizi kontrol edin" });
+        return res
+          .status(400)
+          .send({ message: "Mail adresinizi kontrol edin" });
       }
     } catch (error) {
       return res.status(400).send({ message: "Mail adresinizi kontrol edin" });
@@ -92,6 +97,68 @@ exports.register = async (req, res) => {
   }
 };
 
+exports.google = async (req, res) => {
+  if (req.user) {
+    res.redirect(`https://${HOST}:${PORT_CLIENT}/`);
+  } else {
+    res.redirect(`https://${HOST}:${PORT_CLIENT}/login`);
+  }
+  res.status(200).send();
+};
+
+/**
+ * Control the token for the given type
+ * @param token
+ * @query type
+ */
+exports.controlToken = async (req, res) => {
+  const { token } = req.params;
+  const { type = "reset" } = req.query; // reset or email
+  let user;
+
+  try {
+    user = await User.findOne({
+      include: [
+        {
+          model: Token,
+          as: "tokens",
+          Type: type,
+          where: {
+            Token: token,
+            Expiration: {
+              [Sequelize.Op.gt]: Date.now(),
+            },
+          },
+          required: true,
+        },
+      ],
+    });
+
+    // If user or token not found, respond with an error
+    if (!user) {
+      return res.status(400).send({
+        message: "Bağlantı linki geçersiz veya süresi dolmuştur",
+      });
+    }
+
+    // Time safe comparison for more security
+    if (
+      !crypto.timingSafeEqual(
+        Buffer.from(token),
+        Buffer.from(user.tokens[0].Token)
+      )
+    ) {
+      return res.status(400).send({
+        message: "Bağlantı linki geçersiz veya süresi dolmuştur",
+      });
+    }
+
+    res.status(200).send();
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
 /**
  * Forgot password
  * @body User email
@@ -113,60 +180,22 @@ exports.forgot = async (req, res) => {
       return res.status(404).send({ message: "Geçersiz mail adresi" });
     }
 
-    await Token.upsert({
-      UserId: user.UserId,
-      Token: token,
-      Expiration: Date.now() + 3600000,
-    });
-
-    await sendResetPassword(
-      email,
-      `https://${HOST}:${PORT_CLIENT}/reset/${token}`
+    await Token.upsert(
+      {
+        UserId: user.UserId,
+        Token: token,
+        Expiration: Date.now() + 3600000, // 1 hour
+        Type: "reset",
+      },
+      {
+        where: {
+          UserId: user.UserId,
+          Type: "reset",
+        },
+      }
     );
 
-    res.status(200).send();
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
-
-/**
- * Reset password token verify
- */
-exports.resetVerify = async (req, res) => {
-  const { token } = req.params;
-  let user;
-
-  try {
-    user = await User.findOne({
-      include: [
-        {
-          model: Token,
-          as: "token",
-          where: {
-            Token: token,
-            Expiration: {
-              [Sequelize.Op.gt]: Date.now(),
-            },
-          },
-        },
-      ],
-    });
-
-    if (!user) {
-      return res.status(400).send({
-        message: "Şifre sıfırlama linki geçersiz veya süresi dolmuştur",
-      });
-    }
-
-    // Time safe comparison for more security
-    if (
-      !crypto.timingSafeEqual(Buffer.from(token), Buffer.from(user.token.Token))
-    ) {
-      return res.status(400).send({
-        message: "Şifre sıfırlama linki geçersiz veya süresi dolmuştur",
-      });
-    }
+    await sendResetMail(email, `https://${HOST}:${PORT_CLIENT}/reset/${token}`);
 
     res.status(200).send();
   } catch (error) {
@@ -188,17 +217,20 @@ exports.reset = async (req, res) => {
       include: [
         {
           model: Token,
-          as: "token",
+          as: "tokens",
+          Type: "reset",
           where: {
             Token: token,
             Expiration: {
               [Sequelize.Op.gt]: Date.now(),
             },
           },
+          required: true,
         },
       ],
     });
 
+    // If user or token not found, respond with an error
     if (!user) {
       return res.status(400).send({
         message: "Şifre sıfırlama linki geçersiz veya süresi dolmuştur",
@@ -207,17 +239,21 @@ exports.reset = async (req, res) => {
 
     // Time safe comparison for more security
     if (
-      !crypto.timingSafeEqual(Buffer.from(token), Buffer.from(user.token.Token))
+      !crypto.timingSafeEqual(
+        Buffer.from(token),
+        Buffer.from(user.tokens[0].Token)
+      )
     ) {
       return res.status(400).send({
         message: "Şifre sıfırlama linki geçersiz veya süresi dolmuştur",
       });
     }
 
-    // Delete token
+    // Delete reset token
     await Token.destroy({
       where: {
         UserId: user.UserId,
+        Type: "reset",
       },
     });
 
@@ -243,13 +279,121 @@ exports.reset = async (req, res) => {
   }
 };
 
-exports.google = async (req, res) => {
-  if (req.user) {
-    res.redirect(`https://${HOST}:${PORT_CLIENT}/`);
-  } else {
-    res.redirect(`https://${HOST}:${PORT_CLIENT}/login`);
+/**
+ * Init verify for email
+ */
+exports.initVerify = async (req, res) => {
+  const { UserId: userId } = req.user;
+  let token;
+  let user;
+
+  try {
+    token = crypto.randomBytes(32).toString("hex");
+    user = await User.findOne({
+      where: {
+        UserId: userId,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).send({ message: "Geçersiz kullanıcı" });
+    }
+    if (user.Verified) {
+      return res.status(400).send({ message: "Mail adresi zaten doğrulanmış" });
+    }
+
+    await Token.upsert(
+      {
+        UserId: userId,
+        Token: token,
+        Expiration: Date.now() + 86400000, // 24 hours
+        Type: "email",
+      },
+      {
+        where: {
+          UserId: userId,
+          Type: "email",
+        },
+      }
+    );
+
+    await sendVerifyMail(
+      user.Email,
+      `https://${HOST}:${PORT_CLIENT}/verify/${token}`
+    );
+  } catch (error) {
+    res.status(500).send(error);
   }
-  res.status(200).send();
+};
+
+/**
+ * Complete the email verification
+ */
+exports.completeVerify = async (req, res) => {
+  const { token } = req.params;
+  let user;
+
+  try {
+    user = await User.findOne({
+      include: [
+        {
+          model: Token,
+          as: "tokens",
+          Type: "email",
+          where: {
+            Token: token,
+            Expiration: {
+              [Sequelize.Op.gt]: Date.now(),
+            },
+          },
+          required: true,
+        },
+      ],
+    });
+
+    // If user or token not found, respond with an error
+    if (!user) {
+      return res.status(400).send({
+        message: "Doğrulama linki geçersiz veya süresi dolmuştur",
+      });
+    }
+
+    // Time safe comparison for more security
+    if (
+      !crypto.timingSafeEqual(
+        Buffer.from(token),
+        Buffer.from(user.tokens[0].Token)
+      )
+    ) {
+      return res.status(400).send({
+        message: "Doğrulama linki geçersiz veya süresi dolmuştur",
+      });
+    }
+
+    // Delete email token
+    await Token.destroy({
+      where: {
+        UserId: user.UserId,
+        Type: "email",
+      },
+    });
+
+    // Update user verified status
+    User.update(
+      {
+        Verified: true,
+      },
+      {
+        where: {
+          UserId: user.UserId,
+        },
+      }
+    );
+
+    res.status(200).send();
+  } catch (error) {
+    res.status(500).send(error);
+  }
 };
 
 /**

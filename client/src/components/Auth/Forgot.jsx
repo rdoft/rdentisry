@@ -74,8 +74,8 @@ function Forgot() {
         {success ? (
           <div className="flex mb-2" style={{ justifyContent: "center" }}>
             <Typography variant="h4" fontWeight="light">
-              Şifre sıfırlama bağlantısı email adresinize gönderildi. Lütfen
-              emailinizi kontrol ediniz.
+              Şifre sıfırlama bağlantısı e-posta adresinize gönderildi. Lütfen
+              e-postanızı kontrol ediniz.
             </Typography>
           </div>
         ) : (

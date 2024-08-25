@@ -35,7 +35,7 @@ function ResetPassword() {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    AuthService.control(token, { signal }).catch(() => {
+    AuthService.controlToken(token, "reset", { signal }).catch(() => {
       navigate("/login");
     });
 

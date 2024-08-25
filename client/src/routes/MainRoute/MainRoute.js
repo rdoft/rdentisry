@@ -20,6 +20,8 @@ const Forgot = Loadable(lazy(() => import("pages/Auth/ForgotPage")));
 const ResetPassword = Loadable(
   lazy(() => import("pages/Auth/ResetPasswordPage"))
 );
+const Verify = Loadable(lazy(() => import("pages/Auth/VerifyPage")));
+const Verified = Loadable(lazy(() => import("pages/Auth/VerifiedPage")));
 const NotFound = Loadable(lazy(() => import("pages/Other/NotFoundPage")));
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -40,6 +42,14 @@ const MainRoutes = [
   {
     path: "/reset/:token",
     element: <ResetPassword />,
+  },
+  {
+    path: "/verify",
+    element: <ProtectedRoute element={Verify} />,
+  },
+  {
+    path: "/verify/:token",
+    element: <ProtectedRoute element={Verified} />,
   },
   {
     path: "/",
