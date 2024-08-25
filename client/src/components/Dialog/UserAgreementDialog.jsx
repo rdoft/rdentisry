@@ -455,16 +455,21 @@ function UserAgreementDialog() {
           işlenmesi süreçlerinde veri sorumlusu sıfatını taşır. Siteyi
           geliştiren ve bakımını yapan dishekime ise, veri sorumlusunun
           talimatları doğrultusunda kişisel verileri işleyen veri işleyen
-          sıfatını taşır. 10.2. İşbu Kullanıcı Sözleşmesini kabul ederek, söz
-          konusu üçüncü tarafların kişisel verilerinin Site ve Uygulama
-          aracılığıyla işlenmesinden tamamen sorumlu ve yükümlü olduğunuzu
-          anladığınızı teyit edersiniz. dishekime, Site ve Uygulama aracılığıyla
-          işlediğiniz üçüncü tarafların kişisel verilerinden sorumlu ve yükümlü
-          değildir. 10.3. Bu nedenle, Siteyi ve Uygulamayı üçüncü tarafların
-          kişisel verilerini işlemek için kullanma hakkına yalnızca kişisel
-          verilerle bu tür faaliyetleri yürütmek için yasal bir dayanağınız
-          varsa ve geçerli yasaların gerekliliklerine uyuyorsanız sahip
-          olduğunuzu anladığınızı teyit edersiniz.
+          sıfatını taşır.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          10.2. İşbu Kullanıcı Sözleşmesini kabul ederek, söz konusu üçüncü
+          tarafların kişisel verilerinin Site ve Uygulama aracılığıyla
+          işlenmesinden tamamen sorumlu ve yükümlü olduğunuzu anladığınızı teyit
+          edersiniz. dishekime, Site ve Uygulama aracılığıyla işlediğiniz üçüncü
+          tarafların kişisel verilerinden sorumlu ve yükümlü değildir.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          10.3. Bu nedenle, Siteyi ve Uygulamayı üçüncü tarafların kişisel
+          verilerini işlemek için kullanma hakkına yalnızca kişisel verilerle bu
+          tür faaliyetleri yürütmek için yasal bir dayanağınız varsa ve geçerli
+          yasaların gerekliliklerine uyuyorsanız sahip olduğunuzu anladığınızı
+          teyit edersiniz.
         </Typography>
       </div>
 
@@ -491,7 +496,14 @@ function UserAgreementDialog() {
           barındırdığı tüm bilgi ve dokümanlardan, e-posta, sms hizmetleri ile
           kullanacağı ve faydalanacağı tüm işlemlerden kendisi sorumlu olduğunu,
           söz konusu veri, bilgi ve beyanların herhangi bir hak ihlaline sebep
-          olmayacağını kabul ve taahhüt etmektedir.
+          olmayacağını kabul ve taahhüt etmektedir. Uygulamada oluşturulan ve
+          paylaşılan içeriklerin ve bunlarla ilgili diğer süreçlerin Sosyal
+          Güvenlik Hukuku ve İş Hukuku başta olmak üzere ilgili mevzuata uygun
+          olmasının sağlanması münhasıran Kullanıcıya aittir. Uygulamanın işbu
+          Sözleşme ve ilgili mevzuata uygun olmayan şekilde kullanımı nedeniyle,
+          Kullanıcının Uygulamadan faydalanma imkanı kısmen veya tamamen askıya
+          alınabilinecek olup, bu konuda doğabilecek uyuşmazlıklardan dolayı
+          dishekime herhangi bir sorumluluk kabul etmez.
         </Typography>
         <Typography variant="body1" mb={1}>
           11.3. dishekime diş kliniklerinin ve diş hekimlerinin günlük işlerine
@@ -504,7 +516,80 @@ function UserAgreementDialog() {
           sağlayıcının alıcının ret bildirimi için ticari elektronik iletide
           müşteri hizmetleri numarası kısa mesaj numarası veya yalnızca ret
           bildirimine özgülenmiş bir URL adresi gibi erişilebilir iletişim
-          adresini vermesi gerekir."
+          adresini vermesi gerekir. Ticari elektronik ileti hangi iletişim
+          kanalı ile gönderildiyse ret bildirimi de kolay ve ücretsiz bir
+          şekilde olmak üzere aynı iletişim kanalı ile sağlanır.” düzenlemesi
+          nedeniyle içeriğik sorumluluğu tarafımızda olmayan ticari iletileri
+          mevzuat çerçevesinde göndermek Kullanıcının sorumluluğundadır.
+          Kullanıcı tarafından işbu sorumluluğa aykırı hareket edilmesi halinde
+          dishekime’nin karşı karşıya kalacağı cezai ve hukuki yükümlülükler
+          Kullanıcıya rücu edilecektir. Kullanıcı işbu hükmü koşulsuz şartsız
+          kabul ve beyan eder.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          11.4. Kullanıcı, Hizmetlere Kullanıcı tarafında kişisel verileri
+          yüklenecek hesaplar bakımından 6698 sayılı Kişisel Verilerin Korunması
+          Kanunu kapsamında veri sorumlusu sıfatına haiz olduğunu, kişisel
+          verilerin Hizmetlere yüklenmesi ve veri işleyen sıfatını haiz
+          dishekime tarafından bu verilerin işlenmesi de dahil olmak üzere bu
+          kapsamda Kullanıcı tarafında Hizmetlere kayıt edilmiş hesaplardan
+          gerekli onayların alınması, gerekli bilgilendirilmelerin yapılması ve
+          ilgili mevzuat kapsamındaki yükümlülüklerin yerine getirilmesinin
+          münhasıran kendi sorumluluğunda olduğunu, bu kapsamda dishekime’nin
+          maruz kalabileceği her türlü talep ve zararın kendisine rücu
+          edileceğini beyan, kabul ve taahhüt eder.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          11.5. Kullanıcı, dishekime'nin Hizmetleri kapsamında Kullanıcı veya
+          Kullanıcı tarafında Uygulamaya kayıt edilmiş hesaplar tarafından
+          paylaşılan bilgi, belge ve fotoğrafları kullanarak, söz konusu bilgi
+          ve belgeler içindeki kişisel verileri anonimleştirmek suretiyle ve
+          hesapların kimliğini ifşa etmeden istatistiki değerlendirmeler
+          yapabileceğini, yapay zekanın tedavi önermesi için çalışmalarında
+          kullanılabileceğini kabul eder.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          11.6. dishekime, Kullanıcının bilgilerini yasal bir zorunluluk olarak
+          istendiğinde, yasal gereklere uygun hareket etmek ve dishekime’ye
+          tebliğ edilen yasal işlemlere uymak ve Uygulama ve dishekime'nin
+          haklarını ve mülkiyetini korumak ve savunmak için gerekli olduğuna iyi
+          niyetle kanaat getirdiği hallerde açıklayabilir.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          11.7. dishekime, Uygulamada değişiklikler yapma, Uygulamanın yeni
+          sürüm, yayın, genişletilmiş biçimlerini vb. çıkarma, Uygulamaya yeni
+          özellikler ekleme veya mevcut özelliklerini kaldırma hakkına sahiptir.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          11.8. dishekime Uygulamaya Kullanıcı tarafından kaydedilmiş bilgileri
+          Kullanıcı’nın bilgisi olmaksızın hiçbir kurum, kuruluş ve 3. şahıs ile
+          yasal zorunluluklar dışında paylaşmayacağını beyan, kabul ve taahhüt
+          eder.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          11.9. dishekime Uygulamaya Kullanıcı tarafından kayıt edilmiş
+          bilgileri Kullanıcının kendi bilgisayarına aktarabileceği bir alt
+          yapıyı her zaman hazır bulunduracağını beyan, kabul ve taahhüt eder.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          11.10. dishekime sağladığı Hizmetler içerisinde bulunan Kullanıcı
+          verilerinin hatalı kullanımlarından, veri içeriklerinden, e-posta, sms
+          ile kullanılan tüm verilerden doğabilecek hiçbir maddi veya manevi
+          zarardan sorumlu tutulamaz. Bu verilerin yedekleme ve saklama
+          sorumlulukları dishekime’ye aittir. dishekime Kullanıcının tüm
+          verilerini düzenli bir biçimde yedekleme ve bakım ve talep halinde
+          silme, imha etme, anonimleştirme yahut yasal olarak yok etme işlemine
+          tabi tutacağını taahhüt eder. Buna rağmen doğal afetler, kamu
+          yaptırımlarından veya üçüncü taraf servis sağlayıcılarından dolayı
+          Hizmetlerde meydana gelebilecek kesinti veya veri kaybından dolayı
+          oluşabilecek hasarlardan ve zarardan dishekime sorumlu değildir.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          11.11. dishekime, sunduğu Hizmetleri abonelik süresi bitiminden sonra
+          durdurma veya Hizmetleri tamamen iptal etme hakkını saklı tutmaktadır.
+          Süresi dolmuş veya ödemesi sağlanmamış Hizmetlerin iptalinden sonra
+          dishekime’nin herhangi bir veri kaydı tutma yükümlülüğü
+          bulunmamaktadır.
         </Typography>
       </div>
 
@@ -529,6 +614,15 @@ function UserAgreementDialog() {
           herhangi bir zarardan (veri kaybı veya kar kaybı veya iş kesintisi,
           bilgisayar arızası nedeniyle oluşan zararlar dahil ancak bunlarla
           sınırlı olmamak üzere) hiçbir durumda sorumlulu kabul etmez.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          12.3. Siteyi kullanmanız nedeniyle veya bununla bağlantılı olarak
+          herhangi bir üçüncü tarafça dishekime’ye karşı yapılan her türlü
+          talep, kayıp, yükümlülük, iddia veya masraftan (avukatlık ücretleri
+          dahil) dishekime’yi, yetkililerini, yöneticilerini, hissedarlarını,
+          çalışanlarını, acentelerini, iştiraklerini ve bağlı kuruluşlarını
+          tazmin etmeyi ve bunlardan zarar görmemesini sağlamayı kabul
+          edersiniz.
         </Typography>
       </div>
 
@@ -566,7 +660,42 @@ function UserAgreementDialog() {
           Kullanıcı, kendi isteğine bağlı olarak üyelik paketini yükseltebilecek
           veya düşürebilecektir. Buna ilişkin talepler, dishekime tarafından
           aksi öngörülmedikçe ilgili üyelik döneminin sonunda
-          gerçekleştirilecektir.
+          gerçekleştirilecektir. Kullanıcı’nın üyelik süresi boyunca üyelik
+          paketine ilişkin ücret ve ödeme koşullarında yapılacak değişiklikler,
+          Kullanıcı’nın üyelik döneminin sona ermesine dek uygulanmayacak, yeni
+          ücretler ve ödeme koşulları yeni üyelik döneminin başlamasıyla geçerli
+          olacaktır. Üyelik dönemi boyunca Sözleşme’nin feshi de dahil olmak
+          üzere üyeliğin herhangi bir nedenle sona ermesi halinde geri ödeme
+          yapılmayacaktır.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          14.3. Kullanıcı tarafından periyod bitiminden 10 (on) gün öncesine
+          kadar aksi talep edilmediği sürece her periyodun bitiminde
+          Kullanıcı’nın üyeliği otomatik olarak yenilenecektir.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          14.4. Tüm faturalar, sonradan ödemeli üyelik halinde bir önceki üyelik
+          dönemine ilişkin ücretleri, ön ödemeli üyeliklerde ise bir sonraki
+          üyelik dönemine ilişkin ücretleri içerecektir. Kullanıcı, faturadaki
+          ilgili tutarı fatura tarihini takip eden 7 (yedi) iş günü içinde
+          ödeyecektir. İlgili ücretlere ilişkin vergi ve harçların ödenmesinden
+          Kullanıcı sorumludur.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          14.5. dishekime, sözleşme tarihinden sonra yürürlüğe giren kamu
+          yaptırımlarıyla ürünün kullanımına ilişkin ortaya çıkan ekstra
+          maliyetleri Kullanıcılara yansıtma hakkını saklı tutar.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          14.6. dishekime, Kullanıcı ödeme işlemini tamamlayıncaya kadar ilgili
+          hizmeti kapatma, askıya alma ve kapalı tutma hakkını saklı tutar. Bu
+          nedenle oluşabilecek zarar ve kayıplardan dishekime sorumlu tutulamaz.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          14.7. Kullanıcı, dishekime veya dishekime tarafından onaylanmış üçüncü
+          kişiler üyeliğe ve ödemeye ilişkin işlemler veya banka entegrasyonunu
+          ve ilgili güncellemeleri gerçekleştirmek için Kullanıcı’nın kredi
+          kartı ve ödeme bilgilerini saklayabilecektir.
         </Typography>
       </div>
 
@@ -580,13 +709,13 @@ function UserAgreementDialog() {
           yapmaması, geciktirmesi yahut işbu Sözleşmede belirtilen
           yükümlülüklere uymaması durumunda, dishekime Kullanıcıya verilen
           hizmetlerin tümünü durdurma, askıya alma, hesap erişimini
-          sınırlandırma ve hesabı silme hakkını saklı tutar.{" "}
+          sınırlandırma ve hesabı silme hakkını saklı tutar.
         </Typography>
         <Typography variant="body1" mb={1}>
           15.2. Kullanıcı, dishekime tarafından askıya alınan hesap erişiminde
           e-posta, sms, web erişimleri yapamaz ve Kullanıcının e-posta, sms
           hesapları dondurulur. Kullanıcı, sorumluluğun kendisinde olduğunu
-          beyan, kabul ve taahhüt eder.{" "}
+          beyan, kabul ve taahhüt eder.
         </Typography>
         <Typography variant="body1" mb={1}>
           15.3. Kullanıcı, işbu Sözleşmenin herhangi bir maddesine aykırı
@@ -596,6 +725,49 @@ function UserAgreementDialog() {
           alma halinin 7 (yedi) iş gününden fazla devam etmesi halinde,
           dishekime hiç bir ihtar ve ihbara gerek kalmaksızın sözleşmeyi tek
           taraflı olarak fesih etme hakkına sahiptir.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          15.4. Kullanıcı, aldığı hizmetlere karşılık fatura tarihini takip eden
+          7 (yedi) iş günü içinde ödeme gerçekleştirmediği takdirde temerrüde
+          düşmüş sayılır.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          15.5. Kullanıcı, işbu Sözleşmeden doğan her türlü alacak için
+          dishekime’nin Kullanıcı aleyhine dava açması ya da icra takibi yapması
+          halinde bakiye borç miktarının %50'si kadar cezai şart, %20'si
+          Avukatlık Ücreti ve diğer tüm yasal giderleri ödemeyi beyan, kabul ve
+          taahhüt eder.​
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          15.6. (15.3.) maddesinde gerçekleşecek fesih sonrasında Kullanıcı;
+          kalan süreye bakılmaksızın ödemiş olduğu son sözleşme ücretini geri
+          isteyemeyeceğini, kabul ve taahhüt eder.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          15.7. Taraflardan herhangi biri, diğer tarafça bildirilen e-posta
+          adresine 10 (on) gün önceden yapacağı yazılı bir bildirimle işbu
+          Sözleşme’yi dilediği zaman herhangi bir gerekçe göstermeksizin ve
+          tazminat ödemeksizin feshedebilecektir. Bu bildirim, e-posta yoluyla
+          yapılabileceği gibi noter kanalıyla da gerçekleştirilebilir.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          15.8. İşbu Sözleşmenin sona erme süresinden önce Kullanıcının
+          sözleşmeyi feshetmesi ya da sözleşmenin taraflarca iptali halinde,
+          Kullanıcı ürüne ödemiş olduğu lisans ücretini talep etmeyeceğini kabul
+          eder.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          15.9. Kullanıcı hesabının yasal nedenlerle engellenmiş olmadığı ve
+          Sözleşme’nin feshedildiği hallerde Şirket İçerik’e 3 (üç) ay boyunca
+          salt okunur erişim sağlayacaktır.
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          15.10. dishekime, işbu Sözleşme yürürlükte olduğu müddetçe Veriyi
+          saklama hakkına sahiptir. Kullanıcı’nın üyelik döneminin veya işbu
+          Sözleşme’nin sona ermesini takip eden 3 (üç) ay içinde Kullanıcı
+          Verilerini ücret ödemeksizin alabilecektir. dishekime, bu sürenin sona
+          ermesinden sonra iletilen söz konusu talepler için ücret talep
+          edebilecektir. İlgili ücretler Uygulama kapsamında belirtilecektir.
         </Typography>
       </div>
 
@@ -613,6 +785,7 @@ function UserAgreementDialog() {
           bunlarla sınırlı olmamak kaydıyla ilgili tarafın makul kontrolü
           haricinde gerçekleşen olaylar ve küresel ya da ülkesel çapta pandemi
           ilanı gibi taraflarca öngörülemeyecek olaylar olarak yorumlanacaktır.
+          Mücbir sebep süresince tarafların edimleri askıya alınacaktır
         </Typography>
       </div>
 
