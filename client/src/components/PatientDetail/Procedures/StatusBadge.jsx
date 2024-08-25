@@ -6,7 +6,7 @@ import { Grid, Box, Typography, Tooltip } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { CompletedIcon, InProgressIcon } from "assets/images/icons";
 
-function StatusBadge({ procedures }) {
+function StatusBadge({ procedures, ...props }) {
   const theme = useTheme();
 
   let inProgress = null;
@@ -40,7 +40,7 @@ function StatusBadge({ procedures }) {
     <>
       <Tooltip
         title={completedTooltip}
-        placement="top"
+        placement={props.tooltipReverse ? "bottom" : "top"}
         componentsProps={{
           tooltip: {
             sx: {
@@ -61,7 +61,7 @@ function StatusBadge({ procedures }) {
       </Tooltip>
       <Tooltip
         title={inProgressTooltip}
-        placement="bottom"
+        placement={props.tooltipReverse ? "top" : "bottom"}
         componentsProps={{
           tooltip: {
             sx: {

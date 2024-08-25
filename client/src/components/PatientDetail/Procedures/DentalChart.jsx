@@ -179,7 +179,10 @@ function DentalChart({
 
             {/* Status */}
             <Grid container item xs={1} direction="column-reverse">
-              <StatusBadge procedures={groupedProcedures[tooth.number]} />
+              <StatusBadge
+                procedures={groupedProcedures[tooth.number]}
+                tooltipReverse={true}
+              />
             </Grid>
 
             {/* Numbers */}
