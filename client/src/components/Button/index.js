@@ -16,6 +16,7 @@ import SelectButton from "./SelectButton";
 import Tooth from "./Tooth";
 import Print from "./Print";
 import SwitchTeeth from "./SwitchTeeth";
+import Logout from "./Logout";
 
 export {
   Add,
@@ -36,4 +37,5 @@ export {
   Tooth,
   Print,
   SwitchTeeth,
+  Logout,
 };

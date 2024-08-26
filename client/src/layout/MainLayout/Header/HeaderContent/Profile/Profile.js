@@ -1,38 +1,38 @@
+import React, { useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
-import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { Divider } from "primereact";
 import { useAuth } from "context/AuthProvider";
-
-// material-ui
-// import { useTheme } from "@mui/material/styles";
 import {
   Avatar,
   Box,
   ButtonBase,
-  // CardContent,
-  // ClickAwayListener,
-  // Grid,
-  // Paper,
-  // Popper,
-  // Tab,
-  // Tabs,
+  CardContent,
+  ClickAwayListener,
+  Grid,
+  Paper,
+  Popper,
+  Tab,
+  Tabs,
   Stack,
   Typography,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 // project import
-// import { MainCard } from "components/cards";
-// import Transitions from "components/@extended/Transitions";
-// import ProfileTab from "./ProfileTab";
-// import SettingTab from "./SettingTab";
+import { Logout } from "components/Button";
+import { MainCard } from "components/cards";
+import Transitions from "components/@extended/Transitions";
+import ProfileTab from "./ProfileTab";
+import SettingTab from "./SettingTab";
 
 // assets
-import logoutAvatar from "assets/images/avatars/logout.png";
-// import { SettingOutlined, UserOutlined } from "@ant-design/icons";
+import dentalSvg from "assets/svg/profile/dental.svg";
+import { SettingOutlined, UserOutlined } from "@ant-design/icons";
 
 // services
-import { AuthService } from "services";
+import { AuthService, UserService } from "services";
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -55,45 +55,66 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-// function a11yProps(index) {
-//   return {
-//     id: `profile-tab-${index}`,
-//     "aria-controls": `profile-tabpanel-${index}`,
-//   };
-// }
+function a11yProps(index) {
+  return {
+    id: `profile-tab-${index}`,
+    "aria-controls": `profile-tabpanel-${index}`,
+  };
+}
 
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
 const Profile = () => {
-  // const theme = useTheme();
+  const theme = useTheme();
   const navigate = useNavigate();
   const { unauthenticate } = useAuth();
 
   const anchorRef = useRef(null);
-  const open = useRef(false);
-  // const [open, setOpen] = useState(false);
-  // const handleToggle = () => {
-  //   setOpen((prevOpen) => !prevOpen);
-  // };
-
-  // const handleClose = (event) => {
-  //   if (anchorRef.current && anchorRef.current.contains(event.target)) {
-  //     return;
-  //   }
-  //   setOpen(false);
-  // };
-
-  // const [value, setValue] = useState(0);
-
-  // const handleChange = (event, newValue) => {
-  //   setValue(newValue);
-  // };
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("Profil");
+  const [value, setValue] = useState(0);
 
   const iconBackColorOpen = "grey.300";
+  // Arrange user name for the profile
+  const username = name
+    ? name.length > 20
+      ? name.slice(0, 20) + "..."
+      : name
+    : "Klinik / Diş Hekimi";
 
-  // const [userName, setUserName] = useState("Diş Kliniği");
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    UserService.getUser({ signal })
+      .then((res) => {
+        setName(res.data.name);
+      })
+      .catch((error) => {
+        error.message && toast.error(error.message);
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
 
   // HANDLERS ---------------------------------------------------------
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  const handleToggle = () => {
+    setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleClose = (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+    setOpen(false);
+  };
+
   const handleLogout = async () => {
     try {
       await AuthService.logout();
@@ -105,21 +126,6 @@ const Profile = () => {
       error.message && toast.error(error.message);
     }
   };
-
-  // SERVICES ---------------------------------------------------------
-  // const getUser = async () => {
-  //   let response;
-  //   let userName;
-
-  //   try {
-  //     response = await AuthService.getUser();
-  //     userName = response.data.name ?? "Diş Kliniği";
-  //     userName = userName.length > 20 ? userName.slice(0, 20) + "..." : userName;
-  //     setUserName(userName);
-  //   } catch (error) {
-  // error.message && toast.error(error.message);
-  //   }
-  // };
 
   return (
     <Box sx={{ flexShrink: 0, ml: 0.75 }}>
@@ -134,24 +140,20 @@ const Profile = () => {
         ref={anchorRef}
         aria-controls={open.current ? "profile-grow" : undefined}
         aria-haspopup="true"
-        // onClick={handleToggle}
-        onClick={handleLogout}
+        onClick={handleToggle}
       >
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ p: 0.5 }}>
           <Avatar
             alt="profile user"
-            src={logoutAvatar}
-            sx={{ width: 16, height: 16 }}
+            src={dentalSvg}
+            sx={{ width: 24, height: 24 }}
           />
           <Stack>
-            <Typography variant="h6">Oturumu kapat</Typography>
-            {/* <Typography variant="body2" color="textSecondary">
-              {userName}
-            </Typography> */}
+            <Typography variant="h6">{username}</Typography>
           </Stack>
         </Stack>
       </ButtonBase>
-      {/* <Popper
+      <Popper
         placement="bottom-end"
         open={open}
         anchorEl={anchorRef.current}
@@ -199,15 +201,12 @@ const Profile = () => {
                           >
                             <Avatar
                               alt="profile user"
-                              src={avatar1}
+                              src={dentalSvg}
                               sx={{ width: 32, height: 32 }}
                             />
                             <Stack>
-                              <Typography variant="h6">
-                                Gül Diş Kliniği
-                              </Typography>
-                              <Typography variant="body2" color="textSecondary">
-                                Çayırova/Kocaeli
+                              <Typography variant="h5" fontWeight="light">
+                                {username}
                               </Typography>
                             </Stack>
                           </Stack>
@@ -222,6 +221,13 @@ const Profile = () => {
                             value={value}
                             onChange={handleChange}
                             aria-label="profile tabs"
+                            sx={{
+                              borderBottom: 1,
+                              borderColor: "divider",
+                              "& .MuiTabs-indicator": {
+                                bgcolor: theme.palette.text.secondary,
+                              },
+                            }}
                           >
                             <Tab
                               sx={{
@@ -230,6 +236,13 @@ const Profile = () => {
                                 justifyContent: "center",
                                 alignItems: "center",
                                 textTransform: "capitalize",
+                                "&:hover": {
+                                  bgcolor: theme.palette.background.secondary,
+                                  borderRadius: "10px",
+                                },
+                                "&.Mui-selected": {
+                                  color: theme.palette.text.secondary,
+                                },
                               }}
                               icon={
                                 <UserOutlined
@@ -239,7 +252,7 @@ const Profile = () => {
                                   }}
                                 />
                               }
-                              label="Profil"
+                              label="Hesap"
                               {...a11yProps(0)}
                             />
                             <Tab
@@ -249,6 +262,13 @@ const Profile = () => {
                                 justifyContent: "center",
                                 alignItems: "center",
                                 textTransform: "capitalize",
+                                "&:hover": {
+                                  bgcolor: theme.palette.background.secondary,
+                                  borderRadius: "10px",
+                                },
+                                "&.Mui-selected": {
+                                  color: theme.palette.text.secondary,
+                                },
                               }}
                               icon={
                                 <SettingOutlined
@@ -264,11 +284,13 @@ const Profile = () => {
                           </Tabs>
                         </Box>
                         <TabPanel value={value} index={0} dir={theme.direction}>
-                          <ProfileTab />
+                          <ProfileTab name={name} setName={setName} />
                         </TabPanel>
                         <TabPanel value={value} index={1} dir={theme.direction}>
                           <SettingTab />
                         </TabPanel>
+                        <Divider className="mt-3 mb-1" />
+                        <Logout onClick={handleLogout} style={{ margin: 4 }} />
                       </>
                     )}
                   </MainCard>
@@ -277,7 +299,7 @@ const Profile = () => {
             )}
           </Transitions>
         )}
-      </Popper> */}
+      </Popper>
     </Box>
   );
 };

@@ -60,7 +60,6 @@ exports.updateUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         await user.update({
-          Name: name,
           Password: hashedPassword,
         });
       } else {

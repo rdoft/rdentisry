@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-import { InputText, Divider } from "primereact";
+import { Avatar } from "@mui/material";
+import { InputText } from "primereact";
 import { DialogTemp } from "components/Dialog";
 
-function DoctorDialog({ initDoctor = {}, onHide, onSubmit }) {
-  const [doctor, setDoctor] = useState({
+// assets
+import dentalSvg from "assets/svg/profile/dental.svg";
+
+function ProfileDialog({ initProfile = {}, onSubmit, onHide }) {
+  const [profile, setProfile] = useState({
     name: "",
-    surname: "",
-    ...initDoctor,
+    ...initProfile,
   });
   const [isValid, setIsValid] = useState(false);
 
@@ -15,16 +18,15 @@ function DoctorDialog({ initDoctor = {}, onHide, onSubmit }) {
   const handleChange = (event) => {
     let { name, value } = event.target;
 
-    // doctor
-    const _doctor = {
-      ...doctor,
+    const _profile = {
+      ...profile,
       [name]: value,
     };
 
     // validation
-    const _isValid = _doctor.name.trim() && _doctor.surname.trim();
+    const _isValid = _profile.name.trim();
 
-    setDoctor(_doctor);
+    setProfile(_profile);
     setIsValid(_isValid);
   };
 
@@ -35,7 +37,7 @@ function DoctorDialog({ initDoctor = {}, onHide, onSubmit }) {
 
   // onSubmit handler
   const handleSubmit = () => {
-    onSubmit(doctor);
+    onSubmit(profile);
   };
 
   return (
@@ -43,12 +45,14 @@ function DoctorDialog({ initDoctor = {}, onHide, onSubmit }) {
       isValid={isValid}
       onHide={handleHide}
       onSubmit={handleSubmit}
-      header="Yeni Doktor"
-      style={{ height: "fit-content" }}
+      header="Profil Düzenle"
     >
-      {/* Divider */}
-      <Divider type="solid" className="mt-0" />
-
+      {/* Avatar icon */}
+      <Avatar
+        alt="dentalSvg"
+        src={dentalSvg}
+        sx={{ width: 100, height: 100, mb: 4, mx: "auto" }}
+      />
       {/* Form */}
       <div className="flex">
         <div className="field mr-2">
@@ -57,20 +61,10 @@ function DoctorDialog({ initDoctor = {}, onHide, onSubmit }) {
           </label>
           <InputText
             id="name"
-            value={doctor.name}
             name="name"
+            value={profile.name}
             onChange={handleChange}
-          />
-        </div>
-        <div className="field ml-2">
-          <label className="font-bold">
-            Soyad <small className="p-error">*</small>
-          </label>
-          <InputText
-            id="surname"
-            value={doctor.surname}
-            name="surname"
-            onChange={handleChange}
+            autoComplete="off"
           />
         </div>
       </div>
@@ -78,4 +72,4 @@ function DoctorDialog({ initDoctor = {}, onHide, onSubmit }) {
   );
 }
 
-export default DoctorDialog;
+export default ProfileDialog;

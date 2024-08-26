@@ -7,6 +7,8 @@ import PaymentPlanDialog from "./PaymentPlanDialog";
 import ProcedureDialog from "./ProcedureDialog";
 import BaseProcedureDialog from "./BaseProcedureDialog";
 import UserAgreementDialog from "./UserAgreementDialog";
+import ProfileDialog from "./ProfileDialog";
+import ResetPasswordDialog from "./ResetPasswordDialog";
 
 export {
   DialogTemp,
@@ -18,4 +20,6 @@ export {
   ProcedureDialog,
   BaseProcedureDialog,
   UserAgreementDialog,
+  ProfileDialog,
+  ResetPasswordDialog,
 };
