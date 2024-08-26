@@ -50,7 +50,20 @@ const password = Joi.string()
   .regex(/[@$!%*?&#.^()_+\-={};':"|,.<>?]/, "özel karakter")
   .required();
 
+const user = Joi.object({
+  name: Joi.string().trim().default("").allow(""),
+  password: Joi.string()
+    .trim()
+    .min(8)
+    .max(20)
+    .regex(/[a-z]/, "küçük harf")
+    .regex(/[A-Z]/, "büyük harf")
+    .regex(/\d/, "rakam")
+    .regex(/[@$!%*?&#.^()_+\-={};':"|,.<>?]/, "özel karakter"),
+}).unknown(true);
+
 module.exports = {
+  user,
   login,
   register,
   forgot,

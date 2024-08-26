@@ -1,5 +1,6 @@
 module.exports = (app) => {
   auth = require("./auth.route")(app);
+  user = require("./user.route")(app);
   patient = require("./patient.route")(app);
   doctor = require("./doctor.route")(app);
   appointment = require("./appointment.route")(app);
