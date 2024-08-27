@@ -321,6 +321,7 @@ exports.initVerify = async (req, res) => {
       user.Email,
       `https://${HOST}:${PORT_CLIENT}/verify/${token}`
     );
+    res.status(200).send();
   } catch (error) {
     res.status(500).send(error);
   }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { handleError } from "utils";
 import { Grid, Typography } from "@mui/material";
 import { Button } from "primereact";
@@ -7,21 +8,60 @@ import { Button } from "primereact";
 import { ReactComponent as Logo } from "assets/svg/dishekime/dishekime.svg";
 
 // services
-import { AuthService } from "services";
+import { AuthService, UserService } from "services";
+
+const MAX_LIMIT = 30; // Limit the number of checks
+const INTERVAL = 10000; // 10 seconds interval
 
 function Verify() {
+  const navigate = useNavigate();
+
   const [error, setError] = useState(null);
   const [resent, setResent] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
+    let count = 0;
 
-    AuthService.initVerify({ signal }).catch((error) => {
-      const { message } = handleError(error);
-      setError(message);
-    });
-  }, []);
+    const checkVerification = async () => {
+      try {
+        const res = await UserService.getUser({ signal });
+
+        if (res.data.verified) {
+          navigate("/");
+        } else {
+          await sendMail();
+        }
+      } catch (error) {
+        const { message } = handleError(error);
+        setError(message);
+      }
+    };
+    checkVerification();
+
+    const intervalId = setInterval(async () => {
+      try {
+        count += 1;
+        const res = await UserService.getUser({ signal });
+
+        if (res.data.verified) {
+          clearInterval(intervalId);
+          navigate("/");
+        } else if (count >= MAX_LIMIT) {
+          clearInterval(intervalId);
+        }
+      } catch (error) {
+        const { message } = handleError(error);
+        setError(message);
+      }
+    }, INTERVAL);
+
+    return () => {
+      controller.abort();
+      clearInterval(intervalId);
+    };
+  }, [navigate]);
 
   // SERVICES ---------------------------------------------------------
   const sendMail = async () => {

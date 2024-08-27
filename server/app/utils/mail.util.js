@@ -52,7 +52,7 @@ const sendResetMail = async (to, url) => {
             }
             .email-container {
                 width: 80%;
-                margin: auto;
+                margin: 0 auto;
                 background-color: #ffffff;
                 padding: 20px;
                 border-radius: 5px;
@@ -87,8 +87,8 @@ const sendResetMail = async (to, url) => {
     <body>
       <div>
         <div class="logo-container">
-          <svg class="logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900"
-            zoomAndPan="magnify" viewBox="0 0 675 112.499997" height="55" preserveAspectRatio="xMidYMid meet"
+          <svg class="logo" width="300" height="35" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            zoomAndPan="magnify" viewBox="0 0 675 112.499997" preserveAspectRatio="xMidYMid meet"
             version="1.0">
             <defs>
               <g />
@@ -220,7 +220,7 @@ const sendVerifyMail = async (to, url) => {
             }
             .email-container {
                 width: 80%;
-                margin: auto;
+                margin: 0 auto;
                 background-color: #ffffff;
                 padding: 20px;
                 border-radius: 5px;
@@ -255,8 +255,8 @@ const sendVerifyMail = async (to, url) => {
     <body>
       <div>
         <div class="logo-container">
-          <svg class="logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900"
-            zoomAndPan="magnify" viewBox="0 0 675 112.499997" height="55" preserveAspectRatio="xMidYMid meet"
+          <svg class="logo" width="300" height="35" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            zoomAndPan="magnify" viewBox="0 0 675 112.499997" preserveAspectRatio="xMidYMid meet"
             version="1.0">
             <defs>
               <g />
