@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const { Sequelize } = require("../models");
 const db = require("../models");
 const Note = db.note;
@@ -43,8 +44,21 @@ exports.getNotes = async (req, res) => {
     });
 
     res.status(200).send(notes);
+    log.audit.info("Get notes completed", {
+      userId,
+      action: "GET",
+      success: true,
+      request: {
+        params: req.params,
+      },
+      resource: {
+        type: "note",
+        count: notes.length,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -89,11 +103,37 @@ exports.getNote = async (req, res) => {
 
     if (note) {
       res.status(200).send(note);
+      log.audit.info("Get note completed", {
+        userId,
+        action: "GET",
+        success: true,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "note",
+          count: 1,
+          id: noteId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Not mevcut değil" });
+      log.audit.warn("Get note failed: Note doesn't exist", {
+        userId,
+        action: "GET",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "note",
+          count: 0,
+        },
+      });
     }
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -121,9 +161,19 @@ exports.saveNote = async (req, res) => {
     });
 
     if (!patientRecord) {
-      return res.status(404).send({
+      res.status(404).send({
         message: "Not eklenmek istenen hasta mevcut değil",
       });
+      log.audit.warn("Save note failed: Patient doesn't exist", {
+        userId,
+        action: "POST",
+        success: false,
+        resource: {
+          type: "note",
+          count: 0,
+        },
+      });
+      return;
     }
 
     // Create Note record
@@ -137,8 +187,19 @@ exports.saveNote = async (req, res) => {
     };
 
     res.status(200).send(note);
+    log.audit.info("Save note completed", {
+      userId,
+      action: "POST",
+      success: true,
+      resource: {
+        type: "note",
+        count: 1,
+        id: note.id,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -167,9 +228,22 @@ exports.updateNote = async (req, res) => {
       },
     });
     if (!patientRecord) {
-      return res.status(404).send({
+      res.status(404).send({
         message: "Güncellenen hasta bilgisi mevcut değil",
       });
+      log.audit.warn("Update note failed: Patient doesn't exist", {
+        userId,
+        action: "PUT",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "note",
+          count: 0,
+        },
+      });
+      return;
     }
 
     note = await Note.findOne({
@@ -189,14 +263,41 @@ exports.updateNote = async (req, res) => {
     });
 
     if (!note) {
-      return res.status(404).send({ message: "Not mevcut değil" });
+      res.status(404).send({ message: "Not mevcut değil" });
+      log.audit.warn("Update note failed: Note doesn't exist", {
+        userId,
+        action: "PUT",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "note",
+          count: 0,
+        },
+      });
+      return;
     }
 
     // Update the note
     await note.update(values);
     res.status(200).send({ id: noteId });
+    log.audit.info("Update note completed", {
+      userId,
+      action: "PUT",
+      success: true,
+      request: {
+        params: req.params,
+      },
+      resource: {
+        type: "note",
+        count: 1,
+        id: noteId,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -232,10 +333,36 @@ exports.deleteNote = async (req, res) => {
       note.destroy();
 
       res.status(200).send({ id: noteId });
+      log.audit.info("Delete note completed", {
+        userId,
+        action: "DELETE",
+        success: true,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "note",
+          count: 1,
+          id: noteId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Not mevcut değil" });
+      log.audit.warn("Delete note failed: Note doesn't exist", {
+        userId,
+        action: "DELETE",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "note",
+          count: 0,
+        },
+      });
     }
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
