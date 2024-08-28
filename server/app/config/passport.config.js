@@ -1,3 +1,4 @@
+const log = require("./log.config");
 const { Sequelize } = require("../models");
 const db = require("../models");
 const User = db.user;
@@ -35,6 +36,11 @@ passport.use(
 
         // Check user exists
         if (!user) {
+          log.access.warn("Login failed: Mail doesn't exist", {
+            mail: email,
+            success: false,
+            action: "LOGIN",
+          });
           return cb(null, false, {
             message: "Kullanıcı adı veya şifre yanlış",
           });
@@ -42,6 +48,11 @@ passport.use(
 
         // Check password is valid
         if (!user.Password) {
+          log.access.warn("Login failed: Wrong password", {
+            mail: email,
+            success: false,
+            action: "LOGIN",
+          });
           return cb(null, false, {
             message: "Kullanıcı adı veya şifre yanlış",
           });
@@ -49,13 +60,24 @@ passport.use(
 
         const isValid = await bcrypt.compare(password, user.Password);
         if (!isValid) {
+          log.access.warn("Login failed: Wrong password", {
+            mail: email,
+            success: false,
+            action: "LOGIN",
+          });
           return cb(null, false, {
             message: "Kullanıcı adı veya şifre yanlış",
           });
         }
 
+        log.access.info("Login success", {
+          mail: email,
+          success: true,
+          action: "LOGIN",
+        });
         return cb(null, user);
       } catch (err) {
+        log.error.error(err);
         return cb(err);
       }
     }
@@ -82,10 +104,21 @@ passport.use(
           user = await User.create({
             Email: profile.emails[0].value,
           });
+          log.access.info("Register success", {
+            mail: user.Email,
+            success: true,
+            action: "REGISTER",
+          });
         }
 
+        log.access.info("Login success", {
+          mail: user.Email,
+          success: true,
+          action: "LOGIN",
+        });
         return cb(null, user);
       } catch (err) {
+        log.error.error(err);
         return cb(err);
       }
     }

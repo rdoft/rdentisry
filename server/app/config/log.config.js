@@ -41,6 +41,10 @@ winston.loggers.add("access", {
     mail: null,
     action: null,
     success: null,
+    request: {
+      ip: null,
+      agent: null,
+    },
   },
   format: combine(timestamp(), json()),
   transports: [

@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const { Sequelize } = require("../models");
 const db = require("../models");
 const User = db.user;
@@ -23,9 +24,19 @@ exports.login = async (req, res) => {
 exports.logout = async (req, res, next) => {
   req.logout((err) => {
     if (err) {
+      log.error.error(err);
       return next(err);
     }
     res.status(200).send();
+    log.access.info("Logout success", {
+      userId: req.user.UserId,
+      success: true,
+      action: "LOGOUT",
+      request: {
+        ip: req.ip,
+        agent: req.headers["user-agent"],
+      },
+    });
   });
 };
 
@@ -48,7 +59,17 @@ exports.register = async (req, res) => {
       },
     });
     if (user && user.Password) {
-      return res.status(400).send({ message: "Mail adresi zaten kayıtlıdır" });
+      res.status(400).send({ message: "Mail adresi zaten kayıtlıdır" });
+      log.access.warn("Register failed: User already exists", {
+        email,
+        success: false,
+        action: "REGISTER",
+        request: {
+          ip: req.ip,
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
     }
 
     // Control if email dns is valid
@@ -56,12 +77,30 @@ exports.register = async (req, res) => {
     try {
       addr = await dns.resolve(domain);
       if (!addr.length) {
-        return res
-          .status(400)
-          .send({ message: "Mail adresinizi kontrol edin" });
+        res.status(400).send({ message: "Mail adresinizi kontrol edin" });
+        log.access.warn("Register failed: Invalid email", {
+          email,
+          success: false,
+          action: "REGISTER",
+          request: {
+            ip: req.ip,
+            agent: req.headers["user-agent"],
+          },
+        });
+        return;
       }
     } catch (error) {
-      return res.status(400).send({ message: "Mail adresinizi kontrol edin" });
+      res.status(400).send({ message: "Mail adresinizi kontrol edin" });
+      log.access.warn("Register failed: Invalid email", {
+        email,
+        success: false,
+        action: "REGISTER",
+        request: {
+          ip: req.ip,
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
     }
 
     // Create user record
@@ -85,15 +124,39 @@ exports.register = async (req, res) => {
       );
     }
 
+    log.access.info("Register success", {
+      userId: user.UserId,
+      email,
+      success: true,
+      action: "REGISTER",
+      request: {
+        ip: req.ip,
+        agent: req.headers["user-agent"],
+      },
+    });
+
     // Login user
     req.login(user, function (err) {
       if (err) {
-        return res.status(500).send(err);
+        res.status(500).send(err);
+        log.error.error(err);
+        return;
       }
       res.status(200).send();
+      log.access.info("Login success", {
+        userId: user.UserId,
+        email,
+        success: true,
+        action: "LOGIN",
+        request: {
+          ip: req.ip,
+          agent: req.headers["user-agent"],
+        },
+      });
     });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(err);
   }
 };
 
@@ -136,9 +199,19 @@ exports.controlToken = async (req, res) => {
 
     // If user or token not found, respond with an error
     if (!user) {
-      return res.status(400).send({
+      res.status(400).send({
         message: "Bağlantı linki geçersiz veya süresi dolmuştur",
       });
+      log.access.warn("Control token failed: Token doesn't exist or expired", {
+        token,
+        success: false,
+        action: "RESET",
+        request: {
+          ip: req.ip,
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
     }
 
     // Time safe comparison for more security
@@ -148,14 +221,35 @@ exports.controlToken = async (req, res) => {
         Buffer.from(user.tokens[0].Token)
       )
     ) {
-      return res.status(400).send({
+      res.status(400).send({
         message: "Bağlantı linki geçersiz veya süresi dolmuştur",
       });
+      log.access.warn("Control token failed: Token doesn't exist or expired", {
+        token,
+        success: false,
+        action: "RESET",
+        request: {
+          ip: req.ip,
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
     }
 
     res.status(200).send();
+    log.access.info("Control token success", {
+      userId: user.UserId,
+      token,
+      success: true,
+      action: "RESET",
+      request: {
+        ip: req.ip,
+        agent: req.headers["user-agent"],
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -177,7 +271,17 @@ exports.forgot = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).send({ message: "Geçersiz mail adresi" });
+      res.status(404).send({ message: "Geçersiz mail adresi" });
+      log.access.warn("Forgot failed: Mail doesn't exist", {
+        email,
+        success: false,
+        action: "RESET",
+        request: {
+          ip: req.ip,
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
     }
 
     await Token.upsert(
@@ -198,8 +302,19 @@ exports.forgot = async (req, res) => {
     await sendResetMail(email, `https://${HOST}:${PORT_CLIENT}/reset/${token}`);
 
     res.status(200).send();
+    log.access.info("Forgot success", {
+      userId: user.UserId,
+      email,
+      success: true,
+      action: "RESET",
+      request: {
+        ip: req.ip,
+        agent: req.headers["user-agent"],
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -232,9 +347,19 @@ exports.reset = async (req, res) => {
 
     // If user or token not found, respond with an error
     if (!user) {
-      return res.status(400).send({
+      res.status(400).send({
         message: "Şifre sıfırlama linki geçersiz veya süresi dolmuştur",
       });
+      log.access.warn("Reset failed: Token doesn't exist or expired", {
+        token,
+        success: false,
+        action: "RESET",
+        request: {
+          ip: req.ip,
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
     }
 
     // Time safe comparison for more security
@@ -244,9 +369,19 @@ exports.reset = async (req, res) => {
         Buffer.from(user.tokens[0].Token)
       )
     ) {
-      return res.status(400).send({
+      res.status(400).send({
         message: "Şifre sıfırlama linki geçersiz veya süresi dolmuştur",
       });
+      log.access.warn("Reset failed: Token doesn't exist or expired", {
+        token,
+        success: false,
+        action: "RESET",
+        request: {
+          ip: req.ip,
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
     }
 
     // Delete reset token
@@ -254,6 +389,16 @@ exports.reset = async (req, res) => {
       where: {
         UserId: user.UserId,
         Type: "reset",
+      },
+    });
+    log.access.info("Reset token found and deleted", {
+      userId: user.UserId,
+      token,
+      success: true,
+      action: "RESET",
+      request: {
+        ip: req.ip,
+        agent: req.headers["user-agent"],
       },
     });
 
@@ -274,8 +419,18 @@ exports.reset = async (req, res) => {
     );
 
     res.status(200).send();
+    log.access.info("Reset success", {
+      userId: user.UserId,
+      success: true,
+      action: "RESET",
+      request: {
+        ip: req.ip,
+        agent: req.headers["user-agent"],
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -296,10 +451,30 @@ exports.initVerify = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).send({ message: "Geçersiz kullanıcı" });
+      res.status(404).send({ message: "Geçersiz kullanıcı" });
+      log.audit.warn("Init verify email failed: User doesn't exist", {
+        userId,
+        action: "PUT",
+        success: false,
+        resource: {
+          type: "user",
+          id: userId,
+        },
+      });
+      return;
     }
     if (user.Verified) {
-      return res.status(400).send({ message: "Mail adresi zaten doğrulanmış" });
+      res.status(400).send({ message: "Mail adresi zaten doğrulanmış" });
+      log.audit.warn("Init verify email failed: User already verified", {
+        userId,
+        action: "PUT",
+        success: false,
+        resource: {
+          type: "user",
+          id: userId,
+        },
+      });
+      return;
     }
 
     await Token.upsert(
@@ -322,8 +497,18 @@ exports.initVerify = async (req, res) => {
       `https://${HOST}:${PORT_CLIENT}/verify/${token}`
     );
     res.status(200).send();
+    log.audit.info("Init verify email success", {
+      userId,
+      action: "PUT",
+      success: true,
+      resource: {
+        type: "user",
+        id: userId,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -354,9 +539,22 @@ exports.completeVerify = async (req, res) => {
 
     // If user or token not found, respond with an error
     if (!user) {
-      return res.status(400).send({
+      res.status(400).send({
         message: "Doğrulama linki geçersiz veya süresi dolmuştur",
       });
+      log.audit.warn(
+        "Complete verify email failed: Token doesn't exist or expired",
+        {
+          token,
+          success: false,
+          action: "PUT",
+          resource: {
+            type: "user",
+            id: user.UserId,
+          },
+        }
+      );
+      return;
     }
 
     // Time safe comparison for more security
@@ -366,9 +564,22 @@ exports.completeVerify = async (req, res) => {
         Buffer.from(user.tokens[0].Token)
       )
     ) {
-      return res.status(400).send({
+      res.status(400).send({
         message: "Doğrulama linki geçersiz veya süresi dolmuştur",
       });
+      log.audit.warn(
+        "Complete verify email failed: Token doesn't exist or expired",
+        {
+          token,
+          success: false,
+          action: "PUT",
+          resource: {
+            type: "user",
+            id: user.UserId,
+          },
+        }
+      );
+      return;
     }
 
     // Delete email token
@@ -392,8 +603,18 @@ exports.completeVerify = async (req, res) => {
     );
 
     res.status(200).send();
+    log.audit.info("Complete verify email success", {
+      userId: user.UserId,
+      success: true,
+      action: "PUT",
+      resource: {
+        type: "user",
+        id: user.UserId,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -442,7 +663,23 @@ exports.agree = async (req, res) => {
     );
 
     res.status(200).send();
+    log.audit.info("Agreement accept success", {
+      userId,
+      action: "PUT",
+      success: true,
+      resource: {
+        type: "user",
+        id: userId,
+      },
+      request: {
+        ip: ip,
+        device: device,
+        agent: agent,
+        isMobile: isMobile,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
