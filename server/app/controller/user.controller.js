@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const { Sequelize } = require("../models");
 const db = require("../models");
 const User = db.user;
@@ -27,11 +28,30 @@ exports.getUser = async (req, res) => {
 
     if (user) {
       res.status(200).send(user);
+      log.audit.info(`Get user completed`, {
+        userId,
+        action: "GET",
+        success: true,
+        resource: {
+          type: "user",
+          id: userId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Kullanıcı mevcut değil" });
+      log.audit.warn("Get user failed: User doesn't exist", {
+        userId,
+        action: "GET",
+        success: false,
+        resource: {
+          type: "user",
+          id: userId,
+        },
+      });
     }
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -62,17 +82,57 @@ exports.updateUser = async (req, res) => {
         await user.update({
           Password: hashedPassword,
         });
+        log.access.info(`Update user password completed`, {
+          userId,
+          action: "RESET",
+          success: true,
+          request: {
+            ip: req.ip,
+            agent: req.headers["user-agent"],
+          },
+        });
       } else {
         await user.update({
           Name: name,
+        });
+        log.audit.info(`Update user completed`, {
+          userId,
+          action: "PUT",
+          success: true,
+          resource: {
+            type: "user",
+            id: userId,
+          },
         });
       }
 
       res.status(200).send();
     } else {
       res.status(404).send({ message: "Kullanıcı mevcut değil" });
+      if (password) {
+        log.access.warn("Update user password failed: User doesn't exist", {
+          userId,
+          action: "RESET",
+          success: false,
+          request: {
+            ip: req.ip,
+            agent: req.headers["user-agent"],
+          },
+        });
+      } else {
+        log.audit.warn("Update user failed: User doesn't exist", {
+          userId,
+          action: "PUT",
+          success: false,
+          resource: {
+            type: "user",
+            id: userId,
+          },
+        });
+      }
     }
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
