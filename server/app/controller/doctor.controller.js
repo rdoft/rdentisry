@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const { Sequelize } = require("../models");
 const db = require("../models");
 const Doctor = db.doctor;
@@ -25,8 +26,18 @@ exports.getDoctors = async (req, res) => {
     });
 
     res.status(200).send(doctors);
+    log.audit.info("Get doctors completed", {
+      userId,
+      action: "GET",
+      success: true,
+      resource: {
+        type: "doctor",
+        count: doctors.length,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -50,9 +61,21 @@ exports.saveDoctor = async (req, res) => {
       name: doctor.Name,
       surname: doctor.Surname,
     };
+
     res.status(201).send(doctor);
+    log.audit.info("Save doctor completed", {
+      userId,
+      action: "POST",
+      success: true,
+      resource: {
+        type: "doctor",
+        count: 1,
+        id: doctor.id,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -82,11 +105,37 @@ exports.updateDoctor = async (req, res) => {
       await doctor.update(values);
 
       res.status(200).send({ id: doctorId });
+      log.audit.info("Update doctor completed", {
+        userId,
+        action: "PUT",
+        success: true,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "doctor",
+          count: 1,
+          id: doctorId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Doktor mevcut değil" });
+      log.audit.info("Update doctor failed: Doctor doesn't exist", {
+        userId,
+        action: "PUT",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "doctor",
+          count: 0,
+        },
+      });
     }
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -113,14 +162,52 @@ exports.deleteDoctor = async (req, res) => {
       await doctor.destroy();
 
       res.status(200).send({ id: doctorId });
+      log.audit.info("Delete doctor completed", {
+        userId,
+        action: "DELETE",
+        success: true,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "doctor",
+          count: 1,
+          id: doctorId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Doktor mevcut değil" });
+      log.audit.info("Delete doctor failed: Doctor doesn't exist", {
+        userId,
+        action: "DELETE",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "doctor",
+          count: 0,
+        },
+      });
     }
   } catch (error) {
     if (error instanceof Sequelize.ValidationError) {
       res.status(400).send({ message: error.message });
+      log.audit.info("Delete doctor failed: Validation error", {
+        userId,
+        action: "DELETE",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "doctor",
+          count: 0,
+        },
+      });
     } else {
       res.status(500).send(error);
+      log.error.error(error);
     }
   }
 };
