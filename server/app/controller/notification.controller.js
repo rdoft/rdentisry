@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const db = require("../models");
 const Notification = db.notification;
 const NotificationEvent = db.notificationEvent;
@@ -51,8 +52,21 @@ exports.getNotifications = async (req, res) => {
     });
 
     res.status(200).send(notifications);
+    log.audit.info("Get notifications completed", {
+      userId,
+      action: "GET",
+      success: true,
+      request: {
+        query: req.query,
+      },
+      resource: {
+        type: "notification",
+        count: notifications.length,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -82,11 +96,37 @@ exports.updateNotification = async (req, res) => {
       });
 
       res.status(200).send({ id: notificationId });
+      log.audit.info("Update notification completed", {
+        userId,
+        action: "PUT",
+        success: true,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "notification",
+          count: 1,
+          id: notificationId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Bildirim mevcut değil" });
+      log.audit.warn("Update notification failed: Notification doesn't exist", {
+        userId,
+        action: "PUT",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "notification",
+          count: 0,
+        },
+      });
     }
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -99,7 +139,7 @@ exports.updateNotifications = async (req, res) => {
 
   try {
     // Update status of all notifications
-    await Notification.update(
+    const notifications = await Notification.update(
       { Status: status },
       {
         where: {
@@ -109,7 +149,17 @@ exports.updateNotifications = async (req, res) => {
     );
 
     res.status(200).send({});
+    log.audit.info("Update notifications completed", {
+      userId,
+      action: "PUT",
+      success: true,
+      resource: {
+        type: "notification",
+        count: notifications[0],
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
