@@ -9,6 +9,9 @@ const morgan = require("morgan");
 const session = require("express-session");
 // Requiring passport as we've configured it
 const passport = require("./app/config/passport.config");
+// Requiring out winston logger & logMeta middleware
+const log = require("./app/config/log.config");
+const logMeta = require("./app/middleware/logMeta");
 
 const HOSTNAME = process.env.HOSTNAME || "disheki.me";
 const HOST = process.env.HOST_SERVER || "localhost";
@@ -36,8 +39,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-// development logging
-app.use(morgan("dev"));
+// logging
+app.use(logMeta);
+app.use(morgan("combined", { stream: log.api.stream }));
+
 app.use(
   session({
     secret: SECRET_KEY,
@@ -53,7 +58,7 @@ require("./app/routes/index")(app);
 
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to rdentistry" });
+  res.json({ message: "Welcome to dishekime" });
 });
 
 // CRON JOBS
@@ -97,5 +102,5 @@ const httpsServer = https.createServer(options, app);
 
 // set port, listen for requests
 httpsServer.listen(PORT, () => {
-  console.log(`Server is running on ${HOST}:${PORT}.`);
+  log.app.info(`Server is running on ${HOST}:${PORT}.`);
 });
