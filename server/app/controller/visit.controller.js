@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const { Sequelize } = require("../models");
 const db = require("../models");
 const Visit = db.visit;
@@ -62,8 +63,22 @@ exports.getVisits = async (req, res) => {
     }
 
     res.status(200).send(visits);
+    log.audit.info("Get visits completed", {
+      userId,
+      action: "GET",
+      success: true,
+      request: {
+        params: req.params,
+        query: req.query,
+      },
+      resource: {
+        type: "visit",
+        count: visits.length,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -89,11 +104,33 @@ exports.saveVisit = async (req, res) => {
     });
     if (!patient) {
       res.status(404).send({ message: "Hasta bulunamadı" });
+      log.audit.warn("Save visit failed: Pateint doesn't exist", {
+        userId,
+        action: "POST",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "visit",
+        },
+      });
       return;
     }
 
     if (!patientProcedures || patientProcedures.length === 0) {
       res.status(400).send({ message: "Plan oluşturmak için bir işlem seçin" });
+      log.audit.warn("Save visit failed: No patient procedures", {
+        userId,
+        action: "POST",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "visit",
+        },
+      });
       return;
     }
 
@@ -118,13 +155,25 @@ exports.saveVisit = async (req, res) => {
         await pp.update({
           VisitId: visit.VisitId,
         });
-      } else {
       }
     }
 
     res.status(201).send({ id: visit.VisitId });
+    log.audit.info("Save visit completed", {
+      userId,
+      action: "POST",
+      success: true,
+      request: {
+        params: req.params,
+      },
+      resource: {
+        type: "visit",
+        id: visit.VisitId,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -159,6 +208,18 @@ exports.updateVisit = async (req, res) => {
     });
     if (!visit) {
       res.status(404).send({ message: "Seans bulunamadı" });
+      log.audit.warn("Update visit failed: Visit doesn't exist", {
+        userId,
+        action: "PUT",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "visit",
+          id: visitId,
+        },
+      });
       return;
     }
 
@@ -171,8 +232,21 @@ exports.updateVisit = async (req, res) => {
     });
 
     res.status(200).send({ id: visitId });
+    log.audit.info("Update visit completed", {
+      userId,
+      action: "PUT",
+      success: true,
+      request: {
+        params: req.params,
+      },
+      resource: {
+        type: "visit",
+        id: visitId,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -205,17 +279,54 @@ exports.deleteVisit = async (req, res) => {
     });
     if (!visit) {
       res.status(404).send({ message: "Seans bulunamadı" });
+      log.audit.warn("Delete visit failed: Visit doesn't exist", {
+        userId,
+        action: "DELETE",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "visit",
+          id: visitId,
+        },
+      });
       return;
     }
     if (visit.ApprovedDate) {
       res.status(400).send({ message: "Onaylanmış seans silinemez" });
+      log.audit.warn("Delete visit failed: Approved visit can't be deleted", {
+        userId,
+        action: "DELETE",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "visit",
+          id: visitId,
+        },
+      });
       return;
     }
 
     // Delete the visit
     await visit.destroy();
     res.status(200).send({ id: visitId });
+    log.audit.info("Delete visit completed", {
+      userId,
+      action: "DELETE",
+      success: true,
+      request: {
+        params: req.params,
+      },
+      resource: {
+        type: "visit",
+        id: visitId,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
