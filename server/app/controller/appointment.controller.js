@@ -181,7 +181,7 @@ exports.getAppointment = async (req, res) => {
       });
     } else {
       res.status(404).send({ message: "Randevu mevcut değil" });
-      log.audit.info("Get appointment failed: Appointment doesn't exist", {
+      log.audit.warn("Get appointment failed: Appointment doesn't exist", {
         userId,
         action: "GET",
         success: false,
@@ -241,7 +241,7 @@ exports.saveAppointment = async (req, res) => {
       res.status(404).send({
         message: "Randevu oluşturmak istenen hasta veya doktor mevcut değil",
       });
-      log.audit.info("Save appointment failed: Patient or doctor not exist ", {
+      log.audit.warn("Save appointment failed: Patient or doctor not exist ", {
         userId,
         action: "POST",
         success: false,
@@ -287,7 +287,7 @@ exports.saveAppointment = async (req, res) => {
       res.status(400).send({
         message: "Aynı doktora veya hastaya aynı saatte randevu oluşturulamaz",
       });
-      log.audit.info(
+      log.audit.warn(
         "Save appointment failed: There is an appointment for the same doctor or patient at the current time",
         {
           userId,
@@ -347,7 +347,7 @@ exports.updateAppointment = async (req, res) => {
       res.status(404).send({
         message: "Güncellenen hasta veya doktor bilgisi mevcut değil",
       });
-      log.audit.info("Update appointment failed: Patient or doctor not exist", {
+      log.audit.warn("Update appointment failed: Patient or doctor not exist", {
         userId,
         action: "PUT",
         success: false,
@@ -399,7 +399,7 @@ exports.updateAppointment = async (req, res) => {
       });
     } else {
       res.status(404).send({ message: "Randevu mevcut değil" });
-      log.audit.info("Update appointment failed: Appointment doesn't exist", {
+      log.audit.warn("Update appointment failed: Appointment doesn't exist", {
         userId,
         action: "PUT",
         success: false,
@@ -420,7 +420,7 @@ exports.updateAppointment = async (req, res) => {
       res.status(400).send({
         message: "Aynı doktora veya hastaya aynı saatte randevu oluşturulamaz",
       });
-      log.audit.info(
+      log.audit.warn(
         "Update appointment failed: There is an appointment for the same doctor or patient at the current time",
         {
           userId,
@@ -489,7 +489,7 @@ exports.deleteAppointment = async (req, res) => {
       });
     } else {
       res.status(404).send({ message: "Randevu mevcut değil" });
-      log.audit.info("Delete appointment failed: Appointment doesn't exist", {
+      log.audit.warn("Delete appointment failed: Appointment doesn't exist", {
         userId,
         action: "DELETE",
         success: false,

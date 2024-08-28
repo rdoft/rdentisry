@@ -1,6 +1,6 @@
 const path = require("path");
 const winston = require("winston");
-const { combine, timestamp, json, errors, colorize } = winston.format;
+const { combine, timestamp, json, errors } = winston.format;
 
 // Define the log files path
 const LOG_DIR = path.resolve(__dirname, `../logs`);
@@ -93,7 +93,7 @@ winston.loggers.add("api", {
 winston.loggers.add("db", {
   level: "info",
   maxsize: 10485760, // 10MB
-  format: combine(timestamp(), json(), colorize()),
+  format: combine(timestamp(), json()),
   transports: [new winston.transports.File({ filename: FILE_DB })],
 });
 

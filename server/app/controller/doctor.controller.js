@@ -120,7 +120,7 @@ exports.updateDoctor = async (req, res) => {
       });
     } else {
       res.status(404).send({ message: "Doktor mevcut değil" });
-      log.audit.info("Update doctor failed: Doctor doesn't exist", {
+      log.audit.warn("Update doctor failed: Doctor doesn't exist", {
         userId,
         action: "PUT",
         success: false,
@@ -177,7 +177,7 @@ exports.deleteDoctor = async (req, res) => {
       });
     } else {
       res.status(404).send({ message: "Doktor mevcut değil" });
-      log.audit.info("Delete doctor failed: Doctor doesn't exist", {
+      log.audit.warn("Delete doctor failed: Doctor doesn't exist", {
         userId,
         action: "DELETE",
         success: false,
@@ -193,7 +193,7 @@ exports.deleteDoctor = async (req, res) => {
   } catch (error) {
     if (error instanceof Sequelize.ValidationError) {
       res.status(400).send({ message: error.message });
-      log.audit.info("Delete doctor failed: Validation error", {
+      log.audit.warn("Delete doctor failed: Validation error", {
         userId,
         action: "DELETE",
         success: false,
