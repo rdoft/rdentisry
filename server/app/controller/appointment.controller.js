@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const { Sequelize } = require("../models");
 const db = require("../models");
 const Appointment = db.appointment;
@@ -83,9 +84,24 @@ exports.getAppointments = async (req, res) => {
       appointment.doctor = appointment.doctor?.id ? appointment.doctor : null;
       appointments_.push(appointment);
     });
+
     res.status(200).send(appointments_);
+    log.audit.info("Get appointments completed", {
+      userId,
+      action: "GET",
+      success: true,
+      request: {
+        params: req.params,
+        query: req.query,
+      },
+      resource: {
+        type: "appointment",
+        count: appointments_.length,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -147,12 +163,41 @@ exports.getAppointment = async (req, res) => {
     if (appointment) {
       appointment.startTime = new Date(`1970-01-01T${appointment.startTime}`);
       appointment.endTime = new Date(`1970-01-01T${appointment.endTime}`);
+
       res.status(200).send(appointment);
+      log.audit.info("Get appointment completed", {
+        userId,
+        action: "GET",
+        success: true,
+        request: {
+          params: req.params,
+          query: req.query,
+        },
+        resource: {
+          type: "appointment",
+          count: 1,
+          id: appointmentId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Randevu mevcut değil" });
+      log.audit.info("Get appointment failed: Appointment doesn't exist", {
+        userId,
+        action: "GET",
+        success: false,
+        request: {
+          params: req.params,
+          query: req.query,
+        },
+        resource: {
+          type: "appointment",
+          count: 0,
+        },
+      });
     }
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -193,9 +238,22 @@ exports.saveAppointment = async (req, res) => {
       : null;
 
     if (!patientRecord || (doctor && !doctorRecord)) {
-      return res.status(404).send({
+      res.status(404).send({
         message: "Randevu oluşturmak istenen hasta veya doktor mevcut değil",
       });
+      log.audit.info("Save appointment failed: Patient or doctor not exist ", {
+        userId,
+        action: "POST",
+        success: false,
+        request: {
+          body: req.body,
+        },
+        resource: {
+          type: "appointment",
+          count: 0,
+        },
+      });
+      return;
     }
 
     // Create Appointment record
@@ -211,6 +269,16 @@ exports.saveAppointment = async (req, res) => {
       status: appointment.Status,
     };
     res.status(201).send(appointment);
+    log.audit.info("Save appointment completed", {
+      userId,
+      action: "POST",
+      success: true,
+      resource: {
+        type: "appointment",
+        count: 1,
+        id: appointment.id,
+      },
+    });
   } catch (error) {
     if (
       error instanceof Sequelize.ValidationError &&
@@ -219,8 +287,21 @@ exports.saveAppointment = async (req, res) => {
       res.status(400).send({
         message: "Aynı doktora veya hastaya aynı saatte randevu oluşturulamaz",
       });
+      log.audit.info(
+        "Save appointment failed: There is an appointment for the same doctor or patient at the current time",
+        {
+          userId,
+          action: "POST",
+          success: false,
+          resource: {
+            type: "appointment",
+            count: 0,
+          },
+        }
+      );
     } else {
       res.status(500).send(error);
+      log.error.error(error);
     }
   }
 };
@@ -263,9 +344,22 @@ exports.updateAppointment = async (req, res) => {
       }));
 
     if (!patientRecord || (doctor && !doctorRecord)) {
-      return res.status(404).send({
+      res.status(404).send({
         message: "Güncellenen hasta veya doktor bilgisi mevcut değil",
       });
+      log.audit.info("Update appointment failed: Patient or doctor not exist", {
+        userId,
+        action: "PUT",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "appointment",
+          count: 0,
+        },
+      });
+      return;
     }
 
     // Find Appointment
@@ -290,8 +384,33 @@ exports.updateAppointment = async (req, res) => {
       await appointment.update(values);
 
       res.status(200).send({ id: appointmentId });
+      log.audit.info("Update appointment completed", {
+        userId,
+        action: "PUT",
+        success: true,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "appointment",
+          count: 1,
+          id: appointmentId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Randevu mevcut değil" });
+      log.audit.info("Update appointment failed: Appointment doesn't exist", {
+        userId,
+        action: "PUT",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "appointment",
+          count: 0,
+        },
+      });
     }
   } catch (error) {
     if (
@@ -301,8 +420,24 @@ exports.updateAppointment = async (req, res) => {
       res.status(400).send({
         message: "Aynı doktora veya hastaya aynı saatte randevu oluşturulamaz",
       });
+      log.audit.info(
+        "Update appointment failed: There is an appointment for the same doctor or patient at the current time",
+        {
+          userId,
+          action: "PUT",
+          success: false,
+          request: {
+            params: req.params,
+          },
+          resource: {
+            type: "appointment",
+            count: 0,
+          },
+        }
+      );
     } else {
       res.status(500).send(error);
+      log.error.error(error);
     }
   }
 };
@@ -339,11 +474,37 @@ exports.deleteAppointment = async (req, res) => {
       await appointment.destroy();
 
       res.status(200).send({ id: appointmentId });
+      log.audit.info("Delete appointment completed", {
+        userId,
+        action: "DELETE",
+        success: true,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "appointment",
+          count: 1,
+          id: appointmentId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Randevu mevcut değil" });
+      log.audit.info("Delete appointment failed: Appointment doesn't exist", {
+        userId,
+        action: "DELETE",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "appointment",
+          count: 0,
+        },
+      });
     }
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 

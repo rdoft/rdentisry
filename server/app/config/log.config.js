@@ -23,10 +23,6 @@ winston.loggers.add("app", {
 winston.loggers.add("error", {
   level: "error",
   maxsize: 5242880, // 5MB
-  defaultMeta: {
-    userId: null,
-    stack: null,
-  },
   format: combine(errors({ stack: true }), timestamp(), json()),
   transports: [
     new winston.transports.File({ filename: FILE_ERROR }),
@@ -60,9 +56,11 @@ winston.loggers.add("audit", {
   defaultMeta: {
     userId: null,
     action: null,
+    success: null,
     resource: {
       type: null,
-      ids: [],
+      id: null,
+      count: null,
     },
   },
   format: combine(timestamp(), json()),
