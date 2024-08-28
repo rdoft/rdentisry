@@ -5,13 +5,12 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
-const morgan = require("morgan");
+// Requiring passport and session
 const session = require("express-session");
-// Requiring passport as we've configured it
 const passport = require("./app/config/passport.config");
-// Requiring out winston logger & logMeta middleware
+// Requiring loggers
+const morgan = require("morgan");
 const log = require("./app/config/log.config");
-const logMeta = require("./app/middleware/logMeta");
 
 const HOSTNAME = process.env.HOSTNAME || "disheki.me";
 const HOST = process.env.HOST_SERVER || "localhost";
@@ -39,10 +38,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-// logging
-app.use(logMeta);
-app.use(morgan("combined", { stream: log.api.stream }));
-
 app.use(
   session({
     secret: SECRET_KEY,
@@ -52,6 +47,14 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
+// logging
+app.use(
+  morgan((tokens, req, res) => {
+    log.api.stream(req, res);
+    return null; // Prevents Morgan from logging to console
+  })
+);
 
 // routes
 require("./app/routes/index")(app);

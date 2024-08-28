@@ -25,11 +25,6 @@ winston.loggers.add("error", {
   defaultMeta: {
     userId: null,
     stack: null,
-    request: {
-      ip: null,
-      method: null,
-      url: null,
-    },
   },
   format: combine(errors({ stack: true }), timestamp(), json()),
   transports: [
@@ -47,11 +42,6 @@ winston.loggers.add("access", {
   defaultMeta: {
     userId: null,
     mail: null,
-    request: {
-      ip: null,
-      method: null,
-      url: null,
-    },
     action: null,
     success: null,
   },
@@ -68,11 +58,6 @@ winston.loggers.add("audit", {
   maxsize: 5242880, // 5MB
   defaultMeta: {
     userId: null,
-    request: {
-      ip: null,
-      method: null,
-      url: null,
-    },
     action: null,
     resource: {
       type: null,
@@ -92,13 +77,11 @@ winston.loggers.add("api", {
   maxsize: 5242880, // 5MB
   defaultMeta: {
     userId: null,
-    request: {
-      ip: null,
-      method: null,
-      url: null,
-      status: null,
-      duration: null,
-    },
+    ip: null,
+    method: null,
+    url: null,
+    status: null,
+    agent: null,
   },
   format: combine(timestamp(), json()),
   transports: [
@@ -114,9 +97,16 @@ const access = winston.loggers.get("access");
 const audit = winston.loggers.get("audit");
 const api = winston.loggers.get("api");
 
-// Create a stream object with a 'write' function that will be used by `morgan`
-api.stream = {
-  write: (message) => api.http(message.trim()),
+// Create a stream object that will be used by `morgan`
+api.stream = (req, res) => {
+  api.http(`API request ${req.method} ${req.originalUrl}`, {
+    userId: req.user?.UserId || null,
+    ip: req.ip,
+    method: req.method,
+    url: req.originalUrl,
+    status: res.statusCode,
+    agent: req.headers["user-agent"],
+  });
 };
 
 module.exports = {
