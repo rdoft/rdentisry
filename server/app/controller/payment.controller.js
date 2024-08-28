@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const { Sequelize } = require("../models");
 const db = require("../models");
 const Patient = db.patient;
@@ -113,8 +114,22 @@ exports.getPayments = async (req, res) => {
     }
 
     res.status(200).send(payments);
+    log.audit.info("Get payments completed", {
+      userId,
+      action: "GET",
+      success: true,
+      request: {
+        params: req.params,
+        query: req.query,
+      },
+      resource: {
+        type: plan ? "paymentPlan" : "payment",
+        count: payments.length,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -139,9 +154,21 @@ exports.savePayment = async (req, res) => {
       },
     });
     if (!patientRecord) {
-      return res
+      res
         .status(404)
         .send({ message: "Ödeme eklenmek istenen hasta mevcut değil" });
+      log.audit.warn("Save payment failed: Patient doesn't exist", {
+        userId,
+        action: "POST",
+        success: false,
+        request: {
+          query: req.query,
+        },
+        resource: {
+          type: plan ? "paymentPlan" : "payment",
+        },
+      });
+      return;
     }
 
     if (plan === "true") {
@@ -177,8 +204,21 @@ exports.savePayment = async (req, res) => {
     }
 
     res.status(200).send(payment);
+    log.audit.info("Save payment completed", {
+      userId,
+      action: "POST",
+      success: true,
+      request: {
+        query: req.query,
+      },
+      resource: {
+        type: plan ? "paymentPlan" : "payment",
+        id: payment.id,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -213,7 +253,21 @@ exports.updatePayment = async (req, res) => {
         ],
       });
       if (!payment) {
-        return res.status(404).send({ message: "Ödeme planı mevcut değil" });
+        res.status(404).send({ message: "Ödeme planı mevcut değil" });
+        log.audit.warn("Update payment failed: Payment plan doesn't exist", {
+          userId,
+          action: "PUT",
+          success: false,
+          request: {
+            params: req.params,
+            query: req.query,
+          },
+          resource: {
+            type: "paymentPlan",
+            id: paymentId,
+          },
+        });
+        return;
       }
 
       // Update the payment plan
@@ -239,7 +293,21 @@ exports.updatePayment = async (req, res) => {
         ],
       });
       if (!payment) {
-        return res.status(404).send({ message: "Ödeme mevcut değil" });
+        res.status(404).send({ message: "Ödeme mevcut değil" });
+        log.audit.warn("Update payment failed: Payment doesn't exist", {
+          userId,
+          action: "PUT",
+          success: false,
+          request: {
+            params: req.params,
+            query: req.query,
+          },
+          resource: {
+            type: "payment",
+            id: paymentId,
+          },
+        });
+        return;
       }
 
       // Update the payment
@@ -252,13 +320,40 @@ exports.updatePayment = async (req, res) => {
     }
 
     res.status(200).send({ id: paymentId });
+    log.audit.info("Update payment completed", {
+      userId,
+      action: "PUT",
+      success: true,
+      request: {
+        params: req.params,
+        query: req.query,
+      },
+      resource: {
+        type: plan ? "paymentPlan" : "payment",
+        id: paymentId,
+      },
+    });
   } catch (error) {
     if (error instanceof Sequelize.ValidationError) {
       res.status(400).send({
         message: "Ödeme negatif bir sayı olamaz",
       });
+      log.audit.warn("Update payment failed: Negative amount", {
+        userId,
+        action: "PUT",
+        success: false,
+        request: {
+          params: req.params,
+          query: req.query,
+        },
+        resource: {
+          type: plan ? "paymentPlan" : "payment",
+          id: paymentId,
+        },
+      });
     } else {
       res.status(500).send(error);
+      log.error.error(error);
     }
   }
 };
@@ -293,7 +388,21 @@ exports.deletePayment = async (req, res) => {
       });
 
       if (!payment) {
-        return res.status(404).send({ message: "Ödeme planı mevcut değil" });
+        res.status(404).send({ message: "Ödeme planı mevcut değil" });
+        log.audit.warn("Delete payment failed: Payment plan doesn't exist", {
+          userId,
+          action: "DELETE",
+          success: false,
+          request: {
+            params: req.params,
+            query: req.query,
+          },
+          resource: {
+            type: "paymentPlan",
+            id: paymentId,
+          },
+        });
+        return;
       }
     } else {
       // Find payment
@@ -314,13 +423,41 @@ exports.deletePayment = async (req, res) => {
       });
 
       if (!payment) {
-        return res.status(404).send({ message: "Ödeme mevcut değil" });
+        res.status(404).send({ message: "Ödeme mevcut değil" });
+        log.audit.warn("Delete payment failed: Payment doesn't exist", {
+          userId,
+          action: "DELETE",
+          success: false,
+          request: {
+            params: req.params,
+            query: req.query,
+          },
+          resource: {
+            type: "payment",
+            id: paymentId,
+          },
+        });
+        return;
       }
     }
 
     await payment.destroy();
     res.status(200).send({ id: paymentId });
+    log.audit.info("Delete payment completed", {
+      userId,
+      action: "DELETE",
+      success: true,
+      request: {
+        params: req.params,
+        query: req.query,
+      },
+      resource: {
+        type: plan ? "paymentPlan" : "payment",
+        id: paymentId,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
