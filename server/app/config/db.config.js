@@ -1,3 +1,5 @@
+const log = require("./log.config");
+
 module.exports = {
   HOST: process.env.DB_HOST,
   PORT: process.env.DB_PORT,
@@ -11,4 +13,5 @@ module.exports = {
     acquire: 30000,
     idle: 10000,
   },
+  logging: (msg) => log.db.info(msg),
 };

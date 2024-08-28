@@ -1,6 +1,6 @@
 const path = require("path");
 const winston = require("winston");
-const { combine, timestamp, json, errors } = winston.format;
+const { combine, timestamp, json, errors, colorize } = winston.format;
 
 // Define the log files path
 const LOG_DIR = path.resolve(__dirname, `../logs`);
@@ -9,6 +9,7 @@ const FILE_ACCESS = `${LOG_DIR}/access.log`;
 const FILE_AUDIT = `${LOG_DIR}/audit.log`;
 const FILE_API = `${LOG_DIR}/api.log`;
 const FILE_APP = `${LOG_DIR}/app.log`;
+const FILE_DB = `${LOG_DIR}/db.log`;
 
 // Logger for the application info
 winston.loggers.add("app", {
@@ -90,12 +91,21 @@ winston.loggers.add("api", {
   ],
 });
 
+// Logger for db.log
+winston.loggers.add("db", {
+  level: "info",
+  maxsize: 10485760, // 10MB
+  format: combine(timestamp(), json(), colorize()),
+  transports: [new winston.transports.File({ filename: FILE_DB })],
+});
+
 // Create loggers for the application
 const app = winston.loggers.get("app");
 const error = winston.loggers.get("error");
 const access = winston.loggers.get("access");
 const audit = winston.loggers.get("audit");
 const api = winston.loggers.get("api");
+const db = winston.loggers.get("db");
 
 // Create a stream object that will be used by `morgan`
 api.stream = (req, res) => {
@@ -115,4 +125,5 @@ module.exports = {
   access,
   audit,
   api,
+  db,
 };
