@@ -112,7 +112,6 @@ exports.getNote = async (req, res) => {
         },
         resource: {
           type: "note",
-          count: 1,
           id: noteId,
         },
       });
@@ -127,7 +126,7 @@ exports.getNote = async (req, res) => {
         },
         resource: {
           type: "note",
-          count: 0,
+          id: noteId,
         },
       });
     }
@@ -170,7 +169,6 @@ exports.saveNote = async (req, res) => {
         success: false,
         resource: {
           type: "note",
-          count: 0,
         },
       });
       return;
@@ -193,7 +191,6 @@ exports.saveNote = async (req, res) => {
       success: true,
       resource: {
         type: "note",
-        count: 1,
         id: note.id,
       },
     });
@@ -240,7 +237,7 @@ exports.updateNote = async (req, res) => {
         },
         resource: {
           type: "note",
-          count: 0,
+          id: noteId,
         },
       });
       return;
@@ -273,7 +270,7 @@ exports.updateNote = async (req, res) => {
         },
         resource: {
           type: "note",
-          count: 0,
+          id: noteId,
         },
       });
       return;
@@ -291,7 +288,6 @@ exports.updateNote = async (req, res) => {
       },
       resource: {
         type: "note",
-        count: 1,
         id: noteId,
       },
     });
@@ -342,7 +338,6 @@ exports.deleteNote = async (req, res) => {
         },
         resource: {
           type: "note",
-          count: 1,
           id: noteId,
         },
       });
@@ -357,7 +352,7 @@ exports.deleteNote = async (req, res) => {
         },
         resource: {
           type: "note",
-          count: 0,
+          id: noteId,
         },
       });
     }

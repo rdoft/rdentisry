@@ -105,7 +105,6 @@ exports.updateNotification = async (req, res) => {
         },
         resource: {
           type: "notification",
-          count: 1,
           id: notificationId,
         },
       });
@@ -120,7 +119,7 @@ exports.updateNotification = async (req, res) => {
         },
         resource: {
           type: "notification",
-          count: 0,
+          id: notificationId,
         },
       });
     }

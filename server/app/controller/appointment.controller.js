@@ -175,7 +175,6 @@ exports.getAppointment = async (req, res) => {
         },
         resource: {
           type: "appointment",
-          count: 1,
           id: appointmentId,
         },
       });
@@ -191,7 +190,7 @@ exports.getAppointment = async (req, res) => {
         },
         resource: {
           type: "appointment",
-          count: 0,
+          id: appointmentId,
         },
       });
     }
@@ -250,7 +249,6 @@ exports.saveAppointment = async (req, res) => {
         },
         resource: {
           type: "appointment",
-          count: 0,
         },
       });
       return;
@@ -275,7 +273,6 @@ exports.saveAppointment = async (req, res) => {
       success: true,
       resource: {
         type: "appointment",
-        count: 1,
         id: appointment.id,
       },
     });
@@ -295,7 +292,6 @@ exports.saveAppointment = async (req, res) => {
           success: false,
           resource: {
             type: "appointment",
-            count: 0,
           },
         }
       );
@@ -356,7 +352,7 @@ exports.updateAppointment = async (req, res) => {
         },
         resource: {
           type: "appointment",
-          count: 0,
+          id: appointmentId,
         },
       });
       return;
@@ -393,7 +389,6 @@ exports.updateAppointment = async (req, res) => {
         },
         resource: {
           type: "appointment",
-          count: 1,
           id: appointmentId,
         },
       });
@@ -408,7 +403,7 @@ exports.updateAppointment = async (req, res) => {
         },
         resource: {
           type: "appointment",
-          count: 0,
+          id: appointmentId,
         },
       });
     }
@@ -431,7 +426,7 @@ exports.updateAppointment = async (req, res) => {
           },
           resource: {
             type: "appointment",
-            count: 0,
+            id: appointmentId,
           },
         }
       );
@@ -483,7 +478,6 @@ exports.deleteAppointment = async (req, res) => {
         },
         resource: {
           type: "appointment",
-          count: 1,
           id: appointmentId,
         },
       });
@@ -498,7 +492,7 @@ exports.deleteAppointment = async (req, res) => {
         },
         resource: {
           type: "appointment",
-          count: 0,
+          id: appointmentId,
         },
       });
     }

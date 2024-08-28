@@ -69,7 +69,6 @@ exports.saveDoctor = async (req, res) => {
       success: true,
       resource: {
         type: "doctor",
-        count: 1,
         id: doctor.id,
       },
     });
@@ -114,7 +113,6 @@ exports.updateDoctor = async (req, res) => {
         },
         resource: {
           type: "doctor",
-          count: 1,
           id: doctorId,
         },
       });
@@ -129,7 +127,7 @@ exports.updateDoctor = async (req, res) => {
         },
         resource: {
           type: "doctor",
-          count: 0,
+          id: doctorId,
         },
       });
     }
@@ -171,7 +169,6 @@ exports.deleteDoctor = async (req, res) => {
         },
         resource: {
           type: "doctor",
-          count: 1,
           id: doctorId,
         },
       });
@@ -186,7 +183,7 @@ exports.deleteDoctor = async (req, res) => {
         },
         resource: {
           type: "doctor",
-          count: 0,
+          id: doctorId,
         },
       });
     }
@@ -202,7 +199,7 @@ exports.deleteDoctor = async (req, res) => {
         },
         resource: {
           type: "doctor",
-          count: 0,
+          id: doctorId,
         },
       });
     } else {

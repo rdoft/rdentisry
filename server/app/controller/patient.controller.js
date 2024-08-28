@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const { Sequelize } = require("../models");
 const db = require("../models");
 const Visit = db.visit;
@@ -116,8 +117,21 @@ exports.getPatients = async (req, res) => {
     }
 
     res.status(200).send(patients);
+    log.audit.info("Get patients completed", {
+      userId,
+      action: "GET",
+      success: true,
+      request: {
+        query: req.query,
+      },
+      resource: {
+        type: "patient",
+        count: patients.length,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -149,11 +163,36 @@ exports.getPatient = async (req, res) => {
 
     if (patient) {
       res.status(200).send(patient);
+      log.audit.info("Get patient completed", {
+        userId,
+        action: "GET",
+        success: true,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "patient",
+          id: patientId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Hasta mevcut değil" });
+      log.audit.warn("Get patient failed: Patient doesn't exist ", {
+        userId,
+        action: "GET",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "patient",
+          id: patientId,
+        },
+      });
     }
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -185,7 +224,17 @@ exports.savePatient = async (req, res) => {
       phone: patient.Phone,
       birthYear: patient.BirthYear,
     };
+
     res.status(201).send(patient);
+    log.audit.info("Save patient completed", {
+      userId,
+      action: "POST",
+      success: true,
+      resource: {
+        type: "patient",
+        id: patient.id,
+      },
+    });
   } catch (error) {
     if (
       error instanceof Sequelize.ValidationError &&
@@ -194,8 +243,17 @@ exports.savePatient = async (req, res) => {
       res
         .status(400)
         .send({ message: "Hasta zaten kayıtlıdır, tekrar kaydedilemez" });
+      log.audit.warn("Save patient failed: Patient already exists ", {
+        userId,
+        action: "POST",
+        success: false,
+        resource: {
+          type: "patient",
+        },
+      });
     } else {
       res.status(500).send(error);
+      log.error.error(error);
     }
   }
 };
@@ -232,8 +290,32 @@ exports.updatePatient = async (req, res) => {
       await patient.update(values);
 
       res.status(200).send({ id: patientId });
+      log.audit.info("Update patient completed", {
+        userId,
+        action: "PUT",
+        success: true,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "patient",
+          id: patientId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Hasta mevcut değil" });
+      log.audit.warn("Update patient failed: Patient doesn't exist ", {
+        userId,
+        action: "PUT",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "patient",
+          id: patientId,
+        },
+      });
     }
   } catch (error) {
     if (
@@ -243,8 +325,21 @@ exports.updatePatient = async (req, res) => {
       res
         .status(400)
         .send({ message: "Hasta zaten kayıtlıdır, tekrar kaydedilemez" });
+      log.audit.warn("Update patient failed: Patient already exists ", {
+        userId,
+        action: "PUT",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "patient",
+          id: patientId,
+        },
+      });
     } else {
       res.status(500).send(error);
+      log.error.error(error);
     }
   }
 };
@@ -276,11 +371,35 @@ exports.deletePatients = async (req, res) => {
     }
 
     res.status(200).send({ count: count });
+    log.audit.info("Delete patients completed", {
+      userId,
+      action: "DELETE",
+      success: true,
+      request: {
+        query: req.query,
+      },
+      resource: {
+        type: "patient",
+        count: count,
+      },
+    });
   } catch (error) {
     if (error instanceof Sequelize.ValidationError) {
       res.status(400).send({ message: error.message });
+      log.audit.error("Delete patients failed: Validation error", {
+        userId,
+        action: "DELETE",
+        success: false,
+        request: {
+          query: req.query,
+        },
+        resource: {
+          type: "patient",
+        },
+      });
     } else {
       res.status(500).send(error);
+      log.error.error(error);
     }
   }
 };
@@ -308,14 +427,51 @@ exports.deletePatient = async (req, res) => {
       await patient.destroy();
 
       res.status(200).send({ id: patientId });
+      log.audit.info("Delete patient completed", {
+        userId,
+        action: "DELETE",
+        success: true,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "patient",
+          id: patientId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Hasta mevcut değil" });
+      log.audit.warn("Delete patient failed: Patient doesn't exist", {
+        userId,
+        action: "DELETE",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "patient",
+          id: patientId,
+        },
+      });
     }
   } catch (error) {
     if (error instanceof Sequelize.ValidationError) {
       res.status(400).send({ message: error.message });
+      log.audit.error("Delete patient failed: Validation error", {
+        userId,
+        action: "DELETE",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "patient",
+          id: patientId,
+        },
+      });
     } else {
       res.status(500).send(error);
+      log.error.error(error);
     }
   }
 };
