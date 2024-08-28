@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const { Sequelize } = require("../models");
 const db = require("../models");
 const Patient = db.patient;
@@ -88,8 +89,22 @@ exports.getPatientProcedures = async (req, res) => {
     });
 
     res.status(200).send(visits);
+    log.audit.info("Get patient procedures completed", {
+      userId,
+      action: "GET",
+      success: true,
+      request: {
+        params: req.params,
+        query: req.query,
+      },
+      resource: {
+        type: "patientProcedure",
+        count: visits.length,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -115,7 +130,19 @@ exports.savePatientProcedure = async (req, res) => {
       },
     });
     if (!patient) {
-      return res.status(404).send({ message: "Hasta mevcut değil" });
+      res.status(404).send({ message: "Hasta mevcut değil" });
+      log.audit.warn("Save patient procedure failed: Patient not found", {
+        userId,
+        action: "POST",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "patient",
+        },
+      });
+      return;
     }
 
     procedure_ = await Procedure.findOne({
@@ -125,7 +152,19 @@ exports.savePatientProcedure = async (req, res) => {
       },
     });
     if (!procedure_) {
-      return res.status(404).send({ message: "Tedavi mevcut değil" });
+      res.status(404).send({ message: "Tedavi mevcut değil" });
+      log.audit.warn("Save patient procedure failed: Procedure not found", {
+        userId,
+        action: "POST",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "procedure",
+        },
+      });
+      return;
     }
 
     // Visit record will be created if it does not exist
@@ -163,9 +202,23 @@ exports.savePatientProcedure = async (req, res) => {
         approvedDate: visit_.ApprovedDate,
       },
     };
+
     res.status(201).send(patientProcedure);
+    log.audit.info("Save patient procedure completed", {
+      userId,
+      action: "POST",
+      success: true,
+      request: {
+        params: req.params,
+      },
+      resource: {
+        type: "patientProcedure",
+        id: patientProcedure.id,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -242,11 +295,39 @@ exports.updatePatientProcedure = async (req, res) => {
       });
 
       res.status(200).send({ id: patientProcedureId });
+      log.audit.info("Update patient procedure completed", {
+        userId,
+        action: "PUT",
+        success: true,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "patientProcedure",
+          id: patientProcedureId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Tedavi veya hasta mevcut değil" });
+      log.audit.warn(
+        "Update patient procedure failed: Procedure or patient not found",
+        {
+          userId,
+          action: "PUT",
+          success: false,
+          request: {
+            params: req.params,
+          },
+          resource: {
+            type: "patientProcedure",
+            id: patientProcedureId,
+          },
+        }
+      );
     }
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -294,12 +375,38 @@ exports.deletePatientProcedure = async (req, res) => {
 
     // Delete the patientProcedure if it exists and visit is not approved
     if (!patientProcedure) {
-      return res.status(404).send({ message: "Tedavi mevcut değil" });
+      res.status(404).send({ message: "Tedavi mevcut değil" });
+      log.audit.warn("Delete patient procedure failed: Procedure not found", {
+        userId,
+        action: "DELETE",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "patientProcedure",
+          id: patientProcedureId,
+        },
+      });
+      return;
     }
     await patientProcedure.destroy();
 
     res.status(200).send({ id: patientProcedureId });
+    log.audit.info("Delete patient procedure completed", {
+      userId,
+      action: "DELETE",
+      success: true,
+      request: {
+        params: req.params,
+      },
+      resource: {
+        type: "patientProcedure",
+        id: patientProcedureId,
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
