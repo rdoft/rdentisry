@@ -338,7 +338,7 @@ exports.updatePayment = async (req, res) => {
       res.status(400).send({
         message: "Ödeme negatif bir sayı olamaz",
       });
-      log.audit.warn("Update payment failed: Negative amount", {
+      log.audit.warn("Update payment failed: Validation error", {
         userId,
         action: "PUT",
         success: false,

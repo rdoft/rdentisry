@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const { Sequelize } = require("../models");
 const db = require("../models");
 const Procedure = db.procedure;
@@ -42,6 +43,18 @@ exports.getProcedures = async (req, res) => {
     });
 
     res.status(200).send(procedures);
+    log.audit.info(`Get procedures completed`, {
+      userId,
+      action: "GET",
+      success: true,
+      request: {
+        query: req.query,
+      },
+      resource: {
+        type: "procedure",
+        count: procedures.length,
+      },
+    });
   } catch (error) {
     res.status(500).send(procedures);
   }
@@ -85,11 +98,36 @@ exports.getProcedure = async (req, res) => {
 
     if (procedure) {
       res.status(200).send(procedure);
+      log.audit.info(`Get procedure completed`, {
+        userId,
+        action: "GET",
+        success: true,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "procedure",
+          id: procedureId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Tedavi mevcut değil" });
+      log.audit.warn("Get Procedure failed: Procedure doesn't exist", {
+        userId,
+        action: "GET",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "procedure",
+          id: procedureId,
+        },
+      });
     }
   } catch (error) {
     res.status(500).send(error);
+    log.error.error(error);
   }
 };
 
@@ -120,6 +158,15 @@ exports.saveProcedure = async (req, res) => {
       procedureCategoryId: procedure.procedureCategoryId,
     };
     res.status(201).send(procedure);
+    log.audit.info(`Save procedure completed`, {
+      userId,
+      action: "POST",
+      success: true,
+      resource: {
+        type: "procedure",
+        id: procedure.id,
+      },
+    });
   } catch (error) {
     if (
       error instanceof Sequelize.ValidationError &&
@@ -128,8 +175,17 @@ exports.saveProcedure = async (req, res) => {
       res.status(400).send({
         message: "Aynı işlem koduna sahip yeni bir tedavi oluşturulamaz",
       });
+      log.audit.warn("Save Procedure failed: Validation error", {
+        userId,
+        action: "POST",
+        success: false,
+        resource: {
+          type: "procedure",
+        },
+      });
     } else {
       res.status(500).send(error);
+      log.error.error(error);
     }
   }
 };
@@ -165,8 +221,32 @@ exports.updateProcedure = async (req, res) => {
       await procedure.update(values);
 
       res.status(200).send({ id: procedureId });
+      log.audit.info(`Update procedure completed`, {
+        userId,
+        action: "PUT",
+        success: true,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "procedure",
+          id: procedureId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Tedavi mevcut değil" });
+      log.audit.warn("Update Procedure failed: Procedure doesn't exist", {
+        userId,
+        action: "PUT",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "procedure",
+          id: procedureId,
+        },
+      });
     }
   } catch (error) {
     if (
@@ -177,8 +257,21 @@ exports.updateProcedure = async (req, res) => {
         message:
           "Tedavi zaten mevcut, aynı işlem koduna sahip yeni bir tedavi oluşturulamaz",
       });
+      log.audit.warn("Update Procedure failed: Validation error", {
+        userId,
+        action: "PUT",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "procedure",
+          id: procedureId,
+        },
+      });
     } else {
       res.status(500).send(error);
+      log.error.error(error);
     }
   }
 };
@@ -209,11 +302,35 @@ exports.deleteProcedures = async (req, res) => {
     }
 
     res.status(200).send({ coun: count });
+    log.audit.info(`Delete procedures completed`, {
+      userId,
+      action: "DELETE",
+      success: true,
+      request: {
+        query: req.query,
+      },
+      resource: {
+        type: "procedure",
+        count,
+      },
+    });
   } catch (error) {
     if (error instanceof Sequelize.ValidationError) {
       res.status(400).send({ message: error.message });
+      log.audit.warn("Delete Procedures failed: Validation error", {
+        userId,
+        action: "DELETE",
+        success: false,
+        request: {
+          query: req.query,
+        },
+        resource: {
+          type: "procedure",
+        },
+      });
     } else {
       res.status(500).send(error);
+      log.error.error(error);
     }
   }
 };
@@ -241,14 +358,51 @@ exports.deleteProcedure = async (req, res) => {
       await procedure.destroy();
 
       res.status(200).send({ id: procedureId });
+      log.audit.info(`Delete procedure completed`, {
+        userId,
+        action: "DELETE",
+        success: true,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "procedure",
+          id: procedureId,
+        },
+      });
     } else {
       res.status(404).send({ message: "Tedavi mevcut değil" });
+      log.audit.warn("Delete Procedure failed: Procedure doesn't exist", {
+        userId,
+        action: "DELETE",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "procedure",
+          id: procedureId,
+        },
+      });
     }
   } catch (error) {
     if (error instanceof Sequelize.ValidationError) {
       res.status(400).send({ message: error.message });
+      log.audit.warn("Delete Procedure failed: Validation error", {
+        userId,
+        action: "DELETE",
+        success: false,
+        request: {
+          params: req.params,
+        },
+        resource: {
+          type: "procedure",
+          id: procedureId,
+        },
+      });
     } else {
       res.status(500).send(error);
+      log.error.error(error);
     }
   }
 };
