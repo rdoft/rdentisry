@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const Joi = require("joi");
 
 // Validate the request body with given schema
@@ -15,7 +16,9 @@ const validate = (schema, property) => {
         .map((item) => item.message)
         .join(",")
         .replaceAll('"', "");
-      return res.status(400).send({ message: message });
+      res.status(400).send({ message: message });
+      log.app.warn(`Request validation failed: ${message}`);
+      return;
     }
   };
 };
@@ -32,7 +35,9 @@ function validateOR(schema1, schema2, property) {
         .map((item) => item.message)
         .join(" OR ")
         .replaceAll('"', "");
-      return res.status(400).send({ message: message });
+      res.status(400).send({ message: message });
+      log.app.warn(`Request validation failed: ${message}`);
+      return;
     } else {
       next();
     }

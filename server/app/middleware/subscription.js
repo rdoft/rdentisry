@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const db = require("../models");
 const Subscription = db.subscription;
 const Patient = db.patient;
@@ -14,15 +15,30 @@ const isSubActive = async (req, res, next) => {
 
     // Send error if subscription inactive
     if (subscription.EndDate && new Date(subscription.EndDate) < new Date()) {
-      return res.status(402).send({
+      res.status(402).send({
         message:
           "Aktif aboneliğiniz bulunmamaktadır. Lütfen aboneliğinizi yenileyin.",
       });
+      log.access.warn("Payment required: Inactive subscription", {
+        userId: userId,
+        action: "ACCESS",
+        success: false,
+        request: {
+          ip: req.ip,
+          url: req.originalUrl,
+          method: req.method,
+          status: 402,
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
     }
 
     next();
   } catch (error) {
-    return res.status(500).send(error);
+    res.status(500).send(error);
+    log.error.error(error);
+    return;
   }
 };
 
@@ -39,15 +55,30 @@ const checkLimitPatient = async (req, res, next) => {
 
     // Send error if exceeds patient limit
     if (patientCount >= subscription.MaxPatients) {
-      return res.status(402).send({
+      res.status(402).send({
         message:
           "Maksimum hasta limitine ulaştınız. Lütfen aboneliğinizi yükseltin.",
       });
+      log.access.warn("Payment required: Max patient limit", {
+        userId: userId,
+        action: "ACCESS",
+        success: false,
+        request: {
+          ip: req.ip,
+          url: req.originalUrl,
+          method: req.method,
+          status: 402,
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
     }
 
     next();
   } catch (error) {
-    return res.status(500).send(error);
+    res.status(500).send(error);
+    log.error.error(error);
+    return;
   }
 };
 
@@ -64,15 +95,30 @@ const checkLimitDoctor = async (req, res, next) => {
 
     // Send error if exceeds doctor limit
     if (doctorCount >= subscription.MaxDoctors) {
-      return res.status(402).send({
+      res.status(402).send({
         message:
           "Maksimum doktor limitine ulaştınız. Lütfen aboneliğinizi yükseltin.",
       });
+      log.access.warn("Payment required: Max doctor limit", {
+        userId: userId,
+        action: "ACCESS",
+        success: false,
+        request: {
+          ip: req.ip,
+          url: req.originalUrl,
+          method: req.method,
+          status: 402,
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
     }
 
     next();
   } catch (error) {
-    return res.status(500).send(error);
+    res.status(500).send(error);
+    log.error.error(error);
+    return;
   }
 };
 
@@ -89,9 +135,24 @@ const setLimit = async (req, res, next) => {
       maxDoctors: subscription.MaxDoctors,
     };
 
+    log.access.info("Payment required: Set limit", {
+      userId: userId,
+      action: "ACCESS",
+      success: true,
+      request: {
+        ip: req.ip,
+        url: req.originalUrl,
+        method: req.method,
+        status: 200,
+        agent: req.headers["user-agent"],
+      },
+    });
+
     next();
   } catch (error) {
-    return res.status(500).send(error);
+    res.status(500).send(error);
+    log.error.error(error);
+    return;
   }
 };
 

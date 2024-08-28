@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const { Sequelize } = require("../models");
 const db = require("../models");
 const Visit = db.visit;
@@ -143,7 +144,11 @@ exports.run = async () => {
           }));
       }
     }
+
+    log.app.info(
+      `Service: Created notifications for ${patients.length} patients`
+    );
   } catch (error) {
-    console.log(error);
+    log.error.error(error);
   }
 };

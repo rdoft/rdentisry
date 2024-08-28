@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const { Sequelize } = require("../models");
 const db = require("../models");
 
@@ -21,7 +22,9 @@ exports.run = async () => {
         },
       }
     );
+
+    log.app.info(`Service: Updated status of ${appointments[0]} appointments`);
   } catch (error) {
-    console.log(error);
+    log.error.error(error);
   }
 };

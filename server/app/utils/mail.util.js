@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const nodemailer = require("nodemailer");
 
 const send = async (to, subject, html) => {
@@ -190,6 +191,7 @@ const sendResetMail = async (to, url) => {
   `;
 
   await send(to, subject, html);
+  log.app.info(`Reset password mail sent to ${to}`);
 };
 
 // Send URL token to verify email
@@ -358,6 +360,7 @@ const sendVerifyMail = async (to, url) => {
   `;
 
   await send(to, subject, html);
+  log.app.info(`Verification email sent to ${to}`);
 };
 
 module.exports = {

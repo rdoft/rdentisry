@@ -430,6 +430,7 @@ const createCategories = async () => {
       });
     }
   } catch (error) {
+    log.error.error(error);
     throw new Error(
       "Bir problem oluştu, uygulama yöneticisi ile iletişime geçin"
     );
@@ -455,6 +456,7 @@ const createProcedures = async (user) => {
       });
     }
   } catch (error) {
+    log.error.error(error);
     throw new Error(
       "Bir problem oluştu, uygulama yöneticisi ile iletişime geçin"
     );
