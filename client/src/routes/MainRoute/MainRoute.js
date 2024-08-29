@@ -49,7 +49,7 @@ const MainRoutes = [
   },
   {
     path: "/verify/:token",
-    element: <ProtectedRoute element={Verified} />,
+    element: <Verified />,
   },
   {
     path: "/",
