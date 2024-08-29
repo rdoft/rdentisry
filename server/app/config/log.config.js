@@ -38,7 +38,6 @@ winston.loggers.add("access", {
   maxsize: 5242880, // 5MB
   defaultMeta: {
     userId: null,
-    mail: null,
     action: null,
     success: null,
     request: {
@@ -87,10 +86,7 @@ winston.loggers.add("api", {
     agent: null,
   },
   format: combine(timestamp(), json()),
-  transports: [
-    new winston.transports.File({ filename: FILE_API }),
-    new winston.transports.File({ filename: FILE_APP }),
-  ],
+  transports: [new winston.transports.File({ filename: FILE_API })],
 });
 
 // Logger for db.log

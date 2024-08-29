@@ -1,6 +1,7 @@
 const router = require("express").Router();
 var passport = require("../config/passport.config");
 const { validate } = require("../middleware/validation");
+const { isAuthenticated } = require("../middleware/auth");
 
 // Auth specific imports
 const controller = require("../controller/auth.controller");
@@ -88,7 +89,7 @@ module.exports = function (app) {
     /**
      * Init verify for email
      */
-    .post(controller.initVerify);
+    .post(isAuthenticated, controller.initVerify);
 
   router
     .route(`/verify/:token`)
@@ -110,7 +111,7 @@ module.exports = function (app) {
      * Agree to terms
      * @body User agreement
      */
-    .put(controller.agree);
+    .put(isAuthenticated, controller.agree);
 
   app.use(API_URL, router);
 };

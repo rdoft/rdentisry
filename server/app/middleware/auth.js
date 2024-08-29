@@ -1,4 +1,4 @@
-const log = requeire("../config/log.config");
+const log = require("../config/log.config");
 
 // Restrictng routes a user is not allowed to visit if not logged in
 const isAuthenticated = (req, res, next) => {

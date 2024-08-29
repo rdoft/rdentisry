@@ -22,14 +22,17 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = async (req, res, next) => {
+  const userId = req.user?.UserId || null;
+
   req.logout((err) => {
     if (err) {
       log.error.error(err);
       return next(err);
     }
+
     res.status(200).send();
     log.access.info("Logout success", {
-      userId: req.user.UserId,
+      userId: userId,
       success: true,
       action: "LOGOUT",
       request: {
@@ -61,7 +64,7 @@ exports.register = async (req, res) => {
     if (user && user.Password) {
       res.status(400).send({ message: "Mail adresi zaten kayıtlıdır" });
       log.access.warn("Register failed: User already exists", {
-        email,
+        mail: email,
         success: false,
         action: "REGISTER",
         request: {
@@ -79,7 +82,7 @@ exports.register = async (req, res) => {
       if (!addr.length) {
         res.status(400).send({ message: "Mail adresinizi kontrol edin" });
         log.access.warn("Register failed: Invalid email", {
-          email,
+          mail: email,
           success: false,
           action: "REGISTER",
           request: {
@@ -92,7 +95,7 @@ exports.register = async (req, res) => {
     } catch (error) {
       res.status(400).send({ message: "Mail adresinizi kontrol edin" });
       log.access.warn("Register failed: Invalid email", {
-        email,
+        mail: email,
         success: false,
         action: "REGISTER",
         request: {
@@ -126,7 +129,7 @@ exports.register = async (req, res) => {
 
     log.access.info("Register success", {
       userId: user.UserId,
-      email,
+      mail: email,
       success: true,
       action: "REGISTER",
       request: {
@@ -145,7 +148,7 @@ exports.register = async (req, res) => {
       res.status(200).send();
       log.access.info("Login success", {
         userId: user.UserId,
-        email,
+        mail: email,
         success: true,
         action: "LOGIN",
         request: {
@@ -273,7 +276,7 @@ exports.forgot = async (req, res) => {
     if (!user) {
       res.status(404).send({ message: "Geçersiz mail adresi" });
       log.access.warn("Forgot failed: Mail doesn't exist", {
-        email,
+        mail: email,
         success: false,
         action: "RESET",
         request: {
@@ -304,7 +307,7 @@ exports.forgot = async (req, res) => {
     res.status(200).send();
     log.access.info("Forgot success", {
       userId: user.UserId,
-      email,
+      mail: email,
       success: true,
       action: "RESET",
       request: {
@@ -452,27 +455,17 @@ exports.initVerify = async (req, res) => {
 
     if (!user) {
       res.status(404).send({ message: "Geçersiz kullanıcı" });
-      log.audit.warn("Init verify email failed: User doesn't exist", {
+      log.app.warn("Init verify email failed: User doesn't exist", {
         userId,
-        action: "PUT",
         success: false,
-        resource: {
-          type: "user",
-          id: userId,
-        },
       });
       return;
     }
     if (user.Verified) {
       res.status(400).send({ message: "Mail adresi zaten doğrulanmış" });
-      log.audit.warn("Init verify email failed: User already verified", {
+      log.app.warn("Init verify email failed: User already verified", {
         userId,
-        action: "PUT",
         success: false,
-        resource: {
-          type: "user",
-          id: userId,
-        },
       });
       return;
     }
@@ -497,15 +490,7 @@ exports.initVerify = async (req, res) => {
       `https://${HOST}:${PORT_CLIENT}/verify/${token}`
     );
     res.status(200).send();
-    log.audit.info("Init verify email success", {
-      userId,
-      action: "PUT",
-      success: true,
-      resource: {
-        type: "user",
-        id: userId,
-      },
-    });
+    log.app.info("Init verify email success", { userId, success: true });
   } catch (error) {
     res.status(500).send(error);
     log.error.error(error);
@@ -542,16 +527,11 @@ exports.completeVerify = async (req, res) => {
       res.status(400).send({
         message: "Doğrulama linki geçersiz veya süresi dolmuştur",
       });
-      log.audit.warn(
+      log.app.warn(
         "Complete verify email failed: Token doesn't exist or expired",
         {
           token,
           success: false,
-          action: "PUT",
-          resource: {
-            type: "user",
-            id: user.UserId,
-          },
         }
       );
       return;
@@ -567,16 +547,11 @@ exports.completeVerify = async (req, res) => {
       res.status(400).send({
         message: "Doğrulama linki geçersiz veya süresi dolmuştur",
       });
-      log.audit.warn(
+      log.app.warn(
         "Complete verify email failed: Token doesn't exist or expired",
         {
           token,
           success: false,
-          action: "PUT",
-          resource: {
-            type: "user",
-            id: user.UserId,
-          },
         }
       );
       return;
@@ -588,6 +563,11 @@ exports.completeVerify = async (req, res) => {
         UserId: user.UserId,
         Type: "email",
       },
+    });
+    log.app.info("Complete verify email token found and deleted", {
+      userId: user.UserId,
+      token,
+      success: true,
     });
 
     // Update user verified status
@@ -603,14 +583,9 @@ exports.completeVerify = async (req, res) => {
     );
 
     res.status(200).send();
-    log.audit.info("Complete verify email success", {
+    log.app.info("Complete verify email success", {
       userId: user.UserId,
       success: true,
-      action: "PUT",
-      resource: {
-        type: "user",
-        id: user.UserId,
-      },
     });
   } catch (error) {
     res.status(500).send(error);

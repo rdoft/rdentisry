@@ -8,6 +8,24 @@ const Doctor = db.doctor;
 // There is 3 state: free, active, inactive
 const isSubActive = async (req, res, next) => {
   try {
+    if (!req.user) {
+      res.status(401).send({
+        message: "Yetkilendirme hatası. Lütfen tekrar giriş yapın.",
+      });
+      log.access.warn("Payment required: Unauthorized access", {
+        action: "ACCESS",
+        success: false,
+        request: {
+          ip: req.ip,
+          url: req.originalUrl,
+          method: req.method,
+          status: 401,
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
+    }
+
     const userId = req.user.UserId;
     const subscription = await Subscription.findOne({
       where: { UserId: userId },
@@ -125,6 +143,24 @@ const checkLimitDoctor = async (req, res, next) => {
 // Set a limit for the number of patients and doctors that can be list
 const setLimit = async (req, res, next) => {
   try {
+    if (!req.user) {
+      res.status(401).send({
+        message: "Yetkilendirme hatası. Lütfen tekrar giriş yapın.",
+      });
+      log.access.warn("Payment required: Unauthorized access", {
+        action: "ACCESS",
+        success: false,
+        request: {
+          ip: req.ip,
+          url: req.originalUrl,
+          method: req.method,
+          status: 401,
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
+    }
+
     const userId = req.user.UserId;
     const subscription = await Subscription.findOne({
       where: { UserId: userId },
