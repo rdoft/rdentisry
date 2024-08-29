@@ -25,8 +25,9 @@ passport.use(
     {
       // Our user will sign in using an email, rather than a "username"
       usernameField: "email",
+      passReqToCallback: true,
     },
-    async function (email, password, cb) {
+    async function (req, email, password, cb) {
       try {
         const user = await User.findOne({
           where: {
@@ -40,6 +41,10 @@ passport.use(
             mail: email,
             success: false,
             action: "LOGIN",
+            request: {
+              ip: req.ip,
+              agent: req.headers["user-agent"],
+            },
           });
           return cb(null, false, {
             message: "Kullanıcı adı veya şifre yanlış",
@@ -49,9 +54,14 @@ passport.use(
         // Check password is valid
         if (!user.Password) {
           log.access.warn("Login failed: Wrong password", {
+            userId: user.UserId,
             mail: email,
             success: false,
             action: "LOGIN",
+            request: {
+              ip: req.ip,
+              agent: req.headers["user-agent"],
+            },
           });
           return cb(null, false, {
             message: "Kullanıcı adı veya şifre yanlış",
@@ -61,9 +71,14 @@ passport.use(
         const isValid = await bcrypt.compare(password, user.Password);
         if (!isValid) {
           log.access.warn("Login failed: Wrong password", {
+            userId: user.UserId,
             mail: email,
             success: false,
             action: "LOGIN",
+            request: {
+              ip: req.ip,
+              agent: req.headers["user-agent"],
+            },
           });
           return cb(null, false, {
             message: "Kullanıcı adı veya şifre yanlış",
@@ -71,9 +86,14 @@ passport.use(
         }
 
         log.access.info("Login success", {
+          userId: user.UserId,
           mail: email,
           success: true,
           action: "LOGIN",
+          request: {
+            ip: req.ip,
+            agent: req.headers["user-agent"],
+          },
         });
         return cb(null, user);
       } catch (err) {
@@ -90,6 +110,7 @@ passport.use(
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
       callbackURL: `https://${HOST}:${PORT}/auth/google/callback`,
+      passReqToCallback: true,
     },
     async function (accessToken, refreshToken, profile, cb) {
       try {
@@ -108,13 +129,22 @@ passport.use(
             mail: user.Email,
             success: true,
             action: "REGISTER",
+            request: {
+              ip: req.ip,
+              agent: req.headers["user-agent"],
+            },
           });
         }
 
         log.access.info("Login success", {
+          userId: user.UserId,
           mail: user.Email,
           success: true,
           action: "LOGIN",
+          request: {
+            ip: req.ip,
+            agent: req.headers["user-agent"],
+          },
         });
         return cb(null, user);
       } catch (err) {
