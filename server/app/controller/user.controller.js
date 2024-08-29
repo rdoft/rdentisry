@@ -55,7 +55,6 @@ exports.getUser = async (req, res) => {
   }
 };
 
-// TODO: control if oldPassword null
 /**
  * Update the user
  * @param userId id of the user
