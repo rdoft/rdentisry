@@ -18,6 +18,7 @@ function Verify() {
 
   const [error, setError] = useState(null);
   const [resent, setResent] = useState(false);
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -31,7 +32,8 @@ function Verify() {
         if (res.data.verified) {
           navigate("/");
         } else {
-          await sendMail();
+          setEmail(res.data.email);
+          await sendMail({ email: res.data.email });
         }
       } catch (error) {
         const { message } = handleError(error);
@@ -64,11 +66,11 @@ function Verify() {
   }, [navigate]);
 
   // SERVICES ---------------------------------------------------------
-  const sendMail = async () => {
+  const sendMail = async (auth) => {
     setError(null);
 
     try {
-      await AuthService.initVerify();
+      await AuthService.initVerify(auth);
     } catch (error) {
       const { message } = handleError(error);
       setError(message);
@@ -78,7 +80,7 @@ function Verify() {
   // HANDLERS ---------------------------------------------------------
   // onResend handler
   const handleResend = () => {
-    sendMail();
+    sendMail({ email });
     setResent(true);
   };
 

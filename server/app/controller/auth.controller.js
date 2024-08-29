@@ -441,7 +441,7 @@ exports.reset = async (req, res) => {
  * Init verify for email
  */
 exports.initVerify = async (req, res) => {
-  const { UserId: userId } = req.user;
+  const { email } = req.body;
   let token;
   let user;
 
@@ -449,14 +449,14 @@ exports.initVerify = async (req, res) => {
     token = crypto.randomBytes(32).toString("hex");
     user = await User.findOne({
       where: {
-        UserId: userId,
+        Email: email,
       },
     });
 
     if (!user) {
       res.status(404).send({ message: "Geçersiz kullanıcı" });
       log.app.warn("Init verify email failed: User doesn't exist", {
-        userId,
+        mail: email,
         success: false,
       });
       return;
@@ -464,7 +464,7 @@ exports.initVerify = async (req, res) => {
     if (user.Verified) {
       res.status(400).send({ message: "Mail adresi zaten doğrulanmış" });
       log.app.warn("Init verify email failed: User already verified", {
-        userId,
+        mail: email,
         success: false,
       });
       return;
@@ -472,25 +472,25 @@ exports.initVerify = async (req, res) => {
 
     await Token.upsert(
       {
-        UserId: userId,
+        UserId: user.UserId,
         Token: token,
         Expiration: Date.now() + 86400000, // 24 hours
         Type: "email",
       },
       {
         where: {
-          UserId: userId,
+          UserId: user.UserId,
           Type: "email",
         },
       }
     );
 
     await sendVerifyMail(
-      user.Email,
+      email,
       `https://${HOST}:${PORT_CLIENT}/verify/${token}`
     );
     res.status(200).send();
-    log.app.info("Init verify email success", { userId, success: true });
+    log.app.info("Init verify email success", { mail: email, success: true });
   } catch (error) {
     res.status(500).send(error);
     log.error.error(error);

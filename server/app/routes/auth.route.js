@@ -89,7 +89,7 @@ module.exports = function (app) {
     /**
      * Init verify for email
      */
-    .post(isAuthenticated, controller.initVerify);
+    .post(controller.initVerify);
 
   router
     .route(`/verify/:token`)

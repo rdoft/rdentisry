@@ -28,6 +28,7 @@ winston.loggers.add("error", {
   ],
   exceptionHandlers: [new winston.transports.File({ filename: FILE_ERROR })],
   rejectionHandlers: [new winston.transports.File({ filename: FILE_ERROR })],
+  exitOnError: false,
 });
 
 // Logger for access.log

@@ -51,8 +51,8 @@ auth.reset = (token, auth) => {
 /**
  * Init verify for email
  */
-auth.initVerify = () => {
-  return API.post(`/verify`);
+auth.initVerify = (email) => {
+  return API.post(`/verify`, email);
 };
 
 /**
