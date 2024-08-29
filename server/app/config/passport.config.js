@@ -112,7 +112,7 @@ passport.use(
       callbackURL: `https://${HOST}:${PORT}/auth/google/callback`,
       passReqToCallback: true,
     },
-    async function (accessToken, refreshToken, profile, cb) {
+    async function (req, accessToken, refreshToken, profile, cb) {
       try {
         // Control and create user
         let user = await User.findOne({
