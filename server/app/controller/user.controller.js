@@ -55,6 +55,7 @@ exports.getUser = async (req, res) => {
   }
 };
 
+// TODO: control if oldPassword null
 /**
  * Update the user
  * @param userId id of the user
@@ -62,7 +63,7 @@ exports.getUser = async (req, res) => {
  */
 exports.updateUser = async (req, res) => {
   const { UserId: userId } = req.user;
-  const { name, password } = req.body;
+  const { name, oldPassword, password } = req.body;
   let user;
 
   try {
@@ -72,55 +73,59 @@ exports.updateUser = async (req, res) => {
       },
     });
 
-    if (user) {
-      if (password) {
-        // Generate a salt
-        const salt = await bcrypt.genSalt(10);
-        // Hash the password with the salt
-        const hashedPassword = await bcrypt.hash(password, salt);
+    if (!user) {
+      res.status(404).send({ message: "Kullanıcı mevcut değil" });
+      log.audit.warn(`Update user failed: User doesn't exist`, {
+        userId,
+        action: "PUT",
+        success: false,
+        resource: {
+          type: "user",
+          id: userId,
+        },
+      });
+      return;
+    }
 
-        await user.update({
-          Password: hashedPassword,
-        });
-        log.access.info(`Update user password completed`, {
-          userId,
-          action: "RESET",
-          success: true,
-          request: {
-            ip: req.ip,
-            agent: req.headers["user-agent"],
-          },
-        });
-      } else {
-        await user.update({
-          Name: name,
-        });
-        log.audit.info(`Update user completed`, {
-          userId,
-          action: "PUT",
-          success: true,
-          resource: {
-            type: "user",
-            id: userId,
-          },
-        });
-      }
+    if (!password) {
+      await user.update({
+        Name: name,
+      });
 
       res.status(200).send();
-    } else {
-      res.status(404).send({ message: "Kullanıcı mevcut değil" });
-      if (password) {
-        log.access.warn("Update user password failed: User doesn't exist", {
-          userId,
-          action: "RESET",
-          success: false,
-          request: {
-            ip: req.ip,
-            agent: req.headers["user-agent"],
-          },
-        });
-      } else {
-        log.audit.warn("Update user failed: User doesn't exist", {
+      log.audit.info(`Update user completed`, {
+        userId,
+        action: "PUT",
+        success: true,
+        resource: {
+          type: "user",
+          id: userId,
+        },
+      });
+      return;
+    }
+
+    // Check if the old password is matched with the user's password
+    // It can be null on the db if the user signed up with a social media account
+    if ((!user.Password && oldPassword) || (user.Password && !oldPassword)) {
+      res.status(400).send({ message: "Eski şifre yanlış" });
+      log.access.warn(`Update user failed: Wrong password`, {
+        userId,
+        action: "PUT",
+        success: false,
+        resource: {
+          type: "user",
+          id: userId,
+        },
+      });
+      return;
+    }
+
+    if (user.Password && oldPassword) {
+      const isValid = await bcrypt.compare(oldPassword, user.Password);
+      if (!isValid) {
+        res.status(400).send({ message: "Eski şifre yanlış" });
+        log.access.warn(`Update user failed: Wrong password`, {
           userId,
           action: "PUT",
           success: false,
@@ -129,8 +134,27 @@ exports.updateUser = async (req, res) => {
             id: userId,
           },
         });
+        return;
       }
     }
+
+    // Hash the password with the salt
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    await user.update({
+      Password: hashedPassword,
+    });
+
+    res.status(200).send();
+    log.access.info(`Update user password completed`, {
+      userId,
+      action: "RESET",
+      success: true,
+      request: {
+        ip: req.ip,
+        agent: req.headers["user-agent"],
+      },
+    });
   } catch (error) {
     res.status(500).send(error);
     log.error.error(error);

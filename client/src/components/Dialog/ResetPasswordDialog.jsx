@@ -7,6 +7,7 @@ import schema from "schemas/user.schema";
 
 function ResetPassword({ onSubmit, onHide }) {
   const [user, setUser] = useState({
+    oldPassword: "",
     password: "",
     confirmPassword: "",
   });
@@ -64,7 +65,7 @@ function ResetPassword({ onSubmit, onHide }) {
 
   // onSubmit handler
   const handleSubmit = () => {
-    onSubmit({ password: user.password });
+    onSubmit({ oldPassword: user.oldPassword, password: user.password });
   };
 
   // TEMPLATES -------------------------------------------------------
@@ -87,6 +88,20 @@ function ResetPassword({ onSubmit, onHide }) {
       style={{ height: "fit-content" }}
     >
       <Divider type="solid" className="mt-0" />
+
+      <div className="field mb-3">
+        <Password
+          id="oldPassword"
+          name="oldPassword"
+          placeholder="Eski Parola *"
+          value={user.oldPassword}
+          toggleMask
+          onChange={handleChange}
+          required
+          maxLength={20}
+          feedback={false}
+        />
+      </div>
 
       <div className="flex">
         <div className="field mr-2">
@@ -129,7 +144,7 @@ function ResetPassword({ onSubmit, onHide }) {
               visibility: isError.confirmPassword ? "visible" : "hidden",
             }}
           >
-            Parolalar eşleşmiyor"
+            Parolalar eşleşmiyor
           </small>
         </div>
       </div>
