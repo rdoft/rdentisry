@@ -14,7 +14,6 @@ const FILE_DB = `${LOG_DIR}/db.log`;
 // Logger for the application info
 winston.loggers.add("app", {
   level: "verbose",
-  maxsize: 5242880, // 5MB
   format: combine(timestamp(), json()),
   transports: [new winston.transports.File({ filename: FILE_APP })],
 });
@@ -22,7 +21,6 @@ winston.loggers.add("app", {
 // Logger for error.log
 winston.loggers.add("error", {
   level: "error",
-  maxsize: 5242880, // 5MB
   format: combine(errors({ stack: true }), timestamp(), json()),
   transports: [
     new winston.transports.File({ filename: FILE_ERROR }),
@@ -35,7 +33,6 @@ winston.loggers.add("error", {
 // Logger for access.log
 winston.loggers.add("access", {
   level: "info",
-  maxsize: 5242880, // 5MB
   defaultMeta: {
     userId: null,
     action: null,
@@ -55,7 +52,6 @@ winston.loggers.add("access", {
 // Logger for audit.log
 winston.loggers.add("audit", {
   level: "info",
-  maxsize: 5242880, // 5MB
   defaultMeta: {
     userId: null,
     action: null,
@@ -76,7 +72,6 @@ winston.loggers.add("audit", {
 // Logger for api.log
 winston.loggers.add("api", {
   level: "http",
-  maxsize: 5242880, // 5MB
   defaultMeta: {
     userId: null,
     ip: null,
@@ -92,7 +87,6 @@ winston.loggers.add("api", {
 // Logger for db.log
 winston.loggers.add("db", {
   level: "info",
-  maxsize: 10485760, // 10MB
   format: combine(timestamp(), json()),
   transports: [new winston.transports.File({ filename: FILE_DB })],
 });

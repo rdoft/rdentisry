@@ -171,19 +171,6 @@ const setLimit = async (req, res, next) => {
       maxDoctors: subscription.MaxDoctors,
     };
 
-    log.access.info("Payment required: Set limit", {
-      userId: userId,
-      action: "ACCESS",
-      success: true,
-      request: {
-        ip: req.ip,
-        url: req.originalUrl,
-        method: req.method,
-        status: 200,
-        agent: req.headers["user-agent"],
-      },
-    });
-
     next();
   } catch (error) {
     res.status(500).send(error);

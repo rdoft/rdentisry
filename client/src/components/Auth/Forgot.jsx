@@ -60,7 +60,7 @@ function Forgot() {
   // onKeyDown handler
   const handleKeyDown = (event) => {
     if (isValid && event.key === "Enter") {
-      sendMail();
+      sendMail({ email });
     }
   };
 
