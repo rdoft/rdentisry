@@ -1,4 +1,4 @@
-const PRICE_URL = `https://disheki.me/pricing`;
+const PRICE_URL = process.env.REACT_APP_PRICING_URL;
 
 const handleError = (error) => {
   if (error.name === "CanceledError") {

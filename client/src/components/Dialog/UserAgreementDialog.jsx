@@ -8,8 +8,8 @@ import { useAuth } from "context/AuthProvider";
 // services
 import { AuthService } from "services";
 
-const POLICY_URL = `https://disheki.me/privacy-policy`;
-const TERMS_URL = `https://disheki.me/terms-and-conditions`;
+const POLICY_URL = process.env.REACT_APP_POLICY_URL;
+const TERMS_URL = process.env.REACT_APP_TERMS_URL;
 
 function UserAgreementDialog() {
   const theme = useTheme();
