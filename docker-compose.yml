@@ -11,7 +11,7 @@ services:
     volumes:
           - ./server/:/usr/src/server
           - /usr/src/server/node_modules
-          - logs/:/usr/src/server/app/logs
+          - ./logs/:/usr/src/server/app/logs
     ports:
       - ${PORT_SERVER}:${PORT_SERVER}
     env_file:
