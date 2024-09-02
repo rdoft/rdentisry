@@ -3,4 +3,3 @@ Dockerfile
 .git
 build
 node_modules
-logs
