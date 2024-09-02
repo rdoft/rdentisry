@@ -11,6 +11,7 @@ services:
     volumes:
       - ./server/:/usr/src/server
       - /usr/src/server/node_modules
+      - logs/:/usr/src/server/logs
     ports:
       - ${PORT_SERVER}:${PORT_SERVER}
     env_file:
@@ -18,7 +19,7 @@ services:
     depends_on:
       dev-db:
         condition: service_healthy
-  
+
   dev-client:
     build:
       context: ./client
@@ -41,7 +42,7 @@ services:
     restart: always
     volumes:
       - ./db/pgdata/:/var/lib/postgresql/data
-    ports: 
+    ports:
       - ${DB_PORT_}:${DB_PORT}
     environment:
       - POSTGRES_DB=${DB_DB}
