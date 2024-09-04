@@ -10,7 +10,7 @@ COPY . .
 RUN npm install
 
 # Install additional tools needed for the backup script
-RUN apk add --no-cache docker-cli
+RUN apk add --no-cache postgresql-client tar
 
 # Run the application (cron will start and manage backup tasks)
 CMD ["node", "backup.js"]

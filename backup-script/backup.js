@@ -6,8 +6,6 @@ const { exec } = require("child_process");
 const execAsync = util.promisify(exec);
 require("dotenv").config();
 
-const SERVER = process.env.SERVER;
-const DB = process.env.DB;
 const LOG_SRC = process.env.LOG_SRC;
 const DB_HOST = process.env.DB_HOST;
 const DB_DB = process.env.DB_DB;
@@ -28,20 +26,13 @@ const LOG_RETAIN_WEEKS = 14;
 
 // Backup the database
 const backupDb = async (type) => {
-  const temp = `/tmp/${BACKUP_NAME}.sql`;
   const dest = path.join(DB_PATH, type, `${BACKUP_NAME}.sql`);
 
   try {
     // Dump the database to a temporary file inside the Docker container
     await execAsync(
-      `docker exec ${DB} sh -c "PGPASSWORD=${DB_PASSWORD} pg_dump -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -d ${DB_DB} -F c > ${temp}"`
+      `PGPASSWORD=${DB_PASSWORD} pg_dump -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -d ${DB_DB} -F c > ${dest}`
     );
-
-    // Copy the dumped database file from the Docker container to the local machine
-    await execAsync(`docker cp ${DB}:${temp} ${dest}`);
-
-    // Remove the temporary file from the Docker container
-    await execAsync(`docker exec ${DB} rm ${temp}`);
 
     console.log(`Database backup completed: ${dest}`);
   } catch (err) {
@@ -51,20 +42,14 @@ const backupDb = async (type) => {
 
 // Backup logs
 const backupLogs = async () => {
-  const temp = `/tmp/${BACKUP_NAME}.tar.gz`;
   const dest = path.join(LOG_PATH, `${BACKUP_NAME}.tar.gz`);
 
   try {
     // Archive the logs inside the Docker container
-    await execAsync(`docker exec ${SERVER} tar -czf ${temp} -C ${LOG_SRC} .`);
-    // Copy the archived logs from the Docker container to the local machine
-    await execAsync(`docker cp ${SERVER}:${temp} ${dest}`);
-    // Clear the contents of the log files inside the Docker container
-    await execAsync(
-      `docker exec ${SERVER} sh -c 'find ${LOG_SRC} -type f -exec truncate -s 0 {} +'`
-    );
-    // Remove the archive from the Docker container
-    await execAsync(`docker exec ${SERVER} rm ${temp}`);
+    await execAsync(`tar -czf ${dest} -C ${LOG_SRC} .`);
+
+    // Clear the logs
+    await execAsync(`find ${LOG_SRC} -type f -exec truncate -s 0 {} +`);
 
     console.log(`Log backup completed: ${dest}`);
   } catch (err) {
