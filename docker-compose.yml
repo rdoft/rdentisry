@@ -1,5 +1,5 @@
 version: "3.8"
-name: rdentistry
+name: dishekime
 
 services:
   server:
@@ -7,7 +7,7 @@ services:
       context: ./server
       dockerfile: ./Dockerfile
     container_name: server
-    image: recepdemrci/rdentistry-server:${VERSION}
+    image: recepdemrci/dishekime-server:${VERSION}
     volumes:
       - ./server/:/usr/src/server
       - /usr/src/server/node_modules
@@ -24,7 +24,7 @@ services:
       context: ./client
       dockerfile: ./Dockerfile
     container_name: client
-    image: recepdemrci/rdentistry-client:${VERSION}
+    image: recepdemrci/dishekime-client:${VERSION}
     volumes:
       - ./client/:/usr/src/client
       - /usr/src/client/node_modules
@@ -59,6 +59,7 @@ services:
       context: ./backup-script
       dockerfile: ./Dockerfile
     container_name: backup
+    image: recepdemrci/dishekime-backup:${VERSION}
     volumes:
       - ./backup/:/backup
       - ./server/app/logs/:/logs

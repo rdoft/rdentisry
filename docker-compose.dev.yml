@@ -1,5 +1,5 @@
 version: "3.8"
-name: dev-rdentistry
+name: dishekime-dev
 
 services:
   dev-server:
@@ -7,7 +7,7 @@ services:
       context: ./server
       dockerfile: ./Dockerfile
     container_name: dev-server
-    image: recepdemrci/rdentistry-server:${VERSION}
+    image: recepdemrci/dishekime-dev-server:${VERSION}
     volumes:
       - ./server/:/usr/src/server
       - /usr/src/server/node_modules
@@ -24,7 +24,7 @@ services:
       context: ./client
       dockerfile: ./Dockerfile
     container_name: dev-client
-    image: recepdemrci/rdentistry-client:${VERSION}
+    image: recepdemrci/dishekime-dev-client:${VERSION}
     volumes:
       - ./client/:/usr/src/client
       - /usr/src/client/node_modules
@@ -59,6 +59,7 @@ services:
       context: ./backup-script
       dockerfile: ./Dockerfile
     container_name: dev-backup
+    image: recepdemrci/dishekime-dev-backup:${VERSION}
     volumes:
       - ./backup/:/backup
       - ./server/app/logs/:/logs
