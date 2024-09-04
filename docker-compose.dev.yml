@@ -53,3 +53,22 @@ services:
       timeout: 5s
       start_period: 10s
       retries: 5
+
+  dev-backup:
+    build:
+      context: ./backup-script
+      dockerfile: ./Dockerfile
+    container_name: dev-backup
+    volumes:
+      - ./backup/:/backup
+    env_file:
+      - .env
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+    depends_on:
+      server:
+        condition: service_started
+      db:
+        condition: service_healthy

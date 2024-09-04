@@ -9,8 +9,8 @@ services:
     container_name: server
     image: recepdemrci/rdentistry-server:${VERSION}
     volumes:
-          - ./server/:/usr/src/server
-          - /usr/src/server/node_modules
+      - ./server/:/usr/src/server
+      - /usr/src/server/node_modules
     ports:
       - ${PORT_SERVER}:${PORT_SERVER}
     env_file:
@@ -18,7 +18,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-  
+
   client:
     build:
       context: ./client
@@ -41,7 +41,7 @@ services:
     restart: always
     volumes:
       - ./db/pgdata/:/var/lib/postgresql/data
-    ports: 
+    ports:
       - ${DB_PORT_}:${DB_PORT}
     environment:
       - POSTGRES_DB=${DB_DB}
@@ -53,3 +53,22 @@ services:
       timeout: 5s
       start_period: 10s
       retries: 5
+
+  backup:
+    build:
+      context: ./backup-script
+      dockerfile: ./Dockerfile
+    container_name: backup
+    volumes:
+      - ./backup/:/backup
+    env_file:
+      - .env
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+    depends_on:
+      server:
+        condition: service_started
+      db:
+        condition: service_healthy
