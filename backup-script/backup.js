@@ -24,6 +24,15 @@ const DB_RETAIN_WEEKS = 4;
 const DB_RETAIN_MONTHS = 6;
 const LOG_RETAIN_WEEKS = 14;
 
+// Global error handlers
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+});
+
 // Backup the database
 const backupDb = async (type) => {
   const dest = path.join(DB_PATH, type, `${BACKUP_NAME}.sql`);
