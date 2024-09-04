@@ -68,7 +68,7 @@ services:
       mode: replicated
       replicas: 1
     depends_on:
-      server:
+      dev-server:
         condition: service_started
-      db:
+      dev-db:
         condition: service_healthy
