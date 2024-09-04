@@ -61,10 +61,9 @@ services:
     container_name: dev-backup
     volumes:
       - ./backup/:/backup
+      - ./server/app/logs/:/logs
     env_file:
       - .env
-    environment:
-      - LOG_SRC=./server/app/logs
     restart: always
     deploy:
       mode: replicated

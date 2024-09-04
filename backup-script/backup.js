@@ -6,12 +6,14 @@ const { exec } = require("child_process");
 const execAsync = util.promisify(exec);
 require("dotenv").config();
 
-const LOG_SRC = process.env.LOG_SRC;
 const DB_HOST = process.env.DB_HOST;
 const DB_DB = process.env.DB_DB;
 const DB_PORT = process.env.DB_PORT;
 const DB_USER = process.env.DB_USER;
 const DB_PASSWORD = process.env.DB_PASSWORD;
+
+// Source path of the log
+const LOG_SRC = "/logs";
 
 // Backup paths and names
 const DB_PATH = "/backup/db";
