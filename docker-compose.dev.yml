@@ -9,10 +9,10 @@ services:
     container_name: dev-server
     image: recepdemrci/dishekime-dev-server:${VERSION}
     volumes:
-      - ./server/:/usr/src/server
-      - /usr/src/server/node_modules
+       - ./logs/:/usr/src/server/app/logs
+       - ./certs/:/etc/ssl/certs
     ports:
-      - ${PORT_SERVER}:${PORT_SERVER}
+      - 8081:${PORT_SERVER}
     env_file:
       - .env
     depends_on:
@@ -23,13 +23,17 @@ services:
     build:
       context: ./client
       dockerfile: ./Dockerfile
+      args:
+        PORT_CLIENT: ${PORT_CLIENT}
+        REACT_APP_API_URL: ${REACT_APP_API_URL}
+        REACT_APP_AUTH_URL: ${REACT_APP_AUTH_URL}
+        REACT_APP_POLICY_URL: ${REACT_APP_POLICY_URL}
+        REACT_APP_TERMS_URL: ${REACT_APP_TERMS_URL}
+        REACT_APP_PRICING_URL: ${REACT_APP_PRICING_URL}
     container_name: dev-client
     image: recepdemrci/dishekime-dev-client:${VERSION}
-    volumes:
-      - ./client/:/usr/src/client
-      - /usr/src/client/node_modules
     ports:
-      - ${PORT}:${PORT}
+      - 3001:${PORT_CLIENT}
     env_file:
       - .env
     depends_on:
@@ -42,7 +46,7 @@ services:
     volumes:
       - ./db/pgdata/:/var/lib/postgresql/data
     ports:
-      - ${DB_PORT_}:${DB_PORT}
+      - 5431:${DB_PORT}
     environment:
       - POSTGRES_DB=${DB_DB}
       - POSTGRES_USER=${DB_USER}
@@ -54,6 +58,19 @@ services:
       start_period: 10s
       retries: 5
 
+  nginx:
+    image: nginx:latest
+    container_name: dev-nginx
+    ports:
+      - 8800:80
+      - 8443:443
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf
+      - ./certs/:/etc/nginx/certs
+    depends_on:
+      - dev-client
+      - dev-server
+
   dev-backup:
     build:
       context: ./backup-script
@@ -62,7 +79,7 @@ services:
     image: recepdemrci/dishekime-dev-backup:${VERSION}
     volumes:
       - ./backup/:/backup
-      - ./server/app/logs/:/logs
+      - ./logs/:/logs
     env_file:
       - .env
     restart: always

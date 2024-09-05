@@ -15,10 +15,10 @@ WORKDIR /usr/src/server
 COPY package*.json ./
 RUN npm install
 
-#To bundle your app’s source code inside the Docker image, use the COPY instruction:
+# To bundle your app’s source code inside the Docker image, use the COPY instruction:
 COPY . .
 
-#Your app binds to port 3000 so you’ll use the EXPOSE instruction to have it mapped by the docker daemon:
+# Expose the port to run as server
 EXPOSE ${PORT_SERVER}
 
 CMD ["npm", "start"]

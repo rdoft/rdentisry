@@ -12,17 +12,15 @@ const passport = require("./app/config/passport.config");
 const morgan = require("morgan");
 const log = require("./app/config/log.config");
 
-const HOSTNAME = process.env.HOSTNAME || "disheki.me";
+const HOSTNAME = process.env.HOSTNAME || "app.disheki.me";
 const HOST = process.env.HOST_SERVER || "localhost";
 const PORT = process.env.PORT_SERVER || 8080;
-const PORT_CLIENT = process.env.PORT || 3000;
 const SECRET_KEY = process.env.SECRET_KEY;
 const corsOptions = {
   origin: [
-    `https://${HOST}:${PORT_CLIENT}`,
     `https://${HOST}`,
     `https://${HOSTNAME}`,
-    `https://${HOSTNAME}:${PORT_CLIENT}`,
+    `https://${HOSTNAME}:8443`,
   ],
   credentials: true,
 };
@@ -91,9 +89,8 @@ cron.schedule("00 22 * * *", () => {
 // SERVER HTTPS
 // options for https server
 const options = {
-  key: fs.readFileSync("./app/certs/server.key"),
-  cert: fs.readFileSync("./app/certs/server.crt"),
-  ca: fs.readFileSync("./app/certs/gd.crt"),
+  key: fs.readFileSync("/etc/ssl/certs/server.key"),
+  cert: fs.readFileSync("/etc/ssl/certs/server.crt"),
 };
 
 // create https server

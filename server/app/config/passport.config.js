@@ -14,10 +14,8 @@ const {
   GOOGLE_CLIENT_SECRET,
   HOSTNAME,
   HOST_SERVER,
-  PORT_SERVER,
 } = process.env;
 const HOST = HOSTNAME || HOST_SERVER || "localhost";
-const PORT = PORT_SERVER || 8080;
 
 // Local strategy for username password login
 passport.use(
@@ -109,7 +107,7 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: `https://${HOST}:${PORT}/auth/google/callback`,
+      callbackURL: `https://${HOST}/auth/google/callback`,
       passReqToCallback: true,
     },
     async function (req, accessToken, refreshToken, profile, cb) {

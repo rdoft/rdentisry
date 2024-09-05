@@ -10,9 +10,8 @@ const dns = require("dns").promises;
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 
-const { HOSTNAME, HOST_SERVER, PORT } = process.env;
+const { HOSTNAME, HOST_SERVER } = process.env;
 const HOST = HOSTNAME || HOST_SERVER || "localhost";
-const PORT_CLIENT = PORT || 3000;
 
 exports.login = async (req, res) => {
   res.status(200).send({
@@ -165,9 +164,9 @@ exports.register = async (req, res) => {
 
 exports.google = async (req, res) => {
   if (req.user) {
-    res.redirect(`https://${HOST}:${PORT_CLIENT}/`);
+    res.redirect(`https://${HOST}/`);
   } else {
-    res.redirect(`https://${HOST}:${PORT_CLIENT}/login`);
+    res.redirect(`https://${HOST}/login`);
   }
   res.status(200).send();
 };
@@ -302,7 +301,7 @@ exports.forgot = async (req, res) => {
       }
     );
 
-    await sendResetMail(email, `https://${HOST}:${PORT_CLIENT}/reset/${token}`);
+    await sendResetMail(email, `https://${HOST}/reset/${token}`);
 
     res.status(200).send();
     log.access.info("Forgot success", {
@@ -487,7 +486,7 @@ exports.initVerify = async (req, res) => {
 
     await sendVerifyMail(
       email,
-      `https://${HOST}:${PORT_CLIENT}/verify/${token}`
+      `https://${HOST}/verify/${token}`
     );
     res.status(200).send();
     log.app.info("Init verify email success", { mail: email, success: true });
