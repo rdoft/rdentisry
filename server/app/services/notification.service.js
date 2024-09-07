@@ -126,9 +126,14 @@ exports.run = async () => {
       }
 
       if (patient.dept > 0) {
+        const dept = patient.dept.toLocaleString("tr-TR", {
+          style: "decimal",
+          maximumFractionDigits: 2,
+        });
+
         const existingRecord = await Notification.findOne({
           where: {
-            Message: `${patient.name} ${patient.surname} isimli hastanın ₺${patient.dept} borcu bulunmaktadır`,
+            Message: `${patient.name} ${patient.surname} isimli hastanın ₺${dept} borcu bulunmaktadır`,
             PatientId: patient.id,
             UserId: patient.userId,
             createdAt: { [Sequelize.Op.gte]: recentPeriod },
@@ -136,7 +141,7 @@ exports.run = async () => {
         });
         !existingRecord &&
           (await Notification.create({
-            Message: `${patient.name} ${patient.surname} isimli hastanın ₺${patient.dept} borcu bulunmaktadır`,
+            Message: `${patient.name} ${patient.surname} isimli hastanın ₺${dept} borcu bulunmaktadır`,
             Status: "sent",
             PatientId: patient.id,
             UserId: patient.userId,
