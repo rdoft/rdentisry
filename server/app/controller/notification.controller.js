@@ -25,7 +25,7 @@ exports.getNotifications = async (req, res) => {
         UserId: userId,
         ...(status && { Status: status }),
       },
-      order: [["createdAt", "ASC"]],
+      order: [["createdAt", "DESC"]],
       include: [
         {
           model: Patient,
