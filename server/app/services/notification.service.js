@@ -10,7 +10,7 @@ const Notification = db.notification;
 const NotificationEvent = db.notificationEvent;
 const { processPatientsPayments } = require("../utils/payment.util");
 
-const PERIOD = 7;
+const PERIOD = 30;
 /**
  * Add notifications for upcoming and overdue payments of the patients
  */
