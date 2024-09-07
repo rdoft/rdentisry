@@ -122,7 +122,7 @@ function NotificationItem({ notification, getNotifications, onClose }) {
       </ListItemSecondaryAction>
       {notification.status === "read" || (
         <ListItemSecondaryAction sx={{ alignSelf: "center !important" }}>
-          <Read onClickRead={handleClickRead} />
+          <Read onClick={handleClickRead} style={{ zIndex: 100 }} />
         </ListItemSecondaryAction>
       )}
     </ListItemButton>
