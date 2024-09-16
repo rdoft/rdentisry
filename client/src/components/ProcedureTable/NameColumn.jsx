@@ -56,7 +56,7 @@ function NameColumn({ procedure, onSubmit }) {
 
   return isEdit ? (
     <Grid container alignItems="center" m={"-16px"}>
-      <Grid item xs={9} m={1}>
+      <Grid item xs={9}>
         <ClickAwayListener onClickAway={handleClickAway}>
           <InputText
             id="name"
@@ -70,7 +70,7 @@ function NameColumn({ procedure, onSubmit }) {
           />
         </ClickAwayListener>
       </Grid>
-      <Grid item xs>
+      <Grid item xs={2}>
         <Cancel onClick={handleCancel} />
       </Grid>
     </Grid>
