@@ -71,6 +71,16 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
         _isError["date"] =
           schema[name].validate(value).error || !value ? true : false;
         break;
+      case "plannedDate":
+        value = value
+          ? new Date(
+              Date.UTC(value.getFullYear(), value.getMonth(), value.getDate())
+            )
+          : null;
+
+        _isError["date"] =
+          schema[name].validate(value).error || !value ? true : false;
+        break;
       case "amount":
         _isError[name] = schema[name].validate(value).error ? true : false;
         break;
