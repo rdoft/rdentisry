@@ -11,7 +11,7 @@ const isAuthenticated = (req, res, next) => {
     action: "ACCESS",
     success: false,
     request: {
-      ip: req.ip,
+      ip: req.headers["x-forwarded-for"],
       url: req.originalUrl,
       method: req.method,
       status: 401,

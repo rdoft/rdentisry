@@ -40,7 +40,7 @@ passport.use(
             success: false,
             action: "LOGIN",
             request: {
-              ip: req.ip,
+              ip: req.headers["x-forwarded-for"],
               agent: req.headers["user-agent"],
             },
           });
@@ -57,7 +57,7 @@ passport.use(
             success: false,
             action: "LOGIN",
             request: {
-              ip: req.ip,
+              ip: req.headers["x-forwarded-for"],
               agent: req.headers["user-agent"],
             },
           });
@@ -74,7 +74,7 @@ passport.use(
             success: false,
             action: "LOGIN",
             request: {
-              ip: req.ip,
+              ip: req.headers["x-forwarded-for"],
               agent: req.headers["user-agent"],
             },
           });
@@ -89,7 +89,7 @@ passport.use(
           success: true,
           action: "LOGIN",
           request: {
-            ip: req.ip,
+            ip: req.headers["x-forwarded-for"],
             agent: req.headers["user-agent"],
           },
         });
@@ -128,7 +128,7 @@ passport.use(
             success: true,
             action: "REGISTER",
             request: {
-              ip: req.ip,
+              ip: req.headers["x-forwarded-for"],
               agent: req.headers["user-agent"],
             },
           });
@@ -140,7 +140,7 @@ passport.use(
           success: true,
           action: "LOGIN",
           request: {
-            ip: req.ip,
+            ip: req.headers["x-forwarded-for"],
             agent: req.headers["user-agent"],
           },
         });

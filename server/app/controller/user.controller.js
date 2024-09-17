@@ -150,7 +150,7 @@ exports.updateUser = async (req, res) => {
       action: "RESET",
       success: true,
       request: {
-        ip: req.ip,
+        ip: req.headers["x-forwarded-for"],
         agent: req.headers["user-agent"],
       },
     });

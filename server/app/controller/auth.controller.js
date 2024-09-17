@@ -35,7 +35,7 @@ exports.logout = async (req, res, next) => {
       success: true,
       action: "LOGOUT",
       request: {
-        ip: req.ip,
+        ip: req.headers["x-forwarded-for"],
         agent: req.headers["user-agent"],
       },
     });
@@ -67,7 +67,7 @@ exports.register = async (req, res) => {
         success: false,
         action: "REGISTER",
         request: {
-          ip: req.ip,
+          ip: req.headers["x-forwarded-for"],
           agent: req.headers["user-agent"],
         },
       });
@@ -85,7 +85,7 @@ exports.register = async (req, res) => {
           success: false,
           action: "REGISTER",
           request: {
-            ip: req.ip,
+            ip: req.headers["x-forwarded-for"],
             agent: req.headers["user-agent"],
           },
         });
@@ -98,7 +98,7 @@ exports.register = async (req, res) => {
         success: false,
         action: "REGISTER",
         request: {
-          ip: req.ip,
+          ip: req.headers["x-forwarded-for"],
           agent: req.headers["user-agent"],
         },
       });
@@ -132,7 +132,7 @@ exports.register = async (req, res) => {
       success: true,
       action: "REGISTER",
       request: {
-        ip: req.ip,
+        ip: req.headers["x-forwarded-for"],
         agent: req.headers["user-agent"],
       },
     });
@@ -151,7 +151,7 @@ exports.register = async (req, res) => {
         success: true,
         action: "LOGIN",
         request: {
-          ip: req.ip,
+          ip: req.headers["x-forwarded-for"],
           agent: req.headers["user-agent"],
         },
       });
@@ -209,7 +209,7 @@ exports.controlToken = async (req, res) => {
         success: false,
         action: "RESET",
         request: {
-          ip: req.ip,
+          ip: req.headers["x-forwarded-for"],
           agent: req.headers["user-agent"],
         },
       });
@@ -231,7 +231,7 @@ exports.controlToken = async (req, res) => {
         success: false,
         action: "RESET",
         request: {
-          ip: req.ip,
+          ip: req.headers["x-forwarded-for"],
           agent: req.headers["user-agent"],
         },
       });
@@ -245,7 +245,7 @@ exports.controlToken = async (req, res) => {
       success: true,
       action: "RESET",
       request: {
-        ip: req.ip,
+        ip: req.headers["x-forwarded-for"],
         agent: req.headers["user-agent"],
       },
     });
@@ -279,7 +279,7 @@ exports.forgot = async (req, res) => {
         success: false,
         action: "RESET",
         request: {
-          ip: req.ip,
+          ip: req.headers["x-forwarded-for"],
           agent: req.headers["user-agent"],
         },
       });
@@ -310,7 +310,7 @@ exports.forgot = async (req, res) => {
       success: true,
       action: "RESET",
       request: {
-        ip: req.ip,
+        ip: req.headers["x-forwarded-for"],
         agent: req.headers["user-agent"],
       },
     });
@@ -357,7 +357,7 @@ exports.reset = async (req, res) => {
         success: false,
         action: "RESET",
         request: {
-          ip: req.ip,
+          ip: req.headers["x-forwarded-for"],
           agent: req.headers["user-agent"],
         },
       });
@@ -379,7 +379,7 @@ exports.reset = async (req, res) => {
         success: false,
         action: "RESET",
         request: {
-          ip: req.ip,
+          ip: req.headers["x-forwarded-for"],
           agent: req.headers["user-agent"],
         },
       });
@@ -399,7 +399,7 @@ exports.reset = async (req, res) => {
       success: true,
       action: "RESET",
       request: {
-        ip: req.ip,
+        ip: req.headers["x-forwarded-for"],
         agent: req.headers["user-agent"],
       },
     });
@@ -426,7 +426,7 @@ exports.reset = async (req, res) => {
       success: true,
       action: "RESET",
       request: {
-        ip: req.ip,
+        ip: req.headers["x-forwarded-for"],
         agent: req.headers["user-agent"],
       },
     });

@@ -104,7 +104,7 @@ const db = winston.loggers.get("db");
 api.stream = (req, res) => {
   api.http(`API request ${req.method} ${req.originalUrl}`, {
     userId: req.user?.UserId || null,
-    ip: req.headers["x-forwarded-for"] || req.connection.remoteAddress,
+    ip: req.headers["x-forwarded-for"],
     method: req.method,
     url: req.originalUrl,
     status: res.statusCode,

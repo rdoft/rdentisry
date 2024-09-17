@@ -16,7 +16,7 @@ const isSubActive = async (req, res, next) => {
         action: "ACCESS",
         success: false,
         request: {
-          ip: req.ip,
+          ip: req.headers["x-forwarded-for"],
           url: req.originalUrl,
           method: req.method,
           status: 401,
@@ -42,7 +42,7 @@ const isSubActive = async (req, res, next) => {
         action: "ACCESS",
         success: false,
         request: {
-          ip: req.ip,
+          ip: req.headers["x-forwarded-for"],
           url: req.originalUrl,
           method: req.method,
           status: 402,
@@ -82,7 +82,7 @@ const checkLimitPatient = async (req, res, next) => {
         action: "ACCESS",
         success: false,
         request: {
-          ip: req.ip,
+          ip: req.headers["x-forwarded-for"],
           url: req.originalUrl,
           method: req.method,
           status: 402,
@@ -122,7 +122,7 @@ const checkLimitDoctor = async (req, res, next) => {
         action: "ACCESS",
         success: false,
         request: {
-          ip: req.ip,
+          ip: req.headers["x-forwarded-for"],
           url: req.originalUrl,
           method: req.method,
           status: 402,
@@ -151,7 +151,7 @@ const setLimit = async (req, res, next) => {
         action: "ACCESS",
         success: false,
         request: {
-          ip: req.ip,
+          ip: req.headers["x-forwarded-for"],
           url: req.originalUrl,
           method: req.method,
           status: 401,
