@@ -14,7 +14,7 @@ function Add({ label, onClick, ...props }) {
       label={label}
       onClick={onClick}
       style={{
-        marginRight: "0.5rem",
+        margin: "0 0.5rem",
         backgroundColor: theme.palette.text.secondary,
         ...props.style,
       }}
@@ -28,7 +28,7 @@ function Add({ label, onClick, ...props }) {
       label={label}
       onClick={onClick}
       style={{
-        marginRight: "0.5rem",
+        margin: "0 0.5rem",
         color: theme.palette.text.secondary,
         ...props.style,
       }}

@@ -5,6 +5,7 @@
 
 .rounded-tabview .p-tabview-nav {
   border-radius: 8px;
+  background-color: transparent !important;
 }
 
 .rounded-tabview .p-tabview-nav .p-tabview-nav-link {
@@ -21,4 +22,12 @@
 
 .p-tabview-ink-bar {
   background-color: var(--palette-text-secondary) !important;
+}
+
+.rounded-tabview .p-tabview-nav-container {
+  display: flex;
+  left: 45%;
+  transform: translateX(-50%);
+  justify-content: center;
+  align-items: center;
 }

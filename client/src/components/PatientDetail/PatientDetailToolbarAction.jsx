@@ -34,14 +34,15 @@ function PatientDetailToolbarAction({
       return (
         <>
           <Add
-            label="Ödeme Planı Ekle"
-            default={true}
-            onClick={() => showPaymentDialog("plan")}
-          />
-          <Add
             label="Ödeme Ekle"
             default={true}
             onClick={() => showPaymentDialog("payment")}
+          />
+          <Add
+            label="Ödeme Planı Ekle"
+            default={true}
+            onClick={() => showPaymentDialog("plan")}
+            style={{ marginLeft: 0 }}
           />
         </>
       );
@@ -50,6 +51,22 @@ function PatientDetailToolbarAction({
     case 3:
       return (
         <>
+          <Add
+            label="Tedavi Ekle"
+            default={true}
+            onClick={showProcedureDialog}
+          />
+          <Goto
+            label="Ödeme Planına Git"
+            default={true}
+            onClick={() => handleTabChange(1)}
+            style={{
+              marginRight: "0.5rem",
+              color: theme.palette.text.secondary,
+              borderColor: theme.palette.text.secondary,
+            }}
+          />
+          <More onClick={(event) => menuLeft.current.toggle(event)} />
           <Menu
             model={[
               {
@@ -61,21 +78,6 @@ function PatientDetailToolbarAction({
             ref={menuLeft}
             id="popup_menu_left"
             popup
-          />
-          <More onClick={(event) => menuLeft.current.toggle(event)} />
-          <Add
-            label="Tedavi Ekle"
-            default={true}
-            onClick={showProcedureDialog}
-          />
-          <Goto
-            label="Ödeme Planına Git"
-            default={true}
-            onClick={() => handleTabChange(1)}
-            style={{
-              color: theme.palette.text.secondary,
-              borderColor: theme.palette.text.secondary,
-            }}
           />
         </>
       );

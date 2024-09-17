@@ -307,10 +307,9 @@ const AppointmentCalendar = () => {
         setDoctor={setDoctor}
         setDoctors={setDoctors}
         setShowAll={setShowAll}
-        onClickAddAppointment={showAppointmentDialog}
       />
       <DnDCalendar
-        style={{ height: "calc(100vh - 185px)" }}
+        style={{ height: "calc(100vh - 130px)" }}
         messages={messages}
         localizer={localizer}
         events={events}

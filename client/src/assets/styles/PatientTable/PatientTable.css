@@ -1,7 +1,15 @@
 .p-datatable .p-datatable-tbody > tr {
   cursor: pointer !important;
+  border-radius: 8px;
 }
 
 .p-checkbox-box {
   cursor: default;
+}
+
+.p-datatable {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--palette-background-primary);
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
 }

@@ -1,5 +1,6 @@
 import React from "react";
-import { Toolbar } from "primereact";
+import { Toolbar, Divider } from "primereact";
+import { Typography } from "@mui/material";
 import { Add, Delete } from "components/Button";
 import Search from "components/Search";
 
@@ -16,27 +17,54 @@ function PatientTableToolbar({
   };
 
   // TEMPLATES ------------------------------------------------------------------
+  // Get title
+  const getTitle = () => {
+    return <Typography variant="h3">Hastalar</Typography>;
+  };
+
   // Get Add/Delete patient buttons
   const actionButton = () => {
     return (
       <>
-        <Add label="Hasta Ekle" default={true} onClick={handleClickAdd} />
         <Delete
           label="Sil"
           onClick={onClickDelete}
           style={{ visibility: visibleDelete ? "visible" : "hidden" }}
         />
+        <Add label="Hasta Ekle" default={true} onClick={handleClickAdd} />
       </>
     );
   };
 
   // Get search Input
   const searchInput = () => {
-    return <Search onInput={onInput} />;
+    return (
+      <div
+        style={{
+          position: "absolute",
+          left: "50%",
+          transform: "translateX(-50%)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Search onInput={onInput} />
+      </div>
+    );
   };
 
   return (
-    <Toolbar className="mb-3 p-2" start={actionButton} end={searchInput} />
+    <>
+      <Toolbar
+        className="p-2"
+        start={getTitle}
+        center={searchInput}
+        end={actionButton}
+        style={{ border: "none" }}
+      />
+      <Divider className="m-1 p-1" />
+    </>
   );
 }
 

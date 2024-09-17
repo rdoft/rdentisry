@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { Toolbar } from "primereact";
+import { Toolbar, Divider } from "primereact";
+import { Typography, Stack } from "@mui/material";
 import { DropdownPatient } from "components/Dropdown";
 import { PatientDialog } from "components/Dialog";
 import { useLoading } from "context/LoadingProvider";
@@ -12,12 +13,7 @@ import "assets/styles/PatientDetail/PatientDetailToolbar.css";
 // services
 import { PatientService } from "services";
 
-function PatientDetailToolbar({
-  patient,
-  patients,
-  setPatients,
-  startContent,
-}) {
+function PatientDetailToolbar({ patient, patients, setPatients, endContent }) {
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
 
@@ -98,21 +94,53 @@ function PatientDetailToolbar({
   };
 
   // TEMPLATES ----------------------------------------------------------------
+  // Get title
+  const getTitle = () => {
+    return (
+      <Stack>
+        <Typography variant="h3">Hasta</Typography>
+        <Typography variant="caption" style={{ color: "gray" }}>
+          Hastalar{" "}
+          <i className="pi pi-angle-right" style={{ fontSize: "0.7rem" }} />{" "}
+          Hasta detayı
+        </Typography>
+      </Stack>
+    );
+  };
+
   // Toolbar content thats are on left
-  const endContent = (
-    <DropdownPatient
-      key={patient?.id}
-      value={patient}
-      options={patients}
-      onChange={handleChange}
-      onClickAdd={showPatientDialog}
-      style={{ alignItems: "center", height: "3rem" }}
-    />
+  const centerContent = (
+    <div
+      style={{
+        position: "absolute",
+        left: "50%",
+        transform: "translateX(-50%)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <DropdownPatient
+        key={patient?.id}
+        value={patient}
+        options={patients}
+        onChange={handleChange}
+        onClickAdd={showPatientDialog}
+        style={{ alignItems: "center", height: "3rem" }}
+      />
+    </div>
   );
 
   return (
     <>
-      <Toolbar className="mb-3 p-1" start={startContent} end={endContent} />
+      <Toolbar
+        className="p-1"
+        start={getTitle}
+        center={centerContent}
+        end={endContent}
+        style={{ border: "none" }}
+      />
+      <Divider className="m-1 p-1" />
       {patientDialog && (
         <PatientDialog onHide={hidePatientDialog} onSubmit={savePatient} />
       )}

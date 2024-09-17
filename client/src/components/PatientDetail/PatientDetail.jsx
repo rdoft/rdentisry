@@ -152,7 +152,7 @@ function PatientDetail() {
             patient={patient}
             patients={patients}
             setPatients={setPatients}
-            startContent={
+            endContent={
               <PatientDetailToolbarAction
                 activeIndex={activeIndex}
                 onTabChange={handleTabChange}

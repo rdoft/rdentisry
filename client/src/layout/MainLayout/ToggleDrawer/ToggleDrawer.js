@@ -14,7 +14,7 @@ const ToggleDrawer = ({ open, handleDrawerToggle }) => {
         zIndex: 2000,
         position: "fixed",
         left: open ? "180px" : matchDownMD ? "15px" : "50px",
-        top: "15px",
+        top: "30px",
         padding: 1,
         color: theme.palette.text.primary,
         backgroundColor: theme.palette.common.white,

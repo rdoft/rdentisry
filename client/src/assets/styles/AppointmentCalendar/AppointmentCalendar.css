@@ -51,6 +51,11 @@
   border-bottom: none;
 }
 
+.rbc-time-view {
+  border-radius: 12px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+}
+
 .rbc-current-time-indicator {
   background-color: var(--palette-text-event);
   width: 100%;

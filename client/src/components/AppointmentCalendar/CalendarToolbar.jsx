@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Typography } from "@mui/material";
-import { Toolbar, InputSwitch } from "primereact";
+import { Toolbar, Divider, InputSwitch } from "primereact";
 import { DropdownDoctor } from "components/Dropdown";
 import { DoctorDialog } from "components/Dialog";
-import { Add } from "components/Button";
 import { useLoading } from "context/LoadingProvider";
 
 // services
@@ -20,7 +19,6 @@ function CalendarToolbar({
   setDoctor,
   setDoctors,
   setShowAll,
-  onClickAddAppointment,
 }) {
   const { startLoading, stopLoading } = useLoading();
 
@@ -130,17 +128,37 @@ function CalendarToolbar({
   };
 
   // TEMPLATES -----------------------------------------------------------------
+  // Get title
+  const getTitle = () => {
+    return (
+      <Typography variant="h3" style={{ paddingRight: "50px" }}>
+        Takvim
+      </Typography>
+    );
+  };
+
   // Get doctor dropdown
   const centerContent = () => (
-    <DropdownDoctor
-      key={doctor?.id}
-      value={doctor}
-      options={doctors}
-      onChange={handleChangeDropdown}
-      onClickAdd={showDoctorDialog}
-      onClickDelete={deleteDoctor}
-      style={{ alignItems: "center", width: "22vw", height: "2.5rem" }}
-    />
+    <div
+      style={{
+        position: "absolute",
+        left: "50%",
+        transform: "translateX(-50%)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <DropdownDoctor
+        key={doctor?.id}
+        value={doctor}
+        options={doctors}
+        onChange={handleChangeDropdown}
+        onClickAdd={showDoctorDialog}
+        onClickDelete={deleteDoctor}
+        style={{ alignItems: "center", height: "2.5rem" }}
+      />
+    </div>
   );
 
   // Get showAll switch
@@ -160,23 +178,16 @@ function CalendarToolbar({
     </>
   );
 
-  // Get Add appointment buttons
-  const startContent = () => (
-    <Add
-      label={"Randevu Ekle"}
-      default={true}
-      onClick={onClickAddAppointment}
-    />
-  );
-
   return (
     <>
       <Toolbar
-        className="mb-3 p-2"
-        start={startContent}
+        className="p-2"
+        start={getTitle}
         center={centerContent}
         end={endContent}
+        style={{ border: "none" }}
       />
+      <Divider className="m-1 p-1" />
       {doctorDialog && (
         <DoctorDialog onHide={hideDoctorDialog} onSubmit={saveDoctor} />
       )}
