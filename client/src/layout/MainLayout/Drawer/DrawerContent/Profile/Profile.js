@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { Divider } from "primereact";
 import { useAuth } from "context/AuthProvider";
+import { useSelector } from "react-redux";
 import {
   Avatar,
   Box,
@@ -68,13 +69,14 @@ const Profile = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { unauthenticate } = useAuth();
+  const menu = useSelector((state) => state.menu);
+  const { drawerOpen } = menu;
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("Profil");
   const [value, setValue] = useState(0);
 
-  const iconBackColorOpen = "grey.300";
   // Arrange user name for the profile
   const username = name
     ? name.length > 20
@@ -128,13 +130,24 @@ const Profile = () => {
   };
 
   return (
-    <Box sx={{ flexShrink: 0, ml: 0.75 }}>
+    <Box
+      sx={{
+        flexShrink: 0,
+        px: 1.5,
+        mb: 2,
+      }}
+    >
       <ButtonBase
         sx={{
-          p: 0.25,
-          bgcolor: open.current ? iconBackColorOpen : "transparent",
-          borderRadius: 1,
-          "&:hover": { bgcolor: "secondary.lighter" },
+          borderRadius: 1.5,
+          px: drawerOpen && 1,
+          width: drawerOpen ? 1 : 36,
+          justifyContent: drawerOpen && "flex-start",
+          height: 62,
+          bgcolor: "transparent",
+          "&:hover": { bgcolor: theme.palette.background.primary },
+          border: "1px solid",
+          borderColor: theme.palette.background.primary,
         }}
         aria-label="open profile"
         ref={anchorRef}
@@ -142,24 +155,28 @@ const Profile = () => {
         aria-haspopup="true"
         onClick={handleToggle}
       >
-        <Stack direction="row" spacing={1} alignItems="center" sx={{ p: 0.5 }}>
-          <Avatar
-            alt="profile user"
-            src={dentalSvg}
-            sx={{ width: 24, height: 24 }}
-          />
-          <Stack>
-            <Typography variant="h6">{username}</Typography>
+        <Avatar
+          alt="profile user"
+          src={dentalSvg}
+          sx={{ width: 24, height: 24, padding: "1px" }}
+        />
+        {drawerOpen && (
+          <Stack sx={{ paddingLeft: "10px", textAlign: "start" }}>
+            <Typography variant="h6" fontWeight="bold">
+              Hesap
+            </Typography>
+            <Typography variant="caption" sx={{ fontWeight: "light" }} noWrap>
+              {username}
+            </Typography>
           </Stack>
-        </Stack>
+        )}
       </ButtonBase>
       <Popper
-        placement="bottom-end"
+        placement="right-start"
         open={open}
         anchorEl={anchorRef.current}
         role={undefined}
         transition
-        disablePortal
         popperOptions={{
           modifiers: [
             {
@@ -170,6 +187,7 @@ const Profile = () => {
             },
           ],
         }}
+        sx={{ zIndex: 1300 }}
       >
         {({ TransitionProps }) => (
           <Transitions type="fade" in={open} {...TransitionProps}>
@@ -252,7 +270,7 @@ const Profile = () => {
                                   }}
                                 />
                               }
-                              label="Hesap"
+                              label="Profil"
                               {...a11yProps(0)}
                             />
                             <Tab
@@ -278,7 +296,7 @@ const Profile = () => {
                                   }}
                                 />
                               }
-                              label="Ayarlar"
+                              label="Güvenlik"
                               {...a11yProps(1)}
                             />
                           </Tabs>

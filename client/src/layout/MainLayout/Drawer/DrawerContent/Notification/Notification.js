@@ -1,7 +1,9 @@
 import React, { useRef, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useTheme } from "@mui/material/styles";
+import { useSelector } from "react-redux";
 import {
+  Avatar,
   Badge,
   Box,
   ClickAwayListener,
@@ -26,7 +28,7 @@ import NotificationItem from "./NotificationItem";
 import { NotificationService } from "services";
 
 // assets
-import { BellOutlined } from "@ant-design/icons";
+import notificationSvg from "assets/svg/profile/notification.svg";
 
 // sx styles
 const avatarSX = {
@@ -49,6 +51,8 @@ const actionSX = {
 const Notification = () => {
   const theme = useTheme();
   const matchesXs = useMediaQuery(theme.breakpoints.down("md"));
+  const menu = useSelector((state) => state.menu);
+  const { drawerOpen } = menu;
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -178,10 +182,13 @@ const Notification = () => {
   };
 
   return (
-    <Box sx={{ flexShrink: 0, ml: 0.75 }}>
+    <Box sx={{ flexShrink: 0, px: 1.5, mb: 1 }}>
       <IconButton
         disableRipple
         sx={{
+          px: drawerOpen && 1,
+          width: drawerOpen ? 1 : 36,
+          justifyContent: drawerOpen && "flex-start",
           color: theme.palette.text.primary,
           bgcolor: open ? theme.palette.background.primary : null,
         }}
@@ -200,17 +207,25 @@ const Notification = () => {
             },
           }}
         >
-          <BellOutlined />
+          <Avatar
+            alt="notification"
+            src={notificationSvg}
+            sx={{ width: 24, height: 24, padding: "1px" }}
+          />
+          {drawerOpen && (
+            <Typography variant="h6" sx={{ px: "10px" }}>
+              Bildirim
+            </Typography>
+          )}
         </Badge>
       </IconButton>
 
       <Popper
-        placement={matchesXs ? "bottom" : "bottom-end"}
+        placement={"right-start"}
         open={open}
         anchorEl={anchorRef.current}
         role={undefined}
         transition
-        disablePortal
         popperOptions={{
           modifiers: [
             {
@@ -221,6 +236,7 @@ const Notification = () => {
             },
           ],
         }}
+        sx={{ zIndex: 1300 }}
       >
         {({ TransitionProps }) => (
           <Transitions type="fade" in={open} {...TransitionProps}>
@@ -241,7 +257,7 @@ const Notification = () => {
                   elevation={0}
                   border={false}
                   content={false}
-                  sx={{ maxHeight: 750, overflowY: "auto" }}
+                  sx={{ maxHeight: 600, overflowY: "auto" }}
                   secondary={
                     <Grid
                       container
