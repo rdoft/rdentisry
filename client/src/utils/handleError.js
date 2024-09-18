@@ -23,7 +23,8 @@ const handleError = (error) => {
     window.open(PRICE_URL, "_blank");
     return {
       status: 402,
-      message: null,
+      message:
+        'Mevcut üyeliğiniz bu işlem için yetersizdir. Üyeliğinizi yükselterek daha fazla içeriğe erişebilirsiniz. Lütfen <a href="https://www.disheki.me/pricing"> tıklayınız</a>',
     };
   } else if (error.response.status === 403) {
     return {
