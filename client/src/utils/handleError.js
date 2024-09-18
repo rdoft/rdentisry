@@ -24,7 +24,7 @@ const handleError = (error) => {
     return {
       status: 402,
       message:
-        'Mevcut üyeliğiniz bu işlem için yetersizdir. Üyeliğinizi yükselterek daha fazla içeriğe erişebilirsiniz. Lütfen <a href="https://www.disheki.me/pricing"> tıklayınız</a>',
+        "Mevcut üyeliğiniz bu işlem için yetersizdir. Üyeliğinizi yükselterek daha fazla içeriğe erişebilirsiniz. Daha fazla bilgi için: www.disheki.me/pricing",
     };
   } else if (error.response.status === 403) {
     return {
