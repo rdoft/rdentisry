@@ -484,10 +484,7 @@ exports.initVerify = async (req, res) => {
       }
     );
 
-    await sendVerifyMail(
-      email,
-      `https://${HOST}/verify/${token}`
-    );
+    await sendVerifyMail(email, `https://${HOST}/verify/${token}`);
     res.status(200).send();
     log.app.info("Init verify email success", { mail: email, success: true });
   } catch (error) {
@@ -619,8 +616,8 @@ exports.agree = async (req, res) => {
       defaults: {
         UserId: userId,
         IP: ip,
-        Device: device,
-        Agent: agent,
+        Device: device ? device.substring(0, 255) : null,
+        Agent: agent ? agent.substring(0, 511) : null,
         IsMobile: isMobile,
       },
     });

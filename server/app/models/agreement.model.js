@@ -21,7 +21,7 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: true,
       },
       Agent: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(511),
         allowNull: true,
       },
       Device: {
