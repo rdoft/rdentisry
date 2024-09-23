@@ -126,11 +126,6 @@ function DentalChart({
                   : 0.3,
             }}
           >
-            {/* Numbers */}
-            <Grid item xs={1} pb={1} textAlign="center">
-              {numberItem(tooth.number)}
-            </Grid>
-
             {/* Status */}
             <Grid container item xs={1}>
               <StatusBadge procedures={groupedProcedures[tooth.number]} />
@@ -139,6 +134,11 @@ function DentalChart({
             {/* Teeth */}
             <Grid container item xs justifyContent="center">
               {toothItem(tooth)}
+            </Grid>
+
+            {/* Numbers */}
+            <Grid item xs={1} pt={1} textAlign="center">
+              {numberItem(tooth.number)}
             </Grid>
           </Grid>
         ))}
@@ -172,6 +172,11 @@ function DentalChart({
                   : 0.3,
             }}
           >
+            {/* Numbers */}
+            <Grid item xs={1} pb={1} textAlign="center">
+              {numberItem(tooth.number)}
+            </Grid>
+
             {/* Teeth */}
             <Grid container item xs justifyContent="center">
               {toothItem(tooth)}
@@ -183,11 +188,6 @@ function DentalChart({
                 procedures={groupedProcedures[tooth.number]}
                 tooltipReverse={true}
               />
-            </Grid>
-
-            {/* Numbers */}
-            <Grid item xs={1} pt={1} textAlign="center">
-              {numberItem(tooth.number)}
             </Grid>
           </Grid>
         ))}
