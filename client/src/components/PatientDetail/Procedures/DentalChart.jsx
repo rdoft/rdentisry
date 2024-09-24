@@ -117,7 +117,7 @@ function DentalChart({
             container
             direction="column"
             onClick={() => handleSelectTooth(tooth.number)}
-            pt={3}
+            pt={2}
             sx={{
               opacity:
                 selectedTeeth.includes(0) ||
@@ -127,12 +127,18 @@ function DentalChart({
             }}
           >
             {/* Status */}
-            <Grid container item xs={1}>
+            <Grid container item xs>
               <StatusBadge procedures={groupedProcedures[tooth.number]} />
             </Grid>
 
             {/* Teeth */}
-            <Grid container item xs justifyContent="center">
+            <Grid
+              container
+              item
+              xs
+              justifyContent="center"
+              sx={{ cursor: "pointer" }}
+            >
               {toothItem(tooth)}
             </Grid>
 
@@ -178,12 +184,18 @@ function DentalChart({
             </Grid>
 
             {/* Teeth */}
-            <Grid container item xs justifyContent="center">
+            <Grid
+              container
+              item
+              xs
+              justifyContent="center"
+              sx={{ cursor: "pointer" }}
+            >
               {toothItem(tooth)}
             </Grid>
 
             {/* Status */}
-            <Grid container item xs={1} direction="column-reverse">
+            <Grid container item xs>
               <StatusBadge
                 procedures={groupedProcedures[tooth.number]}
                 tooltipReverse={true}

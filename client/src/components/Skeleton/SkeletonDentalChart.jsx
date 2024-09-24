@@ -22,12 +22,12 @@ function SkeletonDentalChart({ adult }) {
             mb={3}
             sx={{ opacity: 1 }}
           >
-            <Grid item xs={1} mb={5}>
-              <Skeleton shape="circle" size="25px" />
+            <Grid item xs={5} mt={2}>
+              <Skeleton width="3rem" height="10rem" />
             </Grid>
 
-            <Grid item xs={5} mt={3}>
-              <Skeleton width="3rem" height="10rem" />
+            <Grid item xs={1} mt={2}>
+              <Skeleton shape="circle" size="25px" />
             </Grid>
           </Grid>
         ))}
@@ -53,12 +53,12 @@ function SkeletonDentalChart({ adult }) {
             mt={3}
             sx={{ opacity: 1 }}
           >
-            <Grid item xs={5} mb={3}>
-              <Skeleton width="3rem" height="10rem" />
+            <Grid item xs={1} mb={2}>
+              <Skeleton shape="circle" size="25px" />
             </Grid>
 
-            <Grid item xs={1} mt={5}>
-              <Skeleton shape="circle" size="25px" />
+            <Grid item xs={5} mb={2}>
+              <Skeleton width="3rem" height="10rem" />
             </Grid>
           </Grid>
         ))}

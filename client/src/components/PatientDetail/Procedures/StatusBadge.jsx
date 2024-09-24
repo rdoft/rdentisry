@@ -1,88 +1,156 @@
 import React from "react";
-import { Image } from "primereact";
-import { Grid, Box, Typography, Tooltip } from "@mui/material";
+import { Tag, Divider } from "primereact";
+import { Grid, Tooltip, Typography } from "@mui/material";
+import { CircleProgress } from "components/Progress";
 
 // assets
 import { useTheme } from "@mui/material/styles";
-import { CompletedIcon, InProgressIcon } from "assets/images/icons";
 
 function StatusBadge({ procedures, ...props }) {
   const theme = useTheme();
 
   let inProgress = null;
   let completed = null;
-  const inProgressTooltip = [];
-  const completedTooltip = [];
+  let categories = {};
 
   if (procedures) {
-    inProgress = procedures.find((procedure) => !procedure.completedDate);
-    completed = procedures.find((procedure) => procedure.completedDate);
+    inProgress = procedures.filter((procedure) => !procedure.completedDate);
+    completed = procedures.filter((procedure) => procedure.completedDate);
 
-    procedures.forEach((procedure, index) => {
-      const tooltip = (
-        <Box key={index} mb={1}>
-          <Typography variant="body2" color={theme.palette.text.primary}>
-            <strong>{procedure.procedure.name}</strong> -{" "}
-            {procedure.visit.title}
-          </Typography>
-        </Box>
-      );
+    // Group procedures by category and calculate counts
+    categories = procedures.reduce((acc, procedure) => {
+      const isCompleted = procedure.completedDate !== null;
+      const category = procedure.procedure.procedureCategory || {
+        id: "other",
+        title: "Diğer",
+      };
 
-      if (procedure.completedDate) {
-        completedTooltip.push(tooltip);
-      } else {
-        inProgressTooltip.push(tooltip);
+      if (!acc[category.id]) {
+        acc[category.id] = {
+          title: category.title,
+          completed: 0,
+          total: 0,
+          progress: 0,
+        };
       }
-    });
+
+      acc[category.id].total += 1;
+      if (isCompleted) {
+        acc[category.id].completed += 1;
+        acc[category.id].progress =
+          (acc[category.id].completed / acc[category.id].total) * 100;
+      }
+
+      return acc;
+    }, {});
   }
 
-  return (
-    <>
-      <Tooltip
-        title={completedTooltip}
-        placement={props.tooltipReverse ? "bottom" : "top"}
-        componentsProps={{
-          tooltip: {
-            sx: {
-              backgroundColor: theme.palette.background.primary,
-              color: theme.palette.text.primary,
-              visibility: completed ? "visible" : "hidden",
-            },
-          },
-        }}
-      >
-        <Grid container item justifyContent="center">
-          <Image
-            src={CompletedIcon}
-            width="15px"
-            style={{ visibility: completed ? "visible" : "hidden" }}
-          />
-        </Grid>
-      </Tooltip>
-      <Tooltip
-        title={inProgressTooltip}
-        placement={props.tooltipReverse ? "top" : "bottom"}
-        componentsProps={{
-          tooltip: {
-            sx: {
-              backgroundColor: theme.palette.background.primary,
-              color: theme.palette.text.primary,
-              visibility: inProgress ? "visible" : "hidden",
-            },
-          },
-        }}
-      >
-        <Grid container item justifyContent="center">
-          <Image
-            src={InProgressIcon}
-            width="15px"
+  // TEMPLATES ----------------------------------------------------------------
+  // Category tooltip
+  const tooltip = (
+    <Grid container>
+      {Object.keys(categories).map((key) => {
+        const category = categories[key];
+
+        return (
+          <Grid item xs key={category.title} mx={1} p={1} textAlign="center">
+            <Typography
+              variant="h5"
+              color={theme.palette.text.primary}
+              paddingBottom={1}
+            >
+              {category.title}
+            </Typography>
+
+            <CircleProgress
+              completed={category.completed}
+              total={category.total}
+              style={{
+                color: theme.palette.text.secondary,
+                bgColor: theme.palette.grey[300],
+              }}
+            />
+          </Grid>
+        );
+      })}
+
+      <Divider />
+
+      <Grid container item xs={12}>
+        <Grid item xs={6} px={1}>
+          <Tag
+            value="Bekleniyor"
             style={{
-              visibility: inProgress ? "visible" : "hidden",
+              backgroundColor: theme.palette.background.info,
+              color: theme.palette.text.info,
+            }}
+          />
+          {inProgress?.map((procedure) => (
+            <Typography
+              key={procedure.id}
+              variant="body2"
+              color={theme.palette.text.primary}
+              my={1}
+            >
+              <strong>•</strong> {procedure.procedure.name}
+            </Typography>
+          ))}
+        </Grid>
+        <Grid item xs={6} px={1}>
+          <Tag
+            value="Tamamlandı"
+            style={{
+              backgroundColor: theme.palette.background.success,
+              color: theme.palette.text.success,
+            }}
+          />
+          {completed?.map((procedure) => (
+            <Typography
+              key={procedure.id}
+              variant="body2"
+              color={theme.palette.text.primary}
+              my={1}
+            >
+              <strong>
+                • {new Date(procedure.completedDate).toLocaleDateString()}
+              </strong>{" "}
+              - {procedure.procedure.name}
+            </Typography>
+          ))}
+        </Grid>
+      </Grid>
+    </Grid>
+  );
+
+  return (
+    procedures && (
+      <Tooltip
+        title={tooltip}
+        placement={props.tooltipReverse ? "top" : "bottom"}
+        arrow
+        componentsProps={{
+          tooltip: {
+            sx: {
+              backgroundColor: theme.palette.background.primary,
+              color: theme.palette.text.primary,
+              maxWidth: 500,
+            },
+          },
+        }}
+        sx={{ cursor: "pointer" }}
+      >
+        <Grid container justifyContent="center">
+          <CircleProgress
+            completed={completed.length}
+            total={procedures.length}
+            style={{
+              color: theme.palette.text.secondary,
+              bgColor: theme.palette.background.secondary,
             }}
           />
         </Grid>
       </Tooltip>
-    </>
+    )
   );
 }
 
