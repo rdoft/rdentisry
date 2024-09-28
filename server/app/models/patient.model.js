@@ -41,6 +41,11 @@ module.exports = (sequelize, Sequelize) => {
           max: new Date().getFullYear(),
         },
       },
+      isSMS: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
     },
     {
       indexes: [
