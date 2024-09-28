@@ -22,7 +22,7 @@ module.exports = (sequelize, Sequelize) => {
       Type: {
         type: Sequelize.ENUM,
         allowNull: false,
-        values: ["email", "reset"],
+        values: ["email", "reset", "reminder"],
       },
     },
     {

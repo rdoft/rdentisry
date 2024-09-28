@@ -178,7 +178,7 @@ exports.google = async (req, res) => {
  */
 exports.controlToken = async (req, res) => {
   const { token } = req.params;
-  const { type = "reset" } = req.query; // reset or email
+  const { type = "reset" } = req.query; // reset, email or reminder
   let user;
 
   try {
@@ -207,7 +207,7 @@ exports.controlToken = async (req, res) => {
       log.access.warn("Control token failed: Token doesn't exist or expired", {
         token,
         success: false,
-        action: "RESET",
+        action: "CONTROL",
         request: {
           ip: req.headers["x-forwarded-for"],
           agent: req.headers["user-agent"],
@@ -229,7 +229,7 @@ exports.controlToken = async (req, res) => {
       log.access.warn("Control token failed: Token doesn't exist or expired", {
         token,
         success: false,
-        action: "RESET",
+        action: "CONTROL",
         request: {
           ip: req.headers["x-forwarded-for"],
           agent: req.headers["user-agent"],
@@ -243,7 +243,7 @@ exports.controlToken = async (req, res) => {
       userId: user.UserId,
       token,
       success: true,
-      action: "RESET",
+      action: "CONTROL",
       request: {
         ip: req.headers["x-forwarded-for"],
         agent: req.headers["user-agent"],
