@@ -19,7 +19,11 @@ function MonthEvent({ event }) {
   const [isHoverName, setIsHoverName] = useState(false);
 
   const { start, end } = event;
-  const { id, name: pname, surname: psurname } = event.patient;
+  const {
+    id = null,
+    name: pname = "",
+    surname: psurname = "",
+  } = event.patient || {};
 
   const startHours = start.toLocaleTimeString("tr-TR", {
     hour: "2-digit",

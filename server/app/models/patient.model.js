@@ -41,7 +41,7 @@ module.exports = (sequelize, Sequelize) => {
           max: new Date().getFullYear(),
         },
       },
-      isSMS: {
+      IsSMS: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false,

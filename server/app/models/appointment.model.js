@@ -49,7 +49,7 @@ module.exports = (sequelize, Sequelize) => {
       ReminderStatus: {
         type: Sequelize.ENUM,
         allowNull: true,
-        values: ["sent", "approved", "rejected"],
+        values: ["sent", "approved", "rejected", "updated"],
       },
     },
     {

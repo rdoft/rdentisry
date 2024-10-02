@@ -11,4 +11,5 @@ module.exports = (app) => {
   notification = require("./notification.route")(app);
   patientProcedure = require("./patientProcedure.route")(app);
   visit = require("./visit.route")(app);
+  reminder = require("./reminder.route")(app);
 };
