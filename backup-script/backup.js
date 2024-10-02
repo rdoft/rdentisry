@@ -131,20 +131,25 @@ const backup = (type) => {
 };
 
 // Run backup ---------------------------------------------------------------
-// Schedule daily backup at 21:00 UTC (midnight)
-cron.schedule("0 21 * * *", () => {
+// Schedule daily backup at 00:00
+cron.schedule("00 00 * * *", () => {
   console.log("Running daily backup...");
   backup("daily");
 });
 
-// Schedule weekly backup every Friday at 21:10 UTC (midnight)
-cron.schedule("10 21 * * 5", () => {
+// Schedule weekly backup every Friday at 00:10
+cron.schedule("10 00 * * 5", () => {
   console.log("Running weekly backup...");
   backup("weekly");
 });
 
-// Schedule monthly backup on the 14th of every month at 21:20 UTC (midnight)
-cron.schedule("20 21 14 * *", () => {
+// Schedule monthly backup on the 14th of every month at 00:20
+cron.schedule("20 00 14 * *", () => {
   console.log("Running monthly backup...");
   backup("monthly");
 });
+
+// Keep the the process alive (for not to exit)
+setInterval(() => {
+  console.log("Heartbeat - Backup process is running...");
+}, 60 * 60 * 1000);
