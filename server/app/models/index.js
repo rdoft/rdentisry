@@ -24,6 +24,7 @@ db.sequelize = sequelize;
 db.user = require("./user.model")(sequelize, Sequelize);
 db.token = require("./token.model")(sequelize, Sequelize);
 db.subscription = require("./subscription.model")(sequelize, Sequelize);
+db.userSetting = require("./userSetting.model")(sequelize, Sequelize);
 db.agreement = require("./agreement.model")(sequelize, Sequelize);
 db.patient = require("./patient.model")(sequelize, Sequelize);
 db.doctor = require("./doctor.model")(sequelize, Sequelize);
@@ -217,8 +218,22 @@ db.token.belongsTo(db.user, {
 db.user.hasOne(db.subscription, {
   as: "subscription",
   foreignKey: "UserId",
+  onDelete: "cascade",
+  hooks: true,
 });
 db.subscription.belongsTo(db.user, {
+  as: "user",
+  foreignKey: "UserId",
+});
+
+// user - userSettings (one to one)
+db.user.hasOne(db.userSetting, {
+  as: "userSetting",
+  foreignKey: "UserId",
+  onDelete: "cascade",
+  hooks: true,
+});
+db.userSetting.belongsTo(db.user, {
   as: "user",
   foreignKey: "UserId",
 });
@@ -408,6 +423,9 @@ db.user.afterCreate(async (user) => {
   await createCategories();
   await createProcedures(user);
   await db.subscription.create({
+    UserId: user.UserId,
+  });
+  await db.userSetting.create({
     UserId: user.UserId,
   });
 });

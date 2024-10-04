@@ -34,5 +34,17 @@ module.exports = function (app) {
      */
     .put(validate(schema.user, "body"), controller.updateUser);
 
+  router
+    .route(`/user/settings`)
+    /**
+     * Get the user settings
+     */
+    .get(controller.getSettings)
+    /**
+     * Update the user settings
+     * @body settings - The user's settings like apointmentReminder
+     */
+    .put(controller.updateSettings);
+
   app.use(API_URL, router);
 };
