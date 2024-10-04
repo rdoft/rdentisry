@@ -102,7 +102,7 @@ function PatientDetailToolbar({ patient, patients, setPatients, endContent }) {
         <Typography variant="caption" style={{ color: "gray" }}>
           Hastalar{" "}
           <i className="pi pi-angle-right" style={{ fontSize: "0.7rem" }} />{" "}
-          Hasta detayı
+          Hasta Detayı
         </Typography>
       </Stack>
     );

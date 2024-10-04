@@ -4,19 +4,31 @@ import { Button } from "primereact";
 // assets
 import { useTheme } from "@mui/material/styles";
 
-function More({ label, onClick, ...props }) {
+function Add({ label, onClick, ...props }) {
   const theme = useTheme();
 
-  return (
+  return props.default ? (
+    <Button
+      size="small"
+      icon="pi pi-key"
+      label={label}
+      onClick={onClick}
+      style={{
+        margin: "0 0.5rem",
+        backgroundColor: theme.palette.text.secondary,
+        ...props.style,
+      }}
+    />
+  ) : (
     <Button
       text={props.border ? false : true}
       outlined
       size="small"
-      icon={props.icon || "pi pi-ellipsis-v"}
+      icon="pi pi-key"
       label={label}
-      severity={props.severity || "secondary"}
       onClick={onClick}
       style={{
+        margin: "0 0.5rem",
         color: theme.palette.text.secondary,
         ...props.style,
       }}
@@ -24,4 +36,4 @@ function More({ label, onClick, ...props }) {
   );
 }
 
-export default More;
+export default Add;

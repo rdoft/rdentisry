@@ -35,6 +35,15 @@ patient.updatePatient = (patient) => {
 };
 
 /**
+ * Update patients of the given Ids
+ * @query patientId: Id list of patients
+ * @body Patient informations
+ */
+patient.updatePatientsPermission = (ids, permission) => {
+  return API.put(`${API_URL}?patientId=${ids.join(",")}`, permission);
+};
+
+/**
  * Delete the patient
  * @param id: Id of the patient
  */

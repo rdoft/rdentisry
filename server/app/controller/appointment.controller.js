@@ -23,6 +23,7 @@ exports.getAppointments = async (req, res) => {
         ["EndTime", "endTime"],
         ["Description", "description"],
         ["Status", "status"],
+        ["ReminderStatus", "reminderStatus"],
         [
           Sequelize.literal(
             `CAST(EXTRACT(EPOCH FROM ("EndTime" - "StartTime")) / 60 AS INTEGER)`
@@ -123,6 +124,7 @@ exports.getAppointment = async (req, res) => {
         ["EndTime", "endTime"],
         ["Description", "description"],
         ["Status", "status"],
+        ["ReminderStatus", "reminderStatus"],
         [
           Sequelize.literal(
             `CAST(EXTRACT(EPOCH FROM ("EndTime" - "StartTime")) / 60 AS INTEGER)`
@@ -216,6 +218,7 @@ exports.saveAppointment = async (req, res) => {
     EndTime: Sequelize.cast(endTime, "TIME"),
     Description: description ?? null,
     Status: status,
+    ReminderStatus: null,
   };
   let appointment;
 
@@ -265,6 +268,7 @@ exports.saveAppointment = async (req, res) => {
       endTime: appointment.EndTime,
       description: appointment.Description,
       status: appointment.Status,
+      reminderStatus: appointment.ReminderStatus,
     };
     res.status(201).send(appointment);
     log.audit.info("Save appointment completed", {
@@ -309,8 +313,16 @@ exports.saveAppointment = async (req, res) => {
 exports.updateAppointment = async (req, res) => {
   const { UserId: userId } = req.user;
   const { appointmentId } = req.params;
-  const { patient, doctor, date, startTime, endTime, description, status } =
-    req.body;
+  const {
+    patient,
+    doctor,
+    date,
+    startTime,
+    endTime,
+    description,
+    status,
+    reminderStatus,
+  } = req.body;
   let values = {
     PatientId: patient.id,
     DoctorId: doctor ? doctor.id : null,
@@ -319,6 +331,7 @@ exports.updateAppointment = async (req, res) => {
     EndTime: Sequelize.cast(endTime, "TIME"),
     Description: description ?? null,
     Status: status,
+    ReminderStatus: reminderStatus ?? null,
   };
   let appointment;
 

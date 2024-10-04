@@ -2,10 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { Typography, Grid } from "@mui/material";
-import { DataTable, Column, Tag, ConfirmDialog } from "primereact";
-import { AppointmentDialog, PatientDialog } from "components/Dialog";
+import { DataTable, Column, Tag, Menu, ConfirmDialog } from "primereact";
+import {
+  AppointmentDialog,
+  PatientDialog,
+  PatientPermissionDialog,
+} from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
-import { Add, Edit, Delete } from "components/Button";
+import { More, Delete } from "components/Button";
 import { useLoading } from "context/LoadingProvider";
 import { LoadingController } from "components/Loadable";
 import { SkeletonDataTable } from "components/Skeleton";
@@ -25,6 +29,8 @@ function PatientsTable() {
 
   // Set the default values
   const dt = useRef(null);
+  const menu = useRef(null);
+
   const [patient, setPatient] = useState(null);
   const [patients, setPatients] = useState(null);
   const [selectedPatients, setSelectedPatients] = useState(null);
@@ -33,6 +39,7 @@ function PatientsTable() {
   const [dialogs, setDialogs] = useState({
     patient: false,
     appointment: false,
+    permission: false,
     deletePatient: false,
     deletePatients: false,
   });
@@ -177,6 +184,30 @@ function PatientsTable() {
     hideDeletePatientsDialog();
   };
 
+  // Save permission selected patients
+  const savePatientsPermission = async (permission) => {
+    let selectedIds;
+
+    try {
+      // Get IDs of selected patients
+      selectedIds = selectedPatients.map((item) => item.id);
+
+      startLoading("save");
+      await PatientService.updatePatientsPermission(selectedIds, permission);
+
+      if (selectedIds.length > 1) {
+        toast.success("Seçili hastaların izinleri başarıyla güncellendi!");
+      } else {
+        toast.success("Seçili hastanın izni başarıyla güncellendi!");
+      }
+      await getPatients();
+    } catch (error) {
+      error.message && toast.error(error.message);
+    } finally {
+      stopLoading("save");
+    }
+  };
+
   // HANDLERS -----------------------------------------------------------------
   // Show patient dialog
   const showPatientDialog = (patient) => {
@@ -186,7 +217,7 @@ function PatientsTable() {
 
   // Hide patient dialog
   const hidePatientDialog = () => {
-    setDialogs({ ...dialogs, patient: false });
+    setDialogs({ ...dialogs, patient: false, permission: false });
   };
 
   // Show add appointment dialog
@@ -221,6 +252,17 @@ function PatientsTable() {
     setDialogs({ ...dialogs, deletePatients: false });
   };
 
+  // Show permission dialog
+  const showPermissionDialog = (patient) => {
+    setPatient(patient);
+    setDialogs({ ...dialogs, permission: true });
+  };
+
+  // Hide permission dialog
+  const hidePermissionDialog = () => {
+    setDialogs({ ...dialogs, permission: false });
+  };
+
   // onInput handler for search
   const handleInputSearch = (event) => {
     setTimeout(() => setGlobalFilter(event.target.value), 400);
@@ -241,7 +283,6 @@ function PatientsTable() {
       return;
     }
     // Navigate to the patient page
-    localStorage.setItem("activeTabIndex", 1);
     navigate(`/patients/${event.data.id}`);
   };
 
@@ -255,13 +296,75 @@ function PatientsTable() {
     setRowIndex(null);
   };
 
-  // onClick handler for add new appointment
-  const handleAddAppointment = (event, patient) => {
-    event.stopPropagation();
-    showAppointmentDialog(patient);
+  // Save permission
+  const handleSavePermission = (permission) => {
+    hidePermissionDialog();
+    savePatient({
+      ...patient,
+      isSMS: permission.isSMS,
+    });
   };
 
   // TEMPLATES -----------------------------------------------------------------
+  // Menu item for the patient action buttons
+  const more = (patient) => {
+    return (
+      <>
+        <More
+          style={{
+            width: "2rem",
+            height: "2rem",
+            color: theme.palette.text.primary,
+          }}
+          onClick={(event) => {
+            event.stopPropagation();
+            menu.current.toggle(event);
+          }}
+        />
+        <Menu
+          model={[
+            {
+              label: "Hastaya Git",
+              icon: "pi pi-arrow-circle-right",
+              style: { fontSize: "0.9rem" },
+              command: () => navigate(`/patients/${patient.id}`),
+            },
+            {
+              label: "Görüntüle / Düzenle",
+              icon: "pi pi-external-link",
+              style: { fontSize: "0.9rem" },
+              command: () => showPatientDialog(patient),
+            },
+            {
+              label: "Randevu Ekle",
+              icon: "pi pi-calendar-plus",
+              style: { fontSize: "0.9rem" },
+              command: () => showAppointmentDialog(patient),
+            },
+            {
+              label: "İzinleri Yönet",
+              icon: "pi pi-key",
+              style: { fontSize: "0.9rem" },
+              command: () => showPermissionDialog(patient),
+            },
+            {
+              template: () => (
+                <Delete
+                  label="Sil"
+                  style={{ width: "100%", textAlign: "start" }}
+                  onClick={() => showDeletePatientDialog(patient)}
+                />
+              ),
+            },
+          ]}
+          ref={menu}
+          id="popup_menu"
+          popup
+        />
+      </>
+    );
+  };
+
   // Payment status of the patient (overdue or not)
   const status = (patient) => {
     let value;
@@ -351,9 +454,10 @@ function PatientsTable() {
       <div className="card">
         {/* Patient table toolbar */}
         <PatientTableToolbar
-          visibleDelete={selectedPatients?.length ? true : false}
+          selectedCount={selectedPatients?.length}
           onClickAdd={showPatientDialog}
           onClickDelete={showDeletePatientsDialog}
+          onClickPermission={savePatientsPermission}
           onInput={handleInputSearch}
         />
 
@@ -404,12 +508,6 @@ function PatientsTable() {
               )}
               sortable
             ></Column>
-            {/* Phone */}
-            <Column
-              field="phone"
-              header="Telefon"
-              style={{ width: "10rem" }}
-            ></Column>
             {/* Status tags */}
             <Column
               field="dept"
@@ -417,31 +515,18 @@ function PatientsTable() {
               sortable
               style={{ width: "10rem" }}
             ></Column>
+            {/* Phone */}
+            <Column
+              field="phone"
+              header="Telefon"
+              style={{ width: "10rem" }}
+            ></Column>
             {/* Action buttons */}
-            {!window.matchMedia("(hover: none)").matches && (
-              <Column
-                body={(patient) =>
-                  patient.id === rowIndex ? (
-                    <Add
-                      label="Randevu"
-                      onClick={(e) => handleAddAppointment(e, patient)}
-                    />
-                  ) : null
-                }
-                style={{ width: "10rem" }}
-              ></Column>
-            )}
-            {/* Patient action buttons */}
             <Column
               body={(patient) =>
-                patient.id === rowIndex ? (
-                  <>
-                    <Edit onClick={() => showPatientDialog(patient)} />
-                    <Delete onClick={() => showDeletePatientDialog(patient)} />
-                  </>
-                ) : null
+                patient.id === rowIndex ? more(patient) : null
               }
-              style={{ width: "10rem" }}
+              style={{ width: "10rem", textAlign: "end" }}
             ></Column>
           </DataTable>
         </LoadingController>
@@ -471,6 +556,15 @@ function PatientsTable() {
           }}
           onHide={hideAppointmentDialog}
           onSubmit={saveAppointment}
+        />
+      )}
+
+      {/* Permission dialog */}
+      {dialogs.permission && (
+        <PatientPermissionDialog
+          initPermission={{ isSMS: patient.isSMS }}
+          onHide={hidePermissionDialog}
+          onSubmit={handleSavePermission}
         />
       )}
 

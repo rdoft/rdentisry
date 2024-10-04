@@ -1,19 +1,27 @@
-import React from "react";
-import { Toolbar, Divider } from "primereact";
+import React, { useRef } from "react";
+import { Toolbar, Divider, Menu } from "primereact";
 import { Typography } from "@mui/material";
-import { Add, Delete } from "components/Button";
+import { Add, Delete, More } from "components/Button";
 import Search from "components/Search";
 
 function PatientTableToolbar({
-  visibleDelete,
+  selectedCount,
   onClickAdd,
   onClickDelete,
+  onClickPermission,
   onInput,
 }) {
+  const menu = useRef(null);
+
   // HANDLERS ------------------------------------------------------------------
   // onClickAdd handler
   const handleClickAdd = () => {
     onClickAdd();
+  };
+
+  // onClickPermission handler
+  const handleClickPermission = (permission) => {
+    onClickPermission(permission);
   };
 
   // TEMPLATES ------------------------------------------------------------------
@@ -22,15 +30,53 @@ function PatientTableToolbar({
     return <Typography variant="h3">Hastalar</Typography>;
   };
 
-  // Get Add/Delete patient buttons
+  // Get Add/More patient buttons
   const actionButton = () => {
     return (
       <>
-        <Delete
-          label="Sil"
-          onClick={onClickDelete}
-          style={{ visibility: visibleDelete ? "visible" : "hidden" }}
-        />
+        {selectedCount > 0 && (
+          <>
+            <More
+              label={`Seçilen Hastalar (${selectedCount})`}
+              border
+              icon="pi pi-angle-down"
+              onClick={(event) => {
+                menu.current.toggle(event);
+              }}
+            />
+            <Menu
+              model={[
+                {
+                  label: "SMS İzni Ver",
+                  icon: "pi pi-check-circle",
+                  style: { fontSize: "0.9rem" },
+                  command: () => handleClickPermission({ isSMS: true }),
+                },
+                {
+                  label: "SMS İznini Kaldır",
+                  icon: "pi pi-ban",
+                  style: { fontSize: "0.9rem" },
+                  command: () => handleClickPermission({ isSMS: false }),
+                },
+                {
+                  template: () => (
+                    <Delete
+                      label="Sil"
+                      style={{
+                        width: "100%",
+                        textAlign: "start",
+                      }}
+                      onClick={onClickDelete}
+                    />
+                  ),
+                },
+              ]}
+              ref={menu}
+              id="popup_menu"
+              popup
+            />
+          </>
+        )}
         <Add label="Hasta Ekle" default={true} onClick={handleClickAdd} />
       </>
     );

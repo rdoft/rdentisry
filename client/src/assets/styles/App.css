@@ -51,3 +51,11 @@ a:visited {
     display: flex !important;
   }
 }
+
+.p-checkbox .p-checkbox-box {
+  background-color: transparent !important;
+}
+.p-checkbox .p-checkbox-box.p-highlight {
+  border-color: var(--palette-text-secondary) !important;
+  background-color: var(--palette-text-secondary) !important;
+}

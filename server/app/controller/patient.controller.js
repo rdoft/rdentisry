@@ -29,6 +29,7 @@ exports.getPatients = async (req, res) => {
           ["Surname", "surname"],
           ["Phone", "phone"],
           ["BirthYear", "birthYear"],
+          ["IsSMS", "isSMS"],
         ],
         where: {
           UserId: userId,
@@ -104,6 +105,7 @@ exports.getPatients = async (req, res) => {
           ["Surname", "surname"],
           ["Phone", "phone"],
           ["BirthYear", "birthYear"],
+          ["IsSMS", "isSMS"],
         ],
         where: {
           UserId: userId,
@@ -154,6 +156,7 @@ exports.getPatient = async (req, res) => {
         ["Surname", "surname"],
         ["BirthYear", "birthYear"],
         ["Phone", "phone"],
+        ["IsSMS", "isSMS"],
       ],
       where: {
         PatientId: patientId,
@@ -202,12 +205,13 @@ exports.getPatient = async (req, res) => {
  */
 exports.savePatient = async (req, res) => {
   const { UserId: userId } = req.user;
-  const { idNumber, name, surname, phone, birthYear } = req.body;
+  const { idNumber, name, surname, phone, birthYear, isSMS } = req.body;
   let values = {
     Name: name,
     Surname: surname,
     Phone: phone,
-    IdNumber: idNumber,
+    IsSMS: isSMS,
+    IdNumber: idNumber ?? null,
     BirthYear: birthYear ?? null,
     UserId: userId,
   };
@@ -223,6 +227,7 @@ exports.savePatient = async (req, res) => {
       surname: patient.Surname,
       phone: patient.Phone,
       birthYear: patient.BirthYear,
+      isSMS: patient.IsSMS,
     };
 
     res.status(201).send(patient);
@@ -266,11 +271,12 @@ exports.savePatient = async (req, res) => {
 exports.updatePatient = async (req, res) => {
   const { UserId: userId } = req.user;
   const { patientId } = req.params;
-  const { idNumber, name, surname, phone, birthYear } = req.body;
+  const { idNumber, name, surname, phone, birthYear, isSMS } = req.body;
   let values = {
     Name: name,
     Surname: surname,
     Phone: phone,
+    IsSMS: isSMS,
     IdNumber: idNumber ?? null,
     BirthYear: birthYear ?? null,
   };
@@ -335,6 +341,75 @@ exports.updatePatient = async (req, res) => {
         resource: {
           type: "patient",
           id: patientId,
+        },
+      });
+    } else {
+      res.status(500).send(error);
+      log.error.error(error);
+    }
+  }
+};
+
+/**
+ * Update the patient's permission
+ * @query patientId: Id list of the patient
+ * @body Permission informations
+ */
+exports.updatePatientsPermission = async (req, res) => {
+  const { UserId: userId } = req.user;
+  const { patientId } = req.query;
+  const { isSMS } = req.body;
+  let patientIds;
+  let count = 0;
+
+  try {
+    // Convert query string to array
+    patientIds = patientId ? patientId.split(",") : [];
+
+    // Update patient records
+    if (patientIds.length > 0) {
+      [count] = await Patient.update(
+        {
+          IsSMS: isSMS,
+        },
+        {
+          where: {
+            UserId: userId,
+            PatientId: {
+              [Sequelize.Op.in]: patientIds,
+            },
+          },
+        }
+      );
+    }
+
+    res.status(200).send({ count: count });
+    log.audit.info("Update patients permission completed", {
+      userId,
+      action: "PUT",
+      success: true,
+      request: {
+        query: req.query,
+        body: req.body,
+      },
+      resource: {
+        type: "patient",
+        count: count,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Sequelize.ValidationError) {
+      res.status(400).send({ message: error.message });
+      log.audit.error("Update patients permission failed: Validation error", {
+        userId,
+        action: "PUT",
+        success: false,
+        request: {
+          query: req.query,
+          body: req.body,
+        },
+        resource: {
+          type: "patient",
         },
       });
     } else {
