@@ -4,6 +4,7 @@ const db = require("../models");
 const User = db.user;
 const Patient = db.patient;
 const Appointment = db.appointment;
+const UserSetting = db.userSetting;
 
 const { send } = require("../utils/sms.util");
 const {
@@ -62,6 +63,7 @@ async function sendAppointmentApproveReminders() {
             ["Phone", "phone"],
             ["IsSMS", "isSMS"],
           ],
+          required: true,
           include: [
             {
               model: User,
@@ -69,6 +71,17 @@ async function sendAppointmentApproveReminders() {
               attributes: [
                 ["UserId", "id"],
                 ["Name", "name"],
+              ],
+              required: true,
+              include: [
+                {
+                  model: UserSetting,
+                  as: "userSetting",
+                  attributes: [],
+                  where: {
+                    AppointmentReminder: true, // User wants appointment reminders
+                  },
+                },
               ],
             },
           ],
@@ -153,11 +166,23 @@ async function sendAppointmentReminders() {
             ["Phone", "phone"],
             ["IsSMS", "isSMS"],
           ],
+          required: true,
           include: [
             {
               model: User,
               as: "user",
               attributes: [["Name", "name"]],
+              required: true,
+              include: [
+                {
+                  model: UserSetting,
+                  as: "userSetting",
+                  attributes: [],
+                  where: {
+                    AppointmentReminder: true, // User wants appointment reminders
+                  },
+                },
+              ],
             },
           ],
         },
