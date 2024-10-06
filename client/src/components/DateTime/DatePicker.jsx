@@ -25,7 +25,7 @@ function DatePicker({ value, onChange, minDate, ...props }) {
         caption: { color: theme.palette.text.primary },
       }}
       modifiersStyles={{
-        selected: { backgroundColor: theme.palette.text.event },
+        selected: { backgroundColor: theme.palette.text.primary },
       }}
       {...props}
     />

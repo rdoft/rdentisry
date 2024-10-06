@@ -80,7 +80,9 @@ exports.remindAppointment = async (req, res) => {
     if (!appointment.patient.user.name) {
       res
         .status(400)
-        .send({ message: "Kullanıcı hesap adınız sistemde kayıtlı değil" });
+        .send({
+          message: "Hatırlatma gönderebilmek için hesap adınızı ekleyin",
+        });
       log.app.warn("Send appointment reminder failed: User name is not set", {
         userId,
         appointmentId,
@@ -256,7 +258,9 @@ exports.remindPayment = async (req, res) => {
     if (!patient.user.name) {
       res
         .status(400)
-        .send({ message: "Kullanıcı hesap adınız sistemde kayıtlı değil" });
+        .send({
+          message: "Hatırlatma gönderebilmek için hesap adınızı ekleyin",
+        });
       log.app.warn("Send payment reminder failed: User name is not set", {
         userId,
         patientId,

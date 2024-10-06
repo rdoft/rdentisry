@@ -138,26 +138,15 @@ function CalendarToolbar({
 
   // Get doctor dropdown
   const centerContent = () => (
-    <div
-      style={{
-        position: "absolute",
-        left: "50%",
-        transform: "translateX(-50%)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <DropdownDoctor
-        key={doctor?.id}
-        value={doctor}
-        options={doctors}
-        onChange={handleChangeDoctor}
-        onClickAdd={showDoctorDialog}
-        onClickDelete={deleteDoctor}
-        style={{ alignItems: "center", height: "2.5rem" }}
-      />
-    </div>
+    <DropdownDoctor
+      key={doctor?.id}
+      value={doctor}
+      options={doctors}
+      onChange={handleChangeDoctor}
+      onClickAdd={showDoctorDialog}
+      onClickDelete={deleteDoctor}
+      style={{ alignItems: "center", height: "2.5rem", width: "20rem" }}
+    />
   );
 
   // Get showAll switch

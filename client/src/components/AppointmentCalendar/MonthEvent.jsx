@@ -1,24 +1,35 @@
-import React, { useState } from "react";
+import React, { useRef } from "react";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { activeItem } from "store/reducers/menu";
-import { Grid, Typography, Box, Avatar, Tooltip } from "@mui/material";
-import { Goto } from "components/Button";
+import { Menu, Divider } from "primereact";
+import { Grid, Typography, Box, Tooltip } from "@mui/material";
+import { More, Reminder } from "components/Button";
+import { LoadingIcon } from "components/Other";
 
 // assets
-import { patientAvatar } from "assets/images/avatars";
 import { useTheme } from "@mui/material/styles";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+
+// services
+import { ReminderService } from "services";
 
 function MonthEvent({ event }) {
   const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [isHover, setIsHover] = useState(false);
-  const [isHoverName, setIsHoverName] = useState(false);
+  const menu = useRef(null);
 
-  const { start, end } = event;
+  const {
+    id: eventId = null,
+    status = null,
+    reminderStatus = null,
+    start,
+    end,
+    temp,
+  } = event;
   const {
     id = null,
     name: pname = "",
@@ -34,84 +45,122 @@ function MonthEvent({ event }) {
     minute: "2-digit",
   });
 
+  const allowReminder =
+    status === "active" && (!reminderStatus || reminderStatus === "sent");
+
+  // SERVICES -----------------------------------------------------------------
+  // Send appointment reminder
+  const sendReminder = async () => {
+    try {
+      await ReminderService.remindAppointment(eventId);
+      toast.success("Hatırlatma mesajı başarıyla gönderildi");
+    } catch (error) {
+      error.message && toast.error(error.message);
+    }
+  };
+
   // HANDLERS -----------------------------------------------------------------
-  // onMouseEnter handler for display buttons
-  const handleMouseEnter = () => {
-    setIsHover(true);
-  };
-
-  // onMouseLeave handler for hide buttons
-  const handleMouseLeave = () => {
-    setIsHover(false);
-  };
-  // onMouseEnter handler for patient
-  const handleMouseEnterPatient = () => {
-    setIsHoverName(true);
-  };
-
-  // onMouseLeave handler for patient
-  const handleMouseLeavePatient = () => {
-    setIsHoverName(false);
-  };
-
   // onClick handler
-  const handleClick = (event) => {
+  const handleRightClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    navigate(`/patients/${id}`);
+    id && navigate(`/patients/${id}`);
     dispatch(activeItem({ openItem: ["patients"] }));
   };
 
-  return (
-    <Tooltip
-      title={isHoverName ? "Hastaya git" : "Görüntüle / Düzenle"}
-      placement="right"
-      followCursor={true}
-    >
-      <Grid
-        container
-        onContextMenu={handleClick}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
+  // onClick patient handler
+  const handleClickPatient = () => {
+    id && navigate(`/patients/${id}`);
+    dispatch(activeItem({ openItem: ["patients"] }));
+  };
+
+  // onClick send reminder handler
+  const handleClickSendReminder = (event) => {
+    event.stopPropagation();
+    eventId && sendReminder();
+  };
+
+  // TEMPLATES -----------------------------------------------------------------
+  // Action button (more)
+  const actionButton = (
+    <>
+      <More
+        style={{
+          width: "1rem",
+          height: "1rem",
+          padding: "0.25rem 0.5rem",
+          color: theme.palette.text.event,
+        }}
+        onClick={(event) => {
+          event.stopPropagation();
+          menu.current.toggle(event);
+        }}
+      />
+      <Menu
+        model={[
+          {
+            label: "Hastaya Git",
+            icon: "pi pi-arrow-circle-right",
+            style: { fontSize: "0.9rem" },
+            command: () => handleClickPatient(),
+          },
+          {
+            label: "Görüntüle / Düzenle",
+            icon: "pi pi-external-link",
+            style: { fontSize: "0.9rem" },
+          },
+          ...(allowReminder
+            ? [
+                {
+                  template: () => (
+                    <>
+                      <Divider type="solid" className="my-2" />
+                      <Reminder
+                        label="Hatırlatma Gönder"
+                        onClick={handleClickSendReminder}
+                      />
+                    </>
+                  ),
+                },
+              ]
+            : []),
+        ]}
+        ref={menu}
+        id="popup_menu"
+        popup
+      />
+    </>
+  );
+
+  return temp ? (
+    <LoadingIcon style={{ height: "100%", alignItems: "center" }} />
+  ) : (
+    <Tooltip title={`${pname} ${psurname}`} placement="top" arrow>
+      <Grid container onContextMenu={handleRightClick}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="end"
+          position="absolute"
+          top={0}
+          right={0}
+        >
+          {actionButton}
+        </Box>
+
         <Grid container>
-          {isHover ? (
-            <Grid
-              item
-              onClick={handleClick}
-              onMouseEnter={handleMouseEnterPatient}
-              onMouseLeave={handleMouseLeavePatient}
+          <Grid item xs={12}>
+            <Box
+              display="flex"
+              gap={1}
+              alignItems="center"
+              justifyContent="space-between"
             >
-              <Box display="flex" gap={1} alignItems="start">
-                <Avatar
-                  alt="avatar"
-                  src={patientAvatar}
-                  shape="circle"
-                  style={{ width: "18px", height: "18px", padding: "1px" }}
-                />
-                <Typography variant="h6" fontWeight="bolder" noWrap>
-                  {`${pname} ${psurname}`}
-                </Typography>
-                <Goto
-                  severity="info"
-                  style={{
-                    color: theme.palette.text.event,
-                    padding: "0.1rem",
-                    width: "auto",
-                  }}
-                />
-              </Box>
-            </Grid>
-          ) : (
-            <Grid item>
-              <Box display="flex" gap={1} alignItems="center">
-                <Typography variant="h5">⏱️</Typography>
-                <Typography variant="caption" fontWeight="bold">
-                  {`${startHours}-${endHours}`}
-                </Typography>
-              </Box>
-            </Grid>
-          )}
+              <Typography variant="caption" fontWeight="bold">
+                {`${startHours}-${endHours}`}
+              </Typography>
+            </Box>
+          </Grid>
         </Grid>
       </Grid>
     </Tooltip>

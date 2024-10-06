@@ -73,7 +73,8 @@ const AppointmentCalendar = () => {
   const filteredAppointments = appointments.filter(
     (appointment) =>
       (!doctor || appointment.doctor?.id === doctor?.id) &&
-      (showAll || appointment.status === "active")
+      (showAll || appointment.status === "active") &&
+      appointment.status !== "canceled"
   );
 
   // SERVICES -----------------------------------------------------------------
@@ -309,7 +310,9 @@ const AppointmentCalendar = () => {
         setShowAll={setShowAll}
       />
       <DnDCalendar
-        style={{ height: "calc(100vh - 130px)" }}
+        style={{
+          height: "calc(100vh - 130px)",
+        }}
         messages={messages}
         localizer={localizer}
         events={events}

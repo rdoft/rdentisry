@@ -10,6 +10,7 @@ import procedureCategory from "./procedureCategory.service";
 import visit from "./visit.service";
 import auth from "./auth.service";
 import user from "./user.service";
+import reminder from "./reminder.service";
 
 const PatientService = patient;
 const DoctorService = doctor;
@@ -23,6 +24,7 @@ const ProcedureCategoryService = procedureCategory;
 const VisitService = visit;
 const AuthService = auth;
 const UserService = user;
+const ReminderService = reminder;
 
 export {
   PatientService,
@@ -37,4 +39,5 @@ export {
   VisitService,
   AuthService,
   UserService,
+  ReminderService,
 };
