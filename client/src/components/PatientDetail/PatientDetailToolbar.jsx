@@ -78,9 +78,8 @@ function PatientDetailToolbar({ patient, patients, setPatients, endContent }) {
 
   // HANDLERS -----------------------------------------------------------------
   // onChange handler
-  const handleChange = (event) => {
-    const { value } = event.target;
-    navigate(`/patients/${value.id}`);
+  const handleChange = (patient) => {
+    navigate(`/patients/${patient.id}`);
   };
 
   // Show add patient dialog

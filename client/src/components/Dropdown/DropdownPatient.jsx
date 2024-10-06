@@ -11,19 +11,8 @@ import "assets/styles/Other/Dropdown.css";
 function DropdownPatient({ value, options, onChange, onClickAdd, ...props }) {
   const { loading } = useLoading();
 
-  const [patient, setPatient] = useState(
-    value && {
-      ...value,
-      fullName: `${value.name} ${value.surname}`,
-    }
-  );
-
-  const patients = options?.map((option) => {
-    return {
-      ...option,
-      fullName: `${option.name} ${option.surname}`,
-    };
-  });
+  const [patient, setPatient] = useState({ ...value });
+  const patients = options;
 
   // HANDLERS ------------------------------------------------------------------
   // onKeyDown handler
@@ -36,8 +25,9 @@ function DropdownPatient({ value, options, onChange, onClickAdd, ...props }) {
   // onChange handler
   const handleChange = (event) => {
     const { value } = event.target;
-    setPatient(value);
-    onChange(event);
+    const patient_ = patients.find((patient) => patient.id === value);
+    setPatient(patient_);
+    onChange(patient_);
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -64,10 +54,11 @@ function DropdownPatient({ value, options, onChange, onClickAdd, ...props }) {
 
   return (
     <Dropdown
-      value={patient}
+      value={patient.id}
       name="patient"
       options={patients}
-      optionLabel="name"
+      optionValue="id"
+      optionLabel="id"
       valueTemplate={patientDropdownItem}
       itemTemplate={patientDropdownItem}
       panelFooterTemplate={patientDropdownFooter}

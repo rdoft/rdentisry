@@ -190,6 +190,18 @@ function AppointmentDialog({
     });
   };
 
+  // onChangePatient handler
+  const handleChangePatient = (patient) => {
+    setAppointment((prev) => {
+      const _appointment = { ...prev, patient };
+      const _isValid = schema.appointment.validate(_appointment).error
+        ? false
+        : true;
+      setIsValid(_isValid);
+      return _appointment;
+    });
+  };
+
   // onHide handler
   const handleHide = () => {
     onHide();
@@ -255,7 +267,7 @@ function AppointmentDialog({
             key={appointment.patient?.id}
             value={appointment.patient}
             options={patients}
-            onChange={handleChange}
+            onChange={handleChangePatient}
             onClickAdd={showPatientDialog}
             style={{ alignItems: "center", height: "3rem" }}
           />
