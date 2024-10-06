@@ -51,6 +51,18 @@ function BaseProcedureDialog({
     setIsValid(_isValid);
   };
 
+  // onChangeProcedureCategory handler
+  const handleChangeProcedureCategory = (procedureCategory) => {
+    const _procedure = {
+      ...procedure,
+      procedureCategory,
+    };
+    const _isValid = schema.procedure.validate(_procedure).error ? false : true;
+
+    setProcedure(_procedure);
+    setIsValid(_isValid);
+  };
+
   // onHide handler
   const handleHide = () => {
     onHide();
@@ -115,7 +127,7 @@ function BaseProcedureDialog({
         <DropdownProcedureCategory
           value={procedure.procedureCategory}
           options={categories}
-          onChange={handleChange}
+          onChange={handleChangeProcedureCategory}
         />
       </div>
 
