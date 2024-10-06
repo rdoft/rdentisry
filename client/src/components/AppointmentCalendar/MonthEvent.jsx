@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useLoading } from "context/LoadingProvider";
 import { activeItem } from "store/reducers/menu";
 import { Menu, Divider } from "primereact";
 import { Grid, Typography, Box, Tooltip } from "@mui/material";
@@ -19,6 +20,7 @@ function MonthEvent({ event }) {
   const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { startLoading, stopLoading } = useLoading();
 
   const menu = useRef(null);
 
@@ -52,10 +54,13 @@ function MonthEvent({ event }) {
   // Send appointment reminder
   const sendReminder = async () => {
     try {
+      startLoading("send");
       await ReminderService.remindAppointment(eventId);
       toast.success("Hatırlatma mesajı başarıyla gönderildi");
     } catch (error) {
       error.message && toast.error(error.message);
+    } finally {
+      stopLoading("send");
     }
   };
 
