@@ -78,11 +78,9 @@ exports.remindAppointment = async (req, res) => {
 
     // Skip sending if the patient doesn't want SMS or user name is not set
     if (!appointment.patient.user.name) {
-      res
-        .status(400)
-        .send({
-          message: "Hatırlatma gönderebilmek için hesap adınızı ekleyin",
-        });
+      res.status(400).send({
+        message: "Hatırlatma gönderebilmek için hesap adınızı ekleyin",
+      });
       log.app.warn("Send appointment reminder failed: User name is not set", {
         userId,
         appointmentId,
@@ -241,6 +239,10 @@ exports.remindPayment = async (req, res) => {
           ],
         },
       ],
+      order: [
+        [{ model: PaymentPlan, as: "paymentPlans" }, "PlannedDate", "ASC"],
+        [{ model: PaymentPlan, as: "paymentPlans" }, "PaymentPlanId", "ASC"],
+      ],
     });
     patient = patient?.toJSON();
 
@@ -256,11 +258,9 @@ exports.remindPayment = async (req, res) => {
     }
     // Skip sending if the patient doesn't want SMS or user name is not set
     if (!patient.user.name) {
-      res
-        .status(400)
-        .send({
-          message: "Hatırlatma gönderebilmek için hesap adınızı ekleyin",
-        });
+      res.status(400).send({
+        message: "Hatırlatma gönderebilmek için hesap adınızı ekleyin",
+      });
       log.app.warn("Send payment reminder failed: User name is not set", {
         userId,
         patientId,

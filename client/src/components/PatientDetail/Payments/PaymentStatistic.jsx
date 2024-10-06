@@ -2,6 +2,7 @@ import React from "react";
 import { ProgressBar } from "primereact";
 import { Grid } from "@mui/material";
 import { StatisticCard } from "components/cards";
+import { Reminder } from "components/Button";
 
 // assets
 import { useTheme } from "@mui/material/styles";
@@ -13,6 +14,7 @@ function PaymentStatistic({
   waiting,
   overdue,
   dept,
+  onSendReminder,
 }) {
   const theme = useTheme();
 
@@ -85,12 +87,20 @@ function PaymentStatistic({
         </Grid>
       </Grid>
 
-      <Grid item xs={4}>
-        <StatisticCard
-          label={"ÖDENEN"}
-          amount={completed}
-          color={theme.palette.text.primary}
-        ></StatisticCard>
+      <Grid container item xs={4}>
+        <Grid item xs={12}>
+          <StatisticCard
+            label={"ÖDENEN"}
+            amount={completed}
+            color={theme.palette.text.primary}
+          ></StatisticCard>
+        </Grid>
+
+        {(overdue > 0 || dept > 0) && (
+          <Grid item xs={12} textAlign="center" pt={1}>
+            <Reminder label="Hatırlatma Gönder" onClick={onSendReminder} />
+          </Grid>
+        )}
       </Grid>
     </Grid>
   );

@@ -89,6 +89,8 @@ exports.getPatients = async (req, res) => {
         order: [
           ["Name", "ASC"],
           ["Surname", "ASC"],
+          [{ model: PaymentPlan, as: "paymentPlans" }, "PlannedDate", "ASC"],
+          [{ model: PaymentPlan, as: "paymentPlans" }, "PaymentPlanId", "ASC"],
         ],
         limit: maxPatients,
       });

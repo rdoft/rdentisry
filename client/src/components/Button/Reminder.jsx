@@ -18,12 +18,18 @@ function Reminder({ label, onClick, ...props }) {
       <Button
         outlined
         size="small"
-        icon="pi pi-bell"
+        icon={
+          <span
+            className="pi pi-bell pr-2"
+            style={{ color: "#F5AF00" }}
+          />
+        }
         label={label}
         onClick={onClick}
         style={{
           margin: "0 0.5rem",
-          color: theme.palette.text.secondary,
+          color: theme.palette.text.primary,
+          borderColor: theme.palette.grey[300],
           fontWeight: "light",
           fontSize: "0.8rem",
           ...props.style,
