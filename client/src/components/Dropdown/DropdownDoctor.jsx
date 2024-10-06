@@ -18,19 +18,8 @@ function DropdownDoctor({
 }) {
   const { loading } = useLoading();
 
-  const [doctor, setDoctor] = useState(
-    value && {
-      ...value,
-      fullName: `${value.name} ${value.surname}`,
-    }
-  );
-
-  const doctors = options?.map((option) => {
-    return {
-      ...option,
-      fullName: `${option.name} ${option.surname}`,
-    };
-  });
+  const [doctor, setDoctor] = useState({ ...value });
+  const doctors = options;
 
   // HANDLERS ------------------------------------------------------------------
   // onKeyDown handler
@@ -43,8 +32,9 @@ function DropdownDoctor({
   // onChange handler
   const handleChange = (event) => {
     const { value } = event.target;
-    setDoctor(value);
-    onChange(event);
+    const doctor_ = doctors.find((doctor) => doctor.id === value);
+    setDoctor(doctor_);
+    onChange(doctor_);
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -74,10 +64,11 @@ function DropdownDoctor({
 
   return (
     <Dropdown
-      value={doctor}
+      value={doctor.id}
       name="doctor"
       options={doctors}
-      optionLabel="name"
+      optionValue="id"
+      optionLabel="id"
       valueTemplate={doctorDropdownValue}
       itemTemplate={doctorDropdownItem}
       panelFooterTemplate={doctorDropdownFooter}

@@ -109,11 +109,10 @@ function CalendarToolbar({
   };
 
   // onChange handler for doctor dropdown
-  const handleChangeDropdown = (event) => {
-    let value = event.target && event.target.value;
-    setDoctor(value);
-    value
-      ? localStorage.setItem("doctor", JSON.stringify(value))
+  const handleChangeDoctor = (doctor) => {
+    setDoctor(doctor);
+    doctor
+      ? localStorage.setItem("doctor", JSON.stringify(doctor))
       : localStorage.removeItem("doctor");
   };
 
@@ -153,7 +152,7 @@ function CalendarToolbar({
         key={doctor?.id}
         value={doctor}
         options={doctors}
-        onChange={handleChangeDropdown}
+        onChange={handleChangeDoctor}
         onClickAdd={showDoctorDialog}
         onClickDelete={deleteDoctor}
         style={{ alignItems: "center", height: "2.5rem" }}
