@@ -11,7 +11,7 @@ import "assets/styles/Other/Dropdown.css";
 function DropdownPatient({ value, options, onChange, onClickAdd, ...props }) {
   const { loading } = useLoading();
 
-  const [patient, setPatient] = useState({ ...value });
+  const [patient, setPatient] = useState(value);
   const patients = options;
 
   // HANDLERS ------------------------------------------------------------------
@@ -54,7 +54,7 @@ function DropdownPatient({ value, options, onChange, onClickAdd, ...props }) {
 
   return (
     <Dropdown
-      value={patient.id}
+      value={patient?.id}
       name="patient"
       options={patients}
       optionValue="id"

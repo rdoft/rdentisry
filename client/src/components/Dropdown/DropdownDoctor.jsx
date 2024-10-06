@@ -18,7 +18,7 @@ function DropdownDoctor({
 }) {
   const { loading } = useLoading();
 
-  const [doctor, setDoctor] = useState({ ...value });
+  const [doctor, setDoctor] = useState(value);
   const doctors = options;
 
   // HANDLERS ------------------------------------------------------------------
@@ -64,7 +64,7 @@ function DropdownDoctor({
 
   return (
     <Dropdown
-      value={doctor.id}
+      value={doctor?.id}
       name="doctor"
       options={doctors}
       optionValue="id"
