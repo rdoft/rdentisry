@@ -1,14 +1,23 @@
-import React, { useState } from "react";
-import { Divider } from "primereact";
+import React, { useState, useRef } from "react";
+import { toast } from "react-hot-toast";
+import { Menu, Divider } from "primereact";
 import { Grid, Typography, Box, Avatar } from "@mui/material";
-import { Edit } from "components/Button";
+import { More, Reminder } from "components/Button";
 import { LoadingIcon } from "components/Other";
 import AppointmentStatus from "./AppointmentStatus";
 
 // assets
 import { doctorAvatar } from "assets/images/avatars";
+import { useTheme } from "@mui/material/styles";
+
+// services
+import { ReminderService } from "services";
 
 function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
+  const theme = useTheme();
+
+  const menu = useRef(null);
+
   const [loading, setLoading] = useState(false);
   const [isHover, setIsHover] = useState(false);
 
@@ -22,6 +31,20 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
     day: "numeric",
   });
   const { name: dname = "", surname: dsurname = "" } = appointment.doctor || {};
+  const allowReminder =
+    appointment.status === "active" &&
+    (!appointment.reminderStatus || appointment.reminderStatus === "sent");
+
+  // SERVICES -----------------------------------------------------------------
+  // Send appointment reminder
+  const sendReminder = async () => {
+    try {
+      await ReminderService.remindAppointment(appointment.id);
+      toast.success("Hatırlatma mesajı başarıyla gönderildi");
+    } catch (error) {
+      error.message && toast.error(error.message);
+    }
+  };
 
   // HANDLERS -----------------------------------------------------------------
   // onMouseEnter handler for display buttons
@@ -48,6 +71,50 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
     });
     setLoading(false);
   };
+
+  // TEMPLATES ----------------------------------------------------------------
+  const actionButton = (
+    <>
+      <More
+        style={{
+          width: "2rem",
+          height: "2rem",
+          color: theme.palette.text.primary,
+        }}
+        onClick={(event) => {
+          menu.current.toggle(event);
+        }}
+      />
+      <Menu
+        model={[
+          {
+            label: "Görüntüle / Düzenle",
+            icon: "pi pi-external-link",
+            style: { fontSize: "0.9rem" },
+            command: handleClickEdit,
+          },
+          ...(allowReminder
+            ? [
+                {
+                  template: () => (
+                    <>
+                      <Divider type="solid" className="my-2" />
+                      <Reminder
+                        label="Hatırlatma Gönder"
+                        onClick={sendReminder}
+                      />
+                    </>
+                  ),
+                },
+              ]
+            : []),
+        ]}
+        ref={menu}
+        id="popup_menu"
+        popup
+      />
+    </>
+  );
 
   return (
     <>
@@ -126,7 +193,7 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
 
         {/* Edit Button */}
         <Grid item xl={1} xs={1} textAlign="end">
-          {isHover && <Edit onClick={handleClickEdit} />}
+          {isHover && actionButton}
         </Grid>
       </Grid>
 

@@ -307,7 +307,7 @@ function PatientsTable() {
 
   // TEMPLATES -----------------------------------------------------------------
   // Menu item for the patient action buttons
-  const more = (patient) => {
+  const actionButton = (patient) => {
     return (
       <>
         <More
@@ -524,7 +524,7 @@ function PatientsTable() {
             {/* Action buttons */}
             <Column
               body={(patient) =>
-                patient.id === rowIndex ? more(patient) : null
+                patient.id === rowIndex ? actionButton(patient) : null
               }
               style={{ width: "10rem", textAlign: "end" }}
             ></Column>

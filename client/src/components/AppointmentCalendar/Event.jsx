@@ -107,7 +107,7 @@ function Event({ event, step }) {
             label: "Hastaya Git",
             icon: "pi pi-arrow-circle-right",
             style: { fontSize: "0.9rem" },
-            command: () => handleClickPatient(),
+            command: handleClickPatient,
           },
           {
             label: "Görüntüle / Düzenle",
