@@ -22,7 +22,7 @@ function Event({ event, step }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { startLoading, stopLoading } = useLoading();
-  
+
   const menu = useRef(null);
 
   const {
@@ -52,7 +52,10 @@ function Event({ event, step }) {
 
   const lg = event.duration > step * 1.2;
   const sm = event.duration < step;
-  const allowReminder =
+  // Set conditions for sending reminder and approval
+  const allowSendingReminder =
+    status === "active" && reminderStatus === "approved";
+  const allowSendingApproval =
     status === "active" && (!reminderStatus || reminderStatus === "sent");
 
   // SERVICES -----------------------------------------------------------------
@@ -111,15 +114,15 @@ function Event({ event, step }) {
           {
             label: "Hastaya Git",
             icon: "pi pi-arrow-circle-right",
-            style: { fontSize: "0.9rem" },
+            style: { fontSize: "0.8rem" },
             command: handleClickPatient,
           },
           {
             label: "Görüntüle / Düzenle",
             icon: "pi pi-external-link",
-            style: { fontSize: "0.9rem" },
+            style: { fontSize: "0.8rem" },
           },
-          ...(allowReminder
+          ...(allowSendingReminder
             ? [
                 {
                   template: () => (
@@ -127,6 +130,24 @@ function Event({ event, step }) {
                       <Divider type="solid" className="my-2" />
                       <Reminder
                         label="Hatırlatma Gönder"
+                        style={{ width: "100%" }}
+                        onClick={handleClickSendReminder}
+                      />
+                    </>
+                  ),
+                },
+              ]
+            : []),
+          ...(allowSendingApproval
+            ? [
+                {
+                  template: () => (
+                    <>
+                      <Divider type="solid" className="my-2" />
+                      <Reminder
+                        label="Hasta Onayına Gönder"
+                        icon="pi pi-send"
+                        style={{ width: "100%" }}
                         onClick={handleClickSendReminder}
                       />
                     </>
@@ -138,6 +159,7 @@ function Event({ event, step }) {
         ref={menu}
         id="popup_menu"
         popup
+        style={{ padding: "0.5rem" }}
       />
     </>
   );

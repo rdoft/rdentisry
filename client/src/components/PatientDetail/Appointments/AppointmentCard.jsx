@@ -33,7 +33,11 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
     day: "numeric",
   });
   const { name: dname = "", surname: dsurname = "" } = appointment.doctor || {};
-  const allowReminder =
+  // Set conditions for sending reminder and approval
+  const allowSendingReminder =
+    appointment.status === "active" &&
+    appointment.reminderStatus === "approved";
+  const allowSendingApproval =
     appointment.status === "active" &&
     (!appointment.reminderStatus || appointment.reminderStatus === "sent");
 
@@ -95,10 +99,10 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
           {
             label: "Görüntüle / Düzenle",
             icon: "pi pi-external-link",
-            style: { fontSize: "0.9rem" },
+            style: { fontSize: "0.8rem" },
             command: handleClickEdit,
           },
-          ...(allowReminder
+          ...(allowSendingReminder
             ? [
                 {
                   template: () => (
@@ -106,6 +110,24 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
                       <Divider type="solid" className="my-2" />
                       <Reminder
                         label="Hatırlatma Gönder"
+                        style={{ width: "100%" }}
+                        onClick={sendReminder}
+                      />
+                    </>
+                  ),
+                },
+              ]
+            : []),
+          ...(allowSendingApproval
+            ? [
+                {
+                  template: () => (
+                    <>
+                      <Divider type="solid" className="my-2" />
+                      <Reminder
+                        label="Hasta Onayına Gönder"
+                        icon="pi pi-send"
+                        style={{ width: "100%" }}
                         onClick={sendReminder}
                       />
                     </>
@@ -117,6 +139,7 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
         ref={menu}
         id="popup_menu"
         popup
+        style={{ padding: "0.5rem" }}
       />
     </>
   );

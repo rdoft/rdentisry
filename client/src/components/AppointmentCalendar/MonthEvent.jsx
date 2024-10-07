@@ -47,7 +47,10 @@ function MonthEvent({ event }) {
     minute: "2-digit",
   });
 
-  const allowReminder =
+  // Set conditions for sending reminder and approval
+  const allowSendingReminder =
+    status === "active" && reminderStatus === "approved";
+  const allowSendingApproval =
     status === "active" && (!reminderStatus || reminderStatus === "sent");
 
   // SERVICES -----------------------------------------------------------------
@@ -106,15 +109,15 @@ function MonthEvent({ event }) {
           {
             label: "Hastaya Git",
             icon: "pi pi-arrow-circle-right",
-            style: { fontSize: "0.9rem" },
+            style: { fontSize: "0.8rem" },
             command: () => handleClickPatient(),
           },
           {
             label: "Görüntüle / Düzenle",
             icon: "pi pi-external-link",
-            style: { fontSize: "0.9rem" },
+            style: { fontSize: "0.8rem" },
           },
-          ...(allowReminder
+          ...(allowSendingReminder
             ? [
                 {
                   template: () => (
@@ -122,6 +125,24 @@ function MonthEvent({ event }) {
                       <Divider type="solid" className="my-2" />
                       <Reminder
                         label="Hatırlatma Gönder"
+                        style={{ width: "100%" }}
+                        onClick={handleClickSendReminder}
+                      />
+                    </>
+                  ),
+                },
+              ]
+            : []),
+          ...(allowSendingApproval
+            ? [
+                {
+                  template: () => (
+                    <>
+                      <Divider type="solid" className="my-2" />
+                      <Reminder
+                        label="Hasta Onayına Gönder"
+                        icon="pi pi-send"
+                        style={{ width: "100%" }}
                         onClick={handleClickSendReminder}
                       />
                     </>
@@ -133,6 +154,7 @@ function MonthEvent({ event }) {
         ref={menu}
         id="popup_menu"
         popup
+        style={{ padding: "0.5rem" }}
       />
     </>
   );
