@@ -296,6 +296,7 @@ function PaymentsTab({
             completedTotal={completedTotal}
             completed={completedAmount}
             waiting={waitingAmount}
+            remaining={remainingAmount}
             overdue={overdueAmount}
             dept={deptAmount}
             onSendReminder={sendReminder}

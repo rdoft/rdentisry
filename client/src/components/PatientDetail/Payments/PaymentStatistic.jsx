@@ -12,6 +12,7 @@ function PaymentStatistic({
   completedTotal,
   completed,
   waiting,
+  remaining,
   overdue,
   dept,
   onSendReminder,
@@ -28,6 +29,8 @@ function PaymentStatistic({
       : completed > 0
       ? 100
       : 0;
+
+  const allowReminder = overdue > 0 || (remaining <= 0 && dept > 0);
 
   return (
     <Grid container item xs={8} p={2} alignItems="center">
@@ -96,7 +99,7 @@ function PaymentStatistic({
           ></StatisticCard>
         </Grid>
 
-        {(overdue > 0 || dept > 0) && (
+        {allowReminder && (
           <Grid item xs={12} textAlign="center" pt={1}>
             <Reminder label="Hatırlatma Gönder" onClick={onSendReminder} />
           </Grid>
