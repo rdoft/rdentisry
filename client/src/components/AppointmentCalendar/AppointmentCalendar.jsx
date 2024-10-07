@@ -237,9 +237,13 @@ const AppointmentCalendar = () => {
     header: DayHeader,
     timeGutterHeader: TimeGutterHeader,
     timeGutterWrapper: TimeGutter,
-    event: ({ event }) => <Event event={event} step={step.current} />,
+    event: ({ event }) => (
+      <Event event={event} step={step.current} onSubmit={saveAppointment} />
+    ),
     month: {
-      event: MonthEvent,
+      event: ({ event }) => (
+        <MonthEvent event={event} onSubmit={saveAppointment} />
+      ),
     },
   };
 

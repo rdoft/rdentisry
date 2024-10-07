@@ -24,22 +24,22 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
   const [isHover, setIsHover] = useState(false);
 
   // Set values as desired format
-  const description = appointment.description;
-  const duration = appointment.duration;
-  const month = new Date(appointment.date).toLocaleDateString("tr-TR", {
+  const { description, duration, date, status, reminderStatus } = appointment;
+  const { name: dname = "", surname: dsurname = "" } = appointment.doctor || {};
+  const month = new Date(date).toLocaleDateString("tr-TR", {
     month: "long",
   });
-  const day = new Date(appointment.date).toLocaleDateString("tr-TR", {
+  const day = new Date(date).toLocaleDateString("tr-TR", {
     day: "numeric",
   });
-  const { name: dname = "", surname: dsurname = "" } = appointment.doctor || {};
+
   // Set conditions for sending reminder and approval
-  const allowSendingReminder =
-    appointment.status === "active" &&
-    appointment.reminderStatus === "approved";
-  const allowSendingApproval =
-    appointment.status === "active" &&
-    (!appointment.reminderStatus || appointment.reminderStatus === "sent");
+  const showSendReminder = status === "active" && reminderStatus === "approved";
+  const showSendApprove =
+    status === "active" && (!reminderStatus || reminderStatus === "sent");
+  const showRemoveApprove =
+    status === "active" && reminderStatus === "approved";
+  const showApprove = status === "active" && reminderStatus !== "approved";
 
   // SERVICES -----------------------------------------------------------------
   // Send appointment reminder
@@ -71,7 +71,7 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
     onClickEdit(appointment);
   };
 
-  // handleChangeStatus handler
+  // onChangeStatus handler
   const handleChangeStatus = async (status) => {
     setLoading(true);
     await onSubmit({
@@ -79,6 +79,21 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
       status,
     });
     setLoading(false);
+  };
+
+  // onChangeReminderStatus handler
+  const handleChangeReminderStatus = async (reminderStatus) => {
+    await onSubmit({
+      ...appointment,
+      reminderStatus: reminderStatus,
+    });
+  };
+
+  // onRightClick handler
+  const handleRightClick = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    menu.current.toggle(event);
   };
 
   // TEMPLATES ----------------------------------------------------------------
@@ -102,7 +117,26 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
             style: { fontSize: "0.8rem" },
             command: handleClickEdit,
           },
-          ...(allowSendingReminder
+          ...(showApprove
+            ? [
+                {
+                  label: "Onayla",
+                  icon: "pi pi-check",
+                  style: { fontSize: "0.8rem" },
+                  command: () => handleChangeReminderStatus("approved"),
+                },
+              ]
+            : showRemoveApprove
+            ? [
+                {
+                  label: "Onayı Kaldır",
+                  icon: "pi pi-times",
+                  style: { fontSize: "0.8rem" },
+                  command: () => handleChangeReminderStatus(null),
+                },
+              ]
+            : []),
+          ...(showSendReminder
             ? [
                 {
                   template: () => (
@@ -118,7 +152,7 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
                 },
               ]
             : []),
-          ...(allowSendingApproval
+          ...(showSendApprove
             ? [
                 {
                   template: () => (
@@ -153,6 +187,7 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
         style={{ marginTop: "1em", marginBottom: "1em" }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onContextMenu={handleRightClick}
       >
         {/* Reminder Status */}
         <Grid item xs={2} textAlign="center">

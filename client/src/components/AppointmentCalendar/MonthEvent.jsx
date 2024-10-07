@@ -16,7 +16,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 // services
 import { ReminderService } from "services";
 
-function MonthEvent({ event }) {
+function MonthEvent({ event, onSubmit }) {
   const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -48,10 +48,12 @@ function MonthEvent({ event }) {
   });
 
   // Set conditions for sending reminder and approval
-  const allowSendingReminder =
-    status === "active" && reminderStatus === "approved";
-  const allowSendingApproval =
+  const showSendReminder = status === "active" && reminderStatus === "approved";
+  const showSendApprove =
     status === "active" && (!reminderStatus || reminderStatus === "sent");
+  const showRemoveApprove =
+    status === "active" && reminderStatus === "approved";
+  const showApprove = status === "active" && reminderStatus !== "approved";
 
   // SERVICES -----------------------------------------------------------------
   // Send appointment reminder
@@ -72,8 +74,7 @@ function MonthEvent({ event }) {
   const handleRightClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    id && navigate(`/patients/${id}`);
-    dispatch(activeItem({ openItem: ["patients"] }));
+    menu.current.toggle(event);
   };
 
   // onClick patient handler
@@ -88,14 +89,20 @@ function MonthEvent({ event }) {
     eventId && sendReminder();
   };
 
+  // onChangeReminderStatus handler
+  const handleChangeReminderStatus = async (e, reminderStatus) => {
+    e.stopPropagation();
+    onSubmit({ ...event, reminderStatus });
+  };
+
   // TEMPLATES -----------------------------------------------------------------
   // Action button (more)
   const actionButton = (
     <>
       <More
         style={{
-          width: "1rem",
-          height: "1rem",
+          width: "1.2rem",
+          height: "1.2rem",
           padding: "0.25rem 0.5rem",
           color: theme.palette.text.event,
         }}
@@ -110,14 +117,35 @@ function MonthEvent({ event }) {
             label: "Hastaya Git",
             icon: "pi pi-arrow-circle-right",
             style: { fontSize: "0.8rem" },
-            command: () => handleClickPatient(),
+            command: handleClickPatient,
           },
           {
             label: "Görüntüle / Düzenle",
             icon: "pi pi-external-link",
             style: { fontSize: "0.8rem" },
           },
-          ...(allowSendingReminder
+          ...(showApprove
+            ? [
+                {
+                  label: "Onayla",
+                  icon: "pi pi-check",
+                  style: { fontSize: "0.8rem" },
+                  command: (event) =>
+                    handleChangeReminderStatus(event.originalEvent, "approved"),
+                },
+              ]
+            : showRemoveApprove
+            ? [
+                {
+                  label: "Onayı Kaldır",
+                  icon: "pi pi-times",
+                  style: { fontSize: "0.8rem" },
+                  command: (event) =>
+                    handleChangeReminderStatus(event.originalEvent, null),
+                },
+              ]
+            : []),
+          ...(showSendReminder
             ? [
                 {
                   template: () => (
@@ -133,7 +161,7 @@ function MonthEvent({ event }) {
                 },
               ]
             : []),
-          ...(allowSendingApproval
+          ...(showSendApprove
             ? [
                 {
                   template: () => (
@@ -186,7 +214,6 @@ function MonthEvent({ event }) {
                 border: `0.5px solid ${theme.palette.text.eventBorder} `,
                 borderRadius: "5px",
                 padding: "0 0.5rem",
-                
               }}
             >
               <Typography variant="h6" fontWeight="bolder" noWrap>
