@@ -4,7 +4,7 @@ import { useLoading } from "context/LoadingProvider";
 import { Menu, Divider } from "primereact";
 import { Grid, Typography, Box, Avatar } from "@mui/material";
 import { More, Reminder } from "components/Button";
-import { LoadingIcon } from "components/Other";
+import { LoadingIcon, ReminderStatus } from "components/Other";
 import AppointmentStatus from "./AppointmentStatus";
 
 // assets
@@ -149,12 +149,26 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
       <Grid
         container
         alignItems="center"
-        justifyContent="end"
+        justifyContent="space-around"
         style={{ marginTop: "1em", marginBottom: "1em" }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <Grid item xs={7}>
+        {/* Reminder Status */}
+        <Grid item xs={2} textAlign="center">
+          {appointment.status === "active" && (
+            <ReminderStatus
+              status={appointment.reminderStatus}
+              style={{
+                backgroundColor: theme.palette.text.primary,
+                padding: "0.5rem",
+              }}
+            />
+          )}
+        </Grid>
+
+        {/* Appointment Info */}
+        <Grid item xs={6}>
           {/* Date */}
           <Box display="flex" alignItems="center">
             <Typography

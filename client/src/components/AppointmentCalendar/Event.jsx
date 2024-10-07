@@ -7,7 +7,7 @@ import { activeItem } from "store/reducers/menu";
 import { Menu, Divider } from "primereact";
 import { Grid, Typography, Box, Avatar, Tooltip } from "@mui/material";
 import { More, Reminder } from "components/Button";
-import { LoadingIcon } from "components/Other";
+import { LoadingIcon, ReminderStatus } from "components/Other";
 
 // assets
 import { doctorAvatar } from "assets/images/avatars";
@@ -167,7 +167,7 @@ function Event({ event, step }) {
   return temp ? (
     <LoadingIcon style={{ height: "100%", alignItems: "center" }} />
   ) : (
-    <Tooltip title={sm && `${pname} ${psurname}`} placement="top" arrow>
+    <Tooltip title={sm && `${startHours}-${endHours}`} placement="top" arrow>
       <Grid
         container
         onContextMenu={handleRightClick}
@@ -187,20 +187,6 @@ function Event({ event, step }) {
 
         <Grid container>
           {/* Time */}
-          <Grid item xs={12}>
-            <Box
-              display="flex"
-              gap={1}
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <Typography variant="caption" fontWeight="bold">
-                {`${startHours}-${endHours}`}
-              </Typography>
-            </Box>
-          </Grid>
-
-          {/* Patient */}
           {!sm && (
             <Grid item xs={12}>
               <Box
@@ -208,19 +194,37 @@ function Event({ event, step }) {
                 gap={1}
                 alignItems="center"
                 justifyContent="space-between"
-                style={{
-                  border: "0.5px solid",
-                  borderRadius: "5px",
-                  padding: "0.2rem",
-                  margin: "0.4rem 0",
-                }}
               >
-                <Typography variant="h6" fontWeight="bolder" noWrap>
-                  {`${pname} ${psurname}`}
+                <Typography variant="caption" fontWeight="bold">
+                  {`${startHours}-${endHours}`}
                 </Typography>
               </Box>
             </Grid>
           )}
+
+          {/* Patient  - ReminderStatus */}
+          <Grid item xs={sm ? 10 : 12}>
+            <Box
+              display="flex"
+              gap={1}
+              alignItems="center"
+              justifyContent="space-between"
+              style={{
+                border: `0.5px solid ${theme.palette.text.eventBorder} `,
+                borderRadius: "5px",
+                padding: "0.2rem 0.5rem",
+                margin: sm ? "-0.3rem" : "0.4rem 0",
+              }}
+            >
+              <Typography variant="h6" fontWeight="bolder" noWrap>
+                {`${pname} ${psurname}`}
+              </Typography>
+
+              {status === "active" && (
+                <ReminderStatus status={reminderStatus} />
+              )}
+            </Box>
+          </Grid>
 
           {/* Doctor */}
           {lg && dname && (

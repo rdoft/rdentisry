@@ -7,7 +7,7 @@ import { activeItem } from "store/reducers/menu";
 import { Menu, Divider } from "primereact";
 import { Grid, Typography, Box, Tooltip } from "@mui/material";
 import { More, Reminder } from "components/Button";
-import { LoadingIcon } from "components/Other";
+import { LoadingIcon, ReminderStatus } from "components/Other";
 
 // assets
 import { useTheme } from "@mui/material/styles";
@@ -162,7 +162,7 @@ function MonthEvent({ event }) {
   return temp ? (
     <LoadingIcon style={{ height: "100%", alignItems: "center" }} />
   ) : (
-    <Tooltip title={`${pname} ${psurname}`} placement="top" arrow>
+    <Tooltip title={`${startHours}-${endHours}`} placement="top" arrow>
       <Grid container onContextMenu={handleRightClick}>
         <Box
           display="flex"
@@ -176,16 +176,26 @@ function MonthEvent({ event }) {
         </Box>
 
         <Grid container>
-          <Grid item xs={12}>
+          <Grid item xs={10}>
             <Box
               display="flex"
               gap={1}
               alignItems="center"
               justifyContent="space-between"
+              style={{
+                border: `0.5px solid ${theme.palette.text.eventBorder} `,
+                borderRadius: "5px",
+                padding: "0 0.5rem",
+                
+              }}
             >
-              <Typography variant="caption" fontWeight="bold">
-                {`${startHours}-${endHours}`}
+              <Typography variant="h6" fontWeight="bolder" noWrap>
+                {`${pname} ${psurname}`}
               </Typography>
+
+              {status === "active" && (
+                <ReminderStatus status={reminderStatus} />
+              )}
             </Box>
           </Grid>
         </Grid>
