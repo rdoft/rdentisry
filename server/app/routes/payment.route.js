@@ -7,7 +7,7 @@ const controller = require("../controller/payment.controller");
 const schema = require("../schemas/payment.schema");
 
 // Constants
-const API_URL = "/api";
+const API_URL = "/api/payments";
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -22,20 +22,17 @@ module.exports = function (app) {
   router.use(isAuthenticated);
 
   router
-    .route(`/patients/:patientId/payments`)
+    .route(``)
     /**
      * Get payment list of the given patientId
-     * @param {string} patientId id of the patient
+     * @query {string} patientId id of the patient
      * @query {boolean} plan whether to get payment plans or actual payments
      */
-    .get(controller.getPayments);
-
-  router
-    .route(`/payments`)
+    .get(controller.getPayments)
     /**
-     * Update the Payment or Payment Plan
-     * @param paymentId: Id of the Payment or Payment Plan
-     * @query {boolean} plan whether to update payment plan or actual payment
+     * Add a Payment or Payment Plan
+     * @body Payment or Payment Plan information
+     * @query {boolean} plan whether to save payment plan or actual payment
      */
     .post(
       validateOR(schema.payment, schema.paymentPlan, "body"),
@@ -43,7 +40,7 @@ module.exports = function (app) {
     );
 
   router
-    .route(`/payments/:paymentId`)
+    .route(`/:paymentId`)
     /**
      * Update the Payment
      * @param paymentId: Id of the Payment

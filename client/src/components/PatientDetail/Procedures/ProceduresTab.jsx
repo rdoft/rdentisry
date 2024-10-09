@@ -186,10 +186,7 @@ function ProceduresTab({
       startLoading("delete");
       if (Array.isArray(procedure)) {
         for (let p of procedure) {
-          await PatientProcedureService.deletePatientProcedure(
-            patient.id,
-            p.id
-          );
+          await PatientProcedureService.deletePatientProcedure(p.id);
         }
         _selectedProcedures = selectedProcedures
           ? selectedProcedures.filter(
@@ -197,10 +194,7 @@ function ProceduresTab({
             )
           : null;
       } else {
-        await PatientProcedureService.deletePatientProcedure(
-          patient.id,
-          procedure.id
-        );
+        await PatientProcedureService.deletePatientProcedure(procedure.id);
         _selectedProcedures = selectedProcedures
           ? selectedProcedures.filter((item) => item.id !== procedure.id)
           : null;

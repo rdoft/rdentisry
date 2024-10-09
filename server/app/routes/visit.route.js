@@ -8,7 +8,7 @@ const controller = require("../controller/visit.controller");
 const schema = require("../schemas/visit.schema");
 
 // Constants
-const API_URL = "/api";
+const API_URL = "/api/visits";
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -23,23 +23,25 @@ module.exports = function (app) {
   router.use(isAuthenticated);
 
   router
-    .route(`/patients/:patientId/visits`)
+    .route(``)
     /**
      * Get visits for a given patientId
-     * @param patientId id of the patient
+     * @query patientId id of the patient
      */
     .get(controller.getVisits)
     /**
      * Add a new visit
+     * @query patientId id of the patient
      * @body Visit informations along with patientProcedures
      */
     .post(isSubActive, controller.saveVisit);
 
   router
-    .route(`/patients/:patientId/visits/:visitId`)
+    .route(`/:visitId`)
     /**
      * Update the visit
      * @param visitId id of the visit
+     * @query patientId id of the patient
      * @body Visit informations
      */
     .put(

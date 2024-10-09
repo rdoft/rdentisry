@@ -141,7 +141,7 @@ async function createApprovalLink(userId, appointmentId) {
       }
     );
 
-    return `https://${HOST}/reminder/${token}`;
+    return `https://${HOST}/confirm/${token}`;
   } catch (error) {
     log.error.error(error);
     throw new Error(error);

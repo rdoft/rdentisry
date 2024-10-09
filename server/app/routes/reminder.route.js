@@ -1,10 +1,10 @@
 const router = require("express").Router();
-const { isAuthenticated } = require("../middleware/auth");
 const { validate } = require("../middleware/validation");
-const schema = require("../schemas/reminder.schema");
+const { isAuthenticated } = require("../middleware/auth");
 
 // Reminder specific imports
 const controller = require("../controller/reminder.controller");
+const schema = require("../schemas/reminder.schema");
 
 // Constants
 const API_URL = "/api/reminders";

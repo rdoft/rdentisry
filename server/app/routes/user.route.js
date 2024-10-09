@@ -7,7 +7,7 @@ const controller = require("../controller/user.controller");
 const schema = require("../schemas/user.schema");
 
 // Constants
-const API_URL = "/api";
+const API_URL = "/api/user";
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -22,7 +22,7 @@ module.exports = function (app) {
   router.use(isAuthenticated);
 
   router
-    .route(`/user`)
+    .route(``)
     /**
      * Get the user
      * @param userId id of the user
@@ -35,7 +35,7 @@ module.exports = function (app) {
     .put(validate(schema.user, "body"), controller.updateUser);
 
   router
-    .route(`/user/settings`)
+    .route(`/settings`)
     /**
      * Get the user settings
      */

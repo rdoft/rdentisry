@@ -4,6 +4,7 @@ const db = require("../models");
 const User = db.user;
 const Token = db.token;
 const Visit = db.visit;
+const Doctor = db.doctor;
 const Patient = db.patient;
 const Payment = db.payment;
 const PaymentPlan = db.paymentPlan;
@@ -357,8 +358,8 @@ exports.action = async (req, res) => {
         {
           model: Token,
           as: "tokens",
-          Type: "reminder",
           where: {
+            Type: "reminder",
             Token: token,
             Expiration: { [Sequelize.Op.gt]: new Date() },
           },
@@ -425,27 +426,13 @@ exports.action = async (req, res) => {
     });
 
     // Control the appointment is compatible, throw an error
-    if (!appointment) {
+    if (!appointment || appointment.status !== "active") {
       res.status(404).send({
         message:
-          "Randevu bulunamadı. İptal edilmiş veya silinmiş olabilir. Lütfen iletişime geçin",
+          "Aktif randevu bulunamadı. İptal edilmiş veya silinmiş olabilir. Lütfen iletişime geçin",
       });
       log.app.warn(
-        "Update appointment reminder failed: Appointment doesn't exist",
-        {
-          token,
-          success: false,
-        }
-      );
-      return;
-    }
-    if (appointment.status !== "active") {
-      res.status(404).send({
-        message:
-          "Randevu bulunamadı. İptal edilmiş veya silinmiş olabilir. Lütfen iletişime geçin",
-      });
-      log.app.warn(
-        "Update appointment reminder failed: Appointment status is not active",
+        "Update appointment reminder failed: Appointment doesn't exist or not active",
         {
           token,
           success: false,
@@ -470,6 +457,139 @@ exports.action = async (req, res) => {
     log.app.info("Update appointment reminder completed", {
       token,
       success: true,
+    });
+  } catch (error) {
+    res.status(500).send(error);
+    log.error.error(error);
+  }
+};
+
+/**
+ * Control token and send record
+ * @param {string} token - The token to control.
+ * @returns {Appointment} - The appointment record.
+ */
+exports.controlTokenAppointment = async (req, res) => {
+  const { token } = req.params;
+  let user;
+  let appointment;
+  let appointmentId;
+
+  try {
+    user = await User.findOne({
+      include: [
+        {
+          model: Token,
+          as: "tokens",
+          where: {
+            Type: "reminder",
+            Token: token,
+            Expiration: { [Sequelize.Op.gt]: new Date() },
+          },
+          required: true,
+        },
+      ],
+    });
+
+    // If the user or token not found, send an error
+    if (!user) {
+      res
+        .status(400)
+        .send({ message: "Doğrulama linki geçersiz veya süresi dolmuştur" });
+      log.access.warn("Control token failed: Token doesn't exist or expired", {
+        token,
+        success: false,
+        action: "CONTROL",
+        request: {
+          ip: req.headers["x-forwarded-for"],
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
+    }
+
+    // Time safe comparison of the token
+    if (
+      !crypto.timingSafeEqual(
+        Buffer.from(token),
+        Buffer.from(user.tokens[0].Token)
+      )
+    ) {
+      res
+        .status(400)
+        .send({ message: "Doğrulama linki geçersiz veya süresi dolmuştur" });
+      log.access.warn("Control token failed: Token doesn't exist or expired", {
+        token,
+        success: false,
+        action: "CONTROL",
+        request: {
+          ip: req.headers["x-forwarded-for"],
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
+    }
+
+    // Parse the token to get the appointment
+    appointmentId = token.split(":")[1];
+    appointment = await Appointment.findOne({
+      attributes: [
+        ["AppointmentId", "id"],
+        ["Date", "date"],
+        ["StartTime", "startTime"],
+        ["Status", "status"],
+      ],
+      where: { AppointmentId: appointmentId },
+      include: [
+        {
+          model: Doctor,
+          as: "doctor",
+          attributes: [
+            ["DoctorId", "id"],
+            ["Name", "name"],
+            ["Surname", "surname"],
+          ],
+        },
+      ],
+      raw: true,
+      nest: true,
+    });
+
+    // Control the appointment is compatible, send an error
+    if (!appointment || appointment.status !== "active") {
+      res.status(404).send({
+        message:
+          "Randevu bulunamadı. İptal edilmiş veya silinmiş olabilir. Lütfen iletişime geçin",
+      });
+      log.access.warn(
+        "Control token failed: Appointment doesn't exist or not active",
+        {
+          token,
+          success: false,
+          action: "CONTROL",
+          request: {
+            ip: req.headers["x-forwarded-for"],
+            agent: req.headers["user-agent"],
+          },
+        }
+      );
+      return;
+    }
+
+    appointment.startTime = new Date(`1970-01-01T${appointment.startTime}Z`);
+    appointment.endTime = new Date(`1970-01-01T${appointment.endTime}Z`);
+    appointment.doctor = appointment.doctor?.id ? appointment.doctor : null;
+
+    res.status(200).send(appointment);
+    log.access.info("Control token success", {
+      userId: user.UserId,
+      token,
+      success: true,
+      action: "CONTROL",
+      request: {
+        ip: req.headers["x-forwarded-for"],
+        agent: req.headers["user-agent"],
+      },
     });
   } catch (error) {
     res.status(500).send(error);

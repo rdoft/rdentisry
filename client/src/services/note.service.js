@@ -12,7 +12,7 @@ note.updateNote = (id, note) => {
 };
 
 note.getNotes = (patientId, options = {}) => {
-  return API.get(`/patients/${patientId}${API_URL}`, options);
+  return API.get(`${API_URL}?patientId=${patientId}`, options);
 };
 
 note.getNote = (id) => {

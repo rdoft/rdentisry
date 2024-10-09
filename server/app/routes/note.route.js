@@ -8,7 +8,7 @@ const controller = require("../controller/note.controller");
 const schema = require("../schemas/note.schema");
 
 // Constants
-const API_URL = "/api";
+const API_URL = "/api/notes";
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -23,22 +23,19 @@ module.exports = function (app) {
   router.use(isAuthenticated);
 
   router
-    .route(`/patients/:patientId/notes`)
+    .route(``)
     /**
      * Get note list of the given patientId
-     * @param {string} patientId id of the patient
+     * @query {string} patientId id of the patient
      */
-    .get(controller.getNotes);
-
-  router
-    .route(`/notes`)
+    .get(controller.getNotes)
     /**
      * Add a note
      */
     .post(isSubActive, validate(schema.note, "body"), controller.saveNote);
 
   router
-    .route(`/notes/:noteId`)
+    .route(`/:noteId`)
     /**
      * Get an Note
      */

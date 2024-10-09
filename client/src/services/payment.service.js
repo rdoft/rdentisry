@@ -12,7 +12,7 @@ payment.updatePayment = (id, payment, plan = false) => {
 };
 
 payment.getPayments = (patientId, plan = false, options = {}) => {
-  return API.get(`/patients/${patientId}/payments?plan=${plan}`, options);
+  return API.get(`${API_URL}?patientId=${patientId}&plan=${plan}`, options);
 };
 
 payment.deletePayment = (id, plan = false) => {

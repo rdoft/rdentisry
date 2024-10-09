@@ -1,5 +1,4 @@
 const log = require("../config/log.config");
-const Joi = require("joi");
 
 // Validate the request body with given schema
 const validate = (schema, property) => {
