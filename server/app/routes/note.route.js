@@ -38,6 +38,7 @@ module.exports = function (app) {
     .route(`/:noteId`)
     /**
      * Get an Note
+     * @param noteId: Id of the Note
      */
     .get(validate(schema.id, "params"), controller.getNote)
     /**

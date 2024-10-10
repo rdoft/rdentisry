@@ -44,6 +44,7 @@ module.exports = function (app) {
     /**
      * Update the Payment
      * @param paymentId: Id of the Payment
+     * @query {boolean} plan whether to update payment plan or actual payment
      */
     .put(
       validate(schema.id, "params"),

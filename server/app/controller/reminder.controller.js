@@ -20,6 +20,7 @@ const crypto = require("crypto");
 
 /**
  * Send appointment reminder to the patient
+ * @query appointmentId: Id of the Appointment
  */
 exports.remindAppointment = async (req, res) => {
   const { UserId: userId } = req.user;
@@ -167,6 +168,7 @@ exports.remindAppointment = async (req, res) => {
 
 /**
  * Send payment reminder to the patient
+ * @query patientId: Id of the Patient
  */
 exports.remindPayment = async (req, res) => {
   const { UserId: userId } = req.user;
@@ -329,6 +331,8 @@ exports.remindPayment = async (req, res) => {
 
 /**
  * Approve, reject or update an appointment reminder by patient
+ * @param {string} token - The token to control.
+ * @body {string} action - The action to take. "approved", "rejected", "updated"
  */
 exports.action = async (req, res) => {
   const { token } = req.params;

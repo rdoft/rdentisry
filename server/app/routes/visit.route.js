@@ -27,12 +27,13 @@ module.exports = function (app) {
     /**
      * Get visits for a given patientId
      * @query patientId id of the patient
+     * @query approved if the visit is approved
      */
     .get(controller.getVisits)
     /**
      * Add a new visit
      * @query patientId id of the patient
-     * @body Visit informations along with patientProcedures
+     * @body patientProcedures list of patient procedures
      */
     .post(isSubActive, controller.saveVisit);
 
@@ -41,7 +42,6 @@ module.exports = function (app) {
     /**
      * Update the visit
      * @param visitId id of the visit
-     * @query patientId id of the patient
      * @body Visit informations
      */
     .put(

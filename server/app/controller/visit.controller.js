@@ -8,6 +8,7 @@ const PatientProcedure = db.patientProcedure;
 /**
  * Get visits for a given patientId
  * @query patientId id of the patient
+ * @query approved filter by approved status
  */
 exports.getVisits = async (req, res) => {
   const { UserId: userId } = req.user;
@@ -84,7 +85,7 @@ exports.getVisits = async (req, res) => {
 /**
  * Add a new visit
  * @query patientId id of the patient
- * @body Visit informations along with patientProcedures
+ * @body patientProcedures list of patient procedures
  */
 exports.saveVisit = async (req, res) => {
   const { UserId: userId } = req.user;
@@ -180,12 +181,11 @@ exports.saveVisit = async (req, res) => {
 /**
  * Update the visit
  * @param visitId id of the visit
- * @query patientId id of the patient
  * @body Visit informations
  */
 exports.updateVisit = async (req, res) => {
   const { UserId: userId } = req.user;
-  const { visitId } = req.query;
+  const { visitId } = req.params;
   const { title, description, discount, approvedDate } = req.body;
   let visit;
 

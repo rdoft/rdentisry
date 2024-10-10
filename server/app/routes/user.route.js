@@ -25,11 +25,12 @@ module.exports = function (app) {
     .route(``)
     /**
      * Get the user
-     * @param userId id of the user
+     * userId is taken from the request itself
      */
     .get(controller.getUser)
     /**
      * Update the user
+     * userId is taken from the request itself
      * @body name and password
      */
     .put(validate(schema.user, "body"), controller.updateUser);
@@ -38,10 +39,12 @@ module.exports = function (app) {
     .route(`/settings`)
     /**
      * Get the user settings
+     * userId is taken from the request itself
      */
     .get(controller.getSettings)
     /**
      * Update the user settings
+     * userId is taken from the request itself
      * @body settings - The user's settings like apointmentReminder
      */
     .put(controller.updateSettings);

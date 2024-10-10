@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt");
 
 /**
  * Get the user
+ * userId is taken from the request itself
  */
 exports.getUser = async (req, res) => {
   const { UserId: userId } = req.user;
@@ -64,6 +65,7 @@ exports.getUser = async (req, res) => {
 
 /**
  * Update the user
+ * userId is taken from the request itself
  * @body name and password
  */
 exports.updateUser = async (req, res) => {
@@ -168,6 +170,7 @@ exports.updateUser = async (req, res) => {
 
 /**
  * Get the user settings
+ * userId is taken from the request itself
  */
 exports.getSettings = async (req, res) => {
   const { UserId: userId } = req.user;
@@ -212,7 +215,8 @@ exports.getSettings = async (req, res) => {
 
 /**
  * Update the user settings
- * @body preference
+ * userId is taken from the request itself
+ * @body settings - The user's settings like apointmentReminder
  */
 exports.updateSettings = async (req, res) => {
   const { UserId: userId } = req.user;

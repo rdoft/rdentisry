@@ -12,6 +12,7 @@ patient.getPatients = (payments = null, options = {}) => {
 
 /**
  * Get patient by id
+ * @param id id of the patient
  */
 patient.getPatient = (id, options = {}) => {
   return API.get(`${API_URL}/${id}`, options);
@@ -53,7 +54,6 @@ patient.deletePatient = (id) => {
 
 /**
  * Delete patients of the given Ids
- * If ids not given then delete all patients
  * @query ids: Id list of patients
  */
 patient.deletePatients = (ids) => {

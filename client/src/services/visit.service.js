@@ -6,6 +6,7 @@ let visit = {};
 /**
  * Get visits for a given patientId
  * @query patientId id of the patient
+ * @query approved filter by approved status
  */
 visit.getVisits = (patientId, approved = null, options = {}) => {
   return API.get(
@@ -28,11 +29,10 @@ visit.saveVisit = (patientId, patientProcedures) => {
 /**
  * Update the visit to the patient
  * @param visitId id of the visit
- * @query patientId id of the patient
  * @body visit informations
  */
 visit.updateVisit = (visit) => {
-  return API.put(`${API_URL}/${visit.id}?patientId=${visit.patient.id}`, visit);
+  return API.put(`${API_URL}/${visit.id}`, visit);
 };
 
 /**

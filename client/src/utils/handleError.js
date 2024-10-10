@@ -10,7 +10,7 @@ const handleError = (error) => {
     return {
       status: 500,
       message:
-        "Bağlantı hatası! İnternet bağlantınızı kontrol edin ve daha sonra tekrar deneyiniz",
+        "Bilinmeyen bir hata oluştu, lütfen internet bağlantınızı kontrol ediniz ve daha sonra tekrar deneyiniz. Sorunun devam etmesi halinde lütfen destek ekibimiz ile iletişime geçiniz.",
     };
   } else if (error.response.status === 401) {
     // If the status is 401, show a session expired message or redirect to the pricing page

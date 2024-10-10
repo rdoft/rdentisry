@@ -6,6 +6,7 @@ const ProcedureCategory = db.procedureCategory;
 
 /**
  * Get Procedure list
+ * @query categoryId: Category Id
  */
 exports.getProcedures = async (req, res) => {
   const { UserId: userId } = req.user;

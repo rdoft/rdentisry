@@ -21,8 +21,8 @@ reminder.remindPayment = (patientId) => {
 
 /**
  * Update a reminder field of an Appointment
- * @params token
- * @body Reminder field of the Appointment
+ * @params {string} token
+ * @body {object} action - reminder status of the appointment
  */
 reminder.action = (token, action) => {
   return API.put(`${API_URL}/appointments/${token}`, action);

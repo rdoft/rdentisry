@@ -26,6 +26,7 @@ module.exports = function (app) {
     .route(``)
     /**
      * Get Procedure list
+     * @query categoryId: Category Id
      */
     .get(controller.getProcedures)
     /**
