@@ -74,10 +74,10 @@ function AppointmentConfirmation() {
   };
 
   // HANDLERS ---------------------------------------------------------
-  const handleAction = (event) => {
-    const { name } = event.target;
-    saveConfirmation({ action: name });
-  };
+  // onClick handlers for action buttons
+  const handleApproved = () => saveConfirmation({ action: "approved" });
+  const handleUpdated = () => saveConfirmation({ action: "updated" });
+  const handleRejected = () => saveConfirmation({ action: "rejected" });
 
   return loading ? (
     <Loading />
@@ -165,7 +165,7 @@ function AppointmentConfirmation() {
                   name="approved"
                   label="Randevuya Geleceğim"
                   size="small"
-                  onClick={handleAction}
+                  onClick={handleApproved}
                   style={{
                     color: theme.palette.common.white,
                     backgroundColor: theme.palette.text.secondary,
@@ -179,7 +179,7 @@ function AppointmentConfirmation() {
                   name="updated"
                   label="Değişiklik Talep Et"
                   size="small"
-                  onClick={handleAction}
+                  onClick={handleUpdated}
                   style={{
                     color: theme.palette.text.secondary,
                   }}
@@ -191,7 +191,7 @@ function AppointmentConfirmation() {
                   label="İptal Et"
                   size="small"
                   className="p-button-danger"
-                  onClick={handleAction}
+                  onClick={handleRejected}
                 />
               </Grid>
             </Grid>

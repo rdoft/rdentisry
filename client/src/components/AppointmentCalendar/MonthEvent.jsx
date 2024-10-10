@@ -95,13 +95,18 @@ function MonthEvent({ event, onSubmit }) {
     onSubmit({ ...event, reminderStatus });
   };
 
+  // onMouseLeave handler
+  const handleMouseLeave = (event) => {
+    menu.current.hide(event);
+  };
+
   // TEMPLATES -----------------------------------------------------------------
   // Action button (more)
   const actionButton = (
     <>
       <More
         style={{
-          width: "1.2rem",
+          width: "1.4rem",
           height: "1.2rem",
           padding: "0.25rem 0.5rem",
           color: theme.palette.text.event,
@@ -191,14 +196,20 @@ function MonthEvent({ event, onSubmit }) {
     <LoadingIcon style={{ height: "100%", alignItems: "center" }} />
   ) : (
     <Tooltip title={`${startHours}-${endHours}`} placement="top" arrow>
-      <Grid container onContextMenu={handleRightClick}>
+      <Grid
+        container
+        position="relative"
+        style={{ height: "100%" }}
+        onContextMenu={handleRightClick}
+        onMouseLeave={handleMouseLeave}
+      >
         <Box
           display="flex"
           alignItems="center"
           justifyContent="end"
           position="absolute"
-          top={0}
-          right={0}
+          top={3}
+          right={3}
         >
           {actionButton}
         </Box>
@@ -213,7 +224,7 @@ function MonthEvent({ event, onSubmit }) {
               style={{
                 border: `0.5px solid ${theme.palette.text.eventBorder} `,
                 borderRadius: "5px",
-                padding: "0 0.5rem",
+                padding: "0.1rem 0.2rem",
               }}
             >
               <Typography variant="h6" fontWeight="bolder" noWrap>

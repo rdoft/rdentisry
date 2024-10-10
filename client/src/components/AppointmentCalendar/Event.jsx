@@ -100,13 +100,18 @@ function Event({ event, step, onSubmit }) {
     onSubmit({ ...event, reminderStatus });
   };
 
+  // onMouseLeave handler
+  const handleMouseLeave = (event) => {
+    menu.current.hide(event);
+  };
+
   // TEMPLATES -----------------------------------------------------------------
   // Action button (more)
   const actionButton = (
     <>
       <More
         style={{
-          width: "1.2rem",
+          width: "1.4rem",
           height: "1.2rem",
           padding: "0.25rem 0.5rem",
           color: theme.palette.text.event,
@@ -198,9 +203,10 @@ function Event({ event, step, onSubmit }) {
     <Tooltip title={sm && `${startHours}-${endHours}`} placement="top" arrow>
       <Grid
         container
-        onContextMenu={handleRightClick}
-        direction="column"
+        position="relative"
         style={{ height: "100%" }}
+        onContextMenu={handleRightClick}
+        onMouseLeave={handleMouseLeave}
       >
         <Box
           display="flex"

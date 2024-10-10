@@ -125,21 +125,32 @@ function createPaymentMessage(fullName, client, dept) {
  * @param {String} appointmentId - The id of the appointment.
  */
 async function createApprovalLink(userId, appointmentId) {
-  let token;
-
   try {
-    token = crypto.randomBytes(32).toString("hex") + ":" + appointmentId;
-    await Token.upsert(
-      {
+    const token = crypto.randomBytes(32).toString("hex") + ":" + appointmentId;
+
+    // Upsert the token for the user (userId - appointmentId pair)
+    const existingToken = await Token.findOne({
+      where: {
+        UserId: userId,
+        Type: "reminder",
+        Token: {
+          [Sequelize.Op.endsWith]: `:${appointmentId}`,
+        },
+      },
+    });
+    if (existingToken) {
+      await existingToken.update({
+        Token: token,
+        Expiration: new Date(Date.now() + 172800000), // 2 days
+      });
+    } else {
+      await Token.create({
         UserId: userId,
         Token: token,
         Expiration: new Date(Date.now() + 172800000), // 2 days
         Type: "reminder",
-      },
-      {
-        where: { UserId: userId, Type: "reminder" },
-      }
-    );
+      });
+    }
 
     return `https://${HOST}/confirm/${token}`;
   } catch (error) {

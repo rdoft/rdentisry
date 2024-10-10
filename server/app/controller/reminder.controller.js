@@ -405,7 +405,10 @@ exports.action = async (req, res) => {
 
     // Delete the token
     await Token.destroy({
-      where: { Token: token },
+      where: { 
+        UserId: user.UserId,
+        Token: token 
+      },
     });
     log.app.info("Update appointment reminder token found and deleted", {
       userId: user.UserId,

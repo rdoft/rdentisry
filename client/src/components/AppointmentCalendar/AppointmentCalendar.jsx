@@ -37,6 +37,7 @@ const AppointmentCalendar = () => {
   const timeslots = useRef(2);
 
   // const [step, setStep] = useState(30);
+  const [resizable, setResizable] = useState(true);
   const [showAll, setShowAll] = useState(
     localStorage.getItem("showAllAppointment") === "true"
   );
@@ -153,6 +154,11 @@ const AppointmentCalendar = () => {
   // onSelectEvent handler for goto patient page
   const handleSelectEvent = async (event) => {
     handleClickEdit(event.id);
+  };
+
+  // onView handler for set view
+  const handleView = (view) => {
+    setResizable(view === "week");
   };
 
   // onSelectSlot handler for add new appointment
@@ -340,6 +346,8 @@ const AppointmentCalendar = () => {
         }
         formats={formats}
         selectable="ignoreEvents"
+        resizable={resizable}
+        onView={handleView}
         onSelectEvent={handleSelectEvent}
         onSelectSlot={handleSelectSlot}
         onEventResize={handleResizeEvent}
