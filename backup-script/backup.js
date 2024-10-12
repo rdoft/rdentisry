@@ -18,7 +18,6 @@ const LOG_SRC = "/logs";
 // Backup paths and names
 const DB_PATH = "/backup/db";
 const LOG_PATH = "/backup/logs";
-const BACKUP_NAME = new Date().toISOString().replace(/[:.]/g, "-");
 
 // Retention policies
 const DB_RETAIN_DAYS = 7;
@@ -37,7 +36,8 @@ process.on("uncaughtException", (err) => {
 
 // Backup the database
 const backupDb = async (type) => {
-  const dest = path.join(DB_PATH, type, `${BACKUP_NAME}.sql`);
+  const name = new Date().toISOString().replace(/[:.]/g, "-");
+  const dest = path.join(DB_PATH, type, `${name}.sql`);
 
   try {
     // Dump the database to a temporary file inside the Docker container
@@ -53,7 +53,8 @@ const backupDb = async (type) => {
 
 // Backup logs
 const backupLogs = async () => {
-  const dest = path.join(LOG_PATH, `${BACKUP_NAME}.tar.gz`);
+  const name = new Date().toISOString().replace(/[:.]/g, "-");
+  const dest = path.join(LOG_PATH, `${name}.tar.gz`);
 
   try {
     // Archive the logs inside the Docker container
