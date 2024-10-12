@@ -86,6 +86,12 @@ cron.schedule("00 22 * * *", () => {
   notification.run();
 });
 
+// Schedule the reminder to run every day at a specific time
+const reminder = require("./app/services/reminder.service");
+cron.schedule("00 15 * * *", () => {
+  reminder.run();
+});
+
 // SERVER HTTPS
 // options for https server
 const options = {

@@ -1,25 +1,39 @@
-import React, { useState } from "react";
+import React, { useRef } from "react";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useLoading } from "context/LoadingProvider";
 import { activeItem } from "store/reducers/menu";
+import { Menu, Divider } from "primereact";
 import { Grid, Typography, Box, Avatar, Tooltip } from "@mui/material";
-import { Goto } from "components/Button";
-import { LoadingIcon } from "components/Other";
+import { More, Reminder } from "components/Button";
+import { LoadingIcon, ReminderStatus } from "components/Other";
 
 // assets
-import { doctorAvatar, patientAvatar } from "assets/images/avatars";
+import { doctorAvatar } from "assets/images/avatars";
 import { useTheme } from "@mui/material/styles";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-function Event({ event, step }) {
+// services
+import { ReminderService } from "services";
+
+function Event({ event, step, onSubmit }) {
   const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { startLoading, stopLoading } = useLoading();
 
-  const [isHover, setIsHover] = useState(false);
-  const [isHoverName, setIsHoverName] = useState(false);
+  const menu = useRef(null);
 
-  const { description, start, end, temp } = event;
+  const {
+    id: eventId = null,
+    status = null,
+    reminderStatus = null,
+    description,
+    start,
+    end,
+    temp,
+  } = event;
   const { name: dname = "", surname: dsurname = "" } = event.doctor || {};
   const {
     id = null,
@@ -36,100 +50,212 @@ function Event({ event, step }) {
     minute: "2-digit",
   });
 
-  const lg = event.duration >= step;
-  const sm = event.duration <= step / 2;
+  const lg = event.duration > step * 1.2;
+  const sm = event.duration < step;
+  // Set conditions for sending reminder and approval
+  const showSendReminder = status === "active" && reminderStatus === "approved";
+  const showSendApprove =
+    status === "active" && (!reminderStatus || reminderStatus === "sent");
+  const showRemoveApprove =
+    status === "active" && reminderStatus === "approved";
+  const showApprove = status === "active" && reminderStatus !== "approved";
+
+  // SERVICES -----------------------------------------------------------------
+  // Send appointment reminder
+  const sendReminder = async () => {
+    try {
+      startLoading("send");
+      await ReminderService.remindAppointment(eventId);
+      toast.success("Hatırlatma mesajı başarıyla gönderildi");
+    } catch (error) {
+      error.message && toast.error(error.message);
+    } finally {
+      stopLoading("send");
+    }
+  };
 
   // HANDLERS -----------------------------------------------------------------
-  // onMouseEnter handler for display buttons
-  const handleMouseEnter = () => {
-    setIsHover(true);
-  };
-
-  // onMouseLeave handler for hide buttons
-  const handleMouseLeave = () => {
-    setIsHover(false);
-  };
-
-  // onMouseEnter handler for patient
-  const handleMouseEnterPatient = () => {
-    setIsHoverName(true);
-  };
-
-  // onMouseLeave handler for patient
-  const handleMouseLeavePatient = () => {
-    setIsHoverName(false);
-  };
-
   // onClick handler
-  const handleClick = (event) => {
-    event.preventDefault();
+  const handleRightClick = (event) => {
     event.stopPropagation();
+    event.preventDefault();
+    menu.current.toggle(event);
+  };
+
+  // onClick patient handler
+  const handleClickPatient = () => {
     id && navigate(`/patients/${id}`);
     dispatch(activeItem({ openItem: ["patients"] }));
   };
 
+  // onClick send reminder handler
+  const handleClickSendReminder = (event) => {
+    event.stopPropagation();
+    eventId && sendReminder();
+  };
+
+  // onChangeReminderStatus handler
+  const handleChangeReminderStatus = (e, reminderStatus) => {
+    e.stopPropagation();
+    onSubmit({ ...event, reminderStatus });
+  };
+
+  // onMouseLeave handler
+  const handleMouseLeave = (event) => {
+    menu.current.hide(event);
+  };
+
+  // TEMPLATES -----------------------------------------------------------------
+  // Action button (more)
+  const actionButton = (
+    <>
+      <More
+        style={{
+          width: "1.4rem",
+          height: "1.2rem",
+          padding: "0.25rem 0.5rem",
+          color: theme.palette.text.event,
+        }}
+        onClick={(event) => {
+          event.stopPropagation();
+          menu.current.toggle(event);
+        }}
+      />
+      <Menu
+        model={[
+          {
+            label: "Hastaya Git",
+            icon: "pi pi-arrow-circle-right",
+            style: { fontSize: "0.8rem" },
+            command: handleClickPatient,
+          },
+          {
+            label: "Görüntüle / Düzenle",
+            icon: "pi pi-external-link",
+            style: { fontSize: "0.8rem" },
+          },
+          ...(showApprove
+            ? [
+                {
+                  label: "Onayla",
+                  icon: "pi pi-check",
+                  style: { fontSize: "0.8rem" },
+                  command: (event) =>
+                    handleChangeReminderStatus(event.originalEvent, "approved"),
+                },
+              ]
+            : showRemoveApprove
+            ? [
+                {
+                  label: "Onayı Kaldır",
+                  icon: "pi pi-times",
+                  style: { fontSize: "0.8rem" },
+                  command: (event) =>
+                    handleChangeReminderStatus(event.originalEvent, null),
+                },
+              ]
+            : []),
+          ...(showSendReminder
+            ? [
+                {
+                  template: () => (
+                    <>
+                      <Divider type="solid" className="my-2" />
+                      <Reminder
+                        label="Hatırlatma Gönder"
+                        style={{ width: "100%" }}
+                        onClick={handleClickSendReminder}
+                      />
+                    </>
+                  ),
+                },
+              ]
+            : []),
+          ...(showSendApprove
+            ? [
+                {
+                  template: () => (
+                    <>
+                      <Divider type="solid" className="my-2" />
+                      <Reminder
+                        label="Hasta Onayına Gönder"
+                        icon="pi pi-send"
+                        style={{ width: "100%" }}
+                        onClick={handleClickSendReminder}
+                      />
+                    </>
+                  ),
+                },
+              ]
+            : []),
+        ]}
+        ref={menu}
+        id="popup_menu"
+        popup
+        style={{ padding: "0.5rem" }}
+      />
+    </>
+  );
+
   return temp ? (
     <LoadingIcon style={{ height: "100%", alignItems: "center" }} />
   ) : (
-    <Tooltip
-      title={isHoverName ? "Hastaya git" : "Görüntüle / Düzenle"}
-      placement="bottom"
-      followCursor={true}
-    >
+    <Tooltip title={sm && `${startHours}-${endHours}`} placement="top" arrow>
       <Grid
         container
-        onContextMenu={handleClick}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        direction="column"
+        position="relative"
         style={{ height: "100%" }}
+        onContextMenu={handleRightClick}
+        onMouseLeave={handleMouseLeave}
       >
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="end"
+          position="absolute"
+          top={0}
+          right={0}
+        >
+          {actionButton}
+        </Box>
+
         <Grid container>
           {/* Time */}
-          <Grid item xs={sm ? 5 : 12}>
-            <Box display="flex" gap={1} alignItems="center">
-              {!sm && <Typography variant="h5">⏱️</Typography>}
-              <Typography variant="caption">
-                {`${startHours}-${endHours}`}
-              </Typography>
-            </Box>
-          </Grid>
-
-          {/* Patient */}
-          <Grid
-            item
-            xs={sm && 7}
-            onClick={handleClick}
-            onMouseEnter={handleMouseEnterPatient}
-            onMouseLeave={handleMouseLeavePatient}
-          >
-            <Box display="flex" gap={1} alignItems="center">
-              {!sm && (
-                <Avatar
-                  alt="avatar"
-                  src={patientAvatar}
-                  shape="circle"
-                  style={{ width: "18px", height: "18px", padding: "1px" }}
-                />
-              )}
-              <Typography
-                variant={!sm ? "h6" : "caption"}
-                fontWeight="bolder"
-                noWrap
+          {!sm && (
+            <Grid item xs={12}>
+              <Box
+                display="flex"
+                gap={1}
+                alignItems="center"
+                justifyContent="space-between"
               >
+                <Typography variant="caption" fontWeight="bold">
+                  {`${startHours}-${endHours}`}
+                </Typography>
+              </Box>
+            </Grid>
+          )}
+
+          {/* Patient  - ReminderStatus */}
+          <Grid item xs={sm ? 10 : 12}>
+            <Box
+              display="flex"
+              gap={1}
+              alignItems="center"
+              justifyContent="space-between"
+              style={{
+                border: `0.5px solid ${theme.palette.text.eventBorder} `,
+                borderRadius: "5px",
+                padding: "0.2rem 0.5rem",
+                margin: sm ? "-0.3rem" : "0.4rem 0",
+              }}
+            >
+              <Typography variant="h6" fontWeight="bolder" noWrap>
                 {`${pname} ${psurname}`}
               </Typography>
 
-              {/* Goto buttton */}
-              {isHover && (
-                <Goto
-                  severity="info"
-                  style={{
-                    color: theme.palette.text.event,
-                    padding: "0.1rem",
-                    width: "auto",
-                  }}
-                />
+              {status === "active" && (
+                <ReminderStatus status={reminderStatus} />
               )}
             </Box>
           </Grid>

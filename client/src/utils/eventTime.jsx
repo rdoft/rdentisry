@@ -55,6 +55,8 @@ function setEventTime({ date, startTime, endTime, ...event }) {
     date,
     start,
     end,
+    startTime,
+    endTime,
     ...event,
   };
 }

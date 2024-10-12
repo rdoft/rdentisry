@@ -7,7 +7,7 @@ const controller = require("../controller/user.controller");
 const schema = require("../schemas/user.schema");
 
 // Constants
-const API_URL = "/api";
+const API_URL = "/api/user";
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -22,17 +22,32 @@ module.exports = function (app) {
   router.use(isAuthenticated);
 
   router
-    .route(`/user`)
+    .route(``)
     /**
      * Get the user
-     * @param userId id of the user
+     * userId is taken from the request itself
      */
     .get(controller.getUser)
     /**
      * Update the user
+     * userId is taken from the request itself
      * @body name and password
      */
     .put(validate(schema.user, "body"), controller.updateUser);
+
+  router
+    .route(`/settings`)
+    /**
+     * Get the user settings
+     * userId is taken from the request itself
+     */
+    .get(controller.getSettings)
+    /**
+     * Update the user settings
+     * userId is taken from the request itself
+     * @body settings - The user's settings like apointmentReminder
+     */
+    .put(controller.updateSettings);
 
   app.use(API_URL, router);
 };

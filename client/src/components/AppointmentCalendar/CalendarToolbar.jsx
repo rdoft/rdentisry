@@ -109,11 +109,10 @@ function CalendarToolbar({
   };
 
   // onChange handler for doctor dropdown
-  const handleChangeDropdown = (event) => {
-    let value = event.target && event.target.value;
-    setDoctor(value);
-    value
-      ? localStorage.setItem("doctor", JSON.stringify(value))
+  const handleChangeDoctor = (doctor) => {
+    setDoctor(doctor);
+    doctor
+      ? localStorage.setItem("doctor", JSON.stringify(doctor))
       : localStorage.removeItem("doctor");
   };
 
@@ -139,26 +138,15 @@ function CalendarToolbar({
 
   // Get doctor dropdown
   const centerContent = () => (
-    <div
-      style={{
-        position: "absolute",
-        left: "50%",
-        transform: "translateX(-50%)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <DropdownDoctor
-        key={doctor?.id}
-        value={doctor}
-        options={doctors}
-        onChange={handleChangeDropdown}
-        onClickAdd={showDoctorDialog}
-        onClickDelete={deleteDoctor}
-        style={{ alignItems: "center", height: "2.5rem" }}
-      />
-    </div>
+    <DropdownDoctor
+      key={doctor?.id}
+      value={doctor}
+      options={doctors}
+      onChange={handleChangeDoctor}
+      onClickAdd={showDoctorDialog}
+      onClickDelete={deleteDoctor}
+      style={{ alignItems: "center", height: "2.5rem", width: "20rem" }}
+    />
   );
 
   // Get showAll switch

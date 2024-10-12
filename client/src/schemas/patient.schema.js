@@ -22,6 +22,7 @@ const patient = Joi.object({
     .default(null)
     .empty("")
     .allow(null),
+  isSMS: Joi.boolean().empty(null).default(false),
 }).unknown();
 
 const id = Joi.object({

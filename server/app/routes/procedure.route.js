@@ -8,7 +8,7 @@ const controller = require("../controller/procedure.controller");
 const schema = require("../schemas/procedure.schema");
 
 // Constants
-const API_URL = "/api";
+const API_URL = "/api/procedures";
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -23,9 +23,10 @@ module.exports = function (app) {
   router.use(isAuthenticated);
 
   router
-    .route(`/procedures`)
+    .route(``)
     /**
      * Get Procedure list
+     * @query categoryId: Category Id
      */
     .get(controller.getProcedures)
     /**
@@ -44,7 +45,7 @@ module.exports = function (app) {
     .delete(validate(schema.ids, "query"), controller.deleteProcedures);
 
   router
-    .route(`/procedures/:procedureId`)
+    .route(`/:procedureId`)
     /**
      * Get the procedure with given id
      * @param procedureId id of the procedure

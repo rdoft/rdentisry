@@ -12,7 +12,7 @@ const controller = require("../controller/patient.controller");
 const schema = require("../schemas/patient.schema");
 
 // Constants
-const API_URL = "/api";
+const API_URL = "/api/patients";
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -27,7 +27,7 @@ module.exports = function (app) {
   router.use(isAuthenticated);
 
   router
-    .route(`/patients`)
+    .route(``)
     /**
      * Get patient list
      */
@@ -46,10 +46,16 @@ module.exports = function (app) {
      * Delete patients of the given Ids
      * @query patientId: Id list of patients
      */
-    .delete(validate(schema.ids, "query"), controller.deletePatients);
+    .delete(validate(schema.ids, "query"), controller.deletePatients)
+    /**
+     * Update patients of the given Ids
+     * @query patientId: Id list of patients
+     * @body Patient informations
+     */
+    .put(validate(schema.ids, "query"), controller.updatePatientsPermission);
 
   router
-    .route(`/patients/:patientId`)
+    .route(`/:patientId`)
     /**
      * Get the patient with given id
      * @param patientId id of the patient

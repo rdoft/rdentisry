@@ -23,6 +23,9 @@ const ResetPassword = Loadable(
 const Verify = Loadable(lazy(() => import("pages/Auth/VerifyPage")));
 const Verified = Loadable(lazy(() => import("pages/Auth/VerifiedPage")));
 const NotFound = Loadable(lazy(() => import("pages/Other/NotFoundPage")));
+const AppointmentConfirmation = Loadable(
+  lazy(() => import("pages/Confirmation/AppointmentConfirmationPage"))
+);
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -50,6 +53,10 @@ const MainRoutes = [
   {
     path: "/verify/:token",
     element: <Verified />,
+  },
+  {
+    path: "/confirm/:token",
+    element: <AppointmentConfirmation />,
   },
   {
     path: "/",

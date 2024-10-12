@@ -97,6 +97,7 @@ exports.run = async () => {
       ],
       order: [
         [{ model: PaymentPlan, as: "paymentPlans" }, "PlannedDate", "ASC"],
+        [{ model: PaymentPlan, as: "paymentPlans" }, "PaymentPlanId", "ASC"],
       ],
     });
 

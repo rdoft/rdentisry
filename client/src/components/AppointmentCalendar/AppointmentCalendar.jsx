@@ -37,6 +37,7 @@ const AppointmentCalendar = () => {
   const timeslots = useRef(2);
 
   // const [step, setStep] = useState(30);
+  const [resizable, setResizable] = useState(true);
   const [showAll, setShowAll] = useState(
     localStorage.getItem("showAllAppointment") === "true"
   );
@@ -73,7 +74,8 @@ const AppointmentCalendar = () => {
   const filteredAppointments = appointments.filter(
     (appointment) =>
       (!doctor || appointment.doctor?.id === doctor?.id) &&
-      (showAll || appointment.status === "active")
+      (showAll || appointment.status === "active") &&
+      appointment.status !== "canceled"
   );
 
   // SERVICES -----------------------------------------------------------------
@@ -152,6 +154,11 @@ const AppointmentCalendar = () => {
   // onSelectEvent handler for goto patient page
   const handleSelectEvent = async (event) => {
     handleClickEdit(event.id);
+  };
+
+  // onView handler for set view
+  const handleView = (view) => {
+    setResizable(view === "week");
   };
 
   // onSelectSlot handler for add new appointment
@@ -236,9 +243,13 @@ const AppointmentCalendar = () => {
     header: DayHeader,
     timeGutterHeader: TimeGutterHeader,
     timeGutterWrapper: TimeGutter,
-    event: ({ event }) => <Event event={event} step={step.current} />,
+    event: ({ event }) => (
+      <Event event={event} step={step.current} onSubmit={saveAppointment} />
+    ),
     month: {
-      event: MonthEvent,
+      event: ({ event }) => (
+        <MonthEvent event={event} onSubmit={saveAppointment} />
+      ),
     },
   };
 
@@ -309,7 +320,9 @@ const AppointmentCalendar = () => {
         setShowAll={setShowAll}
       />
       <DnDCalendar
-        style={{ height: "calc(100vh - 130px)" }}
+        style={{
+          height: "calc(100vh - 130px)",
+        }}
         messages={messages}
         localizer={localizer}
         events={events}
@@ -333,6 +346,8 @@ const AppointmentCalendar = () => {
         }
         formats={formats}
         selectable="ignoreEvents"
+        resizable={resizable}
+        onView={handleView}
         onSelectEvent={handleSelectEvent}
         onSelectSlot={handleSelectSlot}
         onEventResize={handleResizeEvent}

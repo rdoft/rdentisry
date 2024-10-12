@@ -10,19 +10,25 @@
 
 .rbc-event {
   background-color: var(--palette-background-event) !important;
-  border-width: 1px !important;
-  border-color: var(--palette-common-white) !important;
-  color: var(--palette-text-event) !important;
+  color: var(--palette-text-primary) !important;
+  border: 0.5px solid var(--palette-text-eventBorder) !important;
+  border-left: 3px solid var(--palette-text-event) !important;
   transition: 0.3s;
   min-height: 2em !important;
+  padding: 0.5em !important;
 }
 
+.rbc-event:hover {
+  color: var(--palette-text-event) !important;
+}
+
+.rbc-addons-dnd-drag-preview,
 .rbc-event:active,
 .rbc-event:focus {
-  background-color: var(--palette-background-event) !important;
-  border-width: 1px !important;
-  border-color: var(--palette-common-white) !important;
+  border: 1px solid var(--palette-text-event) !important;
+  border-left: 3px solid var(--palette-text-event) !important;
   color: var(--palette-text-event) !important;
+  transform: scale(1.05);
 }
 
 .rbc-event-label {
@@ -57,9 +63,20 @@
 }
 
 .rbc-current-time-indicator {
-  background-color: var(--palette-text-event);
+  background-color: var(--palette-text-secondary);
   width: 100%;
   height: 2px;
+}
+
+.rbc-current-time-indicator::before {
+  content: "";
+  background-color: var(--palette-text-secondary);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: absolute;
+  top: -4px;
+  right: 0;
 }
 
 .rbc-toolbar-label {

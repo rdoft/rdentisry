@@ -46,6 +46,11 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      ReminderStatus: {
+        type: Sequelize.ENUM,
+        allowNull: true,
+        values: ["sent", "approved", "rejected", "updated"],
+      },
     },
     {
       indexes: [

@@ -17,6 +17,8 @@ import Tooth from "./Tooth";
 import Print from "./Print";
 import SwitchTeeth from "./SwitchTeeth";
 import Logout from "./Logout";
+import Permission from "./Permission";
+import Reminder from "./Reminder";
 
 export {
   Add,
@@ -38,4 +40,6 @@ export {
   Print,
   SwitchTeeth,
   Logout,
+  Permission,
+  Reminder,
 };

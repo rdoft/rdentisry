@@ -5,6 +5,7 @@ const User = db.user;
 const Token = db.token;
 const Agreement = db.agreement;
 
+const { controlTokenAppointment } = require("./reminder.controller");
 const { sendResetMail, sendVerifyMail } = require("../utils/mail.util");
 const dns = require("dns").promises;
 const crypto = require("crypto");
@@ -178,8 +179,13 @@ exports.google = async (req, res) => {
  */
 exports.controlToken = async (req, res) => {
   const { token } = req.params;
-  const { type = "reset" } = req.query; // reset or email
+  const { type = "reset" } = req.query; // reset, email or reminder
   let user;
+
+  // Redirect controlToken to reminder appointment if type is "reminder"
+  if (type === "reminder") {
+    return controlTokenAppointment(req, res);
+  }
 
   try {
     user = await User.findOne({
@@ -187,8 +193,8 @@ exports.controlToken = async (req, res) => {
         {
           model: Token,
           as: "tokens",
-          Type: type,
           where: {
+            Type: type,
             Token: token,
             Expiration: {
               [Sequelize.Op.gt]: Date.now(),
@@ -207,7 +213,7 @@ exports.controlToken = async (req, res) => {
       log.access.warn("Control token failed: Token doesn't exist or expired", {
         token,
         success: false,
-        action: "RESET",
+        action: "CONTROL",
         request: {
           ip: req.headers["x-forwarded-for"],
           agent: req.headers["user-agent"],
@@ -229,7 +235,7 @@ exports.controlToken = async (req, res) => {
       log.access.warn("Control token failed: Token doesn't exist or expired", {
         token,
         success: false,
-        action: "RESET",
+        action: "CONTROL",
         request: {
           ip: req.headers["x-forwarded-for"],
           agent: req.headers["user-agent"],
@@ -243,7 +249,7 @@ exports.controlToken = async (req, res) => {
       userId: user.UserId,
       token,
       success: true,
-      action: "RESET",
+      action: "CONTROL",
       request: {
         ip: req.headers["x-forwarded-for"],
         agent: req.headers["user-agent"],
@@ -335,8 +341,8 @@ exports.reset = async (req, res) => {
         {
           model: Token,
           as: "tokens",
-          Type: "reset",
           where: {
+            Type: "reset",
             Token: token,
             Expiration: {
               [Sequelize.Op.gt]: Date.now(),
@@ -506,8 +512,8 @@ exports.completeVerify = async (req, res) => {
         {
           model: Token,
           as: "tokens",
-          Type: "email",
           where: {
+            Type: "email",
             Token: token,
             Expiration: {
               [Sequelize.Op.gt]: Date.now(),

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dropdown, Button, Divider } from "primereact";
 import DropdownProcedureCategoryItem from "./DropdownItem/DropdownProcedureCategoryItem";
 
@@ -12,6 +12,20 @@ function DropdownProcedureCategory({
   onClickAdd,
   ...props
 }) {
+  const [procedureCategory, setProcedureCategory] = useState(value);
+  const procedureCategories = options;
+
+  // HANDLERS ------------------------------------------------------------------
+  // onChange handler
+  const handleChange = (event) => {
+    const { value } = event.target;
+    const procedureCategory_ = procedureCategories.find(
+      (procedureCategory) => procedureCategory.id === value
+    );
+    setProcedureCategory(procedureCategory_);
+    onChange(procedureCategory_);
+  };
+
   // TEMPLATES -----------------------------------------------------------------
   // Dropdown item template
   const procedureCategoryDropdownItem = (option) => {
@@ -38,14 +52,15 @@ function DropdownProcedureCategory({
 
   return (
     <Dropdown
-      value={value}
+      value={procedureCategory?.id}
       name="procedureCategory"
-      options={options}
+      options={procedureCategories}
+      optionValue="id"
       optionLabel="title"
       itemTemplate={procedureCategoryDropdownItem}
       valueTemplate={procedureCategoryDropdownItem}
       panelFooterTemplate={procedureCategoryDropdownFooter}
-      onChange={onChange}
+      onChange={handleChange}
       style={props?.style}
       placeholder="Kategori seçiniz..."
     />

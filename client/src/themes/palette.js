@@ -47,19 +47,21 @@ const Palette = (mode) => {
       background: {
         primary: "#f5f5f5",
         secondary: "#eff2fd",
-        event: "#e3eef9",
+        event: "#f8f5ff",
         success: "#dff6ec",
         error: "#ffd2cb",
         warning: "#fffadd",
         info: "#e8f0ff",
         today: "#ebeff4",
+
         paper: paletteColor.grey[0],
         default: paletteColor.grey.A50,
       },
       text: {
         primary: "#21273d",
         secondary: "#143CF7",
-        event: "#333c5e",
+        event: "#6d40d3",
+        eventBorder: "#b092ef",
         success: "#22a06a",
         error: "#ef4444",
         warning: "#a44800",

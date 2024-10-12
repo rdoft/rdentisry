@@ -10,7 +10,7 @@ notification.getNotifications = (status, options = {}) => {
   if (status) {
     return API.get(`${API_URL}?status=${status}`, options);
   } else {
-    return API.get(`${API_URL}`, options);
+    return API.get(API_URL, options);
   }
 };
 
@@ -28,7 +28,7 @@ notification.updateNotification = (notification) => {
  * @body status of the notification
  */
 notification.updateNotifications = (status) => {
-  return API.put(`${API_URL}`, { status });
+  return API.put(API_URL, { status });
 };
 
 export default notification;

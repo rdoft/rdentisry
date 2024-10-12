@@ -42,7 +42,6 @@ procedure.deleteProcedure = (id) => {
 
 /**
  * Delete procedures of the given Ids
- * If ids not given then delete all procedures
  * @query ids: Id list of procedures
  */
 procedure.deleteProcedures = (ids) => {

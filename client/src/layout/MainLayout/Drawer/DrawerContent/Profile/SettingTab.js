@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
+import { InputSwitch } from "primereact";
 import {
   Avatar,
   List,
+  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -13,6 +15,7 @@ import { useLoading } from "context/LoadingProvider";
 
 // assets
 import lockSvg from "assets/svg/profile/lock.svg";
+import reminderSvg from "assets/svg/profile/reminder.svg";
 
 // services
 import { UserService } from "services";
@@ -24,6 +27,26 @@ const SettingTab = () => {
   const { startLoading, stopLoading } = useLoading();
 
   const [passwordDialog, setPasswordDialog] = useState(false);
+  const [settings, setSettings] = useState({ appointmentReminder: false });
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    startLoading("SettingTab");
+    UserService.getUser({ signal })
+      .then((res) => {
+        const response = res.data;
+        setSettings(response.userSetting);
+      })
+      .catch((error) => {
+        error.message && toast.error(error.message);
+      })
+      .finally(() => stopLoading("SettingTab"));
+    return () => {
+      controller.abort();
+    };
+  }, [startLoading, stopLoading]);
 
   // SERVICES ----------------------------------------------------------------
   // Change password
@@ -33,6 +56,19 @@ const SettingTab = () => {
       await UserService.saveUser(user);
       setPasswordDialog(false);
       toast.success("Şifreniz başarıyla güncellendi");
+    } catch (error) {
+      error.message && toast.error(error.message);
+    } finally {
+      stopLoading("save");
+    }
+  };
+
+  // Save user settings
+  const saveSettings = async (settings) => {
+    startLoading("save");
+    try {
+      await UserService.saveSettings(settings);
+      setSettings(settings);
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
@@ -51,6 +87,14 @@ const SettingTab = () => {
     setPasswordDialog(false);
   };
 
+  // Handler for reminder settings
+  const handleChangeReminder = (event) => {
+    saveSettings({
+      ...settings,
+      appointmentReminder: event.value,
+    });
+  };
+
   return (
     <>
       <List
@@ -63,6 +107,7 @@ const SettingTab = () => {
           },
         }}
       >
+        {/* Change Password */}
         <ListItemButton
           onClick={showPasswordDialog}
           sx={{
@@ -87,6 +132,23 @@ const SettingTab = () => {
           </ListItemIcon>
           <ListItemText primary="Şifreyi Değiştir" />
         </ListItemButton>
+
+        {/* Reminder preferece */}
+        <ListItem>
+          <ListItemIcon>
+            <Avatar src={reminderSvg} sx={{ width: 16, height: 16 }} />
+          </ListItemIcon>
+          <ListItemText
+            primary="Otomatik Hatırlatma"
+            secondary="SMS izni verdiğiniz hastalara otomatik randevu hatırlatma mesajı gönderilir."
+          />
+          <div style={{ marginLeft: "10px" }}>
+            <InputSwitch
+              checked={settings.appointmentReminder}
+              onChange={handleChangeReminder}
+            />
+          </div>
+        </ListItem>
       </List>
 
       {/* Change Password Dialog */}

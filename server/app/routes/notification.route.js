@@ -5,7 +5,7 @@ const { isAuthenticated } = require("../middleware/auth");
 const controller = require("../controller/notification.controller");
 
 // Constants
-const API_URL = "/api";
+const API_URL = "/api/notifications";
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -20,7 +20,7 @@ module.exports = function (app) {
   router.use(isAuthenticated);
 
   router
-    .route(`/notifications`)
+    .route(``)
     /**
      * Get notification list
      */
@@ -31,7 +31,7 @@ module.exports = function (app) {
     .put(controller.updateNotifications);
 
   router
-    .route(`/notifications/:notificationId`)
+    .route(`/:notificationId`)
     /**
      * Update the Notification
      * @param notificationId: Id of the Notification

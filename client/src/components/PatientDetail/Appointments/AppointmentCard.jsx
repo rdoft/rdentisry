@@ -1,27 +1,59 @@
-import React, { useState } from "react";
-import { Divider } from "primereact";
+import React, { useState, useRef } from "react";
+import { toast } from "react-hot-toast";
+import { useLoading } from "context/LoadingProvider";
+import { Menu, Divider } from "primereact";
 import { Grid, Typography, Box, Avatar } from "@mui/material";
-import { Edit } from "components/Button";
-import { LoadingIcon } from "components/Other";
+import { More, Reminder } from "components/Button";
+import { LoadingIcon, ReminderStatus } from "components/Other";
 import AppointmentStatus from "./AppointmentStatus";
 
 // assets
 import { doctorAvatar } from "assets/images/avatars";
+import { useTheme } from "@mui/material/styles";
+
+// services
+import { ReminderService } from "services";
 
 function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
+  const theme = useTheme();
+  const { startLoading, stopLoading } = useLoading();
+
+  const menu = useRef(null);
+
   const [loading, setLoading] = useState(false);
   const [isHover, setIsHover] = useState(false);
 
   // Set values as desired format
-  const description = appointment.description;
-  const duration = appointment.duration;
-  const month = new Date(appointment.date).toLocaleDateString("tr-TR", {
+  const { description, duration, date, status, reminderStatus } = appointment;
+  const { name: dname = "", surname: dsurname = "" } = appointment.doctor || {};
+  const month = new Date(date).toLocaleDateString("tr-TR", {
     month: "long",
   });
-  const day = new Date(appointment.date).toLocaleDateString("tr-TR", {
+  const day = new Date(date).toLocaleDateString("tr-TR", {
     day: "numeric",
   });
-  const { name: dname = "", surname: dsurname = "" } = appointment.doctor || {};
+
+  // Set conditions for sending reminder and approval
+  const showSendReminder = status === "active" && reminderStatus === "approved";
+  const showSendApprove =
+    status === "active" && (!reminderStatus || reminderStatus === "sent");
+  const showRemoveApprove =
+    status === "active" && reminderStatus === "approved";
+  const showApprove = status === "active" && reminderStatus !== "approved";
+
+  // SERVICES -----------------------------------------------------------------
+  // Send appointment reminder
+  const sendReminder = async () => {
+    try {
+      startLoading("send");
+      await ReminderService.remindAppointment(appointment.id);
+      toast.success("Hatırlatma mesajı başarıyla gönderildi");
+    } catch (error) {
+      error.message && toast.error(error.message);
+    } finally {
+      stopLoading("send");
+    }
+  };
 
   // HANDLERS -----------------------------------------------------------------
   // onMouseEnter handler for display buttons
@@ -39,7 +71,7 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
     onClickEdit(appointment);
   };
 
-  // handleChangeStatus handler
+  // onChangeStatus handler
   const handleChangeStatus = async (status) => {
     setLoading(true);
     await onSubmit({
@@ -49,17 +81,129 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
     setLoading(false);
   };
 
+  // onChangeReminderStatus handler
+  const handleChangeReminderStatus = async (reminderStatus) => {
+    await onSubmit({
+      ...appointment,
+      reminderStatus: reminderStatus,
+    });
+  };
+
+  // onRightClick handler
+  const handleRightClick = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    menu.current.toggle(event);
+  };
+
+  // TEMPLATES ----------------------------------------------------------------
+  const actionButton = (
+    <>
+      <More
+        style={{
+          width: "2rem",
+          height: "2rem",
+          color: theme.palette.text.primary,
+        }}
+        onClick={(event) => {
+          menu.current.toggle(event);
+        }}
+      />
+      <Menu
+        model={[
+          {
+            label: "Görüntüle / Düzenle",
+            icon: "pi pi-external-link",
+            style: { fontSize: "0.8rem" },
+            command: handleClickEdit,
+          },
+          ...(showApprove
+            ? [
+                {
+                  label: "Onayla",
+                  icon: "pi pi-check",
+                  style: { fontSize: "0.8rem" },
+                  command: () => handleChangeReminderStatus("approved"),
+                },
+              ]
+            : showRemoveApprove
+            ? [
+                {
+                  label: "Onayı Kaldır",
+                  icon: "pi pi-times",
+                  style: { fontSize: "0.8rem" },
+                  command: () => handleChangeReminderStatus(null),
+                },
+              ]
+            : []),
+          ...(showSendReminder
+            ? [
+                {
+                  template: () => (
+                    <>
+                      <Divider type="solid" className="my-2" />
+                      <Reminder
+                        label="Hatırlatma Gönder"
+                        style={{ width: "100%" }}
+                        onClick={sendReminder}
+                      />
+                    </>
+                  ),
+                },
+              ]
+            : []),
+          ...(showSendApprove
+            ? [
+                {
+                  template: () => (
+                    <>
+                      <Divider type="solid" className="my-2" />
+                      <Reminder
+                        label="Hasta Onayına Gönder"
+                        icon="pi pi-send"
+                        style={{ width: "100%" }}
+                        onClick={sendReminder}
+                      />
+                    </>
+                  ),
+                },
+              ]
+            : []),
+        ]}
+        ref={menu}
+        id="popup_menu"
+        popup
+        style={{ padding: "0.5rem" }}
+      />
+    </>
+  );
+
   return (
     <>
       <Grid
         container
         alignItems="center"
-        justifyContent="end"
+        justifyContent="space-around"
         style={{ marginTop: "1em", marginBottom: "1em" }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onContextMenu={handleRightClick}
       >
-        <Grid item xs={7}>
+        {/* Reminder Status */}
+        <Grid item xs={2} textAlign="center">
+          {appointment.status === "active" && (
+            <ReminderStatus
+              status={appointment.reminderStatus}
+              style={{
+                backgroundColor: theme.palette.text.primary,
+                padding: "0.5rem",
+              }}
+            />
+          )}
+        </Grid>
+
+        {/* Appointment Info */}
+        <Grid item xs={6}>
           {/* Date */}
           <Box display="flex" alignItems="center">
             <Typography
@@ -126,7 +270,7 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
 
         {/* Edit Button */}
         <Grid item xl={1} xs={1} textAlign="end">
-          {isHover && <Edit onClick={handleClickEdit} />}
+          {isHover && actionButton}
         </Grid>
       </Grid>
 

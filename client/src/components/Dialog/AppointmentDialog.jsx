@@ -190,6 +190,30 @@ function AppointmentDialog({
     });
   };
 
+  // onChangePatient handler
+  const handleChangePatient = (patient) => {
+    setAppointment((prev) => {
+      const _appointment = { ...prev, patient };
+      const _isValid = schema.appointment.validate(_appointment).error
+        ? false
+        : true;
+      setIsValid(_isValid);
+      return _appointment;
+    });
+  };
+
+  // onChangeDoctor handler
+  const handleChangeDoctor = (doctor) => {
+    setAppointment((prev) => {
+      const _appointment = { ...prev, doctor };
+      const _isValid = schema.appointment.validate(_appointment).error
+        ? false
+        : true;
+      setIsValid(_isValid);
+      return _appointment;
+    });
+  };
+
   // onHide handler
   const handleHide = () => {
     onHide();
@@ -255,7 +279,7 @@ function AppointmentDialog({
             key={appointment.patient?.id}
             value={appointment.patient}
             options={patients}
-            onChange={handleChange}
+            onChange={handleChangePatient}
             onClickAdd={showPatientDialog}
             style={{ alignItems: "center", height: "3rem" }}
           />
@@ -267,7 +291,7 @@ function AppointmentDialog({
             key={appointment.doctor?.id}
             value={appointment.doctor}
             options={doctors}
-            onChange={handleChange}
+            onChange={handleChangeDoctor}
             onClickAdd={showDoctorDialog}
             style={{ alignItems: "center", height: "3rem" }}
           />

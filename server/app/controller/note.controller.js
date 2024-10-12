@@ -6,11 +6,11 @@ const Patient = db.patient;
 
 /**
  * Get note list of the given patientId
- * @param {string} patientId id of the patient
+ * @query {string} patientId id of the patient
  */
 exports.getNotes = async (req, res) => {
   const { UserId: userId } = req.user;
-  const { patientId } = req.params;
+  const { patientId } = req.query;
   let notes;
 
   try {

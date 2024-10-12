@@ -9,13 +9,12 @@ const { processPatientPayments } = require("../utils/payment.util");
 
 /**
  * Get payment list of the given patientId
- * @param {string} patientId id of the patient
+ * @query {string} patientId id of the patient
  * @query {boolean} plan whether to get payment plans or actual payments
  */
 exports.getPayments = async (req, res) => {
   const { UserId: userId } = req.user;
-  const { patientId } = req.params;
-  const { plan } = req.query;
+  const { patientId, plan } = req.query;
   let payments;
 
   try {

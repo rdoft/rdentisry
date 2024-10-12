@@ -21,7 +21,7 @@ const processPatientsPayments = (patients) => {
     });
 
     // Reduce the paymentPlans as much as payments amount
-    patient.PaymentPlans = processPatientPayments(
+    patient.paymentPlans = processPatientPayments(
       patient.paymentPlans,
       totalPaidPlan
     );

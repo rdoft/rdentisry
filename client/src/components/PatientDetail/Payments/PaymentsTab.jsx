@@ -24,6 +24,7 @@ import {
   PaymentService,
   VisitService,
   PatientProcedureService,
+  ReminderService,
 } from "services";
 
 function PaymentsTab({
@@ -197,6 +198,19 @@ function PaymentsTab({
     }
   };
 
+  // Send payment reminder
+  const sendReminder = async () => {
+    try {
+      startLoading("send");
+      await ReminderService.remindPayment(patient.id);
+      toast.success("Ödeme hatırlatma mesajı başarıyla gönderildi");
+    } catch (error) {
+      error.message && toast.error(error.message);
+    } finally {
+      stopLoading("send");
+    }
+  };
+
   // HANDLERS -----------------------------------------------------------------
   // onSelectEvent, get payment and show dialog
   const handleSelectPayment = async (event) => {
@@ -282,8 +296,10 @@ function PaymentsTab({
             completedTotal={completedTotal}
             completed={completedAmount}
             waiting={waitingAmount}
+            remaining={remainingAmount}
             overdue={overdueAmount}
             dept={deptAmount}
+            onSendReminder={sendReminder}
           />
 
           {/* Timeline */}

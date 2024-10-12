@@ -29,8 +29,9 @@ function DropdownProcedure({
   // onChange handler
   const handleChange = (event) => {
     const { value } = event.target;
-    setProcedure(value);
-    onChange(event);
+    const procedure_ = options.find((procedure) => procedure.id === value);
+    setProcedure(procedure_);
+    onChange(procedure_);
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -68,10 +69,11 @@ function DropdownProcedure({
 
   return (
     <Dropdown
-      value={procedure}
+      value={procedure?.id}
       name="procedure"
       options={options}
-      optionLabel="name"
+      optionValue="id"
+      optionLabel="id"
       valueTemplate={procedureDropdownValue}
       itemTemplate={procedureDropdownItem}
       panelFooterTemplate={procedureDropdownFooter}

@@ -9,6 +9,7 @@ import BaseProcedureDialog from "./BaseProcedureDialog";
 import UserAgreementDialog from "./UserAgreementDialog";
 import ProfileDialog from "./ProfileDialog";
 import ResetPasswordDialog from "./ResetPasswordDialog";
+import PatientPermissionDialog from "./PatientPermissionDialog";
 
 export {
   DialogTemp,
@@ -22,4 +23,5 @@ export {
   UserAgreementDialog,
   ProfileDialog,
   ResetPasswordDialog,
+  PatientPermissionDialog,
 };

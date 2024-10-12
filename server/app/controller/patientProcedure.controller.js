@@ -8,15 +8,14 @@ const PatientProcedure = db.patientProcedure;
 const ProcedureCategory = db.procedureCategory;
 
 /**
- * Get the procedures of the selected visit
- * @param patientId id of the patient
+ * Get the procedures of the selected patient
+ * @query patientId id of the patient
  * @query tooth: number of the tooth
  * @query completed: flag for completed/noncompleted
  */
 exports.getPatientProcedures = async (req, res) => {
   const { UserId: userId } = req.user;
-  const { patientId } = req.params;
-  let { tooth, completed } = req.query;
+  let { patientId, tooth, completed } = req.query;
   completed =
     completed === "true" ? true : completed === "false" ? false : null;
   let visits;
@@ -110,11 +109,12 @@ exports.getPatientProcedures = async (req, res) => {
 
 /**
  * Add a procedure to the patient
+ * @query patientId id of the patient
  * @body PatientProcedure informations
  */
 exports.savePatientProcedure = async (req, res) => {
   const { UserId: userId } = req.user;
-  const { patientId } = req.params;
+  const { patientId } = req.query;
   const { toothNumber, procedure, visit, price } = req.body;
   let patient;
   let procedure_;
@@ -223,13 +223,15 @@ exports.savePatientProcedure = async (req, res) => {
 };
 
 /**
- * Update a procedure of the patient
+ * Update a procedure to the patient
  * @param patientProcedureId id of the patientprocedure
+ * @query patientId id of the patient
  * @body tooth and procedure informations
  */
 exports.updatePatientProcedure = async (req, res) => {
   const { UserId: userId } = req.user;
-  const { patientProcedureId, patientId } = req.params;
+  const { patientProcedureId } = req.params;
+  const { patientId } = req.query;
   const { toothNumber, completedDate, visit, price } = req.body;
   let patientProcedure;
   let patient;

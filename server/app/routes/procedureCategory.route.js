@@ -5,7 +5,7 @@ const { isAuthenticated } = require("../middleware/auth");
 const controller = require("../controller/procedureCategory.controller");
 
 // Constants
-const API_URL = "/api";
+const API_URL = "/api/procedure-categories";
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -20,7 +20,7 @@ module.exports = function (app) {
   router.use(isAuthenticated);
 
   router
-    .route(`/procedure-categories`)
+    .route(``)
     /**
      * Get procedure categories
      */
@@ -32,7 +32,7 @@ module.exports = function (app) {
     .post(controller.saveProcedureCategory);
 
   router
-    .route(`/procedure-categories/:procedureCategoryId`)
+    .route(`/:procedureCategoryId`)
     /**
      * Delete the category
      * @param procedureCategoryId: Id of the category

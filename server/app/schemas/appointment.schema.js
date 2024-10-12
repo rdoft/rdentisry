@@ -16,6 +16,7 @@ const appointment = Joi.object({
     .required(),
   description: Joi.string().default(null).empty("").allow(null),
   status: Joi.string().default("active").empty(null),
+  reminderStatus: Joi.string().default(null).empty("").allow(null),
   duration: Joi.number().empty(null).allow(null),
 }).unknown();
 

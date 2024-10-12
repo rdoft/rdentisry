@@ -195,9 +195,9 @@ const Profile = () => {
               <Paper
                 sx={{
                   boxShadow: theme.customShadows.z1,
-                  width: 290,
+                  width: 360,
                   minWidth: 240,
-                  maxWidth: 290,
+                  maxWidth: 360,
                   [theme.breakpoints.down("md")]: {
                     maxWidth: 250,
                   },
@@ -296,7 +296,7 @@ const Profile = () => {
                                   }}
                                 />
                               }
-                              label="Güvenlik"
+                              label="Ayarlar"
                               {...a11yProps(1)}
                             />
                           </Tabs>

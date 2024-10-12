@@ -5,6 +5,7 @@ let user = {};
 
 /**
  * Get user information
+ * userId is already in the request
  */
 user.getUser = (options = {}) => {
   return API.get(API_URL, options);
@@ -12,9 +13,27 @@ user.getUser = (options = {}) => {
 
 /**
  * Update user name and password
+ * userId is already in the request
  */
 user.saveUser = (user) => {
   return API.put(API_URL, user);
+};
+
+/**
+ * Get user settings
+ * userId is already in the request
+ */
+user.getSettings = () => {
+  return API.get(`${API_URL}/settings`);
+};
+
+/**
+ * Update user settings
+ * userId is already in the request
+ * @body {object} setting - The user's preference like reminder
+ */
+user.saveSettings = (settings) => {
+  return API.put(`${API_URL}/settings`, settings);
 };
 
 export default user;

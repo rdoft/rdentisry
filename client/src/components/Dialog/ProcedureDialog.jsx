@@ -109,13 +109,7 @@ function ProcedureDialog({
     let _isError = { ...isError };
     let _patientProcedure;
 
-    if (name === "procedure") {
-      _patientProcedure = {
-        ...patientProcedure,
-        procedure: value,
-        price: value.price,
-      };
-    } else if (name === "amount") {
+    if (name === "amount") {
       _patientProcedure = {
         ...patientProcedure,
         price: value,
@@ -135,6 +129,23 @@ function ProcedureDialog({
 
     setPatientProcedure(_patientProcedure);
     setIsError(_isError);
+    setIsValid(_isValid);
+  };
+
+  // onChangeProcedure handler
+  const handleChangeProcedure = (procedure) => {
+    const _patientProcedure = {
+      ...patientProcedure,
+      procedure: procedure,
+      price: procedure.price,
+    };
+    const _isValid =
+      _patientProcedure.patient &&
+      _patientProcedure.procedure &&
+      !isError.amount &&
+      !isError.quantity;
+
+    setPatientProcedure(_patientProcedure);
     setIsValid(_isValid);
   };
 
@@ -206,7 +217,7 @@ function ProcedureDialog({
           key={patientProcedure.procedure?.id}
           value={patientProcedure.procedure}
           options={procedures}
-          onChange={handleChange}
+          onChange={handleChangeProcedure}
           onClickOptions={handleClickProcedureOptions}
           style={{ alignItems: "center", height: "3rem" }}
         />

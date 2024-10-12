@@ -6,7 +6,7 @@ const { isSubActive } = require("../middleware/subscription");
 const controller = require("../controller/patientProcedure.controller");
 
 // Constants
-const API_URL = "/api";
+const API_URL = "/api/patient-procedures";
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -21,32 +21,32 @@ module.exports = function (app) {
   router.use(isAuthenticated);
 
   router
-    .route(`/patients/:patientId/procedures`)
+    .route(``)
     /**
      * Get the procedures of the selected patient
-     * @param patientId id of the patient
+     * @query patientId id of the patient
      * @query tooth: number of the tooth
      * @query completed: flag for completed/noncompleted
      */
     .get(controller.getPatientProcedures)
     /**
      * Add a procedure to the patient
+     * @query patientId id of the patient
      * @body PatientProcedure informations
      */
     .post(isSubActive, controller.savePatientProcedure);
 
   router
-    .route(`/patients/:patientId/procedures/:patientProcedureId`)
+    .route(`/:patientProcedureId`)
     /**
      * Delete the procedure
-     * @param patientId id of the patient
      * @param patientProcedureId: id of the patientProcedure
      */
     .delete(controller.deletePatientProcedure)
     /**
      * Update a procedure of the patient
-     * @param patientId id of the patient
      * @param patientProcedureId id of the patientprocedure
+     * @query patientId id of the patient
      * @body tooth and procedure informations
      */
     .put(controller.updatePatientProcedure);

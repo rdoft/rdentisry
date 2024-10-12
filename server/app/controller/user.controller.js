@@ -2,12 +2,13 @@ const log = require("../config/log.config");
 const { Sequelize } = require("../models");
 const db = require("../models");
 const User = db.user;
+const UserSetting = db.userSetting;
 
 const bcrypt = require("bcrypt");
 
 /**
  * Get the user
- * @param userId id of the user
+ * userId is taken from the request itself
  */
 exports.getUser = async (req, res) => {
   const { UserId: userId } = req.user;
@@ -24,6 +25,13 @@ exports.getUser = async (req, res) => {
       where: {
         UserId: userId,
       },
+      include: [
+        {
+          model: UserSetting,
+          as: "userSetting",
+          attributes: [["AppointmentReminder", "appointmentReminder"]],
+        },
+      ],
     });
 
     if (user) {
@@ -57,7 +65,7 @@ exports.getUser = async (req, res) => {
 
 /**
  * Update the user
- * @param userId id of the user
+ * userId is taken from the request itself
  * @body name and password
  */
 exports.updateUser = async (req, res) => {
@@ -152,6 +160,140 @@ exports.updateUser = async (req, res) => {
       request: {
         ip: req.headers["x-forwarded-for"],
         agent: req.headers["user-agent"],
+      },
+    });
+  } catch (error) {
+    res.status(500).send(error);
+    log.error.error(error);
+  }
+};
+
+/**
+ * Get the user settings
+ * userId is taken from the request itself
+ */
+exports.getSettings = async (req, res) => {
+  const { UserId: userId } = req.user;
+  let settings;
+
+  try {
+    settings = await UserSetting.findOne({
+      attributes: [["AppointmentReminder", "appointmentReminder"]],
+      where: {
+        UserId: userId,
+      },
+    });
+
+    if (settings) {
+      res.status(200).send(settings);
+      log.audit.info(`Get user settings completed`, {
+        userId,
+        action: "GET",
+        success: true,
+        resource: {
+          type: "user",
+          id: userId,
+        },
+      });
+    } else {
+      res.status(404).send({ message: "Kullanıcı ayarları mevcut değil" });
+      log.audit.warn(`Get user settings failed: User settings doesn't exist`, {
+        userId,
+        action: "GET",
+        success: false,
+        resource: {
+          type: "user",
+          id: userId,
+        },
+      });
+    }
+  } catch (error) {
+    res.status(500).send(error);
+    log.error.error(error);
+  }
+};
+
+/**
+ * Update the user settings
+ * userId is taken from the request itself
+ * @body settings - The user's settings like apointmentReminder
+ */
+exports.updateSettings = async (req, res) => {
+  const { UserId: userId } = req.user;
+  const { appointmentReminder } = req.body;
+  let settings;
+
+  try {
+    settings = await UserSetting.findOne({
+      where: {
+        UserId: userId,
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: [["Name", "name"]],
+        },
+      ],
+      raw: true,
+      nest: true,
+    });
+
+    // Control if the user setting exist
+    if (!settings) {
+      res.status(404).send({ message: "Kullanıcı ayarları mevcut değil" });
+      log.audit.warn(
+        `Update user settings failed: User settings doesn't exist`,
+        {
+          userId,
+          action: "PUT",
+          success: false,
+          resource: {
+            type: "user",
+            id: userId,
+          },
+        }
+      );
+      return;
+    }
+
+    // Control if the user name exists
+    if (!settings.user.name) {
+      res.status(400).send({
+        message: "Otomatik hatırlatma gönderebilmek için hesap adınızı ekleyin",
+      });
+      log.audit.warn(`Update user settings failed: User name doesn't exist`, {
+        userId,
+        action: "PUT",
+        success: false,
+        resource: {
+          type: "user",
+          id: userId,
+        },
+      });
+      return;
+    }
+
+    // Update the user settings
+    await UserSetting.update(
+      {
+        AppointmentReminder: appointmentReminder,
+      },
+      {
+        where: {
+          UserId: userId,
+        },
+      }
+    );
+
+    res.status(200).send({ id: settings.UserSettingId });
+    log.audit.info(`Update user settings completed`, {
+      userId,
+      action: "PUT",
+      success: true,
+      resource: {
+        type: "user",
+        id: userId,
       },
     });
   } catch (error) {

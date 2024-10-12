@@ -1,11 +1,11 @@
 import API from "config/api.config";
-const API_URL = "/patients";
+const API_URL = "/patient-procedures";
 
 let patientProcedure = {};
 
 /**
  * Get the procedures of the selected patient
- * @param patientId id of the patient
+ * @query patientId id of the patient
  * @query tooth: number of the tooth
  * @query completed: flag for completed/noncompleted
  */
@@ -14,33 +14,30 @@ patientProcedure.getPatientProcedures = (
   options = {}
 ) => {
   if (tooth) {
-    return API.get(
-      `${API_URL}/${patientId}/procedures?tooth=${tooth}`,
-      options
-    );
+    return API.get(`${API_URL}?patientId=${patientId}&tooth=${tooth}`, options);
   } else {
-    return API.get(`${API_URL}/${patientId}/procedures`, options);
+    return API.get(`${API_URL}?patientId=${patientId}`, options);
   }
 };
 
 /**
  * Add a procedure to the patient
- * @param patientId id of the patient
+ * @query patientId id of the patient
  * @body tooth and procedure informations
  */
 patientProcedure.savePatientProcedure = (procedure) => {
-  return API.post(`${API_URL}/${procedure.patient.id}/procedures`, procedure);
+  return API.post(`${API_URL}?patientId=${procedure.patient.id}`, procedure);
 };
 
 /**
  * Update a procedure to the patient
- * @param patientId id of the patient
  * @param patientProcedureId id of the patientprocedure
+ * @query patientId id of the patient
  * @body tooth and procedure informations
  */
 patientProcedure.updatePatientProcedure = (procedure) => {
   return API.put(
-    `${API_URL}/${procedure.patient.id}/procedures/${procedure.id}`,
+    `${API_URL}/${procedure.id}?patientId=${procedure.patient.id}`,
     procedure
   );
 };
@@ -49,8 +46,8 @@ patientProcedure.updatePatientProcedure = (procedure) => {
  * Delete the procedure of the patient
  * @param id id of the procedure
  */
-patientProcedure.deletePatientProcedure = (patientId, id) => {
-  return API.delete(`${API_URL}/${patientId}/procedures/${id}`);
+patientProcedure.deletePatientProcedure = (id) => {
+  return API.delete(`${API_URL}/${id}`);
 };
 
 export default patientProcedure;

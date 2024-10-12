@@ -9,9 +9,10 @@ function More({ label, onClick, ...props }) {
 
   return (
     <Button
-      text
+      text={props.border ? false : true}
+      outlined
       size="small"
-      icon="pi pi-ellipsis-h"
+      icon={props.icon || "pi pi-ellipsis-v"}
       label={label}
       severity={props.severity || "secondary"}
       onClick={onClick}
