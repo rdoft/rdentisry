@@ -1,7 +1,8 @@
-const SMS = require("../sms.config");
+const SMS = require("../config/sms.config");
 const log = require("../config/log.config");
 
 // TODO: ADD these to .env file
+// TODO: Test this service and fix errors
 // Get env variables
 const { SMS_USERNAME, SMS_PASSWORD, SMS_SENDER, SMS_APPKEY } = process.env;
 
