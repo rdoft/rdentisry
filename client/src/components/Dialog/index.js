@@ -10,6 +10,7 @@ import UserAgreementDialog from "./UserAgreementDialog";
 import ProfileDialog from "./ProfileDialog";
 import ResetPasswordDialog from "./ResetPasswordDialog";
 import PatientPermissionDialog from "./PatientPermissionDialog";
+import TutorialDialog from "./TutorialDialog";
 
 export {
   DialogTemp,
@@ -24,4 +25,5 @@ export {
   ProfileDialog,
   ResetPasswordDialog,
   PatientPermissionDialog,
+  TutorialDialog,
 };

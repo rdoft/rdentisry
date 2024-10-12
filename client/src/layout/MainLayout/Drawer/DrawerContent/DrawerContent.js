@@ -3,6 +3,7 @@ import Navigation from "./Navigation/Navigation";
 import SimpleBar from "components/SimpleBar";
 import Profile from "./Profile/Profile";
 import Notification from "./Notification/Notification";
+import Tutorial from "./Support/Tutorial";
 
 // ==============================|| DRAWER CONTENT ||============================== //
 
@@ -20,6 +21,7 @@ const DrawerContent = () => (
     <Navigation />
     <Box sx={{ flexGrow: 1 }} />
     <Notification />
+    <Tutorial />
     <Profile />
   </SimpleBar>
 );

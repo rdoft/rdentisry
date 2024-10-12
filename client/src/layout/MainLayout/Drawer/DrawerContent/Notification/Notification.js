@@ -189,8 +189,11 @@ const Notification = () => {
           px: drawerOpen && 1,
           width: drawerOpen ? 1 : 36,
           justifyContent: drawerOpen && "flex-start",
-          color: theme.palette.text.primary,
-          bgcolor: open ? theme.palette.background.primary : null,
+          color: open
+            ? theme.palette.text.secondary
+            : theme.palette.text.primary,
+          bgcolor: open ? theme.palette.background.secondary : null,
+          "&:hover": { bgcolor: theme.palette.background.secondary },
         }}
         aria-label="open profile"
         ref={anchorRef}

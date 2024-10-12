@@ -30,6 +30,10 @@ import NotesActiveIcon from "assets/images/icons/notes-active.png";
 import NotesPassiveIcon from "assets/images/icons/notes-passive.png";
 import ProcedureActiveIcon from "assets/images/icons/procedure-active.png";
 import ProcedurePassiveIcon from "assets/images/icons/procedure-passive.png";
+import YoutubeIcon from "assets/images/icons/social/youtube.png";
+import InstagramIcon from "assets/images/icons/social/instagram.png";
+import XIcon from "assets/images/icons/social/x.png";
+import FacebookIcon from "assets/images/icons/social/facebook.png";
 
 export {
   CalendarActiveIcon,
@@ -64,4 +68,8 @@ export {
   NotesPassiveIcon,
   ProcedureActiveIcon,
   ProcedurePassiveIcon,
+  YoutubeIcon,
+  InstagramIcon,
+  XIcon,
+  FacebookIcon,
 };

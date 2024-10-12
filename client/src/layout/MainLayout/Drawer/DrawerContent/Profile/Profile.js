@@ -144,8 +144,11 @@ const Profile = () => {
           width: drawerOpen ? 1 : 36,
           justifyContent: drawerOpen && "flex-start",
           height: 62,
-          bgcolor: "transparent",
-          "&:hover": { bgcolor: theme.palette.background.primary },
+          color: open
+            ? theme.palette.text.secondary
+            : theme.palette.text.primary,
+          bgcolor: open ? theme.palette.background.secondary : "transparent",
+          "&:hover": { bgcolor: theme.palette.background.secondary },
           border: "1px solid",
           borderColor: theme.palette.background.primary,
         }}
