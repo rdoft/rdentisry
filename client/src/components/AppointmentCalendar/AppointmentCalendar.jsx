@@ -244,11 +244,20 @@ const AppointmentCalendar = () => {
     timeGutterHeader: TimeGutterHeader,
     timeGutterWrapper: TimeGutter,
     event: ({ event }) => (
-      <Event initEvent={event} step={step.current} onSubmit={saveAppointment} />
+      <Event
+        key={event.id}
+        initEvent={event}
+        step={step.current}
+        onSubmit={saveAppointment}
+      />
     ),
     month: {
       event: ({ event }) => (
-        <MonthEvent initEvent={event} onSubmit={saveAppointment} />
+        <MonthEvent
+          key={event.id}
+          initEvent={event}
+          onSubmit={saveAppointment}
+        />
       ),
     },
   };
