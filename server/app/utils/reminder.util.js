@@ -49,7 +49,8 @@ async function sendAppointmentReminder(appointment) {
     }
 
     // Send appointment reminder
-    await send(patient.phone, message);
+    // TODO: Uncomment this line to send the SMS
+    // await send(patient.phone, message);
   } catch (error) {
     log.error.error(error);
     throw new Error(error);
@@ -77,7 +78,8 @@ async function sendPaymentReminder(patient) {
     message = createPaymentMessage(fullName, client, patient.dept);
 
     // Send payment reminder
-    await send(patient.phone, message);
+    // TODO: Uncomment this line to send the SMS
+    // await send(patient.phone, message);
   } catch (error) {
     log.error.error(error);
     throw new Error(error);

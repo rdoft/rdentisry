@@ -111,7 +111,8 @@ async function sendAppointmentApproveReminders() {
           { ReminderStatus: "sent" },
           { where: { AppointmentId: appointment.id } }
         );
-        await send(patient.phone, message);
+        // TODO: Uncomment this line to send the SMS
+        // await send(patient.phone, message);
       }
     }
 
@@ -206,7 +207,8 @@ async function sendAppointmentReminders() {
         date = `${appointment.date} ${appointment.startTime.substring(0, 5)}`;
 
         message = createAppointmentMessage(fullName, date, client);
-        await send(patient.phone, message);
+        // TODO: Uncomment this line to send the SMS
+        // await send(patient.phone, message);
       }
     }
 
