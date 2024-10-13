@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -16,52 +16,56 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 // services
 import { ReminderService } from "services";
 
-function MonthEvent({ event, onSubmit }) {
+function MonthEvent({ initEvent = {}, onSubmit }) {
   const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { startLoading, stopLoading } = useLoading();
 
   const menu = useRef(null);
+  const [e, setEvent] = useState({
+    id: null,
+    status: null,
+    reminderStatus: null,
+    ...initEvent,
+  });
 
-  const {
-    id: eventId = null,
-    status = null,
-    reminderStatus = null,
-    start,
-    end,
-    temp,
-  } = event;
   const {
     id = null,
     name: pname = "",
     surname: psurname = "",
-  } = event.patient || {};
+  } = e.patient || {};
 
-  const startHours = start.toLocaleTimeString("tr-TR", {
+  const startHours = e.start.toLocaleTimeString("tr-TR", {
     hour: "2-digit",
     minute: "2-digit",
   });
-  const endHours = end.toLocaleTimeString("tr-TR", {
+  const endHours = e.end.toLocaleTimeString("tr-TR", {
     hour: "2-digit",
     minute: "2-digit",
   });
 
   // Set conditions for sending reminder and approval
-  const showSendReminder = status === "active" && reminderStatus === "approved";
+  const showSendReminder =
+    e.status === "active" && e.reminderStatus === "approved";
   const showSendApprove =
-    status === "active" && (!reminderStatus || reminderStatus === "sent");
+    e.status === "active" && (!e.reminderStatus || e.reminderStatus === "sent");
   const showRemoveApprove =
-    status === "active" && reminderStatus === "approved";
-  const showApprove = status === "active" && reminderStatus !== "approved";
+    e.status === "active" && e.reminderStatus === "approved";
+  const showApprove = e.status === "active" && e.reminderStatus !== "approved";
 
   // SERVICES -----------------------------------------------------------------
   // Send appointment reminder
-  const sendReminder = async () => {
+  const sendReminder = async (id, reminderStatus) => {
     try {
       startLoading("send");
-      await ReminderService.remindAppointment(eventId);
-      toast.success("Hatırlatma mesajı başarıyla gönderildi");
+      await ReminderService.remindAppointment(id);
+      if (reminderStatus) {
+        setEvent({ ...e, reminderStatus });
+        toast.success("Onay mesajı başarıyla gönderildi");
+      } else {
+        toast.success("Hatırlatma mesajı başarıyla gönderildi");
+      }
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
@@ -86,13 +90,20 @@ function MonthEvent({ event, onSubmit }) {
   // onClick send reminder handler
   const handleClickSendReminder = (event) => {
     event.stopPropagation();
-    eventId && sendReminder();
+    e.id && sendReminder(e.id);
+  };
+
+  // onClick send approvement handler
+  const handleClickSendApprovement = (event) => {
+    event.stopPropagation();
+    e.id && sendReminder(e.id, "sent");
   };
 
   // onChangeReminderStatus handler
-  const handleChangeReminderStatus = async (e, reminderStatus) => {
-    e.stopPropagation();
-    onSubmit({ ...event, reminderStatus });
+  const handleChangeReminderStatus = (event, reminderStatus) => {
+    event.stopPropagation();
+    setEvent({ ...e, reminderStatus });
+    onSubmit({ ...e, reminderStatus });
   };
 
   // onMouseLeave handler
@@ -176,7 +187,7 @@ function MonthEvent({ event, onSubmit }) {
                         label="Hasta Onayına Gönder"
                         icon="pi pi-send"
                         style={{ width: "100%" }}
-                        onClick={handleClickSendReminder}
+                        onClick={handleClickSendApprovement}
                       />
                     </>
                   ),
@@ -192,14 +203,13 @@ function MonthEvent({ event, onSubmit }) {
     </>
   );
 
-  return temp ? (
+  return e.temp ? (
     <LoadingIcon style={{ height: "100%", alignItems: "center" }} />
   ) : (
     <Tooltip title={`${startHours}-${endHours}`} placement="top" arrow>
       <Grid
         container
         position="relative"
-        style={{ height: "100%" }}
         onContextMenu={handleRightClick}
         onMouseLeave={handleMouseLeave}
       >
@@ -231,8 +241,8 @@ function MonthEvent({ event, onSubmit }) {
                 {`${pname} ${psurname}`}
               </Typography>
 
-              {status === "active" && (
-                <ReminderStatus status={reminderStatus} />
+              {e.status === "active" && (
+                <ReminderStatus status={e.reminderStatus} />
               )}
             </Box>
           </Grid>

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -17,56 +17,59 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 // services
 import { ReminderService } from "services";
 
-function Event({ event, step, onSubmit }) {
+function Event({ initEvent = {}, step, onSubmit }) {
   const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { startLoading, stopLoading } = useLoading();
 
   const menu = useRef(null);
+  const [e, setEvent] = useState({
+    id: null,
+    status: null,
+    reminderStatus: null,
+    ...initEvent,
+  });
 
-  const {
-    id: eventId = null,
-    status = null,
-    reminderStatus = null,
-    description,
-    start,
-    end,
-    temp,
-  } = event;
-  const { name: dname = "", surname: dsurname = "" } = event.doctor || {};
+  const { name: dname = "", surname: dsurname = "" } = e.doctor || {};
   const {
     id = null,
     name: pname = "",
     surname: psurname = "",
-  } = event.patient || {};
+  } = e.patient || {};
 
-  const startHours = start.toLocaleTimeString("tr-TR", {
+  const startHours = e.start.toLocaleTimeString("tr-TR", {
     hour: "2-digit",
     minute: "2-digit",
   });
-  const endHours = end.toLocaleTimeString("tr-TR", {
+  const endHours = e.end.toLocaleTimeString("tr-TR", {
     hour: "2-digit",
     minute: "2-digit",
   });
 
-  const lg = event.duration > step * 1.2;
-  const sm = event.duration < step;
+  const lg = e.duration > step * 1.2;
+  const sm = e.duration < step;
   // Set conditions for sending reminder and approval
-  const showSendReminder = status === "active" && reminderStatus === "approved";
+  const showSendReminder =
+    e.status === "active" && e.reminderStatus === "approved";
   const showSendApprove =
-    status === "active" && (!reminderStatus || reminderStatus === "sent");
+    e.status === "active" && (!e.reminderStatus || e.reminderStatus === "sent");
   const showRemoveApprove =
-    status === "active" && reminderStatus === "approved";
-  const showApprove = status === "active" && reminderStatus !== "approved";
+    e.status === "active" && e.reminderStatus === "approved";
+  const showApprove = e.status === "active" && e.reminderStatus !== "approved";
 
   // SERVICES -----------------------------------------------------------------
   // Send appointment reminder
-  const sendReminder = async () => {
+  const sendReminder = async (id, reminderStatus) => {
     try {
       startLoading("send");
-      await ReminderService.remindAppointment(eventId);
-      toast.success("Hatırlatma mesajı başarıyla gönderildi");
+      await ReminderService.remindAppointment(id);
+      if (reminderStatus) {
+        setEvent({ ...e, reminderStatus });
+        toast.success("Onay mesajı başarıyla gönderildi");
+      } else {
+        toast.success("Hatırlatma mesajı başarıyla gönderildi");
+      }
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
@@ -91,13 +94,20 @@ function Event({ event, step, onSubmit }) {
   // onClick send reminder handler
   const handleClickSendReminder = (event) => {
     event.stopPropagation();
-    eventId && sendReminder();
+    e.id && sendReminder(e.id);
+  };
+
+  // onClick send approvement handler
+  const handleClickSendApprovement = (event) => {
+    event.stopPropagation();
+    e.id && sendReminder(e.id, "sent");
   };
 
   // onChangeReminderStatus handler
-  const handleChangeReminderStatus = (e, reminderStatus) => {
-    e.stopPropagation();
-    onSubmit({ ...event, reminderStatus });
+  const handleChangeReminderStatus = (event, reminderStatus) => {
+    event.stopPropagation();
+    setEvent({ ...e, reminderStatus });
+    onSubmit({ ...e, reminderStatus });
   };
 
   // onMouseLeave handler
@@ -181,7 +191,7 @@ function Event({ event, step, onSubmit }) {
                         label="Hasta Onayına Gönder"
                         icon="pi pi-send"
                         style={{ width: "100%" }}
-                        onClick={handleClickSendReminder}
+                        onClick={handleClickSendApprovement}
                       />
                     </>
                   ),
@@ -197,14 +207,13 @@ function Event({ event, step, onSubmit }) {
     </>
   );
 
-  return temp ? (
+  return e.temp ? (
     <LoadingIcon style={{ height: "100%", alignItems: "center" }} />
   ) : (
     <Tooltip title={sm && `${startHours}-${endHours}`} placement="top" arrow>
       <Grid
         container
         position="relative"
-        style={{ height: "100%" }}
         onContextMenu={handleRightClick}
         onMouseLeave={handleMouseLeave}
       >
@@ -254,8 +263,8 @@ function Event({ event, step, onSubmit }) {
                 {`${pname} ${psurname}`}
               </Typography>
 
-              {status === "active" && (
-                <ReminderStatus status={reminderStatus} />
+              {e.status === "active" && (
+                <ReminderStatus status={e.reminderStatus} />
               )}
             </Box>
           </Grid>
@@ -277,15 +286,15 @@ function Event({ event, step, onSubmit }) {
             </Grid>
           )}
 
-          {lg && description && (
+          {lg && e.description && (
             <Grid item xs={12}>
               <Box display="flex" gap={1} alignItems="start">
                 <Typography variant="h6">🖋</Typography>
                 <Typography variant="caption">
-                  {description.includes("\n") ||
-                  description.split(/\n/)[0].length > 24
-                    ? description.split(/\n/)[0].slice(0, 24) + " ..."
-                    : description.split(/\n/)[0]}
+                  {e.description.includes("\n") ||
+                  e.description.split(/\n/)[0].length > 24
+                    ? e.description.split(/\n/)[0].slice(0, 24) + " ..."
+                    : e.description.split(/\n/)[0]}
                 </Typography>
               </Box>
             </Grid>
