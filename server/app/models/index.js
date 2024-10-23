@@ -1,3 +1,4 @@
+const log = require("../config/log.config");
 const config = require("../config/db.config");
 const fs = require("fs");
 const { parse } = require("csv-parse");
@@ -36,11 +37,13 @@ db.visit = require("./visit.model")(sequelize, Sequelize);
 db.procedure = require("./procedure.model")(sequelize, Sequelize);
 db.patientProcedure = require("./patientProcedure.model")(sequelize, Sequelize);
 db.notification = require("./notification.model")(sequelize, Sequelize);
-db.procedureCategory = require("./procedureCategory.model")(
+db.pricing = require("./pricing.model")(sequelize, Sequelize);
+db.billing = require("./billing.model")(sequelize, Sequelize);
+db.notificationEvent = require("./notificationEvent.model")(
   sequelize,
   Sequelize
 );
-db.notificationEvent = require("./notificationEvent.model")(
+db.procedureCategory = require("./procedureCategory.model")(
   sequelize,
   Sequelize
 );
@@ -248,6 +251,16 @@ db.agreement.belongsTo(db.user, {
   foreignKey: "UserId",
 });
 
+// User - Bill
+db.user.hasMany(db.billing, {
+  as: "billings",
+  foreignKey: "UserId",
+});
+db.billing.belongsTo(db.user, {
+  as: "user",
+  foreignKey: "UserId",
+});
+
 // HOOKS
 // Control If doctor has any appointments before destroy
 db.doctor.beforeDestroy(async (doctor) => {
@@ -411,9 +424,10 @@ db.patientProcedure.afterDestroy(async (patientProcedure) => {
 db.user.beforeDestroy(async (user) => {
   const patientCount = await user.countPatients();
   const doctorCount = await user.countDoctors();
-  if (patientCount > 0 || doctorCount > 0) {
+  const billCount = await user.countBillings();
+  if (patientCount > 0 || doctorCount > 0 || billCount > 0) {
     throw new Sequelize.ValidationError(
-      "Kullanıcıya ait hasta ve doktor kayıtları olduğundan işlem tamamlanamadı"
+      "Kullanıcıya ait hasta, doktor ve fatura kayıtları olduğundan işlem tamamlanamadı"
     );
   }
 });
@@ -428,6 +442,14 @@ db.user.afterCreate(async (user) => {
   await db.userSetting.create({
     UserId: user.UserId,
   });
+});
+
+// Create pricing records when application starts
+db.sequelize.sync().then(async () => {
+  const pricingCount = await db.pricing.count();
+  if (pricingCount === 0) {
+    await createPricing();
+  }
 });
 
 // If procedure categories don't exist, then create new records from csv
@@ -471,6 +493,34 @@ const createProcedures = async (user) => {
         Code: row[2],
         Name: row[3],
         Price: row[4],
+      });
+    }
+  } catch (error) {
+    log.error.error(error);
+    throw new Error(
+      "Bir problem oluştu, uygulama yöneticisi ile iletişime geçin"
+    );
+  }
+};
+
+// Create pricing records from csv
+const createPricing = async () => {
+  const PATH_PRICING_CSV = `${__dirname}/../data/Pricing.csv`;
+
+  try {
+    const parser = fs
+      .createReadStream(PATH_PRICING_CSV)
+      .pipe(parse({ delimiter: ",", from_line: 2 }));
+
+    for await (const row of parser) {
+      await db.pricing.create({
+        ReferenceCode: row[0],
+        Name: row[1],
+        Price: row[2],
+        DoctorCount: row[3] || null,
+        PatientCount: row[4] || null,
+        SMSCount: row[5] || null,
+        StorageSize: row[6] || null,
       });
     }
   } catch (error) {

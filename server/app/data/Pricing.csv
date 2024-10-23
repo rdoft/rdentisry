@@ -1,0 +1,10 @@
+"ReferenceCode","Name","Price","DoctorCount","PatientCount","SMSCount","StorageSize"
+,"dentist-basic",499,1,500,300,1024
+,"dentist-mid",699,1,1000,500,2048
+,"dentist-pro",1199,1,2000,1000,5120
+,"clinic-basic",1299,2,2000,750,5120
+,"clinic-mid",1649,3,3000,1000,6144
+,"clinic-pro",1999,4,4000,1500,10240
+,"polyclinic-basic",2499,5,5000,1500,10240
+,"polyclinic-mid",3099,6,6000,2000,15360
+,"polyclinic-pro",4899,10,10000,4000,20480
