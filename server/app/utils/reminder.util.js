@@ -117,14 +117,14 @@ async function sendPaymentReminder(patient) {
 function createAppointmentMessage(fullName, date, time, client, url) {
   if (url) {
     return (
-      `Sn. ${fullName},\\n\\nDiş hekimi randevunuzun tarihi yaklaşıyor! ${date} ${time} tarihinde olan randevunuzu hatırlatmak istedik. Lütfen katılım durumunuzu bizimle paylaşın.` +
+      `Sn. ${fullName},\\nDiş hekimi randevunuzun tarihi yaklaşıyor! ${date} ${time} tarihinde olan randevunuzu hatırlatmak istedik. Lütfen katılım durumunuzu bizimle paylaşın.` +
       `\\n\\nOnay, İptal veya Değişiklik için buradan işlem yapabilirsiniz:\\n${url} \\n` +
       (client ? `\\n${client}` : "") +
       `\\nSaygılarımızla.`
     );
   } else {
     return (
-      `Sn. ${fullName},\\n\\nDiş hekimi randevunuzun tarihi yaklaşıyor! ${date} ${time} tarihinde olan randevunuzu hatırlatmak istedik. \\n` +
+      `Sn. ${fullName},\\nDiş hekimi randevunuzun tarihi yaklaşıyor! ${date} ${time} tarihinde olan randevunuzu hatırlatmak istedik. \\n` +
       (client ? `\\n${client}` : "") +
       `\\nSaygılarımızla.`
     );
@@ -141,7 +141,7 @@ function createAppointmentMessage(fullName, date, time, client, url) {
 function createPaymentMessage(fullName, client, dept) {
   if (dept > 0) {
     return (
-      `Sn. ${fullName},\\nDiş tedavinizden kalan ₺${dept} tutarında bir ödemeniz bulunmaktadır. En kısa sürede ödeme yapmanızı rica ederiz. \\n` +
+      `Sn. ${fullName},\\nDiş tedavinizden kalan ${dept}TL tutarında bir ödemeniz bulunmaktadır. En kısa sürede ödeme yapmanızı rica ederiz. \\n` +
       (client ? `\\n${client}` : "") +
       `\\nSaygılarımızla.`
     );
