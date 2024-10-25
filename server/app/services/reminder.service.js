@@ -219,6 +219,7 @@ async function sendAppointmentReminders() {
         time = new Date(
           `1970-01-01T${appointment.startTime}Z`
         ).toLocaleTimeString("tr-TR", {
+          timeZone: "Europe/Istanbul",
           hour: "2-digit",
           minute: "2-digit",
         });
