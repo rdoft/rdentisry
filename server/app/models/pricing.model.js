@@ -1,4 +1,3 @@
-// TODO: Create pricing plan and product in iyzico
 module.exports = (sequelize, Sequelize) => {
   const Pricing = sequelize.define(
     "Pricing",
@@ -15,13 +14,13 @@ module.exports = (sequelize, Sequelize) => {
       Name: {
         type: Sequelize.ENUM(
           "dentist-basic",
-          "dentist-mid",
+          "dentist-medium",
           "dentist-pro",
           "clinic-basic",
-          "clinic-mid",
+          "clinic-medium",
           "clinic-pro",
           "polyclinic-basic",
-          "polyclinic-mid",
+          "polyclinic-medium",
           "polyclinic-pro"
         ),
         allowNull: false,

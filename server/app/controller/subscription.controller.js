@@ -9,7 +9,6 @@ const Subscription = db.subscription;
 const { HOSTNAME, HOST_SERVER } = process.env;
 const HOST = HOSTNAME || HOST_SERVER || "localhost:8080";
 
-// TODO: Implement iyzipay util library
 const {
   checkoutInitialize,
   checkoutRetrieve,

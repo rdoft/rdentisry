@@ -3,7 +3,7 @@ const iyzipay = require("../config/iyzipay.config");
 
 /**
  * Subscription initialize (checkout)
- * @param {Object} req customer, pricing plan, billing and callback information
+ * @param {Object} req customer, pricing plan, billing and callback
  * @return status, token and checkout form
  */
 const checkoutInitialize = async (req) => {
@@ -168,9 +168,54 @@ const cancel = async (req) => {
   });
 };
 
+/**
+ * Update the card information of the subscription
+ * @param {Object} req reference code for the subscription and callback
+ * @return status
+ */
+const updateCard = async (req) => {
+  await new Promise((resolve, reject) => {
+    iyzipay.subscriptionCard.updateWithSubscriptionReferenceCode(
+      req,
+      function (error, result) {
+        // Handle Iyzico API error
+        if (error || !result) {
+          log.error.error(error);
+          return reject(
+            new Error(
+              "Abonelik kart bilgileri güncellenirken, ödeme sağlayıcısı ile bir iletişim hatası oluştu."
+            )
+          );
+        }
+        // Handle Iyzico result based on status
+        if (result.status === "success") {
+          log.app.info(`Iyzipay update card completed`, {
+            success: true,
+            subscription: req.subscriptionReferenceCode,
+          });
+        } else {
+          const { errorCode, errorGroup, errorName, errorMessage } = result;
+          log.app.warn(`Iyzipay update card failed`, {
+            success: false,
+            subscription: req.subscriptionReferenceCode,
+            error: {
+              code: errorCode,
+              group: errorGroup,
+              name: errorName,
+              message: errorMessage,
+            },
+          });
+        }
+        resolve(result);
+      }
+    );
+  });
+};
+
 module.exports = {
   checkoutInitialize,
   checkoutRetrieve,
   upgrade,
   cancel,
+  updateCard,
 };
