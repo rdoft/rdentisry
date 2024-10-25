@@ -51,6 +51,7 @@ exports.getAppointments = async (req, res) => {
             ["Surname", "surname"],
             ["BirthYear", "birthYear"],
             ["Phone", "phone"],
+            ["IsSMS", "isSMS"],
           ],
           where: {
             UserId: userId,
@@ -143,6 +144,7 @@ exports.getAppointment = async (req, res) => {
             ["Surname", "surname"],
             ["BirthYear", "birthYear"],
             ["Phone", "phone"],
+            ["IsSMS", "isSMS"],
           ],
           where: {
             UserId: userId,

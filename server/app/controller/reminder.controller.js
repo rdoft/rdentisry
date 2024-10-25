@@ -78,18 +78,7 @@ exports.remindAppointment = async (req, res) => {
       return;
     }
 
-    // Skip sending if the patient doesn't want SMS or user name is not set
-    if (!appointment.patient.user.name) {
-      res.status(400).send({
-        message: "Hatırlatma gönderebilmek için hesap adınızı ekleyin",
-      });
-      log.app.warn("Send appointment reminder failed: User name is not set", {
-        userId,
-        appointmentId,
-        success: false,
-      });
-      return;
-    }
+    // Skip sending if the patient doesn't want SMS
     if (!appointment.patient.isSMS) {
       res.status(400).send({ message: "Hastanın SMS hatırlatma izni yoktur" });
       log.app.warn(
@@ -150,16 +139,26 @@ exports.remindAppointment = async (req, res) => {
       );
       return;
     }
-
+    
     // Send appointment reminder
-    await sendAppointmentReminder(appointment);
-
-    res.status(200).send({ message: "Randevu hatırlatma mesajı gönderildi" });
-    log.app.info("Send appointment reminder completed", {
-      userId,
-      appointmentId,
-      success: true,
-    });
+    const success = await sendAppointmentReminder(appointment);
+    if (success) {
+      res.status(200).send({ message: "Randevu hatırlatma mesajı gönderildi" });
+      log.app.info("Send appointment reminder completed", {
+        userId,
+        appointmentId,
+        success: true,
+      });
+    } else {
+      res
+        .status(400)
+        .send({ message: "Randevu hatırlatma mesajı gönderilemedi" });
+      log.app.warn("Send appointment reminder failed: SMS couldn't be sent", {
+        userId,
+        appointmentId,
+        success: false,
+      });
+    }
   } catch (error) {
     res.status(500).send(error);
     log.error.error(error);
@@ -259,18 +258,7 @@ exports.remindPayment = async (req, res) => {
       });
       return;
     }
-    // Skip sending if the patient doesn't want SMS or user name is not set
-    if (!patient.user.name) {
-      res.status(400).send({
-        message: "Hatırlatma gönderebilmek için hesap adınızı ekleyin",
-      });
-      log.app.warn("Send payment reminder failed: User name is not set", {
-        userId,
-        patientId,
-        success: false,
-      });
-      return;
-    }
+    // Skip sending if the patient doesn't want SMS
     if (!patient.isSMS) {
       res.status(400).send({ message: "Hastanın SMS hatırlatma izni yoktur" });
       log.app.warn(
@@ -315,14 +303,24 @@ exports.remindPayment = async (req, res) => {
     }
 
     // Send payment reminder
-    await sendPaymentReminder(patient);
-
-    res.status(200).send({ message: "Ödeme hatırlatma mesajı gönderildi" });
-    log.app.info("Send payment reminder completed", {
-      userId,
-      patientId,
-      success: true,
-    });
+    const success = await sendPaymentReminder(patient);
+    if (success) {
+      res.status(200).send({ message: "Ödeme hatırlatma mesajı gönderildi" });
+      log.app.info("Send payment reminder completed", {
+        userId,
+        patientId,
+        success: true,
+      });
+    } else {
+      res
+        .status(400)
+        .send({ message: "Ödeme hatırlatma mesajı gönderilemedi" });
+      log.app.warn("Send payment reminder failed: SMS couldn't be sent", {
+        userId,
+        patientId,
+        success: false,
+      });
+    }
   } catch (error) {
     res.status(500).send(error);
     log.error.error(error);
@@ -409,9 +407,9 @@ exports.action = async (req, res) => {
 
     // Delete the token
     await Token.destroy({
-      where: { 
+      where: {
         UserId: user.UserId,
-        Token: token 
+        Token: token,
       },
     });
     log.app.info("Update appointment reminder token found and deleted", {

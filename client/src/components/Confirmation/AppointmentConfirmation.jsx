@@ -163,7 +163,7 @@ function AppointmentConfirmation() {
               <Grid item>
                 <Button
                   name="approved"
-                  label="Randevuya Geleceğim"
+                  label="Onayla"
                   size="small"
                   onClick={handleApproved}
                   style={{

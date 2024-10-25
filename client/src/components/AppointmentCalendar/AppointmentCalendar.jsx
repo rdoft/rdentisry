@@ -162,17 +162,22 @@ const AppointmentCalendar = () => {
   };
 
   // onSelectSlot handler for add new appointment
-  const handleSelectSlot = ({ start, end }) => {
-    // Set date, start-end time and duration
-    const { date, startTime, endTime, duration } = getEventTime({ start, end });
-    setAppointment({
-      doctor,
-      date,
-      startTime,
-      endTime,
-      duration,
-    });
-    showAppointmentDialog();
+  const handleSelectSlot = ({ start, end, action }) => {
+    if (action === "select") {
+      // Set date, start-end time and duration
+      const { date, startTime, endTime, duration } = getEventTime({
+        start,
+        end,
+      });
+      setAppointment({
+        doctor,
+        date,
+        startTime,
+        endTime,
+        duration,
+      });
+      showAppointmentDialog();
+    }
   };
 
   // onEventResize handler for update appointment
