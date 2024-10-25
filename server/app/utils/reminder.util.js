@@ -89,10 +89,10 @@ async function sendPaymentReminder(patient) {
     fullName = `${patient.name} ${patient.surname}`.toLocaleUpperCase("TR");
     fullName =
       fullName.length > 30 ? fullName.substring(0, 30) + "..." : fullName;
-    client = user.name
-      ? user.name.toLocaleUpperCase("TR").length > 30
-        ? user.name.toLocaleUpperCase("TR").substring(0, 30) + "..."
-        : user.name.toLocaleUpperCase("TR")
+    client = patient.user.name
+      ? patient.user.name.toLocaleUpperCase("TR").length > 30
+        ? patient.user.name.toLocaleUpperCase("TR").substring(0, 30) + "..."
+        : patient.user.name.toLocaleUpperCase("TR")
       : null;
 
     // Create message
