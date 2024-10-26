@@ -25,6 +25,3 @@ module.exports = (sequelize, Sequelize) => {
 
   return UserSetting;
 };
-
-
-// TODO: Add the controls for user settings in the reminders

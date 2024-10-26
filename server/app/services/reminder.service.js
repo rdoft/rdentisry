@@ -95,24 +95,38 @@ async function sendAppointmentApproveReminders() {
       patient = appointment.patient;
       user = appointment.patient.user;
 
-      // Skip sending if the patient doesn't want SMS or user name is not set
+      // Skip sending if the patient doesn't want SMS
       // Create message and send reminder
-      if (user.name && patient.isSMS) {
+      if (patient.isSMS) {
         link = await createApprovalLink(user.id, appointment.id);
-        client = user.name.toLocaleUpperCase("TR");
-        client = client.length > 30 ? client.substring(0, 30) + "..." : client;
         fullName = `${patient.name} ${patient.surname}`.toLocaleUpperCase("TR");
         fullName =
           fullName.length > 30 ? fullName.substring(0, 30) + "..." : fullName;
-        date = `${appointment.date} ${appointment.startTime.substring(0, 5)}`;
+        time = new Date(
+          `1970-01-01T${appointment.startTime}Z`
+        ).toLocaleTimeString("tr-TR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        date = new Date(appointment.date).toLocaleDateString("tr-TR", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        client = user.name
+          ? user.name.toLocaleUpperCase("TR").length > 30
+            ? user.name.toLocaleUpperCase("TR").substring(0, 30) + "..."
+            : user.name.toLocaleUpperCase("TR")
+          : null;
 
-        message = createAppointmentMessage(fullName, date, client, link);
-        await Appointment.update(
-          { ReminderStatus: "sent" },
-          { where: { AppointmentId: appointment.id } }
-        );
-        // TODO: Uncomment this line to send the SMS
-        // await send(patient.phone, message);
+        message = createAppointmentMessage(fullName, date, time, client, link);
+        const success = await send(patient.phone, message);
+        if (success) {
+          await Appointment.update(
+            { ReminderStatus: "sent" },
+            { where: { AppointmentId: appointment.id } }
+          );
+        }
       }
     }
 
@@ -198,17 +212,30 @@ async function sendAppointmentReminders() {
 
       // Skip sending if the patient doesn't want reminders
       // Create message and send reminder
-      if (user.name && patient.isSMS) {
-        client = user.name.toLocaleUpperCase("TR");
-        client = client.length > 30 ? client.substring(0, 30) + "..." : client;
+      if (patient.isSMS) {
         fullName = `${patient.name} ${patient.surname}`.toLocaleUpperCase("TR");
         fullName =
           fullName.length > 30 ? fullName.substring(0, 30) + "..." : fullName;
-        date = `${appointment.date} ${appointment.startTime.substring(0, 5)}`;
+        time = new Date(
+          `1970-01-01T${appointment.startTime}Z`
+        ).toLocaleTimeString("tr-TR", {
+          timeZone: "Europe/Istanbul",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        date = new Date(appointment.date).toLocaleDateString("tr-TR", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        client = user.name
+          ? user.name.toLocaleUpperCase("TR").length > 30
+            ? user.name.toLocaleUpperCase("TR").substring(0, 30) + "..."
+            : user.name.toLocaleUpperCase("TR")
+          : null;
 
-        message = createAppointmentMessage(fullName, date, client);
-        // TODO: Uncomment this line to send the SMS
-        // await send(patient.phone, message);
+        message = createAppointmentMessage(fullName, date, time, client);
+        await send(patient.phone, message);
       }
     }
 

@@ -5,7 +5,14 @@ import { useDispatch } from "react-redux";
 import { useLoading } from "context/LoadingProvider";
 import { activeItem } from "store/reducers/menu";
 import { Menu, Divider } from "primereact";
-import { Grid, Typography, Box, Avatar, Tooltip } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  Box,
+  Avatar,
+  Tooltip,
+  ClickAwayListener,
+} from "@mui/material";
 import { More, Reminder } from "components/Button";
 import { LoadingIcon, ReminderStatus } from "components/Other";
 
@@ -34,6 +41,7 @@ function Event({ initEvent = {}, step, onSubmit }) {
   const { name: dname = "", surname: dsurname = "" } = e.doctor || {};
   const {
     id = null,
+    isSMS = false,
     name: pname = "",
     surname: psurname = "",
   } = e.patient || {};
@@ -110,9 +118,9 @@ function Event({ initEvent = {}, step, onSubmit }) {
     onSubmit({ ...e, reminderStatus });
   };
 
-  // onMouseLeave handler
-  const handleMouseLeave = (event) => {
-    menu.current.hide(event);
+  // onClickAway handler
+  const handleClickAway = () => {
+    menu.current.hide();
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -121,9 +129,9 @@ function Event({ initEvent = {}, step, onSubmit }) {
     <>
       <More
         style={{
-          width: "1.4rem",
-          height: "1.2rem",
-          padding: "0.25rem 0.5rem",
+          width: "1.8rem",
+          height: "1.4rem",
+          padding: 0,
           color: theme.palette.text.event,
         }}
         onClick={(event) => {
@@ -131,79 +139,88 @@ function Event({ initEvent = {}, step, onSubmit }) {
           menu.current.toggle(event);
         }}
       />
-      <Menu
-        model={[
-          {
-            label: "Hastaya Git",
-            icon: "pi pi-arrow-circle-right",
-            style: { fontSize: "0.8rem" },
-            command: handleClickPatient,
-          },
-          {
-            label: "Görüntüle / Düzenle",
-            icon: "pi pi-external-link",
-            style: { fontSize: "0.8rem" },
-          },
-          ...(showApprove
-            ? [
-                {
-                  label: "Onayla",
-                  icon: "pi pi-check",
-                  style: { fontSize: "0.8rem" },
-                  command: (event) =>
-                    handleChangeReminderStatus(event.originalEvent, "approved"),
-                },
-              ]
-            : showRemoveApprove
-            ? [
-                {
-                  label: "Onayı Kaldır",
-                  icon: "pi pi-times",
-                  style: { fontSize: "0.8rem" },
-                  command: (event) =>
-                    handleChangeReminderStatus(event.originalEvent, null),
-                },
-              ]
-            : []),
-          ...(showSendReminder
-            ? [
-                {
-                  template: () => (
-                    <>
-                      <Divider type="solid" className="my-2" />
-                      <Reminder
-                        label="Hatırlatma Gönder"
-                        style={{ width: "100%" }}
-                        onClick={handleClickSendReminder}
-                      />
-                    </>
-                  ),
-                },
-              ]
-            : []),
-          ...(showSendApprove
-            ? [
-                {
-                  template: () => (
-                    <>
-                      <Divider type="solid" className="my-2" />
-                      <Reminder
-                        label="Hasta Onayına Gönder"
-                        icon="pi pi-send"
-                        style={{ width: "100%" }}
-                        onClick={handleClickSendApprovement}
-                      />
-                    </>
-                  ),
-                },
-              ]
-            : []),
-        ]}
-        ref={menu}
-        id="popup_menu"
-        popup
-        style={{ padding: "0.5rem" }}
-      />
+      <ClickAwayListener onClickAway={handleClickAway}>
+        <Menu
+          model={[
+            {
+              label: "Hastaya Git",
+              icon: "pi pi-arrow-circle-right",
+              style: { fontSize: "0.8rem" },
+              command: handleClickPatient,
+            },
+            {
+              label: "Görüntüle / Düzenle",
+              icon: "pi pi-external-link",
+              style: { fontSize: "0.8rem" },
+            },
+            ...(showApprove
+              ? [
+                  {
+                    label: "Onayla",
+                    icon: "pi pi-check",
+                    style: { fontSize: "0.8rem" },
+                    command: (event) =>
+                      handleChangeReminderStatus(
+                        event.originalEvent,
+                        "approved"
+                      ),
+                  },
+                ]
+              : showRemoveApprove
+              ? [
+                  {
+                    label: "Onayı Kaldır",
+                    icon: "pi pi-times",
+                    style: { fontSize: "0.8rem" },
+                    command: (event) =>
+                      handleChangeReminderStatus(event.originalEvent, null),
+                  },
+                ]
+              : []),
+            ...(showSendReminder
+              ? [
+                  {
+                    template: () => (
+                      <>
+                        <Divider type="solid" className="my-2" />
+                        <Reminder
+                          label="Hatırlatma Gönder"
+                          icon="pi pi-bell"
+                          disabled={!isSMS}
+                          style={{ width: "100%" }}
+                          onClick={handleClickSendReminder}
+                        />
+                      </>
+                    ),
+                  },
+                ]
+              : []),
+            ...(showSendApprove
+              ? [
+                  {
+                    template: () => (
+                      <>
+                        <Divider type="solid" className="my-2" />
+                        <Reminder
+                          label="Hasta Onayına Gönder"
+                          icon="pi pi-send"
+                          disabled={!isSMS}
+                          style={{ width: "100%" }}
+                          onClick={handleClickSendApprovement}
+                        />
+                      </>
+                    ),
+                  },
+                ]
+              : []),
+          ]}
+          ref={menu}
+          id="popup_menu"
+          popup
+          popupAlignment="right"
+          style={{ padding: "0.5rem" }}
+        />
+      </ClickAwayListener>
     </>
   );
 
@@ -215,7 +232,8 @@ function Event({ initEvent = {}, step, onSubmit }) {
         container
         position="relative"
         onContextMenu={handleRightClick}
-        onMouseLeave={handleMouseLeave}
+        alignItems="start"
+        sx={{ height: "100%" }}
       >
         <Box
           display="flex"

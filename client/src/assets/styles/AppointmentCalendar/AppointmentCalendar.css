@@ -28,7 +28,6 @@
   border: 1px solid var(--palette-text-event) !important;
   border-left: 3px solid var(--palette-text-event) !important;
   color: var(--palette-text-event) !important;
-  transform: scale(1.05);
 }
 
 .rbc-event-label {

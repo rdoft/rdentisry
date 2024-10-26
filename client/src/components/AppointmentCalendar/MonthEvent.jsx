@@ -5,7 +5,13 @@ import { useDispatch } from "react-redux";
 import { useLoading } from "context/LoadingProvider";
 import { activeItem } from "store/reducers/menu";
 import { Menu, Divider } from "primereact";
-import { Grid, Typography, Box, Tooltip } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  Box,
+  Tooltip,
+  ClickAwayListener,
+} from "@mui/material";
 import { More, Reminder } from "components/Button";
 import { LoadingIcon, ReminderStatus } from "components/Other";
 
@@ -32,6 +38,7 @@ function MonthEvent({ initEvent = {}, onSubmit }) {
 
   const {
     id = null,
+    isSMS = false,
     name: pname = "",
     surname: psurname = "",
   } = e.patient || {};
@@ -106,9 +113,9 @@ function MonthEvent({ initEvent = {}, onSubmit }) {
     onSubmit({ ...e, reminderStatus });
   };
 
-  // onMouseLeave handler
-  const handleMouseLeave = (event) => {
-    menu.current.hide(event);
+  // onClickAway handler
+  const handleClickAway = () => {
+    menu.current.hide();
   };
 
   // TEMPLATES -----------------------------------------------------------------
@@ -169,6 +176,8 @@ function MonthEvent({ initEvent = {}, onSubmit }) {
                       <Divider type="solid" className="my-2" />
                       <Reminder
                         label="Hatırlatma Gönder"
+                        icon="pi pi-bell"
+                        disabled={!isSMS}
                         style={{ width: "100%" }}
                         onClick={handleClickSendReminder}
                       />
@@ -186,6 +195,7 @@ function MonthEvent({ initEvent = {}, onSubmit }) {
                       <Reminder
                         label="Hasta Onayına Gönder"
                         icon="pi pi-send"
+                        disabled={!isSMS}
                         style={{ width: "100%" }}
                         onClick={handleClickSendApprovement}
                       />
@@ -206,49 +216,46 @@ function MonthEvent({ initEvent = {}, onSubmit }) {
   return e.temp ? (
     <LoadingIcon style={{ height: "100%", alignItems: "center" }} />
   ) : (
-    <Tooltip title={`${startHours}-${endHours}`} placement="top" arrow>
-      <Grid
-        container
-        position="relative"
-        onContextMenu={handleRightClick}
-        onMouseLeave={handleMouseLeave}
-      >
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="end"
-          position="absolute"
-          top={3}
-          right={3}
-        >
-          {actionButton}
-        </Box>
+    <ClickAwayListener onClickAway={handleClickAway}>
+      <Tooltip title={`${startHours}-${endHours}`} placement="top" arrow>
+        <Grid container position="relative" onContextMenu={handleRightClick}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="end"
+            position="absolute"
+            top={3}
+            right={3}
+          >
+            {actionButton}
+          </Box>
 
-        <Grid container>
-          <Grid item xs={10}>
-            <Box
-              display="flex"
-              gap={1}
-              alignItems="center"
-              justifyContent="space-between"
-              style={{
-                border: `0.5px solid ${theme.palette.text.eventBorder} `,
-                borderRadius: "5px",
-                padding: "0.1rem 0.2rem",
-              }}
-            >
-              <Typography variant="h6" fontWeight="bolder" noWrap>
-                {`${pname} ${psurname}`}
-              </Typography>
+          <Grid container>
+            <Grid item xs={10}>
+              <Box
+                display="flex"
+                gap={1}
+                alignItems="center"
+                justifyContent="space-between"
+                style={{
+                  border: `0.5px solid ${theme.palette.text.eventBorder} `,
+                  borderRadius: "5px",
+                  padding: "0.1rem 0.2rem",
+                }}
+              >
+                <Typography variant="h6" fontWeight="bolder" noWrap>
+                  {`${pname} ${psurname}`}
+                </Typography>
 
-              {e.status === "active" && (
-                <ReminderStatus status={e.reminderStatus} />
-              )}
-            </Box>
+                {e.status === "active" && (
+                  <ReminderStatus status={e.reminderStatus} />
+                )}
+              </Box>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-    </Tooltip>
+      </Tooltip>
+    </ClickAwayListener>
   );
 }
 
