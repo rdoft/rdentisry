@@ -14,7 +14,7 @@ const {
   checkoutRetrieve,
   upgrade,
   cancel,
-} = require("../services/payment.service");
+} = require("../utils/iyzipay.util");
 
 /**
  * Init checkout proccess by creating billing & subscription with pending status
@@ -102,7 +102,7 @@ exports.checkout = async (req, res) => {
           surname,
           email: user.Email,
           identityNumber: idNumber,
-          gsmNumber: phone,
+          gsmNumber: `+90${phone}`,
           shippingAddress: {
             contactName: `${name} ${surname}`,
             country,
@@ -153,7 +153,7 @@ exports.checkout = async (req, res) => {
     });
 
     // Create a new subscription with pending status
-    subscription = await Subscription.create({
+    await Subscription.create({
       UserId: userId,
       PricingId: pricingId,
       ReferenceCode: null,
@@ -168,7 +168,6 @@ exports.checkout = async (req, res) => {
     });
 
     res.status(201).send({
-      id: subscription.SubscriptionId,
       checkoutForm: checkoutFormContent,
     });
     log.audit.info("Subscription checkout initialize completed", {
@@ -177,7 +176,6 @@ exports.checkout = async (req, res) => {
       success: true,
       resource: {
         type: "subscription",
-        id: subscription.SubscriptionId,
       },
     });
   } catch (error) {

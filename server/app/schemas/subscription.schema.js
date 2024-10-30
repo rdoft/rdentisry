@@ -33,9 +33,34 @@ const pricingId = Joi.object({
   pricingId: Joi.number().empty(null).id(),
 });
 
+const address = Joi.string().trim().empty("").required();
+const city = Joi.string().trim().empty("").required();
+const country = Joi.string().trim().empty("").required();
+const idNumber = Joi.string()
+  .length(11)
+  .pattern(/^\d{11}$/)
+  .default(null)
+  .empty("")
+  .required();
+
+const name = Joi.string().trim().empty("").required();
+const surname = Joi.string().trim().empty("").required();
+const phone = Joi.string()
+  .length(10)
+  .pattern(/^\d{10}$/)
+  .empty("")
+  .required();
+
 module.exports = {
   billing,
   pricingId,
   token,
   id,
+  address,
+  city,
+  country,
+  idNumber,
+  name,
+  surname,
+  phone,
 };

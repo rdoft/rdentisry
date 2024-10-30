@@ -26,6 +26,10 @@ const NotFound = Loadable(lazy(() => import("pages/Other/NotFoundPage")));
 const AppointmentConfirmation = Loadable(
   lazy(() => import("pages/Confirmation/AppointmentConfirmationPage"))
 );
+const Pricing = Loadable(lazy(() => import("pages/Subscription/PricingPage")));
+const Checkout = Loadable(
+  lazy(() => import("pages/Subscription/CheckoutPage"))
+);
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -81,6 +85,16 @@ const MainRoutes = [
       {
         path: "/procedures",
         element: <ProtectedRoute element={Procedures} />,
+      },
+      {
+        // TODO: Add button/link to redirect to the pricing page
+        path: "/pricing",
+        element: <ProtectedRoute element={Pricing} />,
+      },
+      {
+        // TODO: Add button/link to redirect to the checkout page
+        path: "/checkout",
+        element: <ProtectedRoute element={Checkout} />,
       },
     ],
   },

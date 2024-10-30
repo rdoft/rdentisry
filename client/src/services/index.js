@@ -11,6 +11,7 @@ import visit from "./visit.service";
 import auth from "./auth.service";
 import user from "./user.service";
 import reminder from "./reminder.service";
+import subscription from "./subscription.service";
 
 const PatientService = patient;
 const DoctorService = doctor;
@@ -25,6 +26,7 @@ const VisitService = visit;
 const AuthService = auth;
 const UserService = user;
 const ReminderService = reminder;
+const SubscriptionService = subscription;
 
 export {
   PatientService,
@@ -40,4 +42,5 @@ export {
   AuthService,
   UserService,
   ReminderService,
+  SubscriptionService,
 };

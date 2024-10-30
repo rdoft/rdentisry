@@ -21,7 +21,7 @@ module.exports = function (app) {
     /**
      * Init checkout proccess by creating billing & subscription with pending status
      * @body pricingId and billing information
-     * @return id of the subscription and checkout form
+     * @return checkout form
      */
     .post(
       isAuthenticated,

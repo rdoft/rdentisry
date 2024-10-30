@@ -12,4 +12,5 @@ module.exports = (app) => {
   patientProcedure = require("./patientProcedure.route")(app);
   visit = require("./visit.route")(app);
   reminder = require("./reminder.route")(app);
+  subscription = require("./subscription.route")(app);
 };

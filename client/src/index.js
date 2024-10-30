@@ -16,7 +16,7 @@ import { Provider as ReduxProvider } from "react-redux";
 // project import
 import App from "./App";
 import { store } from "store";
-import { AuthProvider, LoadingProvider } from "context";
+import { AuthProvider, LoadingProvider, SubscriptionProvider } from "context";
 
 // ==============================|| MAIN - REACT DOM RENDER  ||============================== //
 
@@ -27,7 +27,9 @@ root.render(
     <BrowserRouter basename="/">
       <LoadingProvider>
         <AuthProvider>
-          <App />
+          <SubscriptionProvider>
+            <App />
+          </SubscriptionProvider>
         </AuthProvider>
       </LoadingProvider>
     </BrowserRouter>

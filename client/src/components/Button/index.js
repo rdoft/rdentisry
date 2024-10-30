@@ -19,6 +19,7 @@ import SwitchTeeth from "./SwitchTeeth";
 import Logout from "./Logout";
 import Permission from "./Permission";
 import Reminder from "./Reminder";
+import Subscribe from "./Subscribe";
 
 export {
   Add,
@@ -42,4 +43,5 @@ export {
   Logout,
   Permission,
   Reminder,
+  Subscribe,
 };

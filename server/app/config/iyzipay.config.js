@@ -1,6 +1,5 @@
 const Iyzipay = require("iyzipay");
 
-// TODO: Add these to .env
 module.exports = new Iyzipay({
   apiKey: process.env.IYZIPAY_API_KEY,
   secretKey: process.env.IYZIPAY_SECRET_KEY,

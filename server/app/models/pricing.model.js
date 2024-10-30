@@ -47,13 +47,14 @@ module.exports = (sequelize, Sequelize) => {
       },
     },
     {
-      timestamps: false,
       indexes: [
         {
           unique: true,
           fields: ["ReferenceCode"],
         },
       ],
+      timestamps: false,
+      tableName: "Pricing",
     }
   );
 

@@ -7,7 +7,7 @@ const iyzipay = require("../config/iyzipay.config");
  * @return status, token and checkout form
  */
 const checkoutInitialize = async (req) => {
-  await new Promise((resolve, reject) => {
+  return await new Promise((resolve, reject) => {
     iyzipay.subscriptionCheckoutForm.initialize(req, function (error, result) {
       // Handle Iyzico API error
       if (error || !result) {
@@ -26,14 +26,12 @@ const checkoutInitialize = async (req) => {
           pricingPlan: req.pricingPlanReferenceCode,
         });
       } else {
-        const { errorCode, errorGroup, errorName, errorMessage } = result;
+        const { status, errorCode, errorMessage } = result;
         log.app.warn(`Iyzipay checkout initialize failed`, {
           success: false,
           email: req.customer.email,
           error: {
             code: errorCode,
-            group: errorGroup,
-            name: errorName,
             message: errorMessage,
           },
         });
@@ -49,7 +47,7 @@ const checkoutInitialize = async (req) => {
  * @return status and data of the subscription
  */
 const checkoutRetrieve = async (req) => {
-  await new Promise((resolve, reject) => {
+  return await new Promise((resolve, reject) => {
     iyzipay.subscriptionCheckoutForm.retrieve(req, function (error, result) {
       // Handle Iyzico API error
       if (error || !result) {
@@ -67,14 +65,12 @@ const checkoutRetrieve = async (req) => {
           token: req.token,
         });
       } else {
-        const { errorCode, errorGroup, errorName, errorMessage } = result;
+        const { status, errorCode, errorMessage } = result;
         log.app.warn(`Iyzipay checkout retrieve failed`, {
           success: false,
           token: req.token,
           error: {
             code: errorCode,
-            group: errorGroup,
-            name: errorName,
             message: errorMessage,
           },
         });
@@ -90,7 +86,7 @@ const checkoutRetrieve = async (req) => {
  * @return status
  */
 const upgrade = async (req) => {
-  await new Promise((resolve, reject) => {
+  return await new Promise((resolve, reject) => {
     iyzipay.subscription.upgrade(req, function (error, result) {
       // Handle Iyzico API error
       if (error || !result) {
@@ -109,15 +105,13 @@ const upgrade = async (req) => {
           pricingPlan: newPricingPlanReferenceCode,
         });
       } else {
-        const { errorCode, errorGroup, errorName, errorMessage } = result;
+        const { status, errorCode, errorMessage } = result;
         log.app.warn(`Iyzipay upgrade failed`, {
           success: false,
           subscription: req.subscriptionReferenceCode,
           pricingPlan: newPricingPlanReferenceCode,
           error: {
             code: errorCode,
-            group: errorGroup,
-            name: errorName,
             message: errorMessage,
           },
         });
@@ -133,7 +127,7 @@ const upgrade = async (req) => {
  * @return status
  */
 const cancel = async (req) => {
-  await new Promise((resolve, reject) => {
+  return await new Promise((resolve, reject) => {
     iyzipay.subscription.cancel(req, function (error, result) {
       // Handle Iyzico API error
       if (error || !result) {
@@ -151,14 +145,12 @@ const cancel = async (req) => {
           subscription: req.subscriptionReferenceCode,
         });
       } else {
-        const { errorCode, errorGroup, errorName, errorMessage } = result;
+        const { status, errorCode, errorMessage } = result;
         log.app.warn(`Iyzipay cancel failed`, {
           success: false,
           subscription: req.subscriptionReferenceCode,
           error: {
             code: errorCode,
-            group: errorGroup,
-            name: errorName,
             message: errorMessage,
           },
         });
@@ -174,7 +166,7 @@ const cancel = async (req) => {
  * @return status
  */
 const updateCard = async (req) => {
-  await new Promise((resolve, reject) => {
+  return await new Promise((resolve, reject) => {
     iyzipay.subscriptionCard.updateWithSubscriptionReferenceCode(
       req,
       function (error, result) {
@@ -194,14 +186,12 @@ const updateCard = async (req) => {
             subscription: req.subscriptionReferenceCode,
           });
         } else {
-          const { errorCode, errorGroup, errorName, errorMessage } = result;
+          const { status, errorCode, errorMessage } = result;
           log.app.warn(`Iyzipay update card failed`, {
             success: false,
             subscription: req.subscriptionReferenceCode,
             error: {
               code: errorCode,
-              group: errorGroup,
-              name: errorName,
               message: errorMessage,
             },
           });
