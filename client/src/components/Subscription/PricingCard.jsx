@@ -1,10 +1,10 @@
 import React from "react";
 import { Divider } from "primereact";
 import { Grid, Box, Typography } from "@mui/material";
-import { Subscribe } from "components/Button";
+import { Subscribe, Basic } from "components/Button";
 import { useTheme } from "@mui/material/styles";
 
-function PricingCard({ pricing, current, selected, onClick }) {
+function PricingCard({ pricing, subscription, selected, onClick }) {
   const theme = useTheme();
 
   const [integerPart, decimalPart] = pricing.price
@@ -60,43 +60,24 @@ function PricingCard({ pricing, current, selected, onClick }) {
 
   return (
     <Grid container item justifyContent="center">
-      {/* Popular */}
-      {current ? (
+      {/* Emphesis */}
+      {emphesis && !subscription && !selected && (
         <Typography
           variant="h5"
           fontWeight="light"
           sx={{
-            color: theme.palette.common.white,
-            backgroundColor: theme.palette.text.secondary,
+            color: theme.palette.text.secondary,
+            backgroundColor: theme.palette.background.secondary,
             padding: "0.3rem 0.5rem",
             borderRadius: "0.5rem",
             width: "100%",
             textAlign: "center",
           }}
         >
-          Mevcut Planın
+          Önerilen
         </Typography>
-      ) : (
-        emphesis &&
-        !selected && (
-          <Typography
-            variant="h5"
-            fontWeight="light"
-            sx={{
-              color: theme.palette.text.secondary,
-              backgroundColor: theme.palette.background.secondary,
-              padding: "0.3rem 0.5rem",
-              borderRadius: "0.5rem",
-              width: "100%",
-              textAlign: "center",
-            }}
-          >
-            Önerilen
-          </Typography>
-        )
       )}
 
-      {/* Card */}
       <Grid
         container
         item
@@ -105,12 +86,13 @@ function PricingCard({ pricing, current, selected, onClick }) {
           borderRadius: "0.5rem",
           backgroundColor: theme.palette.common.white,
           border:
-            emphesis || selected
+            (emphesis && !subscription) || selected
               ? `1px solid ${theme.palette.text.secondary}`
               : `1px solid ${theme.palette.grey[300]}`,
-          boxShadow: emphesis
-            ? `0 10px 10px ${theme.palette.background.secondary}`
-            : "none",
+          boxShadow:
+            emphesis && !subscription
+              ? `0 10px 10px ${theme.palette.background.secondary}`
+              : "none",
         }}
       >
         {/* Name */}
@@ -148,19 +130,36 @@ function PricingCard({ pricing, current, selected, onClick }) {
           </Box>
         </Grid>
 
-        {/* Subscribe button */}
+        {/* Subscribe button or info */}
         {!selected && (
           <Grid item xs={12} py={1}>
-            <Subscribe
-              label="Seç"
-              onClick={handleClick}
-              style={
-                emphesis && {
-                  color: theme.palette.common.white,
-                  backgroundColor: theme.palette.text.secondary,
+            {subscription ? (
+              <Typography
+                variant="h5"
+                fontWeight="light"
+                style={{
+                  height: "3rem",
+                  alignContent: "center",
+                  textAlign: "center",
+                  color: theme.palette.text.primary,
+                  backgroundColor: theme.palette.background.primary,
+                  borderRadius: "8px",
+                }}
+              >
+                Mevcut Planın
+              </Typography>
+            ) : (
+              <Subscribe
+                label={subscription ? "Mevcut Planın" : "Seç"}
+                onClick={handleClick}
+                style={
+                  emphesis && {
+                    color: theme.palette.common.white,
+                    backgroundColor: theme.palette.text.secondary,
+                  }
                 }
-              }
-            />
+              />
+            )}
           </Grid>
         )}
 
@@ -177,6 +176,12 @@ function PricingCard({ pricing, current, selected, onClick }) {
               }}
             ></i>
             {pricing.maxDoctors} Hekim.
+            {subscription && (
+              <small style={{ color: theme.palette.grey[500] }}>
+                {" ( Kalan: "}
+                {subscription.doctors} Hekim. )
+              </small>
+            )}
           </Typography>
           <Typography variant="body1">
             <i
@@ -189,6 +194,12 @@ function PricingCard({ pricing, current, selected, onClick }) {
               }}
             ></i>
             {pricing.maxPatients} Hasta.
+            {subscription && (
+              <small style={{ color: theme.palette.grey[500] }}>
+                {" ( Kalan: "}
+                {subscription.patients} Hasta. )
+              </small>
+            )}
           </Typography>
           <Typography variant="body1">
             <i
@@ -201,8 +212,15 @@ function PricingCard({ pricing, current, selected, onClick }) {
               }}
             ></i>
             {pricing.maxSMS} SMS.
+            {subscription && (
+              <small style={{ color: theme.palette.grey[500] }}>
+                {" ( Kalan: "}
+                {subscription.sms} SMS. )
+              </small>
+            )}
           </Typography>
           <Typography variant="body1">
+            {/* TODO: Add remaining storage */}
             <i
               className="pi pi-check-circle"
               style={{

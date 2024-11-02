@@ -40,15 +40,6 @@ module.exports = function (app) {
     .post(validate(schema.token, "body"), controller.callback);
 
   router
-    .route(`/checkout/:subscriptionId`)
-    /**
-     * Control the payment status of given subscription
-     * @param subscriptionId
-     * @return status of the subscription
-     */
-    .get(isAuthenticated, validate(schema.id, "params"), controller.getStatus);
-
-  router
     .route(`/subscription`)
     /**
      * Get active subscription of the user

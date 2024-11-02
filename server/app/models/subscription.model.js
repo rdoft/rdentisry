@@ -33,22 +33,22 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.DATE,
         allowNull: true,
       },
-      MaxDoctors: {
+      Doctors: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 1,
       },
-      MaxPatients: {
+      Patients: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 75,
       },
-      MaxSMS: {
+      SMS: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 150,
       },
-      MaxStorage: {
+      Storage: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 1024, // in MB

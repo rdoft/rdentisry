@@ -30,6 +30,9 @@ const Pricing = Loadable(lazy(() => import("pages/Subscription/PricingPage")));
 const Checkout = Loadable(
   lazy(() => import("pages/Subscription/CheckoutPage"))
 );
+const CheckoutResult = Loadable(
+  lazy(() => import("pages/Subscription/CheckoutResultPage"))
+);
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -92,9 +95,12 @@ const MainRoutes = [
         element: <ProtectedRoute element={Pricing} />,
       },
       {
-        // TODO: Add button/link to redirect to the checkout page
         path: "/checkout",
         element: <ProtectedRoute element={Checkout} />,
+      },
+      {
+        path: "/checkout/result",
+        element: <ProtectedRoute element={CheckoutResult} />,
       },
     ],
   },

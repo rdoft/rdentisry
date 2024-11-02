@@ -34,6 +34,7 @@ import YoutubeIcon from "assets/images/icons/social/youtube.png";
 import InstagramIcon from "assets/images/icons/social/instagram.png";
 import XIcon from "assets/images/icons/social/x.png";
 import FacebookIcon from "assets/images/icons/social/facebook.png";
+import PricingIcon from "assets/images/icons/pricing.png";
 
 export {
   CalendarActiveIcon,
@@ -72,4 +73,5 @@ export {
   InstagramIcon,
   XIcon,
   FacebookIcon,
+  PricingIcon,
 };

@@ -21,21 +21,31 @@ function Pricing() {
 
   // Set the default values
   const [pricings, setPricings] = useState([]);
+  const [subscription, setSubscription] = useState(null);
 
   // Set the page on loading
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    startLoading("Pricing");
-    SubscriptionService.getPricings({ signal })
-      .then((res) => {
-        setPricings(res.data);
-      })
-      .catch((error) => {
+    const fetchAll = async () => {
+      startLoading("Pricing");
+
+      try {
+        const _pricings = await SubscriptionService.getPricings({ signal });
+        setPricings(_pricings.data);
+
+        const _subscription = await SubscriptionService.getSubscription({
+          signal,
+        });
+        setSubscription(_subscription?.data || null);
+      } catch (error) {
         error.message && toast.error(error.message);
-      })
-      .finally(() => stopLoading("Pricing"));
+      } finally {
+        stopLoading("Pricing");
+      }
+    };
+    fetchAll();
 
     return () => {
       controller.abort();
@@ -90,7 +100,13 @@ function Pricing() {
           >
             {pricings.map((pricing) => (
               <Grid item xs={10} sm={7} md={4} key={pricing.id}>
-                <PricingCard pricing={pricing} onClick={handleClick} />
+                <PricingCard
+                  pricing={pricing}
+                  subscription={
+                    subscription?.pricingId === pricing.id && subscription
+                  }
+                  onClick={handleClick}
+                />
               </Grid>
             ))}
           </Grid>

@@ -20,7 +20,7 @@ function Subscribe({ label, onClick, disabled, ...props }) {
       onClick={onClick}
       style={{
         color: theme.palette.text.primary,
-        opacity: disabled ? 0.5 : 1,
+        opacity: disabled || loading.save ? 0.5 : 1,
         border: `1px solid ${theme.palette.grey[300]}`,
         width: "100%",
         height: "3rem",
