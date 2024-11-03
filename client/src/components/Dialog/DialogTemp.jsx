@@ -54,7 +54,7 @@ function DialogTemp({
         visible
         modal
         className="p-fluid"
-        position="bottom-right"
+        position={props.position || "bottom-right"}
         style={props.style}
         header={props.header}
         onHide={handleHide}
@@ -62,6 +62,8 @@ function DialogTemp({
         onClick={handleClick}
         footer={
           <DialogFooter
+            labelSubmit={props.labelSubmit}
+            labelHide={props.labelHide}
             disabled={!isValid}
             onHide={handleHide}
             onSubmit={handleSubmit}

@@ -101,15 +101,16 @@ const upgrade = async (req) => {
       if (result.status === "success") {
         log.app.info(`Iyzipay upgrade completed`, {
           success: true,
-          subscription: req.subscriptionReferenceCode,
-          pricingPlan: newPricingPlanReferenceCode,
+          subscriptionOld: req.subscriptionReferenceCode,
+          subscriptionNew: result.data.referenceCode,
+          pricingPlan: req.newPricingPlanReferenceCode,
         });
       } else {
         const { status, errorCode, errorMessage } = result;
         log.app.warn(`Iyzipay upgrade failed`, {
           success: false,
-          subscription: req.subscriptionReferenceCode,
-          pricingPlan: newPricingPlanReferenceCode,
+          subscriptionOld: req.subscriptionReferenceCode,
+          pricingPlan: req.newPricingPlanReferenceCode,
           error: {
             code: errorCode,
             message: errorMessage,

@@ -2,26 +2,30 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { useLoading } from "context/LoadingProvider";
 import { useSubscription } from "context/SubscriptionProvider";
 import { LoadingController } from "components/Loadable";
 import { Loading } from "components/Other";
-import { useTheme } from "@mui/material/styles";
+import { UpgradeConfirmationDialog } from "components/Dialog";
 import PricingCard from "./PricingCard";
 import SubscriptionToolbar from "./SubscriptionToolbar";
 
 // services
 import { SubscriptionService } from "services";
 
+//TODO: Fix the sidebar active on subscription
+
 function Pricing() {
   const theme = useTheme();
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
-  const { selectPricing } = useSubscription();
+  const { pricing, selectPricing } = useSubscription();
 
   // Set the default values
   const [pricings, setPricings] = useState([]);
   const [subscription, setSubscription] = useState(null);
+  const [showDialog, setShowDialog] = useState(false);
 
   // Set the page on loading
   useEffect(() => {
@@ -52,11 +56,43 @@ function Pricing() {
     };
   }, [startLoading, stopLoading]);
 
+  // SERVICES -------------------------------------------------------------------
+  // Upgrade the subscription
+  const upgrade = async () => {
+    startLoading("save");
+    try {
+      await SubscriptionService.updateSubscription({ pricingId: pricing.id });
+      const response = await SubscriptionService.getSubscription();
+      setSubscription(response?.data || null);
+      toast.success("Planınız başarıyla güncellendi.");
+    } catch (error) {
+      error.message && toast.error(error.message);
+    } finally {
+      stopLoading("save");
+    }
+  };
+
   // HANDLERS ---------------------------------------------------------------------------------------------------------
   // onClick handler for the pricing card
   const handleClick = (pricing) => {
     selectPricing(pricing);
-    navigate("/checkout");
+    if (subscription) {
+      setShowDialog(true);
+    } else {
+      navigate("/checkout");
+    }
+  };
+
+  // onClose handler for the dialog
+  const handleHide = () => {
+    setShowDialog(false);
+  };
+  // onSubmit handler for the dialog
+  const handleSubmit = async () => {
+    if (pricing) {
+      await upgrade();
+    }
+    setShowDialog(false);
   };
 
   return (
@@ -112,6 +148,15 @@ function Pricing() {
           </Grid>
         </Grid>
       </LoadingController>
+
+      {/* Dialog */}
+      {showDialog && (
+        <UpgradeConfirmationDialog
+          pricing={pricing}
+          onSubmit={handleSubmit}
+          onHide={handleHide}
+        />
+      )}
     </Grid>
   );
 }

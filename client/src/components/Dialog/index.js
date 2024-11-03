@@ -11,6 +11,7 @@ import ProfileDialog from "./ProfileDialog";
 import ResetPasswordDialog from "./ResetPasswordDialog";
 import PatientPermissionDialog from "./PatientPermissionDialog";
 import TutorialDialog from "./TutorialDialog";
+import UpgradeConfirmationDialog from "./UpgradeConfirmationDialog";
 
 export {
   DialogTemp,
@@ -26,4 +27,5 @@ export {
   ResetPasswordDialog,
   PatientPermissionDialog,
   TutorialDialog,
+  UpgradeConfirmationDialog,
 };

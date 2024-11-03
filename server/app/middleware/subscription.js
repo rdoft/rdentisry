@@ -4,6 +4,8 @@ const Subscription = db.subscription;
 const Patient = db.patient;
 const Doctor = db.doctor;
 
+// TODO: Update all this functions based on the subscription and pricing controls
+
 // Check if subscription is valid
 // There is 3 state: free, active, inactive
 const isSubActive = async (req, res, next) => {
@@ -72,7 +74,7 @@ const checkLimitPatient = async (req, res, next) => {
     });
 
     // Send error if exceeds patient limit
-    if (patientCount >= subscription.MaxPatients) {
+    if (patientCount >= subscription.Patients) {
       res.status(402).send({
         message:
           "Maksimum hasta limitine ulaştınız. Lütfen aboneliğinizi yükseltin.",
@@ -112,7 +114,7 @@ const checkLimitDoctor = async (req, res, next) => {
     });
 
     // Send error if exceeds doctor limit
-    if (doctorCount >= subscription.MaxDoctors) {
+    if (doctorCount >= subscription.Doctors) {
       res.status(402).send({
         message:
           "Maksimum doktor limitine ulaştınız. Lütfen aboneliğinizi yükseltin.",
@@ -167,8 +169,8 @@ const setLimit = async (req, res, next) => {
     });
 
     req.limit = {
-      maxPatients: subscription.MaxPatients,
-      maxDoctors: subscription.MaxDoctors,
+      maxPatients: subscription.Patients,
+      maxDoctors: subscription.Doctors,
     };
 
     next();

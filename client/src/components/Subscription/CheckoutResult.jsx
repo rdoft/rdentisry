@@ -66,7 +66,7 @@ function CheckoutResult() {
           <Typography variant="h4" fontWeight="light">
             {status === "success"
               ? "Yeni plan tanımlandı, hemen kullanmaya başlayabilirsin."
-              : "Lütfen tekrar deneyin."}
+              : "Ödeme sırasında bir hata oldu. Lütfen tekrar deneyin."}
           </Typography>
           {/* Reference Code */}
           {referenceCode && (

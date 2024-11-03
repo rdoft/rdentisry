@@ -13,7 +13,7 @@ const finance = {
   type: "group",
   children: [
     {
-      id: "subscription",
+      id: "pricing",
       title: "Üyelik",
       type: "item",
       url: "/pricing",

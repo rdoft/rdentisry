@@ -7,7 +7,7 @@ const Pricing = db.pricing;
 const Subscription = db.subscription;
 
 const { HOSTNAME, HOST_SERVER } = process.env;
-const HOST = HOSTNAME || HOST_SERVER || "localhost:8080";
+const HOST = HOSTNAME || HOST_SERVER;
 
 const {
   checkoutInitialize,
@@ -15,6 +15,11 @@ const {
   upgrade,
   cancel,
 } = require("../utils/iyzipay.util");
+const {
+  calcRemainingDoctors,
+  calcRemainingPatients,
+  calcRemainingStorage,
+} = require("../utils/subscription.util");
 
 /**
  * Init checkout proccess by creating billing & subscription with pending status
@@ -89,13 +94,15 @@ exports.checkout = async (req, res) => {
           },
         }
       );
+      return;
     }
 
     // TODO: Test the payment gateway and errors
+    // TODO: Remove the redirect port from all the redirect links
     // Init checkout process
     const { status, token, checkoutFormContent, errorMessage } =
       await checkoutInitialize({
-        callbackUrl: `https://${HOST}/api/subscription/checkout`,
+        callbackUrl: `https://${HOST}:8080/api/subscriptions/callback`,
         pricingPlanReferenceCode: pricing.ReferenceCode,
         customer: {
           name,
@@ -160,10 +167,10 @@ exports.checkout = async (req, res) => {
       Status: "pending",
       StartDate: new Date(),
       EndDate: null,
-      MaxDoctors: pricing.DoctorCount,
-      MaxPatients: pricing.PatientCount,
-      MaxSMS: pricing.SMSCount,
-      MaxStorage: pricing.StorageSize,
+      Doctors: pricing.DoctorCount,
+      Patients: pricing.PatientCount,
+      SMS: pricing.SMSCount,
+      Storage: pricing.StorageSize,
       PaymentToken: token,
     });
 
@@ -190,12 +197,15 @@ exports.checkout = async (req, res) => {
  * @body token
  * @return empty response
  */
+// TODO: Remove the redirect port from all the redirect links
 exports.callback = async (req, res) => {
   const { token } = req.body;
 
   try {
     if (!token) {
-      res.status(400).send({ message: "Token bilgisi eksik" });
+      res.redirect(
+        `https://${HOST}:3000/checkout/result?status=failed&message=Geçersiz Token`
+      );
       log.audit.warn("Subscription callback failed: Token is missing", {
         action: "POST",
         success: false,
@@ -218,7 +228,9 @@ exports.callback = async (req, res) => {
     });
     // Check if the billing and subscription exists
     if (!billing || !subscription) {
-      res.status(404).send({ message: "Abonelik bulunamadı" });
+      res.redirect(
+        `https://${HOST}:3000/checkout/result?status=failed&message=Üyelik Bulunamadı`
+      );
       log.audit.warn("Subscription callback failed: Subscription not found", {
         token: token,
         action: "POST",
@@ -232,7 +244,9 @@ exports.callback = async (req, res) => {
 
     // TODO: Handle errors
     // Retrieve the checkout result
-    const { status, data, errorMessage } = await checkoutRetrieve({ token });
+    const { status, data, errorMessage } = await checkoutRetrieve({
+      checkoutFormToken: token,
+    });
 
     if (status !== "success") {
       // Update the billing status
@@ -247,7 +261,9 @@ exports.callback = async (req, res) => {
         StartDate: new Date(),
       });
 
-      res.status(400).send({ message: errorMessage });
+      res.redirect(
+        `https://${HOST}:3000/checkout/result?status=failed&message=${errorMessage}`
+      );
       log.audit.warn("Subscription callback failed: Payment gateway error", {
         userId: subscription.UserId,
         action: "POST",
@@ -284,61 +300,15 @@ exports.callback = async (req, res) => {
       }
     );
 
-    res.status(200).send();
+    res.redirect(
+      `https://${HOST}:3000/checkout/result?status=success&referenceCode=${data.referenceCode}`
+    );
     log.audit.info("Subscription callback completed", {
       action: "POST",
       success: true,
       resource: {
         type: "subscription",
         id: subscription.SubscriptionId,
-      },
-    });
-  } catch (error) {
-    res.status(500).send(error);
-    log.error.error(error);
-  }
-};
-
-/**
- * Control the payment status of given subscription
- * @param subscriptionId
- * @return status of the subscription
- */
-exports.getStatus = async (req, res) => {
-  const { UserId: userId } = req.user;
-  const { subscriptionId } = req.params;
-
-  try {
-    // Get subscription
-    const subscription = await Subscription.findOne({
-      where: {
-        SubscriptionId: subscriptionId,
-        UserId: userId,
-      },
-    });
-    // Check if the subscription exists
-    if (!subscription) {
-      res.status(404).send({ message: "Abonelik bulunamadı" });
-      log.audit.warn("Get status failed: Subscription not found", {
-        userId,
-        action: "GET",
-        success: false,
-        resource: {
-          type: "subscription",
-          id: subscriptionId,
-        },
-      });
-      return;
-    }
-
-    res.status(200).send({ status: subscription.Status });
-    log.audit.info("Get status completed", {
-      userId,
-      action: "GET",
-      success: true,
-      resource: {
-        type: "subscription",
-        id: subscriptionId,
       },
     });
   } catch (error) {
@@ -363,10 +333,11 @@ exports.getSubscription = async (req, res) => {
         ["Status", "status"],
         ["StartDate", "startDate"],
         ["EndDate", "endDate"],
-        ["MaxDoctors", "maxDoctors"],
-        ["MaxPatients", "maxPatients"],
-        ["MaxSMS", "maxSMS"],
-        ["MaxStorage", "maxStorage"],
+        ["Doctors", "doctors"],
+        ["Patients", "patients"],
+        ["SMS", "sms"],
+        ["Storage", "storage"],
+        ["PricingId", "pricingId"],
       ],
       where: {
         UserId: userId,
@@ -375,7 +346,7 @@ exports.getSubscription = async (req, res) => {
     });
 
     if (!subscription) {
-      res.status(404).send({ message: "Abonelik bulunamadı" });
+      res.status(404).send();
       log.audit.warn("Get subscription failed: Subscription not found", {
         userId,
         action: "GET",
@@ -442,7 +413,7 @@ exports.updateSubscription = async (req, res) => {
     // Get the pricing
     const pricing = await Pricing.findByPk(pricingId);
     if (!pricing) {
-      res.status(404).send({ message: "Abonelik planı bulunamadı" });
+      res.status(404).send({ message: "Ödeme planı bulunamadı" });
       log.audit.warn("Update subscription failed: Pricing not found", {
         userId,
         action: "PUT",
@@ -457,9 +428,10 @@ exports.updateSubscription = async (req, res) => {
 
     // Update the subscription
     // TODO: Handle error on this function
-    const { status, errorMessage } = await upgrade({
+    const { data, status, errorMessage } = await upgrade({
       subscriptionReferenceCode: subscription.ReferenceCode,
       newPricingPlanReferenceCode: pricing.ReferenceCode,
+      upgradePeriod: "NOW",
     });
 
     // Check if the udate is successful on payment gateway
@@ -473,24 +445,30 @@ exports.updateSubscription = async (req, res) => {
           type: "subscription",
         },
       });
+      return;
     }
 
-    // Make the old subscription passive and create a new one
-    subscription.update({
-      Status: "passive",
-      EndDate: new Date(),
-    });
+    // Create a new subscription with the new pricing plan and make the old one passive
+    const [remainDoctors, remainPatients, remainStorage] = await Promise.all([
+      calcRemainingDoctors(userId, pricing.DoctorCount),
+      calcRemainingPatients(userId, pricing.PatientCount),
+      calcRemainingStorage(userId, pricing.StorageSize),
+    ]);
     await Subscription.create({
       UserId: userId,
       PricingId: pricingId,
-      ReferenceCode: subscription.ReferenceCode,
+      ReferenceCode: data.referenceCode,
       Status: "active",
       StartDate: new Date(),
       EndDate: null,
-      MaxDoctors: pricing.DoctorCount,
-      MaxPatients: pricing.PatientCount,
-      MaxSMS: pricing.SMSCount,
-      MaxStorage: pricing.StorageSize,
+      Doctors: remainDoctors,
+      Patients: remainPatients,
+      Storage: remainStorage,
+      SMS: pricing.SMSCount,
+    });
+    await subscription.update({
+      Status: "passive",
+      EndDate: new Date(),
     });
 
     res.status(200).send();
@@ -560,6 +538,7 @@ exports.cancelSubscription = async (req, res) => {
           type: "subscription",
         },
       });
+      return;
     }
 
     // Update the subscription status as cancelled
