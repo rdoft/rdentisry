@@ -1,10 +1,10 @@
 import React from "react";
 import { Divider } from "primereact";
 import { Grid, Box, Typography } from "@mui/material";
-import { Subscribe, Basic } from "components/Button";
+import { Subscribe, Cancel } from "components/Button";
 import { useTheme } from "@mui/material/styles";
 
-function PricingCard({ pricing, subscription, selected, onClick }) {
+function PricingCard({ pricing, subscription, selected, onSelect, onCancel }) {
   const theme = useTheme();
 
   const [integerPart, decimalPart] = pricing.price
@@ -53,9 +53,14 @@ function PricingCard({ pricing, subscription, selected, onClick }) {
   }
 
   // HANDLERS ---------------------------------------------------------------------------------------------------------
-  // onClick handler for the pricing card
-  const handleClick = () => {
-    onClick(pricing);
+  // onSelect handler for the pricing card subscription
+  const handleSelect = () => {
+    onSelect(pricing);
+  };
+
+  // onCancel handler for subscription
+  const handleCancel = () => {
+    onCancel();
   };
 
   return (
@@ -130,28 +135,50 @@ function PricingCard({ pricing, subscription, selected, onClick }) {
           </Box>
         </Grid>
 
-        {/* Subscribe button or info */}
+        {/* Subscribe button or Current information */}
         {!selected && (
           <Grid item xs={12} py={1}>
             {subscription ? (
-              <Typography
-                variant="h5"
-                fontWeight="light"
-                style={{
+              <Grid
+                container
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{
                   height: "3rem",
-                  alignContent: "center",
-                  textAlign: "center",
-                  color: theme.palette.text.primary,
-                  backgroundColor: theme.palette.background.primary,
                   borderRadius: "8px",
+                  backgroundColor: theme.palette.background.primary,
                 }}
               >
-                Mevcut Planın
-              </Typography>
+                <Grid item xs>
+                  <Typography
+                    variant="h5"
+                    fontWeight="light"
+                    style={{
+                      alignContent: "center",
+                      textAlign: "center",
+                      color: theme.palette.text.primary,
+                    }}
+                  >
+                    Mevcut Planın
+                  </Typography>
+                </Grid>
+                <Grid item xs="auto">
+                  <Cancel
+                    label="İptal Et"
+                    onClick={handleCancel}
+                    style={{
+                      padding: "0.5rem",
+                      marginRight: "0.5rem",
+                      fontSize: "0.8rem",
+                      color: theme.palette.text.error,
+                    }}
+                  />
+                </Grid>
+              </Grid>
             ) : (
               <Subscribe
-                label={subscription ? "Mevcut Planın" : "Seç"}
-                onClick={handleClick}
+                label="Seç"
+                onClick={handleSelect}
                 style={
                   emphesis && {
                     color: theme.palette.common.white,

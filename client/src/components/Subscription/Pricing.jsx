@@ -7,7 +7,10 @@ import { useLoading } from "context/LoadingProvider";
 import { useSubscription } from "context/SubscriptionProvider";
 import { LoadingController } from "components/Loadable";
 import { Loading } from "components/Other";
-import { UpgradeConfirmationDialog } from "components/Dialog";
+import {
+  SubscriptionUpgradeDialog,
+  SubscriptionCancelDialog,
+} from "components/Dialog";
 import PricingCard from "./PricingCard";
 import SubscriptionToolbar from "./SubscriptionToolbar";
 
@@ -25,7 +28,10 @@ function Pricing() {
   // Set the default values
   const [pricings, setPricings] = useState([]);
   const [subscription, setSubscription] = useState(null);
-  const [showDialog, setShowDialog] = useState(false);
+  const [dialog, setDialog] = useState({
+    upgrade: false,
+    cancel: false,
+  });
 
   // Set the page on loading
   useEffect(() => {
@@ -72,27 +78,76 @@ function Pricing() {
     }
   };
 
+  // Cancel the subscription
+  const cancel = async () => {
+    startLoading("save");
+    try {
+      await SubscriptionService.cancelSubscription();
+      setSubscription(null);
+      toast.success("Aboneliğiniz başarıyla iptal edildi.");
+    } catch (error) {
+      error.message && toast.error(error.message);
+    } finally {
+      stopLoading("save");
+    }
+  };
+
   // HANDLERS ---------------------------------------------------------------------------------------------------------
-  // onClick handler for the pricing card
-  const handleClick = (pricing) => {
+  // onSelect handler for the pricing card
+  const handleSelect = (pricing) => {
     selectPricing(pricing);
     if (subscription) {
-      setShowDialog(true);
+      setDialog({
+        ...dialog,
+        upgrade: true,
+      });
     } else {
       navigate("/checkout");
     }
   };
 
-  // onClose handler for the dialog
-  const handleHide = () => {
-    setShowDialog(false);
+  // onCancel handler for the subscription
+  const handleCancel = () => {
+    setDialog({
+      ...dialog,
+      cancel: true,
+    });
   };
-  // onSubmit handler for the dialog
-  const handleSubmit = async () => {
+
+  // Hide the upgrade dialog
+  const hideUpgradeDialog = () => {
+    setDialog({
+      ...dialog,
+      upgrade: false,
+    });
+  };
+
+  // Hide the cancel dialog
+  const hideCancelDialog = () => {
+    setDialog({
+      ...dialog,
+      cancel: false,
+    });
+  };
+
+  // onSubmit handler for the upgrade dialog
+  const handleUpgradeSubmit = async () => {
     if (pricing) {
       await upgrade();
     }
-    setShowDialog(false);
+    setDialog({
+      ...dialog,
+      upgrade: false,
+    });
+  };
+
+  // onSubmit handler for the cancel dialog
+  const handleCancelSubmit = async () => {
+    await cancel();
+    setDialog({
+      ...dialog,
+      cancel: false,
+    });
   };
 
   return (
@@ -125,10 +180,10 @@ function Pricing() {
           <Grid
             container
             item
-            xs={11}
+            xs={12}
             md={10}
-            lg={9}
-            spacing={6}
+            xl={8}
+            spacing={4}
             rowSpacing={6}
             mt={2}
             justifyContent="center"
@@ -141,7 +196,8 @@ function Pricing() {
                   subscription={
                     subscription?.pricingId === pricing.id && subscription
                   }
-                  onClick={handleClick}
+                  onSelect={handleSelect}
+                  onCancel={handleCancel}
                 />
               </Grid>
             ))}
@@ -150,11 +206,17 @@ function Pricing() {
       </LoadingController>
 
       {/* Dialog */}
-      {showDialog && (
-        <UpgradeConfirmationDialog
+      {dialog.upgrade && (
+        <SubscriptionUpgradeDialog
           pricing={pricing}
-          onSubmit={handleSubmit}
-          onHide={handleHide}
+          onSubmit={handleUpgradeSubmit}
+          onHide={hideUpgradeDialog}
+        />
+      )}
+      {dialog.cancel && (
+        <SubscriptionCancelDialog
+          onSubmit={handleCancelSubmit}
+          onHide={hideCancelDialog}
         />
       )}
     </Grid>

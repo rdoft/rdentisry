@@ -12,7 +12,8 @@ const PaymentPlan = db.paymentPlan;
 const PatientProcedure = db.patientProcedure;
 const Visit = db.visit;
 
-// TODO: Add functions to calculate the remaining features
+// TODO: Add functions to calculate the remaining features (SMS and all)
+// TODO: Add these calculations for necessary parts of the application
 
 /**
  * Calculate the remaining doctors for the subscription

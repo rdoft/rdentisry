@@ -6,6 +6,7 @@ function Cancel({ label, rounded, onClick, ...props }) {
     <Button
       text
       outlined
+      label={label}
       rounded={rounded}
       size="small"
       icon="pi pi-times"

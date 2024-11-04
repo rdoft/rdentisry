@@ -2,7 +2,7 @@ import React from "react";
 import { Divider, Typography } from "@mui/material";
 import { DialogTemp } from "components/Dialog";
 
-function UpgradeConfirmationDialog({ pricing, onHide, onSubmit }) {
+function SubscriptionUpgradeDialog({ pricing, onHide, onSubmit }) {
   return (
     <DialogTemp
       isValid={true}
@@ -42,4 +42,4 @@ function UpgradeConfirmationDialog({ pricing, onHide, onSubmit }) {
   );
 }
 
-export default UpgradeConfirmationDialog;
+export default SubscriptionUpgradeDialog;

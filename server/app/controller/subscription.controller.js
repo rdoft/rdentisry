@@ -159,7 +159,12 @@ exports.checkout = async (req, res) => {
       PaymentToken: token,
     });
 
-    // Create a new subscription with pending status
+    // Create a new subscription with pending status  
+    const [remainDoctors, remainPatients, remainStorage] = await Promise.all([
+      calcRemainingDoctors(userId, pricing.DoctorCount),
+      calcRemainingPatients(userId, pricing.PatientCount),
+      calcRemainingStorage(userId, pricing.StorageSize),
+    ]);
     await Subscription.create({
       UserId: userId,
       PricingId: pricingId,
@@ -167,10 +172,10 @@ exports.checkout = async (req, res) => {
       Status: "pending",
       StartDate: new Date(),
       EndDate: null,
-      Doctors: pricing.DoctorCount,
-      Patients: pricing.PatientCount,
+      Doctors: remainDoctors,
+      Patients: remainPatients,
       SMS: pricing.SMSCount,
-      Storage: pricing.StorageSize,
+      Storage: remainStorage,
       PaymentToken: token,
     });
 
@@ -282,8 +287,8 @@ exports.callback = async (req, res) => {
     });
     // Update the subscription status and reference code
     await subscription.update({
-      ReferenceCode: data.referenceCode,
       Status: "active",
+      ReferenceCode: data.referenceCode,
       StartDate: data.startDate,
     });
     // Update free subscription status
@@ -427,7 +432,6 @@ exports.updateSubscription = async (req, res) => {
     }
 
     // Update the subscription
-    // TODO: Handle error on this function
     const { data, status, errorMessage } = await upgrade({
       subscriptionReferenceCode: subscription.ReferenceCode,
       newPricingPlanReferenceCode: pricing.ReferenceCode,
@@ -521,7 +525,6 @@ exports.cancelSubscription = async (req, res) => {
       return;
     }
 
-    // TODO: Test the payment gateway and errors
     // Cancel the subscription
     const { status, errorMessage } = await cancel({
       subscriptionReferenceCode: subscription.ReferenceCode,
