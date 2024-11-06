@@ -5,6 +5,7 @@ const User = db.user;
 const Patient = db.patient;
 const Appointment = db.appointment;
 const UserSetting = db.userSetting;
+const Subscription = db.subscription;
 
 const { send } = require("../utils/sms.util");
 const { setSMSLimit } = require("../utils/subscription.util");
@@ -34,7 +35,6 @@ async function sendAppointmentApproveReminders() {
   let message;
   let success;
 
-  // TODO: Add here subscription and remaining SMS controller
   try {
     startDate = new Date();
     endDate = new Date();
@@ -84,6 +84,17 @@ async function sendAppointmentApproveReminders() {
                   attributes: [],
                   where: {
                     AppointmentReminder: true, // User wants appointment reminders
+                  },
+                },
+                {
+                  model: Subscription,
+                  as: "subscriptions",
+                  attributes: [],
+                  where: {
+                    Status: "active", // User has an active subscription
+                    SMS: {
+                      [Sequelize.Op.gt]: 0, // User has remaining SMS limit
+                    },
                   },
                 },
               ],
@@ -166,7 +177,6 @@ async function sendAppointmentReminders() {
   let message;
   let success;
 
-  // TODO: Add here subscription and remaining SMS controller
   try {
     reminderDate = new Date();
     reminderDate.setDate(reminderDate.getDate() + APPOINTMENT_LAST_REMINDER);
@@ -214,6 +224,17 @@ async function sendAppointmentReminders() {
                   attributes: [],
                   where: {
                     AppointmentReminder: true, // User wants appointment reminders
+                  },
+                },
+                {
+                  model: Subscription,
+                  as: "subscriptions",
+                  attributes: [],
+                  where: {
+                    Status: "active", // User has an active subscription
+                    SMS: {
+                      [Sequelize.Op.gt]: 0, // User has remaining SMS limit
+                    },
                   },
                 },
               ],

@@ -10,7 +10,7 @@ const { setDoctorLimit } = require("../utils/subscription.util");
  */
 exports.getDoctors = async (req, res) => {
   const { UserId: userId } = req.user;
-  const { maxDoctors } = req.limit;
+  const { maxDoctors } = req.limit || {};
   let doctors;
 
   try {
@@ -24,7 +24,7 @@ exports.getDoctors = async (req, res) => {
       where: {
         UserId: userId,
       },
-      limit: maxDoctors,
+      ...(maxDoctors && { limit: maxDoctors }),
     });
 
     res.status(200).send(doctors);

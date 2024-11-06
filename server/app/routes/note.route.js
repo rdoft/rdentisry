@@ -1,7 +1,10 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
-const { isSubActive } = require("../middleware/subscription");
+const {
+  isSubActive,
+  checkStorageLimit,
+} = require("../middleware/subscription");
 
 // Appointment specific imports
 const controller = require("../controller/note.controller");
@@ -32,7 +35,12 @@ module.exports = function (app) {
     /**
      * Add a note
      */
-    .post(isSubActive, validate(schema.note, "body"), controller.saveNote);
+    .post(
+      isSubActive,
+      checkStorageLimit,
+      validate(schema.note, "body"),
+      controller.saveNote
+    );
 
   router
     .route(`/:noteId`)
@@ -54,7 +62,7 @@ module.exports = function (app) {
      * Delete the Note
      * @param noteId: Id of the Note
      */
-    .delete(validate(schema.id, "params"), controller.deleteNote);
+    .delete(isSubActive, validate(schema.id, "params"), controller.deleteNote);
 
   app.use(API_URL, router);
 };

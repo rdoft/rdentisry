@@ -1,7 +1,10 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
-const { isSubActive } = require("../middleware/subscription");
+const {
+  isSubActive,
+  checkStorageLimit,
+} = require("../middleware/subscription");
 
 // Procedure specific imports
 const controller = require("../controller/procedure.controller");
@@ -35,6 +38,7 @@ module.exports = function (app) {
      */
     .post(
       isSubActive,
+      checkStorageLimit,
       validate(schema.procedure, "body"),
       controller.saveProcedure
     )
@@ -42,7 +46,11 @@ module.exports = function (app) {
      * Delete procedures of the given Ids
      * @query ids: Id list of procedures
      */
-    .delete(validate(schema.ids, "query"), controller.deleteProcedures);
+    .delete(
+      isSubActive,
+      validate(schema.ids, "query"),
+      controller.deleteProcedures
+    );
 
   router
     .route(`/:procedureId`)
@@ -65,7 +73,11 @@ module.exports = function (app) {
      * Delete the procedure
      * @param procedureId: Id of the procedure
      */
-    .delete(validate(schema.id, "params"), controller.deleteProcedure);
+    .delete(
+      isSubActive,
+      validate(schema.id, "params"),
+      controller.deleteProcedure
+    );
 
   app.use(API_URL, router);
 };

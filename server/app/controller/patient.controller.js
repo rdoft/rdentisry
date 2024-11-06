@@ -16,7 +16,7 @@ const { setPatientLimit } = require("../utils/subscription.util");
 exports.getPatients = async (req, res) => {
   const { UserId: userId } = req.user;
   const { payments } = req.query;
-  const { maxPatients } = req.limit;
+  const { maxPatients } = req.limit || {};
   let patients;
 
   try {
@@ -93,7 +93,7 @@ exports.getPatients = async (req, res) => {
           [{ model: PaymentPlan, as: "paymentPlans" }, "PlannedDate", "ASC"],
           [{ model: PaymentPlan, as: "paymentPlans" }, "PaymentPlanId", "ASC"],
         ],
-        limit: maxPatients,
+        ...(maxPatients && { limit: maxPatients }),
       });
 
       // Calculate overdue status

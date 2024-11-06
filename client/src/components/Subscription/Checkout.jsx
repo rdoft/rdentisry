@@ -17,9 +17,6 @@ import { SubscriptionService } from "services";
 const PRIVACY = "https://www.disheki.me/privacy-policy";
 const TERMS = "https://www.disheki.me/terms-of-service";
 
-// TODO: Fix the subscription is already exist error (Add upgrade implementation)
-// TODO: Add cancel subscription implementation
-
 function Checkout() {
   const theme = useTheme();
   const navigate = useNavigate();

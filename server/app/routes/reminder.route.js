@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
+const { isSubActive, checkSMSLimit } = require("../middleware/subscription");
 
 // Reminder specific imports
 const controller = require("../controller/reminder.controller");
@@ -26,6 +27,8 @@ module.exports = function (app) {
      */
     .post(
       isAuthenticated,
+      isSubActive,
+      checkSMSLimit,
       validate(schema.appointmentId, "query"),
       controller.remindAppointment
     );
@@ -47,6 +50,8 @@ module.exports = function (app) {
      */
     .post(
       isAuthenticated,
+      isSubActive,
+      checkSMSLimit,
       validate(schema.pateintId, "query"),
       controller.remindPayment
     );

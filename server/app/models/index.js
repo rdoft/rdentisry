@@ -39,6 +39,7 @@ db.patientProcedure = require("./patientProcedure.model")(sequelize, Sequelize);
 db.notification = require("./notification.model")(sequelize, Sequelize);
 db.pricing = require("./pricing.model")(sequelize, Sequelize);
 db.billing = require("./billing.model")(sequelize, Sequelize);
+db.bonus = require("./bonus.model")(sequelize, Sequelize);
 db.notificationEvent = require("./notificationEvent.model")(
   sequelize,
   Sequelize
@@ -218,8 +219,8 @@ db.token.belongsTo(db.user, {
 });
 
 // User - Subscription
-db.user.hasOne(db.subscription, {
-  as: "subscription",
+db.user.hasMany(db.subscription, {
+  as: "subscriptions",
   foreignKey: "UserId",
   onDelete: "cascade",
   hooks: true,
@@ -257,6 +258,18 @@ db.user.hasMany(db.billing, {
   foreignKey: "UserId",
 });
 db.billing.belongsTo(db.user, {
+  as: "user",
+  foreignKey: "UserId",
+});
+
+// User - Bonus
+db.user.hasOne(db.bonus, {
+  as: "bonus",
+  foreignKey: "UserId",
+  onDelete: "cascade",
+  hooks: true,
+});
+db.bonus.belongsTo(db.user, {
   as: "user",
   foreignKey: "UserId",
 });

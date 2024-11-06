@@ -1,11 +1,7 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
-const {
-  isSubActive,
-  checkLimitDoctor,
-  setLimit,
-} = require("../middleware/subscription");
+const { isSubActive, checkDoctorLimit } = require("../middleware/subscription");
 
 // Patient specific imports
 const controller = require("../controller/doctor.controller");
@@ -32,14 +28,14 @@ module.exports = function (app) {
      * Get doctor list
      * Limited to the maxDoctors in the subscription
      */
-    .get(setLimit, controller.getDoctors)
+    .get(controller.getDoctors)
     /**
      * Add a doctor
      * @body Doctor informations
      */
     .post(
       isSubActive,
-      checkLimitDoctor,
+      checkDoctorLimit,
       validate(schema.doctor, "body"),
       controller.saveDoctor
     );
@@ -61,7 +57,11 @@ module.exports = function (app) {
      * Delete the doctor
      * @param doctorId id of the doctor
      */
-    .delete(validate(schema.id, "params"), controller.deleteDoctor);
+    .delete(
+      isSubActive,
+      validate(schema.id, "params"),
+      controller.deleteDoctor
+    );
 
   app.use(API_URL, router);
 };

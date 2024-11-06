@@ -90,7 +90,6 @@ const MainRoutes = [
         element: <ProtectedRoute element={Procedures} />,
       },
       {
-        // TODO: Add button/link to redirect to the pricing page
         path: "/pricing",
         element: <ProtectedRoute element={Pricing} />,
       },

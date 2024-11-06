@@ -1,6 +1,10 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
+const {
+  isSubActive,
+  checkStorageLimit,
+} = require("../middleware/subscription");
 
 // Appointment specific imports
 const controller = require("../controller/appointment.controller");
@@ -30,7 +34,12 @@ module.exports = function (app) {
     /**
      * Add a Appointment
      */
-    .post(validate(schema.appointment, "body"), controller.saveAppointment);
+    .post(
+      isSubActive,
+      checkStorageLimit,
+      validate(schema.appointment, "body"),
+      controller.saveAppointment
+    );
 
   router
     .route(`/:appointmentId`)
@@ -51,7 +60,11 @@ module.exports = function (app) {
      * Delete the Appointment
      * @param appointmentId: Id of the Appointment
      */
-    .delete(validate(schema.id, "params"), controller.deleteAppointment);
+    .delete(
+      isSubActive,
+      validate(schema.id, "params"),
+      controller.deleteAppointment
+    );
 
   app.use(API_URL, router);
 };

@@ -1,6 +1,9 @@
 const router = require("express").Router();
 const { isAuthenticated } = require("../middleware/auth");
-const { isSubActive } = require("../middleware/subscription");
+const {
+  isSubActive,
+  checkStorageLimit,
+} = require("../middleware/subscription");
 
 // PatientProcedure specific imports
 const controller = require("../controller/patientProcedure.controller");
@@ -34,7 +37,7 @@ module.exports = function (app) {
      * @query patientId id of the patient
      * @body PatientProcedure informations
      */
-    .post(isSubActive, controller.savePatientProcedure);
+    .post(isSubActive, checkStorageLimit, controller.savePatientProcedure);
 
   router
     .route(`/:patientProcedureId`)
@@ -42,7 +45,7 @@ module.exports = function (app) {
      * Delete the procedure
      * @param patientProcedureId: id of the patientProcedure
      */
-    .delete(controller.deletePatientProcedure)
+    .delete(isSubActive, controller.deletePatientProcedure)
     /**
      * Update a procedure of the patient
      * @param patientProcedureId id of the patientprocedure

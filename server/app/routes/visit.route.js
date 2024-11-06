@@ -1,7 +1,10 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
-const { isSubActive } = require("../middleware/subscription");
+const {
+  isSubActive,
+  checkStorageLimit,
+} = require("../middleware/subscription");
 
 // Visit specific imports
 const controller = require("../controller/visit.controller");
@@ -35,7 +38,7 @@ module.exports = function (app) {
      * @query patientId id of the patient
      * @body patientProcedures list of patient procedures
      */
-    .post(isSubActive, controller.saveVisit);
+    .post(isSubActive, checkStorageLimit, controller.saveVisit);
 
   router
     .route(`/:visitId`)
@@ -53,7 +56,7 @@ module.exports = function (app) {
      * Delete the visit
      * @param visitId id of the visit
      */
-    .delete(validate(schema.id, "params"), controller.deleteVisit);
+    .delete(isSubActive, validate(schema.id, "params"), controller.deleteVisit);
 
   app.use(API_URL, router);
 };

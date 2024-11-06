@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { validate } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
+const { isSubActive } = require("../middleware/subscription");
 
 // User specific imports
 const controller = require("../controller/user.controller");
@@ -47,7 +48,7 @@ module.exports = function (app) {
      * userId is taken from the request itself
      * @body settings - The user's settings like apointmentReminder
      */
-    .put(controller.updateSettings);
+    .put(isSubActive, controller.updateSettings);
 
   app.use(API_URL, router);
 };

@@ -3,8 +3,7 @@ const { validate } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
 const {
   isSubActive,
-  checkLimitPatient,
-  setLimit,
+  checkPatientLimit,
 } = require("../middleware/subscription");
 
 // Patient specific imports
@@ -31,14 +30,14 @@ module.exports = function (app) {
     /**
      * Get patient list
      */
-    .get(setLimit, controller.getPatients)
+    .get(controller.getPatients)
     /**
      * Add a patient
      * @body Patient informations
      */
     .post(
       isSubActive,
-      checkLimitPatient,
+      checkPatientLimit,
       validate(schema.patient, "body"),
       controller.savePatient
     )
@@ -46,7 +45,11 @@ module.exports = function (app) {
      * Delete patients of the given Ids
      * @query patientId: Id list of patients
      */
-    .delete(validate(schema.ids, "query"), controller.deletePatients)
+    .delete(
+      isSubActive,
+      validate(schema.ids, "query"),
+      controller.deletePatients
+    )
     /**
      * Update patients of the given Ids
      * @query patientId: Id list of patients
@@ -75,7 +78,11 @@ module.exports = function (app) {
      * Delete the patient
      * @param patientId: Id of the patient
      */
-    .delete(validate(schema.id, "params"), controller.deletePatient);
+    .delete(
+      isSubActive,
+      validate(schema.id, "params"),
+      controller.deletePatient
+    );
 
   app.use(API_URL, router);
 };

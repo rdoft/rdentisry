@@ -1,12 +1,9 @@
 const log = require("../config/log.config");
+const { Sequelize } = require("../models");
 const db = require("../models");
 const Subscription = db.subscription;
-const Patient = db.patient;
-const Doctor = db.doctor;
 
-// TODO: Update all this functions based on the subscription and pricing controls
-
-// Check if subscription is valid
+// Check if subscription is active
 // There is 4 state: active, passive, pending, cancelled
 const isSubActive = async (req, res, next) => {
   try {
@@ -14,7 +11,7 @@ const isSubActive = async (req, res, next) => {
       res.status(401).send({
         message: "Yetkilendirme hatası. Lütfen tekrar giriş yapın.",
       });
-      log.access.warn("Payment required: Unauthorized access", {
+      log.access.warn("Is subscription active failed: Unauthorized access", {
         action: "ACCESS",
         success: false,
         request: {
@@ -30,16 +27,19 @@ const isSubActive = async (req, res, next) => {
 
     const userId = req.user.UserId;
     const subscription = await Subscription.findOne({
-      where: { UserId: userId },
+      where: {
+        UserId: userId,
+        Status: "active",
+      },
     });
 
     // Send error if subscription is not active
-    if (subscription.EndDate && new Date(subscription.EndDate) < new Date()) {
+    if (!subscription) {
       res.status(402).send({
         message:
-          "Aktif aboneliğiniz bulunmamaktadır. Lütfen aboneliğinizi yenileyin.",
+          "Aktif aboneliğiniz bulunmamaktadır. Lütfen abonelik satın alın.",
       });
-      log.access.warn("Payment required: Inactive subscription", {
+      log.access.warn("Is subscription active failed: Subscription not found", {
         userId: userId,
         action: "ACCESS",
         success: false,
@@ -64,23 +64,18 @@ const isSubActive = async (req, res, next) => {
 };
 
 // Check if user exceeds patient limit
-const checkLimitPatient = async (req, res, next) => {
+const checkPatientLimit = async (req, res, next) => {
   try {
     const userId = req.user.UserId;
-    const subscription = await Subscription.findOne({
-      where: { UserId: userId },
-    });
-    const patientCount = await Patient.count({
-      where: { UserId: userId },
-    });
+    const subscription = req.subscription;
 
     // Send error if exceeds patient limit
-    if (patientCount >= subscription.Patients) {
+    if (subscription.Patients <= 0) {
       res.status(402).send({
         message:
           "Maksimum hasta limitine ulaştınız. Lütfen aboneliğinizi yükseltin.",
       });
-      log.access.warn("Payment required: Max patient limit", {
+      log.access.warn("Check patient limit: Patient limit exceeded.", {
         userId: userId,
         action: "ACCESS",
         success: false,
@@ -104,23 +99,87 @@ const checkLimitPatient = async (req, res, next) => {
 };
 
 // Check if user exceeds doctor limit
-const checkLimitDoctor = async (req, res, next) => {
+const checkDoctorLimit = async (req, res, next) => {
   try {
     const userId = req.user.UserId;
-    const subscription = await Subscription.findOne({
-      where: { UserId: userId },
-    });
-    const doctorCount = await Doctor.count({
-      where: { UserId: userId },
-    });
+    const subscription = req.subscription;
 
     // Send error if exceeds doctor limit
-    if (doctorCount >= subscription.Doctors) {
+    if (subscription.Doctors <= 0) {
       res.status(402).send({
         message:
           "Maksimum doktor limitine ulaştınız. Lütfen aboneliğinizi yükseltin.",
       });
-      log.access.warn("Payment required: Max doctor limit", {
+      log.access.warn("Check doctor limit failed: Doctor limit exceeded.", {
+        userId: userId,
+        action: "ACCESS",
+        success: false,
+        request: {
+          ip: req.headers["x-forwarded-for"],
+          url: req.originalUrl,
+          method: req.method,
+          status: 402,
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
+    }
+
+    next();
+  } catch (error) {
+    res.status(500).send(error);
+    log.error.error(error);
+    return;
+  }
+};
+
+// Check if user exceeds storage limit
+const checkStorageLimit = async (req, res, next) => {
+  try {
+    const userId = req.user.UserId;
+    const subscription = req.subscription;
+
+    // Send error if exceeds storage limit
+    if (subscription.Storage <= 0) {
+      res.status(402).send({
+        message:
+          "Maksimum depolama limitine ulaştınız. Lütfen aboneliğinizi yükseltin.",
+      });
+      log.access.warn("Check storage limit failed: Storage limit exceeded.", {
+        userId: userId,
+        action: "ACCESS",
+        success: false,
+        request: {
+          ip: req.headers["x-forwarded-for"],
+          url: req.originalUrl,
+          method: req.method,
+          status: 402,
+          agent: req.headers["user-agent"],
+        },
+      });
+      return;
+    }
+
+    next();
+  } catch (error) {
+    res.status(500).send(error);
+    log.error.error(error);
+    return;
+  }
+};
+
+// Check if user exceeds SMS limit
+const checkSMSLimit = async (req, res, next) => {
+  try {
+    const userId = req.user.UserId;
+    const subscription = req.subscription;
+
+    // Send error if exceeds SMS limit
+    if (subscription.SMS <= 0) {
+      res.status(402).send({
+        message: "SMS limitiniz dolmuştur. Lütfen aboneliğinizi yükseltin.",
+      });
+      log.access.warn("Check SMS limit failed: SMS limit exceeded.", {
         userId: userId,
         action: "ACCESS",
         success: false,
@@ -144,6 +203,7 @@ const checkLimitDoctor = async (req, res, next) => {
 };
 
 // Set a limit for the number of patients and doctors that can be list
+// TODO: Apply this to necessary routes
 const setLimit = async (req, res, next) => {
   try {
     if (!req.user) {
@@ -164,15 +224,43 @@ const setLimit = async (req, res, next) => {
       return;
     }
 
-    const userId = req.user.UserId;
     const subscription = await Subscription.findOne({
-      where: { UserId: userId },
+      where: {
+        UserId: req.user.UserId,
+        Status: "active",
+      },
+      include: [
+        {
+          model: Pricing,
+          as: "pricing",
+        },
+        {
+          model: Bonus,
+          as: "bonus",
+          where: {
+            EndDate: {
+              [Sequelize.Op.gte]: new Date(),
+            },
+          },
+        },
+      ],
     });
 
-    req.limit = {
-      maxPatients: subscription.Patients,
-      maxDoctors: subscription.Doctors,
-    };
+    if (!subscription) {
+      req.limit = {
+        maxDoctors: 1,
+        maxPatients: 75,
+      };
+    } else {
+      req.limit = {
+        maxDoctors:
+          (subscription.pricing?.DoctorCount ?? 1) +
+          (pricing?.bonus?.DoctorCount ?? 0),
+        maxPatients:
+          (subscription.pricing.PatientCount ?? 75) +
+          (pricing?.bonus?.PatientCount ?? 0),
+      };
+    }
 
     next();
   } catch (error) {
@@ -184,7 +272,9 @@ const setLimit = async (req, res, next) => {
 
 module.exports = {
   isSubActive,
-  checkLimitPatient,
-  checkLimitDoctor,
+  checkPatientLimit,
+  checkDoctorLimit,
+  checkStorageLimit,
+  checkSMSLimit,
   setLimit,
 };

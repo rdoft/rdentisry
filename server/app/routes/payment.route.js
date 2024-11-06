@@ -1,6 +1,10 @@
 const router = require("express").Router();
 const { validate, validateOR } = require("../middleware/validation");
 const { isAuthenticated } = require("../middleware/auth");
+const {
+  isSubActive,
+  checkStorageLimit,
+} = require("../middleware/subscription");
 
 // Patient specific imports
 const controller = require("../controller/payment.controller");
@@ -35,6 +39,8 @@ module.exports = function (app) {
      * @query {boolean} plan whether to save payment plan or actual payment
      */
     .post(
+      isSubActive,
+      checkStorageLimit,
       validateOR(schema.payment, schema.paymentPlan, "body"),
       controller.savePayment
     );
@@ -56,7 +62,11 @@ module.exports = function (app) {
      * @param paymentId: Id of the Payment or Payment Plan
      * @query {boolean} plan whether to delete payment plan or actual payment
      */
-    .delete(validate(schema.id, "params"), controller.deletePayment);
+    .delete(
+      isSubActive,
+      validate(schema.id, "params"),
+      controller.deletePayment
+    );
 
   app.use(API_URL, router);
 };

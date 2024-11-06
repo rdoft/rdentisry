@@ -247,7 +247,6 @@ function PricingCard({ pricing, subscription, selected, onSelect, onCancel }) {
             )}
           </Typography>
           <Typography variant="body1">
-            {/* TODO: Add remaining storage */}
             <i
               className="pi pi-check-circle"
               style={{

@@ -15,7 +15,7 @@ const {
   upgrade,
   cancel,
 } = require("../utils/iyzipay.util");
-const { calcRemainingLimits } = require("../utils/subscription.util");
+const { calcLimits } = require("../utils/subscription.util");
 
 /**
  * Init checkout proccess by creating billing & subscription with pending status
@@ -93,7 +93,6 @@ exports.checkout = async (req, res) => {
       return;
     }
 
-    // TODO: Test the payment gateway and errors
     // TODO: Remove the redirect port from all the redirect links
     // Init checkout process
     const { status, token, checkoutFormContent, errorMessage } =
@@ -156,8 +155,8 @@ exports.checkout = async (req, res) => {
     });
 
     // Create a new subscription with pending status
-    const { remainDoctors, remainPatients, remainStorage } =
-      await calcRemainingLimits(userId, pricing);
+    const { remainDoctors, remainPatients, remainStorage, remainSMS } =
+      await calcLimits(userId, pricing);
     await Subscription.create({
       UserId: userId,
       PricingId: pricingId,
@@ -167,7 +166,7 @@ exports.checkout = async (req, res) => {
       EndDate: null,
       Doctors: remainDoctors,
       Patients: remainPatients,
-      SMS: pricing.SMSCount,
+      SMS: remainSMS,
       Storage: remainStorage,
       PaymentToken: token,
     });
@@ -240,7 +239,6 @@ exports.callback = async (req, res) => {
       return;
     }
 
-    // TODO: Handle errors
     // Retrieve the checkout result
     const { status, data, errorMessage } = await checkoutRetrieve({
       checkoutFormToken: token,
@@ -446,8 +444,8 @@ exports.updateSubscription = async (req, res) => {
     }
 
     // Create a new subscription with the new pricing plan and make the old one passive
-    const { remainDoctors, remainPatients, remainStorage } =
-      await calcRemainingLimits(userId, pricing);
+    const { remainDoctors, remainPatients, remainStorage, remainSMS } =
+      await calcLimits(userId, pricing);
     await Subscription.create({
       UserId: userId,
       PricingId: pricingId,
@@ -458,7 +456,7 @@ exports.updateSubscription = async (req, res) => {
       Doctors: remainDoctors,
       Patients: remainPatients,
       Storage: remainStorage,
-      SMS: pricing.SMSCount,
+      SMS: remainSMS,
     });
     await subscription.update({
       Status: "passive",
