@@ -2,17 +2,17 @@ const log = require("../config/log.config");
 const { Sequelize } = require("../models");
 const db = require("../models");
 const User = db.user;
+const Note = db.note;
 const Doctor = db.doctor;
 const Patient = db.patient;
-const Note = db.note;
+const Pricing = db.pricing;
 const Appointment = db.appointment;
-const Notification = db.notification;
-const Payment = db.payment;
-const PaymentPlan = db.paymentPlan;
-const PatientProcedure = db.patientProcedure;
-const Visit = db.visit;
+const Subscription = db.subscription;
 
-// TODO: Add functions to calculate the remaining features (SMS and all)
+// Constant for the storage size in MB
+const APPOINTMENT_SIZE = 0.0628;
+const NOTE_SIZE = 0.0628;
+
 // TODO: Add these calculations for necessary parts of the application
 
 /**
@@ -71,12 +71,6 @@ async function calcRemainingStorage(userId, maxStorageSize) {
     throw new Error("Kullanıcı mevcut değil");
   }
 
-  const patientCount = await Patient.count({
-    where: { UserId: userId },
-  });
-  const notificationCount = await Notification.count({
-    where: { UserId: userId },
-  });
   const appointmentCount = await Appointment.count({
     include: [
       {
@@ -95,53 +89,229 @@ async function calcRemainingStorage(userId, maxStorageSize) {
       },
     ],
   });
-  const paymentCount = await Payment.count({
-    include: [
-      {
-        model: Patient,
-        as: "patient",
-        where: { UserId: userId },
-      },
-    ],
-  });
-  const paymentPlanCount = await PaymentPlan.count({
-    include: [
-      {
-        model: Patient,
-        as: "patient",
-        where: { UserId: userId },
-      },
-    ],
-  });
-  const patientProcedureCount = await PatientProcedure.count({
-    include: [
-      {
-        model: Visit,
-        as: "visit",
-        include: [
-          {
-            model: Patient,
-            as: "patient",
-            where: { UserId: userId },
-          },
-        ],
-      },
-    ],
-  });
 
-  const storageSize =
-    0.001 * patientCount +
-    0.004 * notificationCount +
-    0.0005 * appointmentCount +
-    0.003 * noteCount +
-    0.001 * paymentCount +
-    0.001 * paymentPlanCount +
-    0.0005 * patientProcedureCount;
-  return Math.floor(Math.max(0, maxStorageSize - storageSize));
+  const storageSize = Math.floor(
+    APPOINTMENT_SIZE * appointmentCount + NOTE_SIZE * noteCount
+  );
+  return Math.max(0, maxStorageSize - storageSize);
+}
+
+/**
+ * Calculate the remaining SMS for the subscription
+ * @param {number} userId - The user's id
+ * @param {number} maxSMSCount - The maximum SMS count based on pricing
+ * @return {number} - The remaining SMS count
+ */
+async function calcRemainingSMS(userId, maxSMSCount) {
+  // TODO: Implement this function
+
+  return Math.max(0, maxSMSCount);
+}
+
+/**
+ * Calculate the remainings for all subscription limits
+ * @param {number} userId - The user's id
+ * @param {object} pricing - The pricing object
+ * @return {object} - The remaining limits
+ */
+async function calcRemainingLimits(userId, pricing) {
+  const [remainDoctors, remainPatients, remainStorage, remainingSMS] =
+    await Promise.all([
+      calcRemainingDoctors(userId, pricing.DoctorCount),
+      calcRemainingPatients(userId, pricing.PatientCount),
+      calcRemainingStorage(userId, pricing.StorageSize),
+      calcRemainingSMS(userId, pricing.SMSCount),
+    ]);
+
+  return {
+    remainDoctors: remainDoctors ?? 0,
+    remainPatients: remainPatients ?? 0,
+    remainStorage: remainStorage ?? 0,
+    remainingSMS: remainingSMS ?? 0,
+  };
+}
+
+/**
+ * Set the doctors limit for the subscription
+ * @param {number} userId - The user's id
+ * @param {number} by - The value to increment or decrement
+ * @param {object} transaction - The transaction object
+ */
+async function setDoctorLimit(userId, by, transaction) {
+  // Get the subscription
+  const subscription = await Subscription.findOne({
+    where: {
+      UserId: userId,
+      Status: "active",
+    },
+    transaction,
+  });
+  // Check if the subscription exists
+  if (!subscription) {
+    log.app.error(`Set doctor limit failed: Subscription not found`, {
+      success: false,
+      userId: userId,
+    });
+    const error = new Error("Aktif aboneliğiniz bulunmamaktadır");
+    error.code = 402;
+    throw error;
+  }
+  // Check if the limit is exceeded
+  if (subscription.Doctors + by < 0) {
+    log.app.error(`Set doctor limit failed: Limit exceeded`, {
+      success: false,
+      userId: userId,
+      resource: {
+        type: "subscription",
+        by: by,
+      },
+    });
+    const error = new Error("Yetersiz limit, lütfen aboneliğinizi yükseltin");
+    error.code = 402;
+    throw error;
+  }
+
+  // Update the limit
+  await subscription.update(
+    { Doctors: subscription.Doctors + by },
+    { transaction }
+  );
+}
+
+/**
+ * Set patients limit for the subscription
+ * @param {number} userId - The user's id
+ * @param {number} by - The value to increment or decrement
+ * @param {object} transaction - The transaction object
+ */
+async function setPatientLimit(userId, by, transaction) {
+  // Get the subscription
+  const subscription = await Subscription.findOne({
+    where: {
+      UserId: userId,
+      Status: "active",
+    },
+    transaction,
+  });
+  // Check if the subscription exists
+  if (!subscription) {
+    log.app.error(`Set patient limit failed: Subscription not found`, {
+      success: false,
+      userId: userId,
+    });
+    const error = new Error("Aktif aboneliğiniz bulunmamaktadır");
+    error.code = 402;
+    throw error;
+  }
+  // Check if the limit is exceeded
+  if (subscription.Patients + by < 0) {
+    log.app.error(`Set patient limit failed: Limit exceeded`, {
+      success: false,
+      userId: userId,
+      resource: {
+        type: "subscription",
+        by: by,
+      },
+    });
+    const error = new Error("Yetersiz limit, lütfen aboneliğinizi yükseltin");
+    error.code = 402;
+    throw error;
+  }
+
+  // Update the limit
+  await subscription.update(
+    { Patients: subscription.Patients + by },
+    { transaction }
+  );
+}
+
+/**
+ * Set the storage limit for the subscription
+ * @param {number} userId - The user's id
+ * @param {object} transaction - The transaction object
+ */
+async function setStorageLimit(userId, transaction) {
+  // Get the subscription
+  const subscription = await Subscription.findOne({
+    where: {
+      UserId: userId,
+      Status: "active",
+    },
+    include: [
+      {
+        model: Pricing,
+        as: "pricing",
+        attributes: ["StorageSize"],
+      },
+    ],
+    transaction,
+  });
+  // Check if the subscription exists
+  if (!subscription) {
+    log.app.error(`Set storage limit failed: Subscription not found`, {
+      success: false,
+      userId: userId,
+    });
+    const error = new Error("Aktif aboneliğiniz bulunmamaktadır");
+    error.code = 402;
+    throw error;
+  }
+  // Get the resources
+  const appointmentCount = await Appointment.count({
+    include: [
+      {
+        model: Patient,
+        as: "patient",
+        where: { UserId: userId },
+      },
+    ],
+    transaction,
+  });
+  const noteCount = await Note.count({
+    include: [
+      {
+        model: Patient,
+        as: "patient",
+        where: { UserId: userId },
+      },
+    ],
+    transaction,
+  });
+  // Calculate the storage size
+  const maxStorageSize = subscription.pricing.StorageSize;
+  const storageSize = Math.floor(
+    APPOINTMENT_SIZE * appointmentCount + NOTE_SIZE * noteCount
+  );
+
+  // Check if the limit is exceeded
+  if (maxStorageSize - storageSize < 0) {
+    log.app.error(`Set storage limit failed: Limit exceeded`, {
+      success: false,
+      userId: userId,
+      resource: {
+        type: "subscription",
+        size: storageSize,
+      },
+    });
+    const error = new Error("Yetersiz limit, lütfen aboneliğinizi yükseltin");
+    error.code = 402;
+    throw error;
+  }
+
+  // Update the limit
+  await subscription.update(
+    { Storage: maxStorageSize - storageSize },
+    { transaction }
+  );
 }
 
 module.exports = {
   calcRemainingDoctors,
   calcRemainingPatients,
   calcRemainingStorage,
+  calcRemainingSMS,
+  calcRemainingLimits,
+  setDoctorLimit,
+  setPatientLimit,
+  setStorageLimit,
 };

@@ -258,6 +258,12 @@ function PricingCard({ pricing, subscription, selected, onSelect, onCancel }) {
               }}
             ></i>
             {pricing.maxStorage / 1024}GB Depolama.
+            {subscription && (
+              <small style={{ color: theme.palette.grey[500] }}>
+                {" ( Kalan: "}
+                {subscription.storage} MB. )
+              </small>
+            )}
           </Typography>
         </Grid>
       </Grid>

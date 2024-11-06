@@ -1,9 +1,11 @@
 const log = require("../config/log.config");
-const { Sequelize } = require("../models");
+const { Sequelize, sequelize } = require("../models");
 const db = require("../models");
 const Appointment = db.appointment;
 const Patient = db.patient;
 const Doctor = db.doctor;
+
+const { setStorageLimit } = require("../utils/subscription.util");
 
 /**
  * Get appointment list
@@ -223,7 +225,6 @@ exports.saveAppointment = async (req, res) => {
     Status: status,
     ReminderStatus: null,
   };
-  let appointment;
 
   try {
     // Get patient and doctor and control if they belongs to the authenticated user
@@ -260,19 +261,23 @@ exports.saveAppointment = async (req, res) => {
       return;
     }
 
-    // Create Appointment record
-    appointment = await Appointment.create(values);
-    appointment = {
-      id: appointment.AppointmentId,
-      patientId: appointment.PatientId,
-      doctorId: appointment.DoctorId,
-      date: appointment.Date,
-      startTime: appointment.StartTime,
-      endTime: appointment.EndTime,
-      description: appointment.Description,
-      status: appointment.Status,
-      reminderStatus: appointment.ReminderStatus,
-    };
+    // Create Appointment record and update the storage limit
+    const appointment = await sequelize.transaction(async (t) => {
+      const appointment = await Appointment.create(values, { transaction: t });
+      await setStorageLimit(userId, t);
+      return {
+        id: appointment.AppointmentId,
+        patientId: appointment.PatientId,
+        doctorId: appointment.DoctorId,
+        date: appointment.Date,
+        startTime: appointment.StartTime,
+        endTime: appointment.EndTime,
+        description: appointment.Description,
+        status: appointment.Status,
+        reminderStatus: appointment.ReminderStatus,
+      };
+    });
+
     res.status(201).send(appointment);
     log.audit.info("Save appointment completed", {
       userId,
@@ -303,7 +308,9 @@ exports.saveAppointment = async (req, res) => {
         }
       );
     } else {
-      res.status(500).send(error);
+      error.code
+        ? res.status(error.code).send({ message: error.message })
+        : res.status(500).send(error);
       log.error.error(error);
     }
   }
@@ -460,11 +467,10 @@ exports.updateAppointment = async (req, res) => {
 exports.deleteAppointment = async (req, res) => {
   const { UserId: userId } = req.user;
   const { appointmentId } = req.params;
-  let appointment;
 
   try {
     // Find Appointment
-    appointment = await Appointment.findOne({
+    const appointment = await Appointment.findOne({
       where: {
         AppointmentId: appointmentId,
       },
@@ -482,7 +488,10 @@ exports.deleteAppointment = async (req, res) => {
 
     // Delete the Appointment if it exists
     if (appointment) {
-      await appointment.destroy();
+      await sequelize.transaction(async (t) => {
+        await appointment.destroy({ transaction: t });
+        await setStorageLimit(userId, t);
+      });
 
       res.status(200).send({ id: appointmentId });
       log.audit.info("Delete appointment completed", {
@@ -513,7 +522,9 @@ exports.deleteAppointment = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(500).send(error);
+    error.code
+      ? res.status(error.code).send({ message: error.message })
+      : res.status(500).send(error);
     log.error.error(error);
   }
 };

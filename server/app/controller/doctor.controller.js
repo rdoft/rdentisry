@@ -1,7 +1,9 @@
 const log = require("../config/log.config");
-const { Sequelize } = require("../models");
+const { Sequelize, sequelize } = require("../models");
 const db = require("../models");
 const Doctor = db.doctor;
+
+const { setDoctorLimit } = require("../utils/subscription.util");
 
 /**
  * Get doctor list
@@ -49,18 +51,39 @@ exports.saveDoctor = async (req, res) => {
   const { UserId: userId } = req.user;
   const { name, surname } = req.body;
   let values = { Name: name, Surname: surname, UserId: userId };
-  let doctor;
 
   try {
-    // Create doctor record
-    [doctor, _] = await Doctor.findOrCreate({
+    // Check if the doctor already exists
+    let doctor = await Doctor.findOne({
       where: values,
     });
-    doctor = {
-      id: doctor.DoctorId,
-      name: doctor.Name,
-      surname: doctor.Surname,
-    };
+
+    if (doctor) {
+      res
+        .status(400)
+        .send({ message: "Doktor zaten kayıtlıdır, tekrar kaydedilemez." });
+      log.audit.warn("Save doctor failed: Doctor already exists", {
+        userId,
+        action: "POST",
+        success: false,
+        resource: {
+          type: "doctor",
+          id: doctor.DoctorId,
+        },
+      });
+      return;
+    }
+
+    // Create doctor record & decrease the doctor limit
+    doctor = await sequelize.transaction(async (t) => {
+      const doctor = await Doctor.create(values, { transaction: t });
+      await setDoctorLimit(userId, -1, t);
+      return {
+        id: doctor.DoctorId,
+        name: doctor.Name,
+        surname: doctor.Surname,
+      };
+    });
 
     res.status(201).send(doctor);
     log.audit.info("Save doctor completed", {
@@ -73,7 +96,9 @@ exports.saveDoctor = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).send(error);
+    error.code
+      ? res.status(error.code).send({ message: error.message })
+      : res.status(500).send(error);
     log.error.error(error);
   }
 };
@@ -155,9 +180,12 @@ exports.deleteDoctor = async (req, res) => {
       },
     });
 
-    // Delete the doctor if it exists
+    // Delete the doctor if it exists & increase the doctor limit
     if (doctor) {
-      await doctor.destroy();
+      await sequelize.transaction(async (t) => {
+        await doctor.destroy({ transaction: t });
+        await setDoctorLimit(userId, 1, t);
+      });
 
       res.status(200).send({ id: doctorId });
       log.audit.info("Delete doctor completed", {
@@ -203,7 +231,9 @@ exports.deleteDoctor = async (req, res) => {
         },
       });
     } else {
-      res.status(500).send(error);
+      error.code
+        ? res.status(error.code).send({ message: error.message })
+        : res.status(500).send(error);
       log.error.error(error);
     }
   }

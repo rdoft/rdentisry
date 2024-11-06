@@ -261,6 +261,18 @@ db.billing.belongsTo(db.user, {
   foreignKey: "UserId",
 });
 
+// Pricing - Subscription
+db.pricing.hasMany(db.subscription, {
+  as: "subscriptions",
+  foreignKey: "PricingId",
+  onDelete: "set null",
+  hooks: true,
+});
+db.subscription.belongsTo(db.pricing, {
+  as: "pricing",
+  foreignKey: "PricingId",
+});
+
 // HOOKS
 // Control If doctor has any appointments before destroy
 db.doctor.beforeDestroy(async (doctor) => {

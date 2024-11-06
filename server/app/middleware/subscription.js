@@ -7,7 +7,7 @@ const Doctor = db.doctor;
 // TODO: Update all this functions based on the subscription and pricing controls
 
 // Check if subscription is valid
-// There is 3 state: free, active, inactive
+// There is 4 state: active, passive, pending, cancelled
 const isSubActive = async (req, res, next) => {
   try {
     if (!req.user) {
@@ -33,7 +33,7 @@ const isSubActive = async (req, res, next) => {
       where: { UserId: userId },
     });
 
-    // Send error if subscription inactive
+    // Send error if subscription is not active
     if (subscription.EndDate && new Date(subscription.EndDate) < new Date()) {
       res.status(402).send({
         message:
@@ -54,6 +54,7 @@ const isSubActive = async (req, res, next) => {
       return;
     }
 
+    req.subscription = subscription;
     next();
   } catch (error) {
     res.status(500).send(error);

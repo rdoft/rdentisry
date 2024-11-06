@@ -15,11 +15,7 @@ const {
   upgrade,
   cancel,
 } = require("../utils/iyzipay.util");
-const {
-  calcRemainingDoctors,
-  calcRemainingPatients,
-  calcRemainingStorage,
-} = require("../utils/subscription.util");
+const { calcRemainingLimits } = require("../utils/subscription.util");
 
 /**
  * Init checkout proccess by creating billing & subscription with pending status
@@ -159,12 +155,9 @@ exports.checkout = async (req, res) => {
       PaymentToken: token,
     });
 
-    // Create a new subscription with pending status  
-    const [remainDoctors, remainPatients, remainStorage] = await Promise.all([
-      calcRemainingDoctors(userId, pricing.DoctorCount),
-      calcRemainingPatients(userId, pricing.PatientCount),
-      calcRemainingStorage(userId, pricing.StorageSize),
-    ]);
+    // Create a new subscription with pending status
+    const { remainDoctors, remainPatients, remainStorage } =
+      await calcRemainingLimits(userId, pricing);
     await Subscription.create({
       UserId: userId,
       PricingId: pricingId,
@@ -453,11 +446,8 @@ exports.updateSubscription = async (req, res) => {
     }
 
     // Create a new subscription with the new pricing plan and make the old one passive
-    const [remainDoctors, remainPatients, remainStorage] = await Promise.all([
-      calcRemainingDoctors(userId, pricing.DoctorCount),
-      calcRemainingPatients(userId, pricing.PatientCount),
-      calcRemainingStorage(userId, pricing.StorageSize),
-    ]);
+    const { remainDoctors, remainPatients, remainStorage } =
+      await calcRemainingLimits(userId, pricing);
     await Subscription.create({
       UserId: userId,
       PricingId: pricingId,

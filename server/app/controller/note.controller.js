@@ -1,8 +1,10 @@
 const log = require("../config/log.config");
-const { Sequelize } = require("../models");
+const { Sequelize, sequelize } = require("../models");
 const db = require("../models");
 const Note = db.note;
 const Patient = db.patient;
+
+const { setStorageLimit } = require("../utils/subscription.util");
 
 /**
  * Get note list of the given patientId
@@ -148,7 +150,6 @@ exports.saveNote = async (req, res) => {
     Detail: detail,
     Title: title,
   };
-  let note;
 
   try {
     // Get patient and control if it belongs to the authenticated user
@@ -174,15 +175,18 @@ exports.saveNote = async (req, res) => {
       return;
     }
 
-    // Create Note record
-    note = await Note.create(values);
-    note = {
-      id: note.NoteId,
-      patientId: note.PatientId,
-      detail: note.Detail,
-      title: note.Title,
-      date: note.Date,
-    };
+    // Create Note record and update the storage limit
+    const note = await sequelize.transaction(async (t) => {
+      const note = await Note.create(values, { transaction: t });
+      await setStorageLimit(userId, t);
+      return {
+        id: note.NoteId,
+        patientId: note.PatientId,
+        detail: note.Detail,
+        title: note.Title,
+        date: note.Date,
+      };
+    });
 
     res.status(200).send(note);
     log.audit.info("Save note completed", {
@@ -195,7 +199,9 @@ exports.saveNote = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).send(error);
+    error.code
+      ? res.status(error.code).send({ message: error.message })
+      : res.status(500).send(error);
     log.error.error(error);
   }
 };
@@ -326,7 +332,10 @@ exports.deleteNote = async (req, res) => {
 
     // Delete the Note if it exists
     if (note) {
-      note.destroy();
+      await sequelize.transaction(async (t) => {
+        await note.destroy({ transaction: t });
+        await setStorageLimit(userId, t);
+      });
 
       res.status(200).send({ id: noteId });
       log.audit.info("Delete note completed", {
@@ -357,7 +366,9 @@ exports.deleteNote = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(500).send(error);
+    error.code
+      ? res.status(error.code).send({ message: error.message })
+      : res.status(500).send(error);
     log.error.error(error);
   }
 };

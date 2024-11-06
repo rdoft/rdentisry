@@ -1,5 +1,5 @@
 const log = require("../config/log.config");
-const { Sequelize } = require("../models");
+const { Sequelize, sequelize } = require("../models");
 const db = require("../models");
 const Visit = db.visit;
 const Patient = db.patient;
@@ -8,6 +8,7 @@ const PaymentPlan = db.paymentPlan;
 const PatientProcedure = db.patientProcedure;
 
 const { processPatientsPayments } = require("../utils/payment.util");
+const { setPatientLimit } = require("../utils/subscription.util");
 
 /**
  * Get patient list
@@ -217,20 +218,23 @@ exports.savePatient = async (req, res) => {
     BirthYear: birthYear ?? null,
     UserId: userId,
   };
-  let patient;
 
   try {
-    // Create patient record
-    patient = await Patient.create(values);
-    patient = {
-      id: patient.PatientId,
-      idNumber: patient.IdNumber,
-      name: patient.Name,
-      surname: patient.Surname,
-      phone: patient.Phone,
-      birthYear: patient.BirthYear,
-      isSMS: patient.IsSMS,
-    };
+    // Create patient record & decrease the patient limit
+    const patient = await sequelize.transaction(async (t) => {
+      const patient = await Patient.create(values, { transaction: t });
+
+      await setPatientLimit(userId, -1, t);
+      return {
+        id: patient.PatientId,
+        idNumber: patient.IdNumber,
+        name: patient.Name,
+        surname: patient.Surname,
+        phone: patient.Phone,
+        birthYear: patient.BirthYear,
+        isSMS: patient.IsSMS,
+      };
+    });
 
     res.status(201).send(patient);
     log.audit.info("Save patient completed", {
@@ -259,7 +263,9 @@ exports.savePatient = async (req, res) => {
         },
       });
     } else {
-      res.status(500).send(error);
+      error.code
+        ? res.status(error.code).send({ message: error.message })
+        : res.status(500).send(error);
       log.error.error(error);
     }
   }
@@ -435,15 +441,21 @@ exports.deletePatients = async (req, res) => {
     // Convert query strng to array
     patientIds = patientId ? patientId.split(",") : [];
 
-    // Delete patient records
+    // Delete patient records & increase the patient limit
     if (patientIds.length > 0) {
-      count = await Patient.destroy({
-        where: {
-          UserId: userId,
-          PatientId: {
-            [Sequelize.Op.in]: patientIds,
+      count = await sequelize.transaction(async (t) => {
+        const count = await Patient.destroy({
+          where: {
+            UserId: userId,
+            PatientId: {
+              [Sequelize.Op.in]: patientIds,
+            },
           },
-        },
+          transaction: t,
+        });
+
+        await setPatientLimit(userId, patientIds.length, t);
+        return count;
       });
     }
 
@@ -475,7 +487,9 @@ exports.deletePatients = async (req, res) => {
         },
       });
     } else {
-      res.status(500).send(error);
+      error.code
+        ? res.status(error.code).send({ message: error.message })
+        : res.status(500).send(error);
       log.error.error(error);
     }
   }
@@ -499,9 +513,12 @@ exports.deletePatient = async (req, res) => {
       },
     });
 
-    // Delete the patient if it exists
+    // Delete the patient if it exists & increase the patient limit
     if (patient) {
-      await patient.destroy();
+      await sequelize.transaction(async (t) => {
+        await patient.destroy({ transaction: t });
+        await setPatientLimit(userId, 1, t);
+      });
 
       res.status(200).send({ id: patientId });
       log.audit.info("Delete patient completed", {
@@ -547,7 +564,9 @@ exports.deletePatient = async (req, res) => {
         },
       });
     } else {
-      res.status(500).send(error);
+      error.code
+        ? res.status(error.code).send({ message: error.message })
+        : res.status(500).send(error);
       log.error.error(error);
     }
   }
