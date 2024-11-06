@@ -5,7 +5,7 @@ const log = require("../config/log.config");
  * Sends an SMS message via the NetGSM API.
  * @param {string} to - The recipient's phone number.
  * @param {string} message - The SMS message content.
- * @returns {boolean} - True if the message was sent successfully, false otherwise.
+ * @returns - True if the message was sent successfully, false otherwise.
  */
 async function send(to, message) {
   try {

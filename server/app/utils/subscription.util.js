@@ -305,6 +305,50 @@ async function setStorageLimit(userId, transaction) {
   );
 }
 
+/**
+ * Set the SMS limit for the subscription
+ * @param {number} userId - The user's id
+ * @param {number} by - The value to increment or decrement
+ * @param {object} transaction - The transaction object
+ */
+async function setSMSLimit(userId, by, transaction) {
+  // Get the subscription
+  const subscription = await Subscription.findOne({
+    where: {
+      UserId: userId,
+      Status: "active",
+    },
+    transaction,
+  });
+  // Check if the subscription exists
+  if (!subscription) {
+    log.app.error(`Set SMS limit failed: Subscription not found`, {
+      success: false,
+      userId: userId,
+    });
+    const error = new Error("Aktif aboneliğiniz bulunmamaktadır");
+    error.code = 402;
+    throw error;
+  }
+  // Check if the limit is exceeded
+  if (subscription.SMS + by < 0) {
+    log.app.error(`Set SMS limit failed: Limit exceeded`, {
+      success: false,
+      userId: userId,
+      resource: {
+        type: "subscription",
+        by: by,
+      },
+    });
+    const error = new Error("Yetersiz limit, lütfen aboneliğinizi yükseltin");
+    error.code = 402;
+    throw error;
+  }
+
+  // Update the limit
+  await subscription.update({ SMS: subscription.SMS + by }, { transaction });
+}
+
 module.exports = {
   calcRemainingDoctors,
   calcRemainingPatients,
@@ -314,4 +358,5 @@ module.exports = {
   setDoctorLimit,
   setPatientLimit,
   setStorageLimit,
+  setSMSLimit,
 };

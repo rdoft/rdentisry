@@ -1,5 +1,5 @@
 const log = require("../config/log.config");
-const { Sequelize } = require("../models");
+const { Sequelize, sequelize } = require("../models");
 const db = require("../models");
 const User = db.user;
 const Patient = db.patient;
@@ -7,6 +7,7 @@ const Appointment = db.appointment;
 const UserSetting = db.userSetting;
 
 const { send } = require("../utils/sms.util");
+const { setSMSLimit } = require("../utils/subscription.util");
 const {
   createAppointmentMessage,
   createApprovalLink,
@@ -27,10 +28,13 @@ async function sendAppointmentApproveReminders() {
   let user;
   let client;
   let fullName;
+  let time;
   let date;
   let link;
   let message;
+  let success;
 
+  // TODO: Add here subscription and remaining SMS controller
   try {
     startDate = new Date();
     endDate = new Date();
@@ -120,12 +124,21 @@ async function sendAppointmentApproveReminders() {
           : null;
 
         message = createAppointmentMessage(fullName, date, time, client, link);
-        const success = await send(patient.phone, message);
+        success = await send(patient.phone, message);
         if (success) {
           await Appointment.update(
             { ReminderStatus: "sent" },
             { where: { AppointmentId: appointment.id } }
           );
+
+          // Descrease the SMS limit
+          try {
+            await sequelize.transaction(async (t) => {
+              await setSMSLimit(user.id, -1, t);
+            });
+          } catch (error) {
+            log.error.error(error);
+          }
         }
       }
     }
@@ -148,9 +161,12 @@ async function sendAppointmentReminders() {
   let user;
   let client;
   let fullName;
+  let time;
   let date;
   let message;
+  let success;
 
+  // TODO: Add here subscription and remaining SMS controller
   try {
     reminderDate = new Date();
     reminderDate.setDate(reminderDate.getDate() + APPOINTMENT_LAST_REMINDER);
@@ -186,7 +202,10 @@ async function sendAppointmentReminders() {
             {
               model: User,
               as: "user",
-              attributes: [["Name", "name"]],
+              attributes: [
+                ["UserId", "id"],
+                ["Name", "name"],
+              ],
               required: true,
               include: [
                 {
@@ -235,7 +254,17 @@ async function sendAppointmentReminders() {
           : null;
 
         message = createAppointmentMessage(fullName, date, time, client);
-        await send(patient.phone, message);
+        success = await send(patient.phone, message);
+        if (success) {
+          // Descrease the SMS limit
+          try {
+            await sequelize.transaction(async (t) => {
+              await setSMSLimit(user.id, -1, t);
+            });
+          } catch (error) {
+            log.error.error(error);
+          }
+        }
       }
     }
 

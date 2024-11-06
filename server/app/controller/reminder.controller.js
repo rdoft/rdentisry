@@ -139,7 +139,7 @@ exports.remindAppointment = async (req, res) => {
       );
       return;
     }
-    
+
     // Send appointment reminder
     const success = await sendAppointmentReminder(appointment);
     if (success) {
@@ -160,7 +160,9 @@ exports.remindAppointment = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(500).send(error);
+    error.code
+      ? res.status(error.code).send({ message: error.message })
+      : res.status(500).send(error);
     log.error.error(error);
   }
 };
@@ -188,7 +190,10 @@ exports.remindPayment = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: [["Name", "name"]],
+          attributes: [
+            ["UserId", "id"],
+            ["Name", "name"],
+          ],
         },
         {
           model: Payment,
@@ -322,7 +327,9 @@ exports.remindPayment = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(500).send(error);
+    error.code
+      ? res.status(error.code).send({ message: error.message })
+      : res.status(500).send(error);
     log.error.error(error);
   }
 };

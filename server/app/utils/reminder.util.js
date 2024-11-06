@@ -1,11 +1,12 @@
 const log = require("../config/log.config");
-const { Sequelize } = require("../models");
+const { Sequelize, sequelize } = require("../models");
 const db = require("../models");
 const Token = db.token;
 const Patient = db.patient;
 const Appointment = db.appointment;
 
 const { send } = require("./sms.util");
+const { setSMSLimit } = require("./subscription.util");
 const crypto = require("crypto");
 
 const { HOSTNAME, HOST_SERVER } = process.env;
@@ -20,9 +21,11 @@ async function sendAppointmentReminder(appointment) {
   let user;
   let client;
   let fullName;
+  let time;
   let date;
   let link;
   let message;
+  let success;
 
   try {
     patient = appointment.patient;
@@ -67,6 +70,12 @@ async function sendAppointmentReminder(appointment) {
         );
       }
     }
+    // Decrease the SMS limit if the message was sent successfully
+    if (success) {
+      await sequelize.transaction(async (t) => {
+        await setSMSLimit(user.id, -1, t);
+      });
+    }
 
     return success;
   } catch (error) {
@@ -83,6 +92,7 @@ async function sendPaymentReminder(patient) {
   let client;
   let fullName;
   let message;
+  let success;
 
   try {
     // Prepare the message
@@ -98,8 +108,15 @@ async function sendPaymentReminder(patient) {
     // Create message
     message = createPaymentMessage(fullName, client, patient.dept);
 
-    // Send payment reminder
-    return await send(patient.phone, message);
+    // Send payment reminder & decrease the SMS limit
+    success = await send(patient.phone, message);
+    if (success) {
+      await sequelize.transaction(async (t) => {
+        await setSMSLimit(patient.user.id, -1, t);
+      });
+    }
+
+    return success;
   } catch (error) {
     log.error.error(error);
     throw new Error(error);
@@ -117,14 +134,14 @@ async function sendPaymentReminder(patient) {
 function createAppointmentMessage(fullName, date, time, client, url) {
   if (url) {
     return (
-      `Sn. ${fullName},\\nDiş hekimi randevunuzun tarihi yaklaşıyor! ${date} ${time} tarihinde olan randevunuzu hatırlatmak istedik. Lütfen katılım durumunuzu bizimle paylaşın.` +
-      `\\n\\nOnay, İptal veya Değişiklik için buradan işlem yapabilirsiniz:\\n${url} \\n` +
+      `Sn. ${fullName},\\n${date} ${time} tarihindeki diş hekimi randevunuza katılım durumunuzu bildiriniz.` +
+      `\\n\\nOnay, İptal veya Değişiklik için:\\n${url} \\n` +
       (client ? `\\n${client}` : "") +
       `\\nSaygılarımızla.`
     );
   } else {
     return (
-      `Sn. ${fullName},\\nDiş hekimi randevunuzun tarihi yaklaşıyor! ${date} ${time} tarihinde olan randevunuzu hatırlatmak istedik. \\n` +
+      `Sn. ${fullName},\\${date} ${time} tarihindeki diş hekimi randevunuzu hatırlatırız.\\n` +
       (client ? `\\n${client}` : "") +
       `\\nSaygılarımızla.`
     );
@@ -141,13 +158,13 @@ function createAppointmentMessage(fullName, date, time, client, url) {
 function createPaymentMessage(fullName, client, dept) {
   if (dept > 0) {
     return (
-      `Sn. ${fullName},\\nDiş tedavinizden kalan ${dept}TL tutarında bir ödemeniz bulunmaktadır. En kısa sürede ödeme yapmanızı rica ederiz. \\n` +
+      `Sn. ${fullName},\\nDiş tedavinizden kalan ${dept} TL tutarında bir ödemeniz bulunmaktadır. En kısa sürede ödeme yapmanızı rica ederiz.\\n` +
       (client ? `\\n${client}` : "") +
       `\\nSaygılarımızla.`
     );
   } else {
     return (
-      `Sn. ${fullName},\\nDiş tedavinizle ilgili tarihi geçmiş bir ödemeniz bulunmaktadır. Ödemenizi en kısa sürede yapmanızı rica ederiz. \\n` +
+      `Sn. ${fullName},\\nDiş tedavinizle ilgili tarihi geçmiş bir ödemeniz bulunmaktadır. Ödemenizi en kısa sürede yapmanızı rica ederiz.\\n` +
       (client ? `\\n${client}` : "") +
       `\\nSaygılarımızla.`
     );
