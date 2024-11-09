@@ -5,6 +5,7 @@ import { Menu, Divider } from "primereact";
 import { Grid, Typography, Box, Avatar } from "@mui/material";
 import { More, Reminder } from "components/Button";
 import { LoadingIcon, ReminderStatus } from "components/Other";
+import { SubscriptionController } from "components/Subscription";
 import AppointmentStatus from "./AppointmentStatus";
 
 // assets
@@ -142,11 +143,13 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
                   template: () => (
                     <>
                       <Divider type="solid" className="my-2" />
-                      <Reminder
-                        label="Hatırlatma Gönder"
-                        style={{ width: "100%" }}
-                        onClick={sendReminder}
-                      />
+                      <SubscriptionController type="sms">
+                        <Reminder
+                          label="Hatırlatma Gönder"
+                          style={{ width: "100%" }}
+                          onClick={sendReminder}
+                        />
+                      </SubscriptionController>
                     </>
                   ),
                 },
@@ -158,12 +161,14 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
                   template: () => (
                     <>
                       <Divider type="solid" className="my-2" />
-                      <Reminder
-                        label="Hasta Onayına Gönder"
-                        icon="pi pi-send"
-                        style={{ width: "100%" }}
-                        onClick={sendReminder}
-                      />
+                      <SubscriptionController type="sms">
+                        <Reminder
+                          label="Hasta Onayına Gönder"
+                          icon="pi pi-send"
+                          style={{ width: "100%" }}
+                          onClick={sendReminder}
+                        />
+                      </SubscriptionController>
                     </>
                   ),
                 },

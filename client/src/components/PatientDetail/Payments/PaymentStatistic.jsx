@@ -3,6 +3,7 @@ import { ProgressBar } from "primereact";
 import { Grid } from "@mui/material";
 import { StatisticCard } from "components/cards";
 import { Reminder } from "components/Button";
+import { SubscriptionController } from "components/Subscription";
 
 // assets
 import { useTheme } from "@mui/material/styles";
@@ -101,7 +102,9 @@ function PaymentStatistic({
 
         {allowReminder && (
           <Grid item xs={12} textAlign="center" pt={1}>
-            <Reminder label="Hatırlatma Gönder" onClick={onSendReminder} />
+            <SubscriptionController type="sms">
+              <Reminder label="Hatırlatma Gönder" onClick={onSendReminder} />
+            </SubscriptionController>
           </Grid>
         )}
       </Grid>

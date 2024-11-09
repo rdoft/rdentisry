@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
-import { NewItem } from "components/Button";
+import { Add } from "components/Button";
 import { NotFoundText } from "components/Text";
 import { LoadingIcon } from "components/Other";
 import { useLoading } from "context/LoadingProvider";
 import { LoadingController } from "components/Loadable";
 import { SkeletonNotesTab } from "components/Skeleton";
+import { SubscriptionController } from "components/Subscription";
 import NoteCard from "./NoteCard";
 import Note from "./Note";
 
@@ -167,7 +168,11 @@ function NotesTab({
           {loading.save && <LoadingIcon style={{ padding: "2rem" }} />}
 
           {/* Add note */}
-          <NewItem label="Not Ekle" onClick={showDialog} />
+          <Grid item xs={12} mt={3} style={{ textAlign: "center" }}>
+            <SubscriptionController type="storage" >
+              <Add border label="Not Ekle" onClick={showDialog} />
+            </SubscriptionController>
+          </Grid>
         </Grid>
 
         {/* Note detail */}

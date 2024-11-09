@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { Menu } from "primereact";
 import { Add, Goto, More } from "components/Button";
+import { SubscriptionController } from "components/Subscription";
 
 // assets
 import { useTheme } from "@mui/material/styles";
@@ -24,41 +25,45 @@ function PatientDetailToolbarAction({
   switch (activeIndex) {
     case 0:
       return (
-        <Add
-          label="Randevu Ekle"
-          default={true}
-          onClick={showAppointmentDialog}
-        />
+        <SubscriptionController type="storage">
+          <Add label="Randevu Ekle" default onClick={showAppointmentDialog} />
+        </SubscriptionController>
       );
     case 1:
       return (
         <>
-          <Add
-            label="Ödeme Ekle"
-            default={true}
-            onClick={() => showPaymentDialog("payment")}
-          />
-          <Add
-            label="Ödeme Planı Ekle"
-            default={true}
-            onClick={() => showPaymentDialog("plan")}
-            style={{ marginLeft: 0 }}
-          />
+          <SubscriptionController type="storage">
+            <Add
+              default
+              label="Ödeme Ekle"
+              onClick={() => showPaymentDialog("payment")}
+            />
+          </SubscriptionController>
+          <SubscriptionController type="storage">
+            <Add
+              default
+              label="Ödeme Planı Ekle"
+              onClick={() => showPaymentDialog("plan")}
+              style={{ marginLeft: 0 }}
+            />
+          </SubscriptionController>
         </>
       );
     case 2:
-      return <Add label="Not Ekle" default={true} onClick={showNoteDialog} />;
+      return (
+        <SubscriptionController type="storage">
+          <Add default label="Not Ekle" onClick={showNoteDialog} />
+        </SubscriptionController>
+      );
     case 3:
       return (
         <>
-          <Add
-            label="Tedavi Ekle"
-            default={true}
-            onClick={showProcedureDialog}
-          />
+          <SubscriptionController type="storage">
+            <Add default label="Tedavi Ekle" onClick={showProcedureDialog} />
+          </SubscriptionController>
           <Goto
+            default
             label="Ödeme Planına Git"
-            default={true}
             onClick={() => handleTabChange(1)}
             style={{
               marginRight: "0.5rem",

@@ -6,16 +6,17 @@ import { useSubscription } from "context/SubscriptionProvider";
 // assets
 import { PremiumIcon } from "assets/images/icons";
 
-const SubscriptionController = ({ type, onClick, children }) => {
+const SubscriptionController = ({ type, children }) => {
   const theme = useTheme();
   const { limits, isSubscribed, showDialog } = useSubscription();
   const exceeded = limits[type] <= 0;
 
+  // HANDLERS ------------------------------------------------------------------
   const handleClick = (event) => {
     if (exceeded || !isSubscribed) {
       showDialog();
-    } else if (onClick) {
-      onClick(event);
+    } else if (children.props.onClick) {
+      children.props.onClick(event);
     } else {
       return;
     }

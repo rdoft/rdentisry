@@ -4,10 +4,11 @@ import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import { AppointmentDialog } from "components/Dialog";
 import { CardTitle } from "components/cards";
-import { NewItem } from "components/Button";
+import { Add } from "components/Button";
 import { useLoading } from "context/LoadingProvider";
 import { LoadingController } from "components/Loadable";
 import { SkeletonAppointmentsTab } from "components/Skeleton";
+import { SubscriptionController } from "components/Subscription";
 
 import NotFoundText from "components/Text/NotFoundText";
 import AppointmentCard from "./AppointmentCard";
@@ -194,7 +195,16 @@ function AppointmentsTab({
             )}
 
             {/* Add appointment */}
-            <NewItem label="Randevu Ekle" onClick={showDialog} />
+            <Grid
+              item
+              xs={12}
+              mt={ 3}
+              style={{ textAlign: "center" }}
+            >
+              <SubscriptionController type="storage" >
+                <Add border label="Randevu Ekle" onClick={showDialog} />
+              </SubscriptionController>
+            </Grid>
           </Grid>
         </Grid>
 
@@ -227,7 +237,16 @@ function AppointmentsTab({
             )}
 
             {/* Add appointment */}
-            <NewItem label="Randevu Ekle" onClick={showDialog} />
+            <Grid
+              item
+              xs={12}
+              mt={3}
+              style={{ textAlign: "center" }}
+            >
+              <SubscriptionController type="storage" >
+                <Add border label="Randevu Ekle" onClick={showDialog} />
+              </SubscriptionController>
+            </Grid>
           </Grid>
         </Grid>
       </Grid>

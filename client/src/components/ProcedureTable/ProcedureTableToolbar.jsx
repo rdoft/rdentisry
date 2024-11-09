@@ -2,6 +2,7 @@ import React from "react";
 import { Toolbar, Divider } from "primereact";
 import { Typography } from "@mui/material";
 import { Add, Delete } from "components/Button";
+import { SubscriptionController } from "components/Subscription";
 import Search from "components/Search";
 
 function ProcedureTableToolbar({
@@ -24,7 +25,9 @@ function ProcedureTableToolbar({
           onClick={onClickDelete}
           style={{ visibility: visibleDelete ? "visible" : "hidden" }}
         />
-        <Add label="Tedavi Ekle" default={true} onClick={onClickAdd} />
+        <SubscriptionController type="storage">
+          <Add label="Tedavi Ekle" default={true} onClick={onClickAdd} />
+        </SubscriptionController>
       </>
     );
   };

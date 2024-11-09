@@ -7,7 +7,6 @@ import Pay from "./Pay";
 import Next from "./Next";
 import Prev from "./Prev";
 import Cancel from "./Cancel";
-import NewItem from "./NewItem";
 import SplitItem from "./SplitItem";
 import Goto from "./Goto";
 import Reduce from "./Reduce";
@@ -31,7 +30,6 @@ export {
   Next,
   Prev,
   Cancel,
-  NewItem,
   SplitItem,
   Goto,
   Reduce,

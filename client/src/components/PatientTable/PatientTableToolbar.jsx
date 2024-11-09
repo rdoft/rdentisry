@@ -78,8 +78,8 @@ function PatientTableToolbar({
             />
           </>
         )}
-        <SubscriptionController type="patients" onClick={handleClickAdd}>
-          <Add label="Hasta Ekle" default />
+        <SubscriptionController type="patients">
+          <Add default label="Hasta Ekle" onClick={handleClickAdd} />
         </SubscriptionController>
       </>
     );

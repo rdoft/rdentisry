@@ -4,12 +4,13 @@ import { Grid, Tooltip } from "@mui/material";
 import { Timeline, Divider } from "primereact";
 import { CardTitle } from "components/cards";
 import { PaymentDialog, PaymentPlanDialog } from "components/Dialog";
-import { NewItem } from "components/Button";
+import { Add } from "components/Button";
 import { NotFoundText } from "components/Text";
 import { calcProgress } from "utils";
 import { useLoading } from "context/LoadingProvider";
 import { LoadingController } from "components/Loadable";
 import { SkeletonPaymentsTab } from "components/Skeleton";
+import { SubscriptionController } from "components/Subscription";
 import PaymentStatistic from "./PaymentStatistic";
 import PaymentMarker from "./PaymentMarker";
 import PaymentDateTag from "./PaymentDateTag";
@@ -341,7 +342,15 @@ function PaymentsTab({
                 )}
               </Grid>
               {/* Add payment plan */}
-              <NewItem label="Ödeme Planı Ekle" onClick={handlePlanDialog} />
+              <Grid item xs={12} mt={3} style={{ textAlign: "center" }}>
+                <SubscriptionController type="storage">
+                  <Add
+                    border
+                    label="Ödeme Planı Ekle"
+                    onClick={handlePlanDialog}
+                  />
+                </SubscriptionController>
+              </Grid>
             </Grid>
 
             {/* Payment Timeline */}
@@ -378,7 +387,15 @@ function PaymentsTab({
               </Grid>
 
               {/* Add payment */}
-              <NewItem label="Ödeme Ekle" onClick={handlePaymentDialog} />
+              <Grid item xs={12} mt={3} style={{ textAlign: "center" }}>
+                <SubscriptionController type="storage">
+                  <Add
+                    border
+                    label="Ödeme Ekle"
+                    onClick={handlePaymentDialog}
+                  />
+                </SubscriptionController>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>

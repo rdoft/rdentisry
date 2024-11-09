@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { More, Reminder } from "components/Button";
 import { LoadingIcon, ReminderStatus } from "components/Other";
+import { SubscriptionController } from "components/Subscription";
 
 // assets
 import { useTheme } from "@mui/material/styles";
@@ -174,13 +175,15 @@ function MonthEvent({ initEvent = {}, onSubmit }) {
                   template: () => (
                     <>
                       <Divider type="solid" className="my-2" />
-                      <Reminder
-                        label="Hatırlatma Gönder"
-                        icon="pi pi-bell"
-                        disabled={!isSMS}
-                        style={{ width: "100%" }}
-                        onClick={handleClickSendReminder}
-                      />
+                      <SubscriptionController type="sms">
+                        <Reminder
+                          label="Hatırlatma Gönder"
+                          icon="pi pi-bell"
+                          disabled={!isSMS}
+                          style={{ width: "100%" }}
+                          onClick={handleClickSendReminder}
+                        />
+                      </SubscriptionController>
                     </>
                   ),
                 },
@@ -192,13 +195,15 @@ function MonthEvent({ initEvent = {}, onSubmit }) {
                   template: () => (
                     <>
                       <Divider type="solid" className="my-2" />
-                      <Reminder
-                        label="Hasta Onayına Gönder"
-                        icon="pi pi-send"
-                        disabled={!isSMS}
-                        style={{ width: "100%" }}
-                        onClick={handleClickSendApprovement}
-                      />
+                      <SubscriptionController type="sms">
+                        <Reminder
+                          label="Hasta Onayına Gönder"
+                          icon="pi pi-send"
+                          disabled={!isSMS}
+                          style={{ width: "100%" }}
+                          onClick={handleClickSendApprovement}
+                        />
+                      </SubscriptionController>
                     </>
                   ),
                 },

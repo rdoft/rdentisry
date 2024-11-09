@@ -3,11 +3,12 @@ import { toast } from "react-hot-toast";
 import { Grid, Tabs, Tab, Avatar } from "@mui/material";
 import ReactToPrint from "react-to-print";
 import { ProcedureDialog } from "components/Dialog";
-import { NewItem, SplitItem, Print } from "components/Button";
+import { Add, SplitItem, Print } from "components/Button";
 import { AppointmentDialog } from "components/Dialog";
 import { useLoading } from "context/LoadingProvider";
 import { LoadingController } from "components/Loadable";
 import { SkeletonProceduresTab } from "components/Skeleton";
+import { SubscriptionController } from "components/Subscription";
 import ProcedureToolbar from "./ProcedureToolbar";
 import DentalChart from "./DentalChart";
 import ProcedureList from "./ProcedureList/ProcedureList";
@@ -430,39 +431,53 @@ function ProceduresTab({
                 <Grid
                   item
                   xs={3}
-                  style={{ display: "flex", justifyContent: "end" }}
+                  mt={3}
+                  sx={{ display: "flex", justifyContent: "end" }}
                 >
-                  <SplitItem
-                    label="Randevu Ekle"
-                    options={approvedVisits}
-                    onClick={handleCreateAppointment}
-                    disabled={!(approvedVisits?.length > 0)}
-                    tooltip={
-                      !(approvedVisits?.length > 0) &&
-                      "Randevu eklemek için en az bir seansı onaylayın"
-                    }
-                  />
+                  <SubscriptionController type="storage">
+                    <SplitItem
+                      label="Randevu Ekle"
+                      options={approvedVisits}
+                      disabled={!(approvedVisits?.length > 0)}
+                      onClick={handleCreateAppointment}
+                      tooltip={
+                        !(approvedVisits?.length > 0) &&
+                        "Randevu eklemek için en az bir seansı onaylayın"
+                      }
+                    />
+                  </SubscriptionController>
                 </Grid>
                 <Grid
                   item
                   xs={3}
-                  style={{ display: "flex", justifyContent: "start" }}
+                  mt={3}
+                  sx={{ display: "flex", justifyContent: "start" }}
                 >
-                  <SplitItem
-                    label="Seans Ekle"
-                    options={pendingVisits}
-                    onClick={handleCreateVisit}
-                    disabled={!(selectedProcedures?.length > 0)}
-                    tooltip={
-                      !(selectedProcedures?.length > 0) &&
-                      "Seans ekleme/düzenleme yapmak için tedavi seçin"
-                    }
-                  />
+                  <SubscriptionController type="storage">
+                    <SplitItem
+                      label="Seans Ekle"
+                      options={pendingVisits}
+                      disabled={!(selectedProcedures?.length > 0)}
+                      onClick={handleCreateVisit}
+                      tooltip={
+                        !(selectedProcedures?.length > 0) &&
+                        "Seans ekleme/düzenleme yapmak için tedavi seçin"
+                      }
+                    />
+                  </SubscriptionController>
                 </Grid>
               </>
             )}
             <Grid item xs={6} md={5}>
-              <NewItem label="Tedavi Ekle" onClick={showProcedureDialog} />
+              <Grid item xs={12} mt={3} style={{ textAlign: "center" }}>
+                <SubscriptionController type="storage">
+                  <Add
+                    border
+                    label="Tedavi Ekle"
+                    onClick={showProcedureDialog}
+                  />
+                </SubscriptionController>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>

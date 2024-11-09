@@ -58,8 +58,8 @@ function DropdownDoctor({
     return (
       <div className="m-2">
         <Divider className="mt-0 mb-2" />
-        <SubscriptionController type="doctors" onClick={onClickAdd}>
-          <Add label="Doktor Ekle" />
+        <SubscriptionController type="doctors" >
+          <Add label="Doktor Ekle" onClick={onClickAdd} />
         </SubscriptionController>
       </div>
     );

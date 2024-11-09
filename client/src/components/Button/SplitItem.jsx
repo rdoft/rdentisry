@@ -5,7 +5,7 @@ import { SplitButton } from "primereact";
 function SplitItem({ label, options, onClick, tooltip, ...props }) {
   return (
     <Tooltip title={tooltip} placement="bottom" enterDelay={500}>
-      <Grid item xs="auto" mt={props?.mt ?? 3} style={{ textAlign: "center" }}>
+      <Grid item xs="auto" style={{ textAlign: "center" }}>
         <SplitButton
           outlined
           size="small"
