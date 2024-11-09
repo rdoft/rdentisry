@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Divider, InputText } from "primereact";
 import { Grid, Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useSubscription } from "context/SubscriptionProvider";
+import { usePaymentContext } from "context/PaymentProvider";
 import { Subscribe } from "components/Button";
 // schemas
 import schema from "schemas/subscription.schema";
 
 function BillingForm({ onSubmit }) {
   const theme = useTheme();
-  const { userDetail, saveUserDetail } = useSubscription();
+  const { userDetail, saveUserDetail } = usePaymentContext();
 
   // Set the default values
   const [isValid, setIsValid] = useState();

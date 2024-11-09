@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useLoading } from "context/LoadingProvider";
-import { useSubscription } from "context/SubscriptionProvider";
+import { usePaymentContext } from "context/PaymentProvider";
 import { LoadingController } from "components/Loadable";
 import { Loading } from "components/Other";
 import {
@@ -23,7 +23,7 @@ function Pricing() {
   const theme = useTheme();
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
-  const { pricing, selectPricing } = useSubscription();
+  const { pricing, selectPricing } = usePaymentContext();
 
   // Set the default values
   const [pricings, setPricings] = useState([]);

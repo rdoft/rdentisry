@@ -16,7 +16,12 @@ import { Provider as ReduxProvider } from "react-redux";
 // project import
 import App from "./App";
 import { store } from "store";
-import { AuthProvider, LoadingProvider, SubscriptionProvider } from "context";
+import {
+  AuthProvider,
+  LoadingProvider,
+  SubscriptionProvider,
+  PaymentProvider,
+} from "context";
 
 // ==============================|| MAIN - REACT DOM RENDER  ||============================== //
 
@@ -28,7 +33,9 @@ root.render(
       <LoadingProvider>
         <AuthProvider>
           <SubscriptionProvider>
-            <App />
+            <PaymentProvider>
+              <App />
+            </PaymentProvider>
           </SubscriptionProvider>
         </AuthProvider>
       </LoadingProvider>

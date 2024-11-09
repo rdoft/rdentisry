@@ -35,6 +35,7 @@ import InstagramIcon from "assets/images/icons/social/instagram.png";
 import XIcon from "assets/images/icons/social/x.png";
 import FacebookIcon from "assets/images/icons/social/facebook.png";
 import PricingIcon from "assets/images/icons/pricing.png";
+import PremiumIcon from "assets/images/icons/premium.png";
 
 export {
   CalendarActiveIcon,
@@ -74,4 +75,5 @@ export {
   XIcon,
   FacebookIcon,
   PricingIcon,
+  PremiumIcon,
 };

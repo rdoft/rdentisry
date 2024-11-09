@@ -6,8 +6,10 @@ import { Subscribe } from "components/Button";
 import SubscriptionToolbar from "./SubscriptionToolbar";
 
 // assets
-import successPng from "assets/svg/subscription/success.png";
-import failPng from "assets/svg/subscription/fail.png";
+import {
+  PaymentFailImage,
+  PaymentSuccessImage,
+} from "assets/images/subscriptions";
 
 function CheckoutResult() {
   const navigate = useNavigate();
@@ -50,7 +52,7 @@ function CheckoutResult() {
         {/* Image */}
         <Grid item xs={2}>
           <img
-            src={status === "success" ? successPng : failPng}
+            src={status === "success" ? PaymentSuccessImage : PaymentFailImage}
             alt="result"
             style={{
               width: "100%",

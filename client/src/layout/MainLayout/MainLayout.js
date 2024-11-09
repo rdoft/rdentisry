@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useSubscription } from "context/SubscriptionProvider";
 
 // material-ui
 import { useTheme } from "@mui/material/styles";
@@ -11,6 +12,7 @@ import navigation from "menu-items";
 import Drawer from "./Drawer/Drawer";
 import ToggleDrawer from "./ToggleDrawer/ToggleDrawer";
 import Breadcrumbs from "components/@extended/Breadcrumbs";
+import { UpgradeDialog } from "components/Dialog";
 
 // types
 import { openDrawer } from "store/reducers/menu";
@@ -19,6 +21,7 @@ import { openDrawer } from "store/reducers/menu";
 
 const MainLayout = () => {
   const theme = useTheme();
+  const { dialog } = useSubscription();
   const matchDownLG = useMediaQuery(theme.breakpoints.down("xl"));
   const matchDownMD = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -69,6 +72,8 @@ const MainLayout = () => {
             divider={false}
           />
           <Outlet />
+          {/* Upgrade subscription dialog */}
+          {dialog && <UpgradeDialog />}
         </Box>
       </Box>
     </>

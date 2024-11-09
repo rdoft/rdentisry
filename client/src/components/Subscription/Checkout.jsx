@@ -4,7 +4,7 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { Grid, Typography, Link } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useLoading } from "context/LoadingProvider";
-import { useSubscription } from "context/SubscriptionProvider";
+import { usePaymentContext } from "context/PaymentProvider";
 import { Prev } from "components/Button";
 import SubscriptionToolbar from "./SubscriptionToolbar";
 import PricingCard from "./PricingCard";
@@ -21,7 +21,7 @@ function Checkout() {
   const theme = useTheme();
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
-  const { pricing, userDetail } = useSubscription();
+  const { pricing, userDetail } = usePaymentContext();
 
   const [checkoutForm, setCheckoutForm] = useState(null);
 
