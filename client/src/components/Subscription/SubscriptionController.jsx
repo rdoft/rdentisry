@@ -28,13 +28,18 @@ const SubscriptionController = ({ type, onClick, children }) => {
           <Tooltip
             arrow
             title="Üyelik limitlerinize ulaştınız, daha fazla erişim için planınızı yükseltin."
+            PopperProps={{
+              disablePortal: true,
+              style: {
+                width: "250px",
+              },
+            }}
           >
             <Avatar
               src={PremiumIcon}
               sx={{
                 width: "1.1rem",
                 height: "1.1rem",
-                marginLeft: "-1.1rem",
                 padding: "0.15rem",
                 backgroundColor: `${theme.palette.text.primary}80`,
               }}
@@ -42,6 +47,12 @@ const SubscriptionController = ({ type, onClick, children }) => {
           </Tooltip>
         ) : null
       }
+      sx={{
+        "& .MuiBadge-badge": {
+          right: 12,
+          top: 6,
+        },
+      }}
     >
       {cloneElement(children, {
         onClick: handleClick,

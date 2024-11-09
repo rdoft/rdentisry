@@ -3,6 +3,7 @@ import { Dropdown, Divider } from "primereact";
 import { Add } from "components/Button";
 import { useLoading } from "context/LoadingProvider";
 import { SkeletonDropdown } from "components/Skeleton";
+import { SubscriptionController } from "components/Subscription";
 import DropdownPatientItem from "./DropdownItem/DropdownPatientItem";
 
 // assets
@@ -46,7 +47,9 @@ function DropdownPatient({ value, options, onChange, onClickAdd, ...props }) {
       onClickAdd && (
         <div className="m-2">
           <Divider className="mt-0 mb-2" />
-          <Add label="Hasta Ekle" onClick={onClickAdd} />
+          <SubscriptionController type="patients" onClick={onClickAdd}>
+            <Add label="Hasta Ekle" />
+          </SubscriptionController>
         </div>
       )
     );

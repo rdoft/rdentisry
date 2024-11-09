@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { Toolbar, Divider, Menu } from "primereact";
 import { Typography } from "@mui/material";
 import { Add, Delete, More } from "components/Button";
+import { SubscriptionController } from "components/Subscription";
 import Search from "components/Search";
 
 function PatientTableToolbar({
@@ -77,7 +78,9 @@ function PatientTableToolbar({
             />
           </>
         )}
-        <Add label="Hasta Ekle" default={true} onClick={handleClickAdd} />
+        <SubscriptionController type="patients" onClick={handleClickAdd}>
+          <Add label="Hasta Ekle" default />
+        </SubscriptionController>
       </>
     );
   };

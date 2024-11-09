@@ -12,7 +12,7 @@ import navigation from "menu-items";
 import Drawer from "./Drawer/Drawer";
 import ToggleDrawer from "./ToggleDrawer/ToggleDrawer";
 import Breadcrumbs from "components/@extended/Breadcrumbs";
-import { UpgradeDialog } from "components/Dialog";
+import { PremiumDialog } from "components/Dialog";
 
 // types
 import { openDrawer } from "store/reducers/menu";
@@ -73,7 +73,7 @@ const MainLayout = () => {
           />
           <Outlet />
           {/* Upgrade subscription dialog */}
-          {dialog && <UpgradeDialog />}
+          {dialog && <PremiumDialog />}
         </Box>
       </Box>
     </>

@@ -13,7 +13,7 @@ import PatientPermissionDialog from "./PatientPermissionDialog";
 import TutorialDialog from "./TutorialDialog";
 import SubscriptionUpgradeDialog from "./SubscriptionUpgradeDialog";
 import SubscriptionCancelDialog from "./SubscriptionCancelDialog";
-import UpgradeDialog from "./UpgradeDialog";
+import PremiumDialog from "./PremiumDialog";
 
 export {
   DialogTemp,
@@ -31,5 +31,5 @@ export {
   TutorialDialog,
   SubscriptionUpgradeDialog,
   SubscriptionCancelDialog,
-  UpgradeDialog,
+  PremiumDialog,
 };
