@@ -44,7 +44,7 @@ function PremiumDialog() {
         resizable={false}
         onHide={hideDialog}
         position="center"
-        style={{ width: "75vw" }}
+        style={{ width: "60vw", minHeight:"50vh" }}
         onClick={handleClick}
         footer={
           <Box display="flex" justifyContent="center">
