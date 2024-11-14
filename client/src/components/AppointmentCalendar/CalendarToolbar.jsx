@@ -5,6 +5,7 @@ import { Toolbar, Divider, InputSwitch } from "primereact";
 import { DropdownDoctor } from "components/Dropdown";
 import { DoctorDialog } from "components/Dialog";
 import { useLoading } from "context/LoadingProvider";
+import { useSubscription } from "context/SubscriptionProvider";
 
 // services
 import { DoctorService } from "services";
@@ -21,6 +22,7 @@ function CalendarToolbar({
   setShowAll,
 }) {
   const { startLoading, stopLoading } = useLoading();
+  const { refresh } = useSubscription();
 
   // Set the default values
   const [doctorDialog, setDoctorDialog] = useState(false);
@@ -73,6 +75,7 @@ function CalendarToolbar({
       await getDoctors();
       setDoctorDialog(false);
       setDoctor(doctor);
+      refresh();
       localStorage.setItem("doctor", JSON.stringify(doctor));
     } catch (error) {
       error.message && toast.error(error.message);
@@ -93,6 +96,7 @@ function CalendarToolbar({
       // Get and set the updated list of doctors
       await getDoctors();
       setDoctor(null);
+      refresh();
       localStorage.removeItem("doctor");
     } catch (error) {
       error.message && toast.error(error.message);

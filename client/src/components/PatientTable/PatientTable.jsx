@@ -11,6 +11,7 @@ import {
 import { DialogFooter } from "components/DialogFooter";
 import { More, Delete } from "components/Button";
 import { useLoading } from "context/LoadingProvider";
+import { useSubscription } from "context/SubscriptionProvider";
 import { LoadingController } from "components/Loadable";
 import { SkeletonDataTable } from "components/Skeleton";
 import PatientTableToolbar from "./PatientTableToolbar";
@@ -26,6 +27,7 @@ function PatientsTable() {
   const theme = useTheme();
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
+  const { refresh } = useSubscription();
 
   // Set the default values
   const dt = useRef(null);
@@ -102,6 +104,7 @@ function PatientsTable() {
       // Set the patients and close the dialog
       await getPatients();
       hidePatientDialog();
+      refresh();
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
@@ -140,6 +143,7 @@ function PatientsTable() {
       // Set the list of patients and selected patients
       setPatients(_patients);
       setSelectedPatients(_selectedPatients);
+      refresh();
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
@@ -174,6 +178,7 @@ function PatientsTable() {
       }
       setPatients(_patients);
       setSelectedPatients(null);
+      refresh();
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {

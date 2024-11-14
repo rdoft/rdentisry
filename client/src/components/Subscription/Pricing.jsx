@@ -5,6 +5,7 @@ import { Grid, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useLoading } from "context/LoadingProvider";
 import { usePaymentContext } from "context/PaymentProvider";
+import { useSubscription } from "context/SubscriptionProvider";
 import { LoadingController } from "components/Loadable";
 import { Loading } from "components/Other";
 import {
@@ -24,6 +25,7 @@ function Pricing() {
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
   const { pricing, selectPricing } = usePaymentContext();
+  const { refresh } = useSubscription();
 
   // Set the default values
   const [pricings, setPricings] = useState([]);
@@ -70,6 +72,7 @@ function Pricing() {
       await SubscriptionService.updateSubscription({ pricingId: pricing.id });
       const response = await SubscriptionService.getSubscription();
       setSubscription(response?.data || null);
+      refresh();
       toast.success("Planınız başarıyla güncellendi.");
     } catch (error) {
       error.message && toast.error(error.message);
@@ -84,6 +87,7 @@ function Pricing() {
     try {
       await SubscriptionService.cancelSubscription();
       setSubscription(null);
+      refresh();
       toast.success("Aboneliğiniz başarıyla iptal edildi.");
     } catch (error) {
       error.message && toast.error(error.message);

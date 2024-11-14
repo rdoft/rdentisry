@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { Grid, Tooltip } from "@mui/material";
 import { Timeline, Divider } from "primereact";
+import { useLoading } from "context/LoadingProvider";
+import { useSubscription } from "context/SubscriptionProvider";
+import { calcProgress } from "utils";
 import { CardTitle } from "components/cards";
 import { PaymentDialog, PaymentPlanDialog } from "components/Dialog";
 import { Add } from "components/Button";
 import { NotFoundText } from "components/Text";
-import { calcProgress } from "utils";
-import { useLoading } from "context/LoadingProvider";
 import { LoadingController } from "components/Loadable";
 import { SkeletonPaymentsTab } from "components/Skeleton";
 import { SubscriptionController } from "components/Subscription";
@@ -38,6 +39,7 @@ function PaymentsTab({
 }) {
   const theme = useTheme();
   const { startLoading, stopLoading } = useLoading();
+  const { refresh } = useSubscription();
 
   // Set the default values
   const [total, setTotal] = useState(0);
@@ -204,6 +206,7 @@ function PaymentsTab({
     try {
       startLoading("send");
       await ReminderService.remindPayment(patient.id);
+      refresh();
       toast.success("Ödeme hatırlatma mesajı başarıyla gönderildi");
     } catch (error) {
       error.message && toast.error(error.message);

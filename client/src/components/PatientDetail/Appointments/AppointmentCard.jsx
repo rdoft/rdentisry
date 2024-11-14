@@ -1,8 +1,9 @@
 import React, { useState, useRef } from "react";
 import { toast } from "react-hot-toast";
-import { useLoading } from "context/LoadingProvider";
 import { Menu, Divider } from "primereact";
 import { Grid, Typography, Box, Avatar } from "@mui/material";
+import { useLoading } from "context/LoadingProvider";
+import { useSubscription } from "context/SubscriptionProvider";
 import { More, Reminder } from "components/Button";
 import { LoadingIcon, ReminderStatus } from "components/Other";
 import { SubscriptionController } from "components/Subscription";
@@ -18,6 +19,7 @@ import { ReminderService } from "services";
 function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
   const theme = useTheme();
   const { startLoading, stopLoading } = useLoading();
+  const { refresh } = useSubscription();
 
   const menu = useRef(null);
 
@@ -48,6 +50,7 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
     try {
       startLoading("send");
       await ReminderService.remindAppointment(appointment.id);
+      refresh();
       toast.success("Hatırlatma mesajı başarıyla gönderildi");
     } catch (error) {
       error.message && toast.error(error.message);

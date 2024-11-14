@@ -6,6 +6,7 @@ import { Typography, Stack } from "@mui/material";
 import { DropdownPatient } from "components/Dropdown";
 import { PatientDialog } from "components/Dialog";
 import { useLoading } from "context/LoadingProvider";
+import { useSubscription } from "context/SubscriptionProvider";
 
 // assets
 import "assets/styles/PatientDetail/PatientDetailToolbar.css";
@@ -16,6 +17,7 @@ import { PatientService } from "services";
 function PatientDetailToolbar({ patient, patients, setPatients, endContent }) {
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
+  const { refresh } = useSubscription();
 
   // Set the default values
   const [patientDialog, setPatientDialog] = useState(false);
@@ -68,6 +70,7 @@ function PatientDetailToolbar({ patient, patients, setPatients, endContent }) {
       // Set the patients and close the dialog
       await getPatients();
       setPatientDialog(false);
+      refresh();
       navigate(`/patients/${patient.id}`);
     } catch (error) {
       error.message && toast.error(error.message);

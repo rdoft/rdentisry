@@ -2,8 +2,9 @@ import React, { useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useLoading } from "context/LoadingProvider";
 import { activeItem } from "store/reducers/menu";
+import { useLoading } from "context/LoadingProvider";
+import { useSubscription } from "context/SubscriptionProvider";
 import { Menu, Divider } from "primereact";
 import {
   Grid,
@@ -30,6 +31,7 @@ function Event({ initEvent = {}, step, onSubmit }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { startLoading, stopLoading } = useLoading();
+  const { refresh } = useSubscription();
 
   const menu = useRef(null);
   const [e, setEvent] = useState({
@@ -75,6 +77,7 @@ function Event({ initEvent = {}, step, onSubmit }) {
       await ReminderService.remindAppointment(id);
       if (reminderStatus) {
         setEvent({ ...e, reminderStatus });
+        refresh();
         toast.success("Onay mesajı başarıyla gönderildi");
       } else {
         toast.success("Hatırlatma mesajı başarıyla gönderildi");

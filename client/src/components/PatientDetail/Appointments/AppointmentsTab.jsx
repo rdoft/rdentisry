@@ -5,10 +5,10 @@ import { DataScroller } from "primereact";
 import { AppointmentDialog } from "components/Dialog";
 import { CardTitle } from "components/cards";
 import { Add } from "components/Button";
-import { useLoading } from "context/LoadingProvider";
 import { LoadingController } from "components/Loadable";
 import { SkeletonAppointmentsTab } from "components/Skeleton";
 import { SubscriptionController } from "components/Subscription";
+import { useLoading } from "context/LoadingProvider";
 
 import NotFoundText from "components/Text/NotFoundText";
 import AppointmentCard from "./AppointmentCard";

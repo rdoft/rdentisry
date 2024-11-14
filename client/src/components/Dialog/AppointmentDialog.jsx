@@ -8,6 +8,7 @@ import {
   confirmDialog,
 } from "primereact";
 import { useLoading } from "context/LoadingProvider";
+import { useSubscription } from "context/SubscriptionProvider";
 import { DatePicker, TimeRangePicker } from "components/DateTime";
 import { DropdownDoctor, DropdownPatient } from "components/Dropdown";
 import { DialogTemp, DoctorDialog, PatientDialog } from "components/Dialog";
@@ -26,6 +27,7 @@ function AppointmentDialog({
   onDelete,
 }) {
   const { startLoading, stopLoading } = useLoading();
+  const { refresh } = useSubscription();
 
   // Set the default values
   const [patients, setPatients] = useState([]);
@@ -120,6 +122,7 @@ function AppointmentDialog({
       await getDoctors();
       setDoctorDialog(false);
       setAppointment({ ...appointment, doctor });
+      refresh();
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
@@ -140,6 +143,7 @@ function AppointmentDialog({
       await getPatients();
       setPatientDialog(false);
       setAppointment({ ...appointment, patient });
+      refresh();
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
