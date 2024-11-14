@@ -165,6 +165,7 @@ function PaymentPlanDialog({ patient, initAmount = 0, onHide, onSubmit }) {
       onSubmit={handleSubmit}
       header="Ödeme Planı"
       style={{ width: "500px" }}
+      controlSubscription
     >
       {/* Divider */}
       <Divider />

@@ -3,6 +3,7 @@ import { Grid, Typography } from "@mui/material";
 import { ConfirmDialog } from "primereact";
 import { DialogFooter } from "components/DialogFooter";
 import { Edit, Delete, Pay } from "components/Button";
+import { SubscriptionController } from "components/Subscription";
 import PaymentAmount from "./PaymentAmount";
 
 function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
@@ -104,14 +105,18 @@ function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
           <Edit onClick={handleEdit} />
 
           {/* Delete button */}
-          <Delete onClick={handleDelete} />
+          <SubscriptionController>
+            <Delete onClick={handleDelete} />
+          </SubscriptionController>
 
           {/* Pay button */}
           {payment.plannedDate && payment.amount > payment.paid && (
-            <Pay
-              label={"₺" + (payment.amount - payment.paid)}
-              onClick={handlePay}
-            />
+            <SubscriptionController type="storage">
+              <Pay
+                label={"₺" + (payment.amount - payment.paid)}
+                onClick={handlePay}
+              />
+            </SubscriptionController>
           )}
         </Grid>
       </Grid>

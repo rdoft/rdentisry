@@ -45,6 +45,7 @@ function DoctorDialog({ initDoctor = {}, onHide, onSubmit }) {
       onSubmit={handleSubmit}
       header="Yeni Doktor"
       style={{ height: "fit-content" }}
+      controlSubscription
     >
       {/* Divider */}
       <Divider type="solid" className="mt-0" />

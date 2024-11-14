@@ -93,6 +93,7 @@ function PatientDialog({ initPatient = {}, onHide, onSubmit }) {
         onSubmit={handleSubmit}
         style={{ width: "450px" }}
         header={!patient.id ? "Yeni Hasta" : "Hasta Bilgileri"}
+        controlSubscription
       >
         {/* Avatar icon */}
         <Avatar

@@ -3,6 +3,7 @@ import { Grid, Typography } from "@mui/material";
 import { ConfirmDialog } from "primereact";
 import { DialogFooter } from "components/DialogFooter";
 import { Delete } from "components/Button";
+import { SubscriptionController } from "components/Subscription";
 import NoteTitle from "./NoteTitle";
 import NoteDetail from "./NoteDetail";
 
@@ -96,7 +97,11 @@ function Note({ initNote, onSubmit, setEdit, onDelete }) {
 
           {/* Delete button */}
           <Grid container item xs={1} justifyContent="end">
-            {note.id && <Delete onClick={handleDelete} />}
+            {note.id && (
+              <SubscriptionController>
+                <Delete onClick={handleDelete} />
+              </SubscriptionController>
+            )}
           </Grid>
         </Grid>
 

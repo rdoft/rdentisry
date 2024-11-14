@@ -324,16 +324,16 @@ function PatientsTable() {
         <Menu
           model={[
             {
-              label: "Hastaya Git",
-              icon: "pi pi-arrow-circle-right",
-              style: { fontSize: "0.9rem" },
-              command: () => navigate(`/patients/${patient.id}`),
-            },
-            {
               label: "Görüntüle / Düzenle",
               icon: "pi pi-external-link",
               style: { fontSize: "0.9rem" },
               command: () => showPatientDialog(patient),
+            },
+            {
+              label: "Hastaya Git",
+              icon: "pi pi-arrow-circle-right",
+              style: { fontSize: "0.9rem" },
+              command: () => navigate(`/patients/${patient.id}`),
             },
             {
               label: "Randevu Ekle",

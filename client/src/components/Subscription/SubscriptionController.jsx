@@ -6,10 +6,10 @@ import { useSubscription } from "context/SubscriptionProvider";
 // assets
 import { PremiumIcon } from "assets/images/icons";
 
-const SubscriptionController = ({ type, children }) => {
+const SubscriptionController = ({ type, children, disabled }) => {
   const theme = useTheme();
   const { limits, isSubscribed, showDialog } = useSubscription();
-  const exceeded = limits[type] <= 0;
+  const exceeded = type ? limits[type] <= 0 : false;
 
   // HANDLERS ------------------------------------------------------------------
   const handleClick = (event) => {
@@ -22,10 +22,12 @@ const SubscriptionController = ({ type, children }) => {
     }
   };
 
-  return (
+  return disabled ? (
+    children
+  ) : (
     <Badge
       badgeContent={
-        exceeded ? (
+        exceeded || !isSubscribed ? (
           <Tooltip
             arrow
             title="Üyelik limitlerinize ulaştınız, daha fazla erişim için planınızı yükseltin."

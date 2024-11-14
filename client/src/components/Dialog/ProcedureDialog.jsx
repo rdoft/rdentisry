@@ -196,6 +196,7 @@ function ProcedureDialog({
       onSubmit={handleSubmit}
       header="Yeni Tedavi"
       style={{ width: "600px" }}
+      controlSubscription
     >
       {/* Divider */}
       <Divider type="solid" className="mt-0" />

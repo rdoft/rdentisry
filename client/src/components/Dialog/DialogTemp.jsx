@@ -68,6 +68,7 @@ function DialogTemp({
             onHide={handleHide}
             onSubmit={handleSubmit}
             onDelete={onDelete && handleDelete}
+            controlSubscription={props.controlSubscription}
           />
         }
       >

@@ -144,15 +144,15 @@ function Event({ initEvent = {}, step, onSubmit }) {
         <Menu
           model={[
             {
+              label: "Görüntüle / Düzenle",
+              icon: "pi pi-external-link",
+              style: { fontSize: "0.8rem" },
+            },
+            {
               label: "Hastaya Git",
               icon: "pi pi-arrow-circle-right",
               style: { fontSize: "0.8rem" },
               command: handleClickPatient,
-            },
-            {
-              label: "Görüntüle / Düzenle",
-              icon: "pi pi-external-link",
-              style: { fontSize: "0.8rem" },
             },
             ...(showApprove
               ? [

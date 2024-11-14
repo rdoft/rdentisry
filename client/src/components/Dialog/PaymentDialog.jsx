@@ -148,6 +148,7 @@ function PaymentDialog({ initPayment = {}, onHide, onSubmit, onDelete }) {
         onDelete={handleDeleteConfim}
         header={!payment.id ? "Yeni Ödeme" : "Ödeme Bilgileri"}
         style={{ width: "500px" }}
+        controlSubscription
       >
         {/* Divider */}
         <Divider type="solid" className="mt-0" />

@@ -4,6 +4,7 @@ import { Grid, Typography } from "@mui/material";
 import { Delete } from "components/Button";
 import { DialogFooter } from "components/DialogFooter";
 import { ProcedureCategory } from "components/ProcedureCategory";
+import { SubscriptionController } from "components/Subscription";
 import { Tooth } from "components/Button";
 import NotFoundText from "components/Text/NotFoundText";
 import PriceColumn from "../PriceColumn";
@@ -286,7 +287,9 @@ function ProcedureList({
         <Column
           body={(procedure) =>
             procedure.id === rowIndex && !procedure.visit.approvedDate ? (
-              <Delete onClick={() => handleDelete(procedure)} />
+              <SubscriptionController>
+                <Delete onClick={() => handleDelete(procedure)} />
+              </SubscriptionController>
             ) : null
           }
           style={{ width: "4rem" }}

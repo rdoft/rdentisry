@@ -8,6 +8,7 @@ import { Delete } from "components/Button";
 import { useLoading } from "context/LoadingProvider";
 import { LoadingController } from "components/Loadable";
 import { SkeletonDataTable } from "components/Skeleton";
+import { SubscriptionController } from "components/Subscription";
 import PriceColumn from "./PriceColumn";
 import CategoryColumn from "./CategoryColumn";
 import NameColumn from "./NameColumn";
@@ -252,7 +253,10 @@ function ProcedureTable() {
           onClickDelete={showDeleteProceduresDialog}
           onInput={handleInputSearch}
         />
-        <LoadingController name="ProcedureTable" skeleton={<SkeletonDataTable />}>
+        <LoadingController
+          name="ProcedureTable"
+          skeleton={<SkeletonDataTable />}
+        >
           <DataTable
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
             ref={dt}
@@ -326,9 +330,11 @@ function ProcedureTable() {
             <Column
               body={(procedure) =>
                 procedure.id === rowIndex ? (
-                  <Delete
-                    onClick={() => showDeleteProcedureDialog(procedure)}
-                  />
+                  <SubscriptionController>
+                    <Delete
+                      onClick={() => showDeleteProcedureDialog(procedure)}
+                    />
+                  </SubscriptionController>
                 ) : null
               }
               style={{ width: "8rem" }}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Typography, Avatar, Grid } from "@mui/material";
 import { ConfirmDialog } from "primereact";
+import { SubscriptionController } from "components/Subscription";
 import { DialogFooter } from "components/DialogFooter";
 import { Delete } from "components/Button";
 
@@ -88,7 +89,9 @@ function DropdownDoctorItem({ option, onDelete }) {
       <Grid item xs={1}>
         {onDelete &&
           (isHover || window.matchMedia("(hover: none)").matches) && (
-            <Delete onClick={handleDelete} />
+            <SubscriptionController>
+              <Delete onClick={handleDelete} />
+            </SubscriptionController>
           )}
       </Grid>
 

@@ -269,6 +269,7 @@ function AppointmentDialog({
         onDelete={handleDeleteConfim}
         header="Randevu Planla"
         style={{ width: "450px" }}
+        controlSubscription
       >
         {/* Divider */}
         <Divider type="solid" className="mt-0" />
