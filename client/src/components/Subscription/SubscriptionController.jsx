@@ -6,17 +6,29 @@ import { useSubscription } from "context/SubscriptionProvider";
 // assets
 import { PremiumIcon } from "assets/images/icons";
 
-const SubscriptionController = ({ type, children, disabled }) => {
+const SubscriptionController = ({ type, children, disabled, ...props }) => {
   const theme = useTheme();
   const { limits, isSubscribed, showDialog } = useSubscription();
   const exceeded = type ? limits[type] <= 0 : false;
 
   // HANDLERS ------------------------------------------------------------------
+  // onClick  handler
   const handleClick = (event) => {
     if (exceeded || !isSubscribed) {
       showDialog();
     } else if (children.props.onClick) {
       children.props.onClick(event);
+    } else {
+      return;
+    }
+  };
+
+  // onChange hanler
+  const handleChange = (event) => {
+    if (exceeded || !isSubscribed) {
+      showDialog();
+    } else if (children.props.onChange) {
+      children.props.onChange(event);
     } else {
       return;
     }
@@ -52,13 +64,14 @@ const SubscriptionController = ({ type, children, disabled }) => {
       }
       sx={{
         "& .MuiBadge-badge": {
-          right: 12,
-          top: 6,
+          right: props.right ?? 12,
+          top: props.top ?? 6,
         },
       }}
     >
       {cloneElement(children, {
         onClick: handleClick,
+        onChange: handleChange,
       })}
     </Badge>
   );

@@ -9,9 +9,11 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
+import { SubscriptionController } from "components/Subscription";
 import { ResetPasswordDialog } from "components/Dialog";
 import { useTheme } from "@mui/material/styles";
 import { useLoading } from "context/LoadingProvider";
+import { useSubscription } from "context/SubscriptionProvider";
 
 // assets
 import lockSvg from "assets/svg/profile/lock.svg";
@@ -25,6 +27,7 @@ import { UserService } from "services";
 const SettingTab = () => {
   const theme = useTheme();
   const { startLoading, stopLoading } = useLoading();
+  const { isSubscribed, limits } = useSubscription();
 
   const [passwordDialog, setPasswordDialog] = useState(false);
   const [settings, setSettings] = useState({ appointmentReminder: false });
@@ -143,10 +146,16 @@ const SettingTab = () => {
             secondary="SMS izni verdiğiniz hastalara otomatik randevu hatırlatma mesajı gönderilir."
           />
           <div style={{ marginLeft: "10px" }}>
-            <InputSwitch
-              checked={settings.appointmentReminder}
-              onChange={handleChangeReminder}
-            />
+            <SubscriptionController type="sms" top={0} right={0}>
+              <InputSwitch
+                checked={
+                  isSubscribed &&
+                  limits.sms > 0 &&
+                  settings.appointmentReminder
+                }
+                onChange={handleChangeReminder}
+              />
+            </SubscriptionController>
           </div>
         </ListItem>
       </List>

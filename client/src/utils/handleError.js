@@ -10,13 +10,13 @@ const handleError = (error) => {
     return {
       status: 500,
       message:
-        "Bir hata oluştu. İnternet bağlantınızı kontrol edip tekrar deneyin. Sorun devam etmesi halinde destek ekibimizle iletişime geçin",
+        "Bir hata oluştu. İnternet bağlantınızı kontrol edip tekrar deneyin. Sorun devam etmesi halinde destek ekibimizle iletişime geçin.",
     };
   } else if (error.response.status === 401) {
     // If the status is 401, show a session expired message or redirect to the pricing page
     return {
       status: 401,
-      message: "Oturumunuzun süresi doldu, lütfen tekrar giriş yapınız",
+      message: "Oturumunuzun süresi doldu, lütfen tekrar giriş yapın.",
     };
   } else if (error.response.status === 402) {
     // If the status is 402, redirect to the pricing page
@@ -24,7 +24,7 @@ const handleError = (error) => {
     return {
       status: 402,
       message:
-        "Mevcut üyeliğiniz bu işlem için yetersizdir. Üyeliğinizi yükselterek daha fazla içeriğe erişebilirsiniz. Daha fazla bilgi için: www.disheki.me/pricing",
+        "Mevcut üyeliğiniz bu işlem için yetersizdir. Üyeliğinizi yükselterek daha fazla içeriğe erişebilirsiniz.",
     };
   } else if (error.response.status === 403) {
     return {
@@ -44,7 +44,7 @@ const handleError = (error) => {
   } else {
     return {
       status: 500,
-      message: "Bilinmeyen bir hata oluştu, daha sonra tekrar deneyiniz",
+      message: "Bilinmeyen bir hata oluştu, daha sonra tekrar deneyin.",
     };
   }
 };
