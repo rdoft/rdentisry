@@ -141,7 +141,7 @@ function createAppointmentMessage(fullName, date, time, client, url) {
     );
   } else {
     return (
-      `Sn. ${fullName},\\${date} ${time} tarihindeki diş hekimi randevunuzu hatırlatırız.\\n` +
+      `Sn. ${fullName},\\n${date} ${time} tarihindeki diş hekimi randevunuzu hatırlatırız.\\n` +
       (client ? `\\n${client}` : "") +
       `\\nSaygılarımızla.`
     );
