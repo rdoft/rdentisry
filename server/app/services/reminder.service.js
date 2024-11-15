@@ -15,7 +15,7 @@ const {
 } = require("../utils/reminder.util");
 
 // Define the reminder intervals in days
-const APPOINTMENT_FIRST_REMINDER = 5; // Days before appointment
+const APPOINTMENT_FIRST_REMINDER = 3; // Days before appointment
 const APPOINTMENT_LAST_REMINDER = 1; // Days before appointment
 
 /**

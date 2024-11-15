@@ -11,6 +11,8 @@ const crypto = require("crypto");
 
 const { HOSTNAME, HOST_SERVER } = process.env;
 const HOST = HOSTNAME || HOST_SERVER || "localhost:3000";
+// Define the reminder link expiration time in milliseconds
+const LINK_EXPIRATION_TIME = 172800000 // 2 gün
 
 /**
  * Send reminder for given appointment
@@ -193,13 +195,13 @@ async function createApprovalLink(userId, appointmentId) {
     if (existingToken) {
       await existingToken.update({
         Token: token,
-        Expiration: new Date(Date.now() + 172800000), // 2 days
+        Expiration: new Date(Date.now() + LINK_EXPIRATION_TIME),
       });
     } else {
       await Token.create({
         UserId: userId,
         Token: token,
-        Expiration: new Date(Date.now() + 172800000), // 2 days
+        Expiration: new Date(Date.now() + LINK_EXPIRATION_TIME),
         Type: "reminder",
       });
     }

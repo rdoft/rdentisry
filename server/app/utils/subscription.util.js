@@ -258,7 +258,7 @@ async function calcLimits(userId, pricing) {
       calcRemainingDoctors(userId, pricing.DoctorCount + bonus.DoctorCount),
       calcRemainingPatients(userId, pricing.PatientCount + bonus.PatientCount),
       calcRemainingStorage(userId, pricing.StorageSize + bonus.StorageSize),
-      calcRemainingSMS(userId, pricing.SMSCount + bonus.SMSCount),
+      calcRemainingSMS(pricing.SMSCount + bonus.SMSCount),
     ]);
 
   return {
@@ -352,13 +352,10 @@ async function calcRemainingStorage(userId, maxStorageSize) {
 
 /**
  * Calculate the remaining SMS for the subscription
- * @param {number} userId - The user's id
  * @param {number} maxSMSCount - The maximum SMS count based on pricing
  * @return {number} - The remaining SMS count
  */
-async function calcRemainingSMS(userId, maxSMSCount) {
-  // TODO: Implement this function
-
+async function calcRemainingSMS(maxSMSCount) {
   return Math.max(0, maxSMSCount);
 }
 
