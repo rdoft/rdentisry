@@ -244,7 +244,10 @@ async function calcLimits(userId, pricing) {
     where: {
       UserId: userId,
       EndDate: {
-        [Sequelize.Op.gte]: new Date(),
+        [Sequelize.Op.or]: {
+          [Sequelize.Op.gt]: new Date(),
+          [Sequelize.Op.eq]: null,
+        },
       },
     },
   })) ?? { DoctorCount: 0, PatientCount: 0, StorageSize: 0, SMSCount: 0 };

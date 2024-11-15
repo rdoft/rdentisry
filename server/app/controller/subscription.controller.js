@@ -6,6 +6,8 @@ const Billing = db.billing;
 const Pricing = db.pricing;
 const Subscription = db.subscription;
 
+const { sendRenewMail } = require("../utils/mail.util");
+
 const { HOSTNAME, HOST_SERVER } = process.env;
 const HOST = HOSTNAME || HOST_SERVER;
 
@@ -313,51 +315,199 @@ exports.callback = async (req, res) => {
   }
 };
 
+// TODO: Test if the iyziEventType's are correct for the renewSuccess and renewFailure functions
 /**
- * Get active subscription of the user
- * @user
- * @return active subscription
+ * Monthly successfull renew proccess for the subscription
+ * Get the renew status and update the subscription and billing status accordingly
+ * @body subscriptionRefereceCode and iyziEventType
+ * @return empty response
  */
-exports.getSubscription = async (req, res) => {
-  const { UserId: userId } = req.user;
+exports.renewSuccess = async (req, res) => {
+  const { subscriptionReferenceCode, iyziEventType } = req.body;
 
   try {
-    // Find active subscription
-    const subscription = await Subscription.findOne({
-      attributes: [
-        ["SubscriptionId", "id"],
-        ["Status", "status"],
-        ["StartDate", "startDate"],
-        ["EndDate", "endDate"],
-        ["Doctors", "doctors"],
-        ["Patients", "patients"],
-        ["SMS", "sms"],
-        ["Storage", "storage"],
-        ["PricingId", "pricingId"],
-      ],
-      where: {
-        UserId: userId,
-        Status: "active",
-      },
-    });
-
-    if (!subscription) {
-      res.status(404).send();
-      log.audit.warn("Get subscription failed: Subscription not found", {
-        userId,
-        action: "GET",
+    // Check if the event type is payment success
+    if (iyziEventType !== "subscription.order.success") {
+      res.status(400).send({ message: "Geçersiz işlem" });
+      log.audit.warn("Subscription renew failed: Invalid event type", {
+        action: "POST",
         success: false,
         resource: {
           type: "subscription",
+          referenceCode: subscriptionReferenceCode,
         },
       });
       return;
     }
 
-    res.status(200).send(subscription);
-    log.audit.info("Get subscription completed", {
-      userId,
-      action: "GET",
+    // Get the subscription
+    const subscription = await Subscription.findOne({
+      where: {
+        ReferenceCode: subscriptionReferenceCode,
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+        },
+        {
+          model: Pricing,
+          as: "pricing",
+        },
+      ],
+    });
+    if (!subscription) {
+      res.status(404).send({ message: "Abonelik bulunamadı" });
+      log.audit.warn("Subscription renew failed: Subscription not found", {
+        action: "POST",
+        success: false,
+        resource: {
+          type: "subscription",
+          referenceCode: subscriptionReferenceCode,
+        },
+      });
+      return;
+    }
+
+    // Renew the subscription and limits
+    const { remainDoctors, remainPatients, remainStorage, remainSMS } =
+      await calcLimits(subscription.UserId, subscription.pricing);
+    await subscription.update({
+      Status: "active",
+      Doctors: remainDoctors,
+      Patients: remainPatients,
+      Storage: remainStorage,
+      SMS: remainSMS,
+      EndDate: null,
+    });
+
+    // Create a new billing for the payment success
+    const billig = await Billing.findOne({
+      where: {
+        UserId: subscription.UserId,
+      },
+      order: [["PaymentDate", "DESC"]],
+    });
+    await Billing.create({
+      UserId: subscription.UserId,
+      Status: "paid",
+      PaymentDate: new Date(),
+      Amount: subscription.pricing.Price,
+      Description: `${subscription.pricing.Name} - renew`,
+      IdNumber: billig.IdNumber,
+      Name: billig.Name,
+      Surname: billig.Surname,
+      Address: billig.Address,
+      City: billig.City,
+      Country: billig.Country,
+      Phone: billig.Phone,
+    });
+
+    // Send the renew mail
+    await sendRenewMail(subscription.user.Email, true);
+
+    res.status(200).send();
+    log.audit.info("Subscription renew completed", {
+      action: "POST",
+      success: true,
+      resource: {
+        type: "subscription",
+        id: subscription.SubscriptionId,
+      },
+    });
+  } catch (error) {
+    res.status(500).send(error);
+    log.error.error(error);
+  }
+};
+
+/**
+ * Monthly failed renew proccess for the subscription
+ * Get the renew status and update the subscription and billing status accordingly
+ * @body subscriptionRefereceCode and iyziEventType
+ * return empty response
+ */
+exports.renewFailure = async (req, res) => {
+  const { subscriptionReferenceCode, iyziEventType } = req.body;
+
+  try {
+    // Check if the event type is payment failure
+    if (iyziEventType !== "subscription.order.failure") {
+      res.status(400).send({ message: "Geçersiz işlem" });
+      log.audit.warn("Subscription renew failed: Invalid event type", {
+        action: "POST",
+        success: false,
+        resource: {
+          type: "subscription",
+          referenceCode: subscriptionReferenceCode,
+        },
+      });
+      return;
+    }
+
+    // Get the subscription
+    const subscription = await Subscription.findOne({
+      where: {
+        ReferenceCode: subscriptionReferenceCode,
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+        },
+        {
+          model: Pricing,
+          as: "pricing",
+        },
+      ],
+    });
+    if (!subscription) {
+      res.status(404).send({ message: "Abonelik bulunamadı" });
+      log.audit.warn("Subscription renew failed: Subscription not found", {
+        action: "POST",
+        success: false,
+        resource: {
+          type: "subscription",
+          referenceCode: subscriptionReferenceCode,
+        },
+      });
+      return;
+    }
+
+    // Update the subscription status as passive
+    await subscription.update({
+      Status: "passive",
+      EndDate: new Date(),
+    });
+
+    // Create a new billing for the payment failure
+    const billig = await Billing.findOne({
+      where: {
+        UserId: subscription.UserId,
+      },
+      order: [["PaymentDate", "DESC"]],
+    });
+    await Billing.create({
+      UserId: subscription.UserId,
+      Status: "failed",
+      PaymentDate: new Date(),
+      Amount: subscription.pricing.Price,
+      Description: `${subscription.pricing.Name} - renew failed`,
+      IdNumber: billig.IdNumber,
+      Name: billig.Name,
+      Surname: billig.Surname,
+      Address: billig.Address,
+      City: billig.City,
+      Country: billig.Country,
+      Phone: billig.Phone,
+    });
+
+    // Send mail to the user
+    sendRenewMail(subscription.user.Email, false);
+
+    res.status(200).send();
+    log.audit.info("Subscription renew completed", {
+      action: "POST",
       success: true,
       resource: {
         type: "subscription",
@@ -578,6 +728,63 @@ exports.getPricings = async (req, res) => {
       success: true,
       resource: {
         type: "pricing",
+      },
+    });
+  } catch (error) {
+    res.status(500).send(error);
+    log.error.error(error);
+  }
+};
+
+/**
+ * Get active subscription of the user
+ * @user
+ * @return active subscription
+ */
+exports.getSubscription = async (req, res) => {
+  const { UserId: userId } = req.user;
+
+  try {
+    // Find active subscription
+    const subscription = await Subscription.findOne({
+      attributes: [
+        ["SubscriptionId", "id"],
+        ["Status", "status"],
+        ["StartDate", "startDate"],
+        ["EndDate", "endDate"],
+        ["Doctors", "doctors"],
+        ["Patients", "patients"],
+        ["SMS", "sms"],
+        ["Storage", "storage"],
+        ["PricingId", "pricingId"],
+      ],
+      where: {
+        UserId: userId,
+        Status: "active",
+      },
+    });
+
+    if (!subscription) {
+      res.status(404).send();
+      log.audit.warn("Get subscription failed: Subscription not found", {
+        userId,
+        action: "GET",
+        success: false,
+        resource: {
+          type: "subscription",
+        },
+      });
+      return;
+    }
+
+    res.status(200).send(subscription);
+    log.audit.info("Get subscription completed", {
+      userId,
+      action: "GET",
+      success: true,
+      resource: {
+        type: "subscription",
+        id: subscription.SubscriptionId,
       },
     });
   } catch (error) {

@@ -40,6 +40,25 @@ module.exports = function (app) {
     .post(validate(schema.token, "body"), controller.callback);
 
   router
+    .route(`/renew/success`)
+    /**
+     * Monthly successfull renew proccess for the subscription
+     * Get the renew status and update the subscription and billing status accordingly
+     * @body subscriptionRefereceCode and iyziEventType
+     * @return empty response
+     */
+    .post(controller.renewSuccess);
+  router
+    .route(`/renew/failure`)
+    /**
+     * Monthly failed renew proccess for the subscription
+     * Get the renew status and update the subscription and billing status accordingly
+     * @body subscriptionRefereceCode and iyziEventType
+     * @return empty response
+     */
+    .post(controller.renewFailure);
+
+  router
     .route(`/subscription`)
     /**
      * Get active subscription of the user
