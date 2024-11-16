@@ -141,24 +141,14 @@ exports.remindAppointment = async (req, res) => {
     }
 
     // Send appointment reminder
-    const success = await sendAppointmentReminder(appointment);
-    if (success) {
-      res.status(200).send({ message: "Randevu hatırlatma mesajı gönderildi" });
-      log.app.info("Send appointment reminder completed", {
-        userId,
-        appointmentId,
-        success: true,
-      });
-    } else {
-      res
-        .status(400)
-        .send({ message: "Randevu hatırlatma mesajı gönderilemedi" });
-      log.app.warn("Send appointment reminder failed: SMS couldn't be sent", {
-        userId,
-        appointmentId,
-        success: false,
-      });
-    }
+    await sendAppointmentReminder(appointment);
+
+    res.status(200).send({ message: "Randevu hatırlatma mesajı gönderildi" });
+    log.app.info("Send appointment reminder completed", {
+      userId,
+      appointmentId,
+      success: true,
+    });
   } catch (error) {
     error.code
       ? res.status(error.code).send({ message: error.message })
@@ -308,24 +298,14 @@ exports.remindPayment = async (req, res) => {
     }
 
     // Send payment reminder
-    const success = await sendPaymentReminder(patient);
-    if (success) {
-      res.status(200).send({ message: "Ödeme hatırlatma mesajı gönderildi" });
-      log.app.info("Send payment reminder completed", {
-        userId,
-        patientId,
-        success: true,
-      });
-    } else {
-      res
-        .status(400)
-        .send({ message: "Ödeme hatırlatma mesajı gönderilemedi" });
-      log.app.warn("Send payment reminder failed: SMS couldn't be sent", {
-        userId,
-        patientId,
-        success: false,
-      });
-    }
+    await sendPaymentReminder(patient);
+
+    res.status(200).send({ message: "Ödeme hatırlatma mesajı gönderildi" });
+    log.app.info("Send payment reminder completed", {
+      userId,
+      patientId,
+      success: true,
+    });
   } catch (error) {
     error.code
       ? res.status(error.code).send({ message: error.message })

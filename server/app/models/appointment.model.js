@@ -51,6 +51,10 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: true,
         values: ["sent", "approved", "rejected", "updated"],
       },
+      SMSReferenceCode: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
     },
     {
       indexes: [

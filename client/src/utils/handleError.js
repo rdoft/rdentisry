@@ -9,8 +9,7 @@ const handleError = (error) => {
   } else if (!error.response || error.response.status === 500) {
     return {
       status: 500,
-      message:
-        "Bir hata oluştu. İnternet bağlantınızı kontrol edip tekrar deneyin. Sorun devam etmesi halinde destek ekibimizle iletişime geçin.",
+      message: "Bilinmeyen bir hata oluştu, daha sonra tekrar deneyin.",
     };
   } else if (error.response.status === 401) {
     // If the status is 401, show a session expired message or redirect to the pricing page

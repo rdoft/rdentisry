@@ -40,6 +40,7 @@ db.notification = require("./notification.model")(sequelize, Sequelize);
 db.pricing = require("./pricing.model")(sequelize, Sequelize);
 db.billing = require("./billing.model")(sequelize, Sequelize);
 db.bonus = require("./bonus.model")(sequelize, Sequelize);
+db.sms = require("./sms.model")(sequelize, Sequelize);
 db.notificationEvent = require("./notificationEvent.model")(
   sequelize,
   Sequelize
@@ -270,6 +271,18 @@ db.user.hasOne(db.bonus, {
   hooks: true,
 });
 db.bonus.belongsTo(db.user, {
+  as: "user",
+  foreignKey: "UserId",
+});
+
+// User - SMS
+db.user.hasMany(db.sms, {
+  as: "sms",
+  foreignKey: "UserId",
+  onDelete: "cascade",
+  hooks: true,
+});
+db.sms.belongsTo(db.user, {
   as: "user",
   foreignKey: "UserId",
 });

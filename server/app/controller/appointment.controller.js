@@ -4,6 +4,7 @@ const db = require("../models");
 const Appointment = db.appointment;
 const Patient = db.patient;
 const Doctor = db.doctor;
+const SMS = db.sms;
 
 const { setStorageLimit } = require("../utils/subscription.util");
 
@@ -26,6 +27,7 @@ exports.getAppointments = async (req, res) => {
         ["Description", "description"],
         ["Status", "status"],
         ["ReminderStatus", "reminderStatus"],
+        ["SMSReferenceCode", "smsReferenceCode"],
         [
           Sequelize.literal(
             `CAST(EXTRACT(EPOCH FROM ("EndTime" - "StartTime")) / 60 AS INTEGER)`
@@ -81,8 +83,34 @@ exports.getAppointments = async (req, res) => {
       ],
     });
 
+    // Find SMS list and Merge SMS information with appointments
+    const smsList = await SMS.findAll({
+      attributes: [
+        ["SMSId", "id"],
+        ["ReferenceCode", "referenceCode"],
+        ["DeliveredDate", "deliveredDate"],
+        ["Status", "status"],
+        ["Error", "error"],
+      ],
+      where: {
+        UserId: userId,
+        ReferenceCode: {
+          [Sequelize.Op.in]: appointments.map(
+            (appointment) => appointment.smsReferenceCode
+          ),
+        },
+      },
+      raw: true,
+    });
+    const smsMap = smsList.reduce((acc, sms) => {
+      acc[sms.referenceCode] = sms;
+      return acc;
+    }, {});
+
+    // Prepare the response
     let appointments_ = [];
     appointments.map((appointment) => {
+      appointment.sms = smsMap[appointment.smsReferenceCode] || null;
       appointment.startTime = new Date(`1970-01-01T${appointment.startTime}Z`);
       appointment.endTime = new Date(`1970-01-01T${appointment.endTime}Z`);
       appointment.doctor = appointment.doctor?.id ? appointment.doctor : null;

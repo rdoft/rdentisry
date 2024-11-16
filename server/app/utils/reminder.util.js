@@ -1,18 +1,17 @@
 const log = require("../config/log.config");
-const { Sequelize, sequelize } = require("../models");
+const { Sequelize } = require("../models");
 const db = require("../models");
 const Token = db.token;
 const Patient = db.patient;
 const Appointment = db.appointment;
 
 const { send } = require("./sms.util");
-const { setSMSLimit } = require("./subscription.util");
 const crypto = require("crypto");
 
 const { HOSTNAME, HOST_SERVER } = process.env;
 const HOST = HOSTNAME || HOST_SERVER || "localhost:3000";
 // Define the reminder link expiration time in milliseconds
-const LINK_EXPIRATION_TIME = 172800000 // 2 gün
+const LINK_EXPIRATION_TIME = 172800000; // 2 gün
 
 /**
  * Send reminder for given appointment
@@ -27,7 +26,7 @@ async function sendAppointmentReminder(appointment) {
   let date;
   let link;
   let message;
-  let success;
+  let type;
 
   try {
     patient = appointment.patient;
@@ -56,33 +55,36 @@ async function sendAppointmentReminder(appointment) {
         : user.name.toLocaleUpperCase("TR")
       : null;
 
-    // Create message with approval link or not based on the reminder status
-    // Send appointment reminder
+    // Create message with approval link or not, based on the reminder status
     if (appointment.reminderStatus === "approved") {
       message = createAppointmentMessage(fullName, date, time, client);
-      success = await send(patient.phone, message);
+      type = "appointmentReminder";
     } else {
       link = await createApprovalLink(user.id, appointment.id);
       message = createAppointmentMessage(fullName, date, time, client, link);
-      success = await send(patient.phone, message);
-      if (success) {
-        await Appointment.update(
-          { ReminderStatus: "sent" },
-          { where: { AppointmentId: appointment.id } }
-        );
-      }
+      type = "appointmentApproval";
     }
-    // Decrease the SMS limit if the message was sent successfully
-    if (success) {
-      await sequelize.transaction(async (t) => {
-        await setSMSLimit(user.id, -1, t);
-      });
-    }
-
-    return success;
+    // Send appointment reminder
+    const referenceCode = await send(
+      user.id,
+      patient.phone,
+      message,
+      type,
+      false
+    );
+    // Update the appointment with the reference code
+    await Appointment.update(
+      {
+        SMSReferenceCode: referenceCode,
+        ...(appointment.reminderStatus !== "approved" && {
+          ReminderStatus: "sent",
+        }),
+      },
+      { where: { AppointmentId: appointment.id } }
+    );
   } catch (error) {
-    log.error.error(error);
-    throw new Error(error);
+    !error.code && log.error.error(error);
+    throw error;
   }
 }
 
@@ -94,7 +96,6 @@ async function sendPaymentReminder(patient) {
   let client;
   let fullName;
   let message;
-  let success;
 
   try {
     // Prepare the message
@@ -111,17 +112,16 @@ async function sendPaymentReminder(patient) {
     message = createPaymentMessage(fullName, client, patient.dept);
 
     // Send payment reminder & decrease the SMS limit
-    success = await send(patient.phone, message);
-    if (success) {
-      await sequelize.transaction(async (t) => {
-        await setSMSLimit(patient.user.id, -1, t);
-      });
-    }
-
-    return success;
+    await send(
+      patient.user.id,
+      patient.phone,
+      message,
+      "paymentReminder",
+      false
+    );
   } catch (error) {
-    log.error.error(error);
-    throw new Error(error);
+    !error.code && log.error.error(error);
+    throw error;
   }
 }
 

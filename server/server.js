@@ -92,6 +92,12 @@ cron.schedule("00 15 * * *", () => {
   reminder.run();
 });
 
+// Schedule the check SMS status to run every 15 minutes
+const sms = require("./app/services/sms.service");
+cron.schedule("*/15 * * * *", () => {
+  sms.run();
+});
+
 // SERVER HTTPS
 // options for https server
 const options = {

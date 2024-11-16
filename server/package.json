@@ -31,7 +31,8 @@
     "pg": "^8.11.1",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.3",
-    "winston": "^3.14.2"
+    "winston": "^3.14.2",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"

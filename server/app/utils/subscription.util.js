@@ -194,7 +194,6 @@ async function setStorageLimit(userId, transaction) {
  * @param {number} by - The value to increment or decrement
  * @param {object} transaction - The transaction object
  */
-// TODO: Use this function for the message that wasn't sent
 async function setSMSLimit(userId, by, transaction) {
   // Get the subscription
   const subscription = await Subscription.findOne({
