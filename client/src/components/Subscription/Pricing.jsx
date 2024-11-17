@@ -50,7 +50,9 @@ function Pricing() {
         const _subscription = await SubscriptionService.getSubscription({
           signal,
         });
-        setSubscription(_subscription?.data || null);
+        _subscription?.data?.pricingId
+          ? setSubscription(_subscription.data)
+          : setSubscription(null);
       } catch (error) {
         error.message && toast.error(error.message);
       } finally {
