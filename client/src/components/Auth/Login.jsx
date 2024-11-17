@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider } from "primereact";
 import { useAuth } from "context/AuthProvider";
+import { useSubscription } from "context/SubscriptionProvider";
 
 // assets
 import svgGoogle from "assets/svg/google.svg";
@@ -17,6 +18,7 @@ import schema from "schemas/user.schema";
 function Login() {
   const navigate = useNavigate();
   const { authenticate } = useAuth();
+  const { refresh } = useSubscription();
 
   const GOOGLE_AUTH = process.env.REACT_APP_AUTH_URL
     ? `${process.env.REACT_APP_AUTH_URL}google`
@@ -40,6 +42,7 @@ function Login() {
 
       // Set isAuthenticated for all routes
       authenticate(res.data);
+      refresh();
       res.data.verified ? navigate("/") : navigate("/verify");
     } catch (error) {
       const { status, message } = handleError(error);

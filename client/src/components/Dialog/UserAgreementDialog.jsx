@@ -4,6 +4,7 @@ import { Dialog, InputSwitch } from "primereact";
 import { DialogFooter } from "components/DialogFooter";
 import { useTheme } from "@mui/material/styles";
 import { useAuth } from "context/AuthProvider";
+import { useSubscription } from "context/SubscriptionProvider";
 
 // services
 import { AuthService } from "services";
@@ -14,6 +15,8 @@ const TERMS_URL = process.env.REACT_APP_TERMS_URL;
 function UserAgreementDialog() {
   const theme = useTheme();
   const { authenticate, unauthenticate } = useAuth();
+  const { refresh } = useSubscription();
+
   const [agreement, setAgreement] = useState(false);
   const [message, setMessage] = useState(false);
   const dialogContentRef = useRef(null);
@@ -47,11 +50,13 @@ function UserAgreementDialog() {
       ...clientInfo,
     });
     authenticate({ agreement: true });
+    refresh();
   };
 
   const handleReject = async () => {
     await AuthService.logout();
     unauthenticate();
+    refresh();
   };
 
   // onClick handler to scroll bottom

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { Divider } from "primereact";
 import { useAuth } from "context/AuthProvider";
+import { useSubscription } from "context/SubscriptionProvider";
 import { useSelector } from "react-redux";
 import {
   Avatar,
@@ -69,6 +70,7 @@ const Profile = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { unauthenticate } = useAuth();
+  const { refresh } = useSubscription();
   const menu = useSelector((state) => state.menu);
   const { drawerOpen } = menu;
 
@@ -123,6 +125,7 @@ const Profile = () => {
 
       // Set Unauthenticated for all routes
       unauthenticate();
+      refresh();
       navigate(`/login`);
     } catch (error) {
       error.message && toast.error(error.message);
