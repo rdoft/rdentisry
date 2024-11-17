@@ -4,7 +4,7 @@ import { Tooltip } from "@mui/material";
 // assets
 import { useTheme } from "@mui/material/styles";
 
-function ReminderStatus({ status, ...props }) {
+function ReminderStatus({ status, errorMessage, ...props }) {
   const theme = useTheme();
 
   // Status items
@@ -29,6 +29,11 @@ function ReminderStatus({ status, ...props }) {
       icon: "pi pi-sync",
       label: "Güncelleme Talebi",
     },
+    {
+      status: "failed",
+      icon: "pi pi-exclamation-triangle",
+      label: errorMessage,
+    },
   ];
 
   // Set status of the reminder
@@ -41,8 +46,12 @@ function ReminderStatus({ status, ...props }) {
           <i
             className={reminderStatus.icon}
             style={{
-              backgroundColor: theme.palette.text.event,
-              color: theme.palette.common.white,
+              backgroundColor: errorMessage
+                ? theme.palette.background.error
+                : theme.palette.text.event,
+              color: errorMessage
+                ? theme.palette.text.error
+                : theme.palette.common.white,
               fontWeight: "bold",
               fontSize: "0.7rem",
               padding: "0.25rem",

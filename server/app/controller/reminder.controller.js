@@ -143,7 +143,7 @@ exports.remindAppointment = async (req, res) => {
     // Send appointment reminder
     await sendAppointmentReminder(appointment);
 
-    res.status(200).send({ message: "Randevu hatırlatma mesajı gönderildi" });
+    res.status(200).send({ message: "Hatırlatma mesajı isteği alındı" });
     log.app.info("Send appointment reminder completed", {
       userId,
       appointmentId,
@@ -300,7 +300,7 @@ exports.remindPayment = async (req, res) => {
     // Send payment reminder
     await sendPaymentReminder(patient);
 
-    res.status(200).send({ message: "Ödeme hatırlatma mesajı gönderildi" });
+    res.status(200).send({ message: "Hatırlatma mesajı isteği alındı" });
     log.app.info("Send payment reminder completed", {
       userId,
       patientId,

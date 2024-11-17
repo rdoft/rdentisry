@@ -71,12 +71,13 @@ function MonthEvent({ initEvent = {}, onSubmit }) {
       startLoading("send");
       await ReminderService.remindAppointment(id);
       if (reminderStatus) {
-        setEvent({ ...e, reminderStatus });
-        refresh();
-        toast.success("Onay mesajı başarıyla gönderildi");
+        setEvent({ ...e, reminderStatus, sms: { error: null } });
+        toast.success("Onay mesajı talebi alındı");
       } else {
-        toast.success("Hatırlatma mesajı başarıyla gönderildi");
+        toast.success("Hatırlatma mesajı talebi alındı");
+        setEvent({ ...e, sms: { error: null } });
       }
+      refresh();
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
@@ -256,7 +257,10 @@ function MonthEvent({ initEvent = {}, onSubmit }) {
                 </Typography>
 
                 {e.status === "active" && (
-                  <ReminderStatus status={e.reminderStatus} />
+                  <ReminderStatus
+                    status={e.sms?.error ? "failed" : e.reminderStatus}
+                    errorMessage={e.sms?.error}
+                  />
                 )}
               </Box>
             </Grid>

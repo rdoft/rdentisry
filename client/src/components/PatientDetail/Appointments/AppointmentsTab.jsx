@@ -9,6 +9,7 @@ import { LoadingController } from "components/Loadable";
 import { SkeletonAppointmentsTab } from "components/Skeleton";
 import { SubscriptionController } from "components/Subscription";
 import { useLoading } from "context/LoadingProvider";
+import { useSubscription } from "context/SubscriptionProvider";
 
 import NotFoundText from "components/Text/NotFoundText";
 import AppointmentCard from "./AppointmentCard";
@@ -18,7 +19,7 @@ import { useTheme } from "@mui/material/styles";
 import "assets/styles/PatientDetail/AppointmentsTab.css";
 
 // services
-import { AppointmentService } from "services";
+import { AppointmentService, ReminderService } from "services";
 
 function AppointmentsTab({
   patient,
@@ -32,6 +33,7 @@ function AppointmentsTab({
 }) {
   const theme = useTheme();
   const { startLoading, stopLoading } = useLoading();
+  const { refresh } = useSubscription();
 
   // Set the default values
   const [appointments, setAppointments] = useState([]);
@@ -128,6 +130,22 @@ function AppointmentsTab({
     }
   };
 
+  // Send reminder
+  const sendReminder = async (appointment) => {
+    try {
+      startLoading("send");
+      await ReminderService.remindAppointment(appointment.id);
+
+      await getAppointments(patient.id);
+      refresh();
+      toast.success("Hatırlatma mesajı talebi alındı");
+    } catch (error) {
+      error.message && toast.error(error.message);
+    } finally {
+      stopLoading("send");
+    }
+  };
+
   // HANDLERS -----------------------------------------------------------------
   // onSelectEvent, get appointment and show dialog
   const handleSelectAppointment = async (event) => {
@@ -156,6 +174,7 @@ function AppointmentsTab({
         appointment={appointment}
         onClickEdit={handleSelectAppointment}
         onSubmit={saveAppointment}
+        onReminder={sendReminder}
       />
     );
   };
@@ -195,13 +214,8 @@ function AppointmentsTab({
             )}
 
             {/* Add appointment */}
-            <Grid
-              item
-              xs={12}
-              mt={ 3}
-              style={{ textAlign: "center" }}
-            >
-              <SubscriptionController type="storage" >
+            <Grid item xs={12} mt={3} style={{ textAlign: "center" }}>
+              <SubscriptionController type="storage">
                 <Add border label="Randevu Ekle" onClick={showDialog} />
               </SubscriptionController>
             </Grid>
@@ -237,13 +251,8 @@ function AppointmentsTab({
             )}
 
             {/* Add appointment */}
-            <Grid
-              item
-              xs={12}
-              mt={3}
-              style={{ textAlign: "center" }}
-            >
-              <SubscriptionController type="storage" >
+            <Grid item xs={12} mt={3} style={{ textAlign: "center" }}>
+              <SubscriptionController type="storage">
                 <Add border label="Randevu Ekle" onClick={showDialog} />
               </SubscriptionController>
             </Grid>

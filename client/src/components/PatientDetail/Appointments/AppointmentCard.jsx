@@ -1,9 +1,6 @@
 import React, { useState, useRef } from "react";
-import { toast } from "react-hot-toast";
 import { Menu, Divider } from "primereact";
 import { Grid, Typography, Box, Avatar } from "@mui/material";
-import { useLoading } from "context/LoadingProvider";
-import { useSubscription } from "context/SubscriptionProvider";
 import { More, Reminder } from "components/Button";
 import { LoadingIcon, ReminderStatus } from "components/Other";
 import { SubscriptionController } from "components/Subscription";
@@ -13,14 +10,8 @@ import AppointmentStatus from "./AppointmentStatus";
 import { doctorAvatar } from "assets/images/avatars";
 import { useTheme } from "@mui/material/styles";
 
-// services
-import { ReminderService } from "services";
-
-function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
+function AppointmentCard({ appointment, onClickEdit, onSubmit, onReminder }) {
   const theme = useTheme();
-  const { startLoading, stopLoading } = useLoading();
-  const { refresh } = useSubscription();
-
   const menu = useRef(null);
 
   const [loading, setLoading] = useState(false);
@@ -43,21 +34,6 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
   const showRemoveApprove =
     status === "active" && reminderStatus === "approved";
   const showApprove = status === "active" && reminderStatus !== "approved";
-
-  // SERVICES -----------------------------------------------------------------
-  // Send appointment reminder
-  const sendReminder = async () => {
-    try {
-      startLoading("send");
-      await ReminderService.remindAppointment(appointment.id);
-      refresh();
-      toast.success("Hatırlatma mesajı başarıyla gönderildi");
-    } catch (error) {
-      error.message && toast.error(error.message);
-    } finally {
-      stopLoading("send");
-    }
-  };
 
   // HANDLERS -----------------------------------------------------------------
   // onMouseEnter handler for display buttons
@@ -98,6 +74,11 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
     event.preventDefault();
     event.stopPropagation();
     menu.current.toggle(event);
+  };
+
+  // Send reminder
+  const sendReminder = async () => {
+    await onReminder(appointment);
   };
 
   // TEMPLATES ----------------------------------------------------------------
@@ -201,9 +182,14 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit }) {
         <Grid item xs={2} textAlign="center">
           {appointment.status === "active" && (
             <ReminderStatus
-              status={appointment.reminderStatus}
+              status={
+                appointment.sms?.error ? "failed" : appointment.reminderStatus
+              }
+              errorMessage={appointment.sms?.error}
               style={{
-                backgroundColor: theme.palette.text.primary,
+                backgroundColor: appointment.sms?.error
+                  ? theme.palette.background.error
+                  : theme.palette.text.primary,
                 padding: "0.5rem",
               }}
             />

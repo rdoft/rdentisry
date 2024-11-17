@@ -158,7 +158,7 @@ async function status(smsId) {
       } else {
         await sequelize.transaction(async (t) => {
           await sms.update(
-            { Status: "failed", Error: "Zaman aşımı" },
+            { Status: "failed", Error: "SMS gönderilemedi: zaman aşımı" },
             { transaction: t }
           );
           await setSMSLimit(sms.UserId, 1, t);
@@ -171,7 +171,7 @@ async function status(smsId) {
     } else if (smsStatus === "3") {
       await sequelize.transaction(async (t) => {
         await sms.update(
-          { Status: "failed", Error: "Hatalı numara" },
+          { Status: "failed", Error: "SMS gönderilemedi: hatalı numara" },
           { transaction: t }
         );
         await setSMSLimit(sms.UserId, 1, t);
@@ -179,25 +179,25 @@ async function status(smsId) {
       log.app.warn(
         `SMS status request for ${smsId} successful: Invalid number.`
       );
-      const error = new Error("Hatalı numara");
+      const error = new Error("SMS gönderilemedi: hatalı numara");
       error.code = 400;
       throw error;
     } else if (smsStatus === "13") {
       await sequelize.transaction(async (t) => {
         await sms.update(
-          { Status: "failed", Error: "Tekrarlı SMS hatası." },
+          { Status: "failed", Error: "SMS gönderilemedi: tekrarlı SMS hatası" },
           { transaction: t }
         );
         await setSMSLimit(sms.UserId, 1, t);
       });
       log.app.info(`SMS status request for ${smsId} successful: Duplicate.`);
-      const error = new Error("Tekrarlı SMS hatası");
+      const error = new Error("SMS gönderilemedi: tekrarlı SMS hatası");
       error.code = 400;
       throw error;
     } else {
       await sequelize.transaction(async (t) => {
         await sms.update(
-          { Status: "failed", Error: "Bilinmeyen hata" },
+          { Status: "failed", Error: "SMS gönderilemedi: bilinmeyen hata" },
           { transaction: t }
         );
         await setSMSLimit(sms.UserId, 1, t);
@@ -205,7 +205,7 @@ async function status(smsId) {
       log.app.warn(
         `SMS status request for ${smsId} failed: Unknown status, ${result}`
       );
-      const error = new Error("Bilinmeyen hata");
+      const error = new Error("SMS gönderilemedi: bilinmeyen hata");
       error.code = 400;
       throw error;
     }
