@@ -95,11 +95,10 @@ exports.checkout = async (req, res) => {
       return;
     }
 
-    // TODO: Remove the redirect port from all the redirect links
     // Init checkout process
     const { status, token, checkoutFormContent, errorMessage } =
       await checkoutInitialize({
-        callbackUrl: `https://${HOST}:8080/api/subscriptions/callback`,
+        callbackUrl: `https://${HOST}/api/subscriptions/callback`,
         pricingPlanReferenceCode: pricing.ReferenceCode,
         customer: {
           name,
@@ -196,14 +195,13 @@ exports.checkout = async (req, res) => {
  * @body token
  * @return empty response
  */
-// TODO: Remove the redirect port from all the redirect links
 exports.callback = async (req, res) => {
   const { token } = req.body;
 
   try {
     if (!token) {
       res.redirect(
-        `https://${HOST}:3000/checkout/result?status=failed&message=Geçersiz Token`
+        `https://${HOST}/checkout/result?status=failed&message=Geçersiz Token`
       );
       log.audit.warn("Subscription callback failed: Token is missing", {
         action: "POST",
@@ -228,7 +226,7 @@ exports.callback = async (req, res) => {
     // Check if the billing and subscription exists
     if (!billing || !subscription) {
       res.redirect(
-        `https://${HOST}:3000/checkout/result?status=failed&message=Üyelik Bulunamadı`
+        `https://${HOST}/checkout/result?status=failed&message=Üyelik Bulunamadı`
       );
       log.audit.warn("Subscription callback failed: Subscription not found", {
         token: token,
@@ -260,7 +258,7 @@ exports.callback = async (req, res) => {
       });
 
       res.redirect(
-        `https://${HOST}:3000/checkout/result?status=failed&message=${errorMessage}`
+        `https://${HOST}/checkout/result?status=failed&message=${errorMessage}`
       );
       log.audit.warn("Subscription callback failed: Payment gateway error", {
         userId: subscription.UserId,
@@ -299,7 +297,7 @@ exports.callback = async (req, res) => {
     );
 
     res.redirect(
-      `https://${HOST}:3000/checkout/result?status=success&referenceCode=${data.referenceCode}`
+      `https://${HOST}/checkout/result?status=success&referenceCode=${data.referenceCode}`
     );
     log.audit.info("Subscription callback completed", {
       action: "POST",

@@ -14,8 +14,8 @@ import PaymentForm from "./PaymentForm";
 // services
 import { SubscriptionService } from "services";
 
-const PRIVACY = "https://www.disheki.me/privacy-policy";
-const TERMS = "https://www.disheki.me/terms-of-service";
+const PRIVACY = process.env.REACT_APP_POLICY_URL;
+const TERMS = process.env.REACT_APP_TERMS_URL;
 
 function Checkout() {
   const theme = useTheme();
