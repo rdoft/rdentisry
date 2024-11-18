@@ -41,6 +41,7 @@ db.pricing = require("./pricing.model")(sequelize, Sequelize);
 db.billing = require("./billing.model")(sequelize, Sequelize);
 db.bonus = require("./bonus.model")(sequelize, Sequelize);
 db.sms = require("./sms.model")(sequelize, Sequelize);
+db.referral = require("./referral.model")(sequelize, Sequelize);
 db.notificationEvent = require("./notificationEvent.model")(
   sequelize,
   Sequelize
@@ -287,6 +288,22 @@ db.sms.belongsTo(db.user, {
   foreignKey: "UserId",
 });
 
+// User - Referral
+db.user.hasMany(db.referral, {
+  as: "referrals",
+  foreignKey: "ReffererId",
+  onDelete: "cascade",
+  hooks: true,
+});
+db.referral.belongsTo(db.user, {
+  as: "refferer",
+  foreignKey: "ReffererId",
+});
+db.referral.belongsTo(db.user, {
+  as: "referred",
+  foreignKey: "ReferredId",
+});
+
 // Pricing - Subscription
 db.pricing.hasMany(db.subscription, {
   as: "subscriptions",
@@ -299,7 +316,7 @@ db.subscription.belongsTo(db.pricing, {
   foreignKey: "PricingId",
 });
 
-// HOOKS
+// HOOKS -----------------------------------------------
 // Control If doctor has any appointments before destroy
 db.doctor.beforeDestroy(async (doctor) => {
   const appointmentCount = await doctor.countAppointments({
@@ -474,6 +491,7 @@ db.user.beforeDestroy(async (user) => {
 db.user.afterCreate(async (user) => {
   await createCategories();
   await createProcedures(user);
+  await createReferralCode(user);
   await db.subscription.create({
     UserId: user.UserId,
   });
@@ -567,6 +585,12 @@ const createPricing = async () => {
       "Bir problem oluştu, uygulama yöneticisi ile iletişime geçin"
     );
   }
+};
+
+// Create refferal link for the user
+const createReferralCode = async (user) => {
+  const referralCode = Buffer.from(`ref-${user.UserId}`).toString("base64");
+  await user.update({ ReferralCode: referralCode });
 };
 
 module.exports = db;

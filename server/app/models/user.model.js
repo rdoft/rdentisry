@@ -33,6 +33,10 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false,
         defaultValue: false,
       },
+      ReferralCode: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
     },
     {
       indexes: [
