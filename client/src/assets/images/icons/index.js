@@ -36,6 +36,7 @@ import XIcon from "assets/images/icons/social/x.png";
 import FacebookIcon from "assets/images/icons/social/facebook.png";
 import PricingIcon from "assets/images/icons/pricing.png";
 import PremiumIcon from "assets/images/icons/premium.png";
+import BonusIcon from "assets/images/icons/bonus.png";
 
 export {
   CalendarActiveIcon,
@@ -76,4 +77,5 @@ export {
   FacebookIcon,
   PricingIcon,
   PremiumIcon,
+  BonusIcon,
 };

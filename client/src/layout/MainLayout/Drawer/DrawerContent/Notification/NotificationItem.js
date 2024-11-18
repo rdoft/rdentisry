@@ -17,6 +17,7 @@ import {
   LiraDangerIcon,
   LiraWarningIcon,
   LiraInfoIcon,
+  BonusIcon,
 } from "assets/images/icons";
 import { useTheme } from "@mui/material/styles";
 
@@ -46,6 +47,9 @@ function NotificationItem({ notification, getNotifications, onClose }) {
     case "dept":
       icon = LiraDangerIcon;
       break;
+    case "bonus":
+      icon = BonusIcon;
+      break;
     default:
       break;
   }
@@ -74,8 +78,12 @@ function NotificationItem({ notification, getNotifications, onClose }) {
   // onClick handler to go to the patient page
   const handleClickNotification = () => {
     onClose();
-    localStorage.setItem("activeTabIndex", getTabIndex("payments"));
-    navigate(`/patients/${notification.patient.id}`);
+    if (notification.notificationEvent.type === "referral") {
+      navigate("/pricing");
+    } else if (notification.notificationEvent.type === "payment") {
+      localStorage.setItem("activeTabIndex", getTabIndex("payments"));
+      navigate(`/patients/${notification.patient.id}`);
+    }
     updateNotification("read");
   };
 
@@ -100,7 +108,7 @@ function NotificationItem({ notification, getNotifications, onClose }) {
       <ListItemAvatar>
         <Avatar
           src={icon}
-          sx={{ width: "24px !important", height: "24px !important" }}
+          sx={{ width: "30px !important", height: "30px !important" }}
         ></Avatar>
       </ListItemAvatar>
       <ListItemText

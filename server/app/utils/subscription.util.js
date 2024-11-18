@@ -10,6 +10,8 @@ const Bonus = db.bonus;
 const Referral = db.referral;
 const Appointment = db.appointment;
 const Subscription = db.subscription;
+const Notification = db.notification;
+const NotificationEvent = db.notificationEvent;
 
 // Constant for the storage size in MB
 const APPOINTMENT_SIZE = 0.0628;
@@ -388,6 +390,20 @@ async function referralBonus(referredId) {
       return;
     }
 
+    // Update the referral
+    await referral.update({ Status: "success" }, { transaction: t });
+
+    // Add bonus to the referred
+    await Bonus.create(
+      {
+        UserId: referral.ReferredId,
+        SMSCount: REFERRED_SMS,
+        PatientCount: REFERRED_PATIENT,
+        EndDate: new Date(new Date().setHours(new Date().getHours() + 1)),
+      },
+      { transaction: t }
+    );
+
     // Add bonus to the referrer if the referral limit is not exceeded
     const count = await Referral.count({
       where: {
@@ -406,20 +422,25 @@ async function referralBonus(referredId) {
         },
         { transaction: t }
       );
-    }
 
-    // Add bonus to the referred
-    await Bonus.create(
-      {
-        UserId: referral.ReferredId,
-        SMSCount: REFERRED_SMS,
-        PatientCount: REFERRED_PATIENT,
-        EndDate: new Date(new Date().setHours(new Date().getHours() + 1)),
-      },
-      { transaction: t }
-    );
-    // Update the referral
-    await referral.update({ Status: "success" }, { transaction: t });
+      // Send notification to the referrer
+      const [bonusEvent] = await NotificationEvent.findOrCreate({
+        where: {
+          Event: "bonus",
+          Type: "referral",
+        },
+        transaction: t,
+      });
+      await Notification.create(
+        {
+          Message: `Tebrikler, bir kişi sizin referans kodunuzu kullanarak uygulamamıza üye oldu. Kazandığınız hasta ve SMS hakları bir sonraki ay hesabınıza eklenecektir.`,
+          Status: "sent",
+          UserId: referral.ReffererId,
+          NotificationEventId: bonusEvent.NotificationEventId,
+        },
+        { transaction: t }
+      );
+    }
   });
 }
 
