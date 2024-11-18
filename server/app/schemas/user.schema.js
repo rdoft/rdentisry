@@ -12,6 +12,7 @@ const register = Joi.object({
     .regex(/\d/, "rakam")
     .regex(/[@$!%*?&#.^()_+\-={};':"|,.<>?]/, "özel karakter")
     .required(),
+  referralCode: Joi.string().trim().empty("").allow(null),
 });
 
 const login = Joi.object({

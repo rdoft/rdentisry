@@ -44,6 +44,10 @@ module.exports = (sequelize, Sequelize) => {
           unique: true,
           fields: ["Email"],
         },
+        {
+          unique: true,
+          fields: ["ReferralCode"],
+        },
       ],
       timestamps: false,
       tableName: "User",

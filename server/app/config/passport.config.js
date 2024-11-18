@@ -1,7 +1,7 @@
 const log = require("./log.config");
-const { Sequelize } = require("../models");
 const db = require("../models");
 const User = db.user;
+const Referral = db.referral;
 
 const bcrypt = require("bcrypt");
 const passport = require("passport");
@@ -9,12 +9,8 @@ const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 // Get env variables
-const {
-  GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET,
-  HOSTNAME,
-  HOST_SERVER,
-} = process.env;
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, HOSTNAME, HOST_SERVER } =
+  process.env;
 const HOST = HOSTNAME || HOST_SERVER || "localhost";
 
 // Local strategy for username password login
@@ -123,6 +119,24 @@ passport.use(
           user = await User.create({
             Email: profile.emails[0].value,
           });
+
+          // Create referral record if referral code exists
+          const { referralCode } = req.query;
+          if (referralCode) {
+            const referrer = await User.findOne({
+              where: {
+                ReferralCode: referralCode,
+              },
+            });
+            if (referrer) {
+              await Referral.create({
+                ReffererId: referrer.UserId,
+                ReferredId: user.UserId,
+                Status: "pending",
+              });
+            }
+          }
+
           log.access.info("Register success", {
             mail: user.Email,
             success: true,

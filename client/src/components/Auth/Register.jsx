@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { handleError } from "utils";
 import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider } from "primereact";
@@ -17,6 +17,7 @@ import schema from "schemas/user.schema";
 
 function Register() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { authenticate } = useAuth();
   const { refresh } = useSubscription();
 
@@ -30,6 +31,7 @@ function Register() {
     password: "",
     confirmPassword: "",
   });
+  const [referralCode, setReferralCode] = useState(null);
   const [isValid, setIsValid] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -38,6 +40,15 @@ function Register() {
     password: false,
     confirmPassword: false,
   });
+
+  // Initialize referral code from query string
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const referralCode = params.get("ref");
+    if (referralCode) {
+      setReferralCode(referralCode);
+    }
+  }, [location.search]);
 
   // SERVICES ---------------------------------------------------------
   const register = async (auth) => {
@@ -108,7 +119,9 @@ function Register() {
 
   // Register with google
   const handleRegisterGoogle = () => {
-    window.location.href = GOOGLE_AUTH;
+    window.location.href = referralCode
+      ? `${GOOGLE_AUTH}?referralCode=${referralCode}`
+      : GOOGLE_AUTH;
   };
 
   // Register handler
@@ -117,6 +130,7 @@ function Register() {
       name: user.name,
       email: user.email,
       password: user.password,
+      referralCode: referralCode,
     });
   };
 

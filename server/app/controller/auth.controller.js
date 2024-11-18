@@ -3,6 +3,7 @@ const { Sequelize } = require("../models");
 const db = require("../models");
 const User = db.user;
 const Token = db.token;
+const Referral = db.referral;
 const Agreement = db.agreement;
 
 const { controlTokenAppointment } = require("./reminder.controller");
@@ -44,7 +45,7 @@ exports.logout = async (req, res, next) => {
 };
 
 exports.register = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, referralCode } = req.body;
   let user;
   let domain;
   let addr;
@@ -106,13 +107,28 @@ exports.register = async (req, res) => {
       return;
     }
 
-    // Create user record
+    // Create user or update record
     if (!user) {
       user = await User.create({
         Name: name,
         Email: email,
         Password: hashedPassword,
       });
+      // Create refferal record if referral code exists
+      if (referralCode) {
+        const referrer = await User.findOne({
+          where: {
+            ReferralCode: referralCode,
+          },
+        });
+        if (referrer) {
+          await Referral.create({
+            ReffererId: referrer.UserId,
+            ReferredId: user.UserId,
+            Status: "pending",
+          });
+        }
+      }
     } else {
       await User.update(
         {
