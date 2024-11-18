@@ -7,17 +7,16 @@ const Pricing = db.pricing;
 const Subscription = db.subscription;
 
 const { sendRenewMail } = require("../utils/mail.util");
-
-const { HOSTNAME, HOST_SERVER } = process.env;
-const HOST = HOSTNAME || HOST_SERVER;
-
 const {
   checkoutInitialize,
   checkoutRetrieve,
   upgrade,
   cancel,
 } = require("../utils/iyzipay.util");
-const { calcLimits } = require("../utils/subscription.util");
+const { calcLimits, referralBonus } = require("../utils/subscription.util");
+
+const { HOSTNAME, HOST_SERVER } = process.env;
+const HOST = HOSTNAME || HOST_SERVER;
 
 /**
  * Init checkout proccess by creating billing & subscription with pending status
@@ -156,8 +155,6 @@ exports.checkout = async (req, res) => {
     });
 
     // Create a new subscription with pending status
-    const { remainDoctors, remainPatients, remainStorage, remainSMS } =
-      await calcLimits(userId, pricing);
     await Subscription.create({
       UserId: userId,
       PricingId: pricingId,
@@ -165,10 +162,6 @@ exports.checkout = async (req, res) => {
       Status: "pending",
       StartDate: new Date(),
       EndDate: null,
-      Doctors: remainDoctors,
-      Patients: remainPatients,
-      SMS: remainSMS,
-      Storage: remainStorage,
       PaymentToken: token,
     });
 
@@ -271,16 +264,28 @@ exports.callback = async (req, res) => {
       return;
     }
 
+    // Add referral bonus to the users
+    await referralBonus(subscription.UserId);
+
+    // Get the pricing and limits
+    const pricing = await Pricing.findByPk(subscription.PricingId);
+    const { remainDoctors, remainPatients, remainStorage, remainSMS } =
+      await calcLimits(subscription.UserId, pricing);
+
     // Update the billing status
     await billing.update({
       Status: "paid",
       PaymentDate: new Date(),
     });
-    // Update the subscription status and reference code
+    // Update the subscription status, limits and reference code
     await subscription.update({
       Status: "active",
       ReferenceCode: data.referenceCode,
       StartDate: data.startDate,
+      Doctors: remainDoctors,
+      Patients: remainPatients,
+      Storage: remainStorage,
+      SMS: remainSMS,
     });
     // Update free subscription status
     await Subscription.update(

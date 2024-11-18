@@ -1,5 +1,5 @@
 const log = require("../config/log.config");
-const { Sequelize } = require("../models");
+const { Sequelize, sequelize } = require("../models");
 const db = require("../models");
 const User = db.user;
 const Note = db.note;
@@ -7,12 +7,19 @@ const Doctor = db.doctor;
 const Patient = db.patient;
 const Pricing = db.pricing;
 const Bonus = db.bonus;
+const Referral = db.referral;
 const Appointment = db.appointment;
 const Subscription = db.subscription;
 
 // Constant for the storage size in MB
 const APPOINTMENT_SIZE = 0.0628;
 const NOTE_SIZE = 0.0628;
+// Referral bonus and limit
+const REFERRAL_LIMIT = 10;
+const REFERRER_SMS = 200;
+const REFERRER_PATIENT = 100;
+const REFERRED_SMS = 100;
+const REFERRED_PATIENT = 200;
 
 /**
  * Set the doctors limit for the subscription
@@ -233,7 +240,7 @@ async function setSMSLimit(userId, by, transaction) {
 }
 
 /**
- * Calculate the remainings of l-subscription limits based on given pricing (and existing bonus)
+ * Calculate the remainings of subscription limits based on given pricing (and existing bonus)
  * @param {number} userId - The user's id
  * @param {object} pricing - The pricing object
  * @return {object} - The remaining limits
@@ -358,6 +365,64 @@ async function calcRemainingSMS(maxSMSCount) {
   return Math.max(0, maxSMSCount);
 }
 
+/**
+ * Add the bonus for referral to the user
+ * @param {number} referredId - The user's id who is referred
+ */
+async function referralBonus(referredId) {
+  await sequelize.transaction(async (t) => {
+    // Get the referral
+    const referral = await Referral.findOne({
+      where: {
+        ReferredId: referredId,
+        Status: "pending",
+      },
+      transaction: t,
+    });
+    // Check if the referral exists
+    if (!referral) {
+      log.app.warn(`Referral bonus failed: Referral not found`, {
+        success: false,
+        referredId: referredId,
+      });
+      return;
+    }
+
+    // Add bonus to the referrer if the referral limit is not exceeded
+    const count = await Referral.count({
+      where: {
+        ReffererId: referral.ReffererId,
+        Status: "success",
+      },
+      transaction: t,
+    });
+    if (count < REFERRAL_LIMIT) {
+      await Bonus.create(
+        {
+          UserId: referral.ReffererId,
+          SMSCount: REFERRER_SMS,
+          PatientCount: REFERRER_PATIENT,
+          EndDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+        },
+        { transaction: t }
+      );
+    }
+
+    // Add bonus to the referred
+    await Bonus.create(
+      {
+        UserId: referral.ReferredId,
+        SMSCount: REFERRED_SMS,
+        PatientCount: REFERRED_PATIENT,
+        EndDate: new Date(new Date().setHours(new Date().getHours() + 1)),
+      },
+      { transaction: t }
+    );
+    // Update the referral
+    await referral.update({ Status: "success" }, { transaction: t });
+  });
+}
+
 module.exports = {
   setDoctorLimit,
   setPatientLimit,
@@ -368,4 +433,5 @@ module.exports = {
   calcRemainingPatients,
   calcRemainingStorage,
   calcRemainingSMS,
+  referralBonus,
 };
