@@ -87,6 +87,7 @@ exports.getReferralCode = async (req, res) => {
           id: userId,
         },
       });
+      return;
     }
 
     // Get the user and send the referral code
