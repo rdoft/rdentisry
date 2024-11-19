@@ -28,7 +28,7 @@ function ReferDialog({ onHide }) {
   const theme = useTheme();
   const { startLoading, stopLoading } = useLoading();
 
-  const [referralLink, setReferralLink] = useState(`${HOST}/register`);
+  const [referralLink, setReferralLink] = useState("");
   const [referredCount, setReferredCount] = useState(0);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ function ReferDialog({ onHide }) {
     UserService.getReferralCode({ signal })
       .then((response) => {
         setReferredCount(response.data.referredCount ?? 0);
-        setReferralLink(`${HOST}/register?ref=${response.data.referralCode}`);
+        setReferralLink(response.data.referralLink);
       })
       .catch((error) => {
         error.message && toast.error(error.message);

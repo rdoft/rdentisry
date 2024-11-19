@@ -6,6 +6,14 @@ const UserSetting = db.userSetting;
 
 const bcrypt = require("bcrypt");
 
+const { ENV, HOSTNAME, PORT_SSL, POST_CLIENT } = process.env;
+const HOST =
+  ENV === "production"
+    ? HOSTNAME
+    : ENV === "development"
+    ? `${HOSTNAME}:${PORT_SSL}`
+    : `${HOSTNAME}:${POST_CLIENT}`;
+
 /**
  * Get the user
  * userId is taken from the request itself
@@ -71,6 +79,8 @@ exports.getReferralCode = async (req, res) => {
   const { UserId: userId } = req.user;
   const subscription = req.subscription;
   let user;
+  let referralCode;
+  let referralLink;
 
   try {
     // Control if the user has an active subscription (except free)
@@ -100,7 +110,6 @@ exports.getReferralCode = async (req, res) => {
         },
       });
 
-      let referralCode;
       if (user.ReferralCode) {
         referralCode = user.ReferralCode;
       } else {
@@ -109,8 +118,9 @@ exports.getReferralCode = async (req, res) => {
           ReferralCode: referralCode,
         });
       }
+      referralLink = `${HOST}/register?ref=${referralCode}`;
 
-      res.status(200).send({ referralCode, referredCount });
+      res.status(200).send({ referralLink, referredCount });
       log.audit.info(`Get referral code completed`, {
         userId,
         action: "GET",
