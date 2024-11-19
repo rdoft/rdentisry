@@ -407,7 +407,7 @@ async function referralBonus(referredId) {
     // Add bonus to the referrer if the referral limit is not exceeded
     const count = await Referral.count({
       where: {
-        ReffererId: referral.ReffererId,
+        ReferrerId: referral.ReferrerId,
         Status: "success",
       },
       transaction: t,
@@ -415,7 +415,7 @@ async function referralBonus(referredId) {
     if (count < REFERRAL_LIMIT) {
       await Bonus.create(
         {
-          UserId: referral.ReffererId,
+          UserId: referral.ReferrerId,
           SMSCount: REFERRER_SMS,
           PatientCount: REFERRER_PATIENT,
           EndDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
@@ -435,7 +435,7 @@ async function referralBonus(referredId) {
         {
           Message: `Tebrikler, bir kişi sizin referans kodunuzu kullanarak uygulamamıza üye oldu. Kazandığınız hasta ve SMS hakları bir sonraki ay hesabınıza eklenecektir.`,
           Status: "sent",
-          UserId: referral.ReffererId,
+          UserId: referral.ReferrerId,
           NotificationEventId: bonusEvent.NotificationEventId,
         },
         { transaction: t }

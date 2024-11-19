@@ -293,13 +293,13 @@ db.sms.belongsTo(db.user, {
 // User - Referral
 db.user.hasMany(db.referral, {
   as: "referrals",
-  foreignKey: "ReffererId",
+  foreignKey: "ReferrerId",
   onDelete: "cascade",
   hooks: true,
 });
 db.referral.belongsTo(db.user, {
-  as: "refferer",
-  foreignKey: "ReffererId",
+  as: "referrer",
+  foreignKey: "ReferrerId",
 });
 db.referral.belongsTo(db.user, {
   as: "referred",

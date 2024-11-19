@@ -128,7 +128,7 @@ exports.register = async (req, res) => {
         });
         if (referrer) {
           await Referral.create({
-            ReffererId: referrer.UserId,
+            ReferrerId: referrer.UserId,
             ReferredId: user.UserId,
             Status: "pending",
           });

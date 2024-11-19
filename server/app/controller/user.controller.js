@@ -93,14 +93,22 @@ exports.getReferralCode = async (req, res) => {
     // Get the user and send the referral code
     user = await User.findByPk(userId);
     if (user) {
-      const referralCode =
-        user.ReferralCode ?? Buffer.from(`ref-${userId}`).toString("base64");
-      const referredCount = Referral.count({
+      const referredCount = await Referral.count({
         where: {
           ReferrerId: userId,
           Status: "success",
         },
       });
+
+      let referralCode;
+      if (user.ReferralCode) {
+        referralCode = user.ReferralCode;
+      } else {
+        referralCode = Buffer.from(`ref-${userId}`).toString("base64");
+        await user.update({
+          ReferralCode: referralCode,
+        });
+      }
 
       res.status(200).send({ referralCode, referredCount });
       log.audit.info(`Get referral code completed`, {

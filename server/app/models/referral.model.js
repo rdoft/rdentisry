@@ -7,7 +7,7 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      ReffererId: {
+      ReferrerId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -25,7 +25,7 @@ module.exports = (sequelize, Sequelize) => {
       indexes: [
         {
           unique: true,
-          fields: ["ReffererId", "ReferralId"],
+          fields: ["ReferrerId", "ReferralId"],
         },
       ],
       timestamps: false,

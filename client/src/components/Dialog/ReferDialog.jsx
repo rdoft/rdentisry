@@ -21,8 +21,7 @@ import { Copy } from "components/Button";
 // services
 import { UserService } from "services";
 
-// TODO: Add the referral link from env
-const HOST = "app.disheki.me";
+const HOST = process.env.HOSTNAME;
 
 function ReferDialog({ onHide }) {
   const qrRef = useRef(null);
