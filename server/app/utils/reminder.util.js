@@ -8,8 +8,13 @@ const Appointment = db.appointment;
 const { send } = require("./sms.util");
 const crypto = require("crypto");
 
-const { HOSTNAME, HOST_SERVER } = process.env;
-const HOST = HOSTNAME || HOST_SERVER || "localhost:3000";
+const { ENV, HOSTNAME, PORT_SSL, PORT_CLIENT } = process.env;
+const HOST =
+  ENV === "production"
+    ? HOSTNAME
+    : ENV === "development"
+    ? `${HOSTNAME}:${PORT_SSL}`
+    : `${HOSTNAME}:${PORT_CLIENT}`;
 // Define the reminder link expiration time in milliseconds
 const LINK_EXPIRATION_TIME = 172800000; // 2 gün
 

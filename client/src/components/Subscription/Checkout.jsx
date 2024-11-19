@@ -14,8 +14,8 @@ import PaymentForm from "./PaymentForm";
 // services
 import { SubscriptionService } from "services";
 
-const PRIVACY = process.env.REACT_APP_POLICY_URL;
-const TERMS = process.env.REACT_APP_TERMS_URL;
+const POLICY_URL = process.env.REACT_APP_POLICY_URL;
+const TERMS_URL = process.env.REACT_APP_TERMS_URL;
 
 function Checkout() {
   const theme = useTheme();
@@ -117,7 +117,7 @@ function Checkout() {
             <Grid item>
               <Typography variant="body2" align="center">
                 <Link
-                  href={PRIVACY}
+                  href={POLICY_URL}
                   style={{
                     color: theme.palette.text.secondary,
                     textDecoration: "none",
@@ -140,7 +140,7 @@ function Checkout() {
                   |
                 </Typography>{" "}
                 <Link
-                  href={TERMS}
+                  href={TERMS_URL}
                   style={{
                     color: theme.palette.text.secondary,
                     textDecoration: "none",

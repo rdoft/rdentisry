@@ -9,9 +9,9 @@ const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 // Get env variables
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, HOSTNAME, HOST_SERVER } =
+const { ENV, HOSTNAME, PORT_SSL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } =
   process.env;
-const HOST = HOSTNAME || HOST_SERVER || "localhost";
+const HOST = ENV === "production" ? HOSTNAME : `${HOSTNAME}:${PORT_SSL}`;
 
 // Local strategy for username password login
 passport.use(

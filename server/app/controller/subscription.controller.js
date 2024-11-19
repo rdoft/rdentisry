@@ -15,8 +15,19 @@ const {
 } = require("../utils/iyzipay.util");
 const { calcLimits, referralBonus } = require("../utils/subscription.util");
 
-const { HOSTNAME, HOST_SERVER } = process.env;
-const HOST = HOSTNAME || HOST_SERVER;
+const { ENV, HOSTNAME, PORT_SSL, PORT_SERVER, PORT_CLIENT } = process.env;
+const HOST_SERVER =
+  ENV === "production"
+    ? HOSTNAME
+    : ENV === "development"
+    ? `${HOSTNAME}:${PORT_SSL}`
+    : `${HOSTNAME}:${PORT_SERVER}`;
+const HOST_CLIENT =
+  ENV === "production"
+    ? HOSTNAME
+    : ENV === "development"
+    ? `${HOSTNAME}:${PORT_SSL}`
+    : `${HOSTNAME}:${PORT_CLIENT}`;
 
 /**
  * Init checkout proccess by creating billing & subscription with pending status
@@ -97,7 +108,7 @@ exports.checkout = async (req, res) => {
     // Init checkout process
     const { status, token, checkoutFormContent, errorMessage } =
       await checkoutInitialize({
-        callbackUrl: `https://${HOST}/api/subscriptions/callback`,
+        callbackUrl: `https://${HOST_SERVER}/api/subscriptions/callback`,
         pricingPlanReferenceCode: pricing.ReferenceCode,
         customer: {
           name,
@@ -194,7 +205,7 @@ exports.callback = async (req, res) => {
   try {
     if (!token) {
       res.redirect(
-        `https://${HOST}/checkout/result?status=failed&message=Geçersiz Token`
+        `https://${HOST_CLIENT}/checkout/result?status=failed&message=Geçersiz Token`
       );
       log.audit.warn("Subscription callback failed: Token is missing", {
         action: "POST",
@@ -219,7 +230,7 @@ exports.callback = async (req, res) => {
     // Check if the billing and subscription exists
     if (!billing || !subscription) {
       res.redirect(
-        `https://${HOST}/checkout/result?status=failed&message=Üyelik Bulunamadı`
+        `https://${HOST_CLIENT}/checkout/result?status=failed&message=Üyelik Bulunamadı`
       );
       log.audit.warn("Subscription callback failed: Subscription not found", {
         token: token,
@@ -251,7 +262,7 @@ exports.callback = async (req, res) => {
       });
 
       res.redirect(
-        `https://${HOST}/checkout/result?status=failed&message=${errorMessage}`
+        `https://${HOST_CLIENT}/checkout/result?status=failed&message=${errorMessage}`
       );
       log.audit.warn("Subscription callback failed: Payment gateway error", {
         userId: subscription.UserId,
@@ -302,7 +313,7 @@ exports.callback = async (req, res) => {
     );
 
     res.redirect(
-      `https://${HOST}/checkout/result?status=success&referenceCode=${data.referenceCode}`
+      `https://${HOST_CLIENT}/checkout/result?status=success&referenceCode=${data.referenceCode}`
     );
     log.audit.info("Subscription callback completed", {
       action: "POST",

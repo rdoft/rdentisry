@@ -21,9 +21,7 @@ function Register() {
   const { authenticate } = useAuth();
   const { refresh } = useSubscription();
 
-  const GOOGLE_AUTH = process.env.REACT_APP_AUTH_URL
-    ? `${process.env.REACT_APP_AUTH_URL}google`
-    : "https://localhost:8080/auth/google";
+  const GOOGLE_AUTH = `${process.env.REACT_APP_AUTH_URL}google`;
 
   const [user, setUser] = useState({
     name: "",

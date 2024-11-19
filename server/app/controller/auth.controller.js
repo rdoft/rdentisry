@@ -12,8 +12,13 @@ const dns = require("dns").promises;
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 
-const { HOSTNAME, HOST_SERVER } = process.env;
-const HOST = HOSTNAME || HOST_SERVER || "localhost";
+const { ENV, HOSTNAME, PORT_SSL, PORT_CLIENT } = process.env;
+const HOST =
+  ENV === "production"
+    ? HOSTNAME
+    : ENV === "development"
+    ? `${HOSTNAME}:${PORT_SSL}`
+    : `${HOSTNAME}:${PORT_CLIENT}`;
 
 exports.login = async (req, res) => {
   res.status(200).send({

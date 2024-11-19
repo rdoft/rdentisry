@@ -20,9 +20,7 @@ function Login() {
   const { authenticate } = useAuth();
   const { refresh } = useSubscription();
 
-  const GOOGLE_AUTH = process.env.REACT_APP_AUTH_URL
-    ? `${process.env.REACT_APP_AUTH_URL}google`
-    : "https://localhost:8080/auth/google";
+  const GOOGLE_AUTH = `${process.env.REACT_APP_AUTH_URL}google`;
 
   const [auth, setAuth] = useState({
     email: document.getElementById("email")?.value || "",
