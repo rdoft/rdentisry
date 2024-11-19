@@ -1,8 +1,9 @@
 import React from "react";
 import { Toolbar, Divider } from "primereact";
 import { Typography, Stack } from "@mui/material";
+import { Refer } from "components/Button";
 
-function SubscriptionToolbar({ index }) {
+function SubscriptionToolbar({ index, onClickRefer }) {
   // TEMPLATES ------------------------------------------------------------------
   // Get title
   const getTitle = () => {
@@ -34,11 +35,19 @@ function SubscriptionToolbar({ index }) {
     );
   };
 
+  // Get refer button
+  const getRefer = () => {
+    return (
+      onClickRefer && <Refer label="Paylaş - Kazan" onClick={onClickRefer} />
+    );
+  };
+
   return (
     <>
       <Toolbar
         className="p-2 mt-1 mb-2"
         start={getTitle}
+        end={getRefer}
         style={{ border: "none" }}
       />
       <Divider className="m-1 p-1" />

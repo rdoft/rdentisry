@@ -19,6 +19,9 @@ import Logout from "./Logout";
 import Permission from "./Permission";
 import Reminder from "./Reminder";
 import Subscribe from "./Subscribe";
+import Refer from "./Refer";
+import Copy from "./Copy";
+import Share from "./Share";
 
 export {
   Add,
@@ -42,4 +45,7 @@ export {
   Permission,
   Reminder,
   Subscribe,
+  Refer,
+  Copy,
+  Share,
 };

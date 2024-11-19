@@ -17,7 +17,7 @@ const NotificationEvent = db.notificationEvent;
 const APPOINTMENT_SIZE = 0.0628;
 const NOTE_SIZE = 0.0628;
 // Referral bonus and limit
-const REFERRAL_LIMIT = 10;
+const REFERRAL_LIMIT = 5;
 const REFERRER_SMS = 200;
 const REFERRER_PATIENT = 100;
 const REFERRED_SMS = 100;

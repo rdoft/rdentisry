@@ -8,6 +8,7 @@ import { usePaymentContext } from "context/PaymentProvider";
 import { useSubscription } from "context/SubscriptionProvider";
 import { LoadingController } from "components/Loadable";
 import { Loading } from "components/Other";
+import { ReferDialog } from "components/Dialog";
 import {
   SubscriptionUpgradeDialog,
   SubscriptionCancelDialog,
@@ -33,6 +34,7 @@ function Pricing() {
   const [dialog, setDialog] = useState({
     upgrade: false,
     cancel: false,
+    refer: false,
   });
 
   // Set the page on loading
@@ -120,6 +122,14 @@ function Pricing() {
     });
   };
 
+  // onClick handler for the refer dialog
+  const handleRefer = () => {
+    setDialog({
+      ...dialog,
+      refer: true,
+    });
+  };
+
   // Hide the upgrade dialog
   const hideUpgradeDialog = () => {
     setDialog({
@@ -133,6 +143,14 @@ function Pricing() {
     setDialog({
       ...dialog,
       cancel: false,
+    });
+  };
+
+  // Hide the refer dialog
+  const hideReferDialog = () => {
+    setDialog({
+      ...dialog,
+      refer: false,
     });
   };
 
@@ -160,7 +178,11 @@ function Pricing() {
     <Grid container item rowSpacing={4.5} columnSpacing={2.75}>
       <Grid item xs={12}>
         {/* Toolbar */}
-        <SubscriptionToolbar index={1} />
+        {subscription ? (
+          <SubscriptionToolbar index={1} onClickRefer={handleRefer} />
+        ) : (
+          <SubscriptionToolbar index={1} />
+        )}
       </Grid>
 
       {/* Pricing Plan */}
@@ -225,6 +247,7 @@ function Pricing() {
           onHide={hideCancelDialog}
         />
       )}
+      {dialog.refer && <ReferDialog onHide={hideReferDialog} />}
     </Grid>
   );
 }

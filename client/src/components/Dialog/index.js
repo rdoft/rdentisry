@@ -14,6 +14,7 @@ import TutorialDialog from "./TutorialDialog";
 import SubscriptionUpgradeDialog from "./SubscriptionUpgradeDialog";
 import SubscriptionCancelDialog from "./SubscriptionCancelDialog";
 import PremiumDialog from "./PremiumDialog";
+import ReferDialog from "./ReferDialog";
 
 export {
   DialogTemp,
@@ -32,4 +33,5 @@ export {
   SubscriptionUpgradeDialog,
   SubscriptionCancelDialog,
   PremiumDialog,
+  ReferDialog,
 };

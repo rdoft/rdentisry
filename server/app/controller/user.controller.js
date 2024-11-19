@@ -64,6 +64,72 @@ exports.getUser = async (req, res) => {
 };
 
 /**
+ * Get referral code of the user
+ * userId and subscription is taken from the request itself
+ */
+exports.getReferralCode = async (req, res) => {
+  const { UserId: userId } = req.user;
+  const subscription = req.subscription;
+  let user;
+
+  try {
+    // Control if the user has an active subscription (except free)
+    if (!subscription.ReferenceCode) {
+      res
+        .status(404)
+        .send({ message: "Aktif ücretli abonelik bulunmamaktadır" });
+      log.audit.warn(`Get referral code failed: Subscription doesn't exist`, {
+        userId,
+        action: "GET",
+        success: false,
+        resource: {
+          type: "user",
+          id: userId,
+        },
+      });
+    }
+
+    // Get the user and send the referral code
+    user = await User.findByPk(userId);
+    if (user) {
+      const referralCode =
+        user.ReferralCode ?? Buffer.from(`ref-${userId}`).toString("base64");
+      const referredCount = Referral.count({
+        where: {
+          ReferrerId: userId,
+          Status: "success",
+        },
+      });
+
+      res.status(200).send({ referralCode, referredCount });
+      log.audit.info(`Get referral code completed`, {
+        userId,
+        action: "GET",
+        success: true,
+        resource: {
+          type: "user",
+          id: userId,
+        },
+      });
+    } else {
+      res.status(404).send({ message: "Kullanıcı mevcut değil" });
+      log.audit.warn(`Get referral code failed: User doesn't exist`, {
+        userId,
+        action: "GET",
+        success: false,
+        resource: {
+          type: "user",
+          id: userId,
+        },
+      });
+    }
+  } catch (error) {
+    res.status(500).send(error);
+    log.error.error(error);
+  }
+};
+
+/**
  * Update the user
  * userId is taken from the request itself
  * @body name and password

@@ -12,6 +12,14 @@ user.getUser = (options = {}) => {
 };
 
 /**
+ * Get referral code of the user
+ * userId and subscription is already in the request
+ */
+user.getReferralCode = (options = {}) => {
+  return API.get(`${API_URL}/referral`, options);
+};
+
+/**
  * Update user name and password
  * userId is already in the request
  */

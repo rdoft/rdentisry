@@ -50,5 +50,13 @@ module.exports = function (app) {
      */
     .put(isSubActive, controller.updateSettings);
 
+  router
+    .route(`/referral`)
+    /**
+     * Get referral code of the user
+     * userId and subscription is taken from the request itself
+     */
+    .get(isSubActive, controller.getReferralCode);
+
   app.use(API_URL, router);
 };
