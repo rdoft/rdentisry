@@ -3,6 +3,8 @@ const config = require("../config/db.config");
 const fs = require("fs");
 const { parse } = require("csv-parse");
 
+const ENV = process.env.ENV;
+
 const Sequelize = require("sequelize");
 const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
   host: config.HOST,
@@ -561,7 +563,9 @@ const createProcedures = async (user) => {
 
 // Create pricing records from csv
 const createPricing = async () => {
-  const PATH_PRICING_CSV = `${__dirname}/../data/Pricing.csv`;
+  const filename =
+    ENV === "production" ? "Pricing.csv" : "Pricing[sandbox].csv";
+  const PATH_PRICING_CSV = `${__dirname}/../data/${filename}`;
 
   try {
     const parser = fs

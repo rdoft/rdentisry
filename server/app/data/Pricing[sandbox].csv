@@ -1,0 +1,10 @@
+"ReferenceCode","Name","Price","DoctorCount","PatientCount","SMSCount","StorageSize"
+"7ecbb3ac-b921-46cb-8a32-b363043cdebe","dentist-basic",499,1,500,300,1024
+"d1b30312-d5a5-4550-a093-75c15ba130c8","dentist-medium",699,1,1000,500,2048
+"6264dfc7-e885-47e0-b483-20197be3e391","dentist-pro",1199,1,2000,1000,5120
+"91b2cbf7-4bcf-43b0-a77c-53c0d1505eb9","clinic-basic",1299,2,2000,750,5120
+"31efdcf9-0366-4a09-bc0a-b64959f27d74","clinic-medium",1699,3,3000,1000,6144
+"52d38dfa-6523-4b0b-8d04-8b1ee617c157","clinic-pro",1999,4,4000,1500,10240
+"a07a3c78-56f3-4f8b-8bec-f6dabbe068ec","polyclinic-basic",2499,5,5000,1500,10240
+"c570223b-7891-447a-9b3c-de4c25ce73cf","polyclinic-medium",3099,6,6000,2000,15360
+"ab5dbc85-6938-4d80-964b-b9a29f71fb68","polyclinic-pro",4899,10,10000,4000,20480
