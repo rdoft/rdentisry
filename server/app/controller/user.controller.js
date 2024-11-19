@@ -1,7 +1,7 @@
 const log = require("../config/log.config");
-const { Sequelize } = require("../models");
 const db = require("../models");
 const User = db.user;
+const Referral = db.referral;
 const UserSetting = db.userSetting;
 
 const bcrypt = require("bcrypt");
