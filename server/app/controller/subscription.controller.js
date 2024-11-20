@@ -1,5 +1,5 @@
 const log = require("../config/log.config");
-const { Sequelize } = require("../models");
+const { Sequelize, sequelize } = require("../models");
 const db = require("../models");
 const User = db.user;
 const Billing = db.billing;
@@ -769,7 +769,7 @@ exports.getSubscription = async (req, res) => {
         ["Doctors", "doctors"],
         ["Patients", "patients"],
         ["SMS", "sms"],
-        ["Storage", "storage"],
+        [sequelize.literal("CAST(\"Storage\" AS INTEGER)"), "storage"],
         ["PricingId", "pricingId"],
       ],
       where: {

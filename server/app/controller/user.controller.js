@@ -6,13 +6,13 @@ const UserSetting = db.userSetting;
 
 const bcrypt = require("bcrypt");
 
-const { ENV, HOSTNAME, PORT_SSL, POST_CLIENT } = process.env;
+const { ENV, HOSTNAME, PORT_SSL, PORT_CLIENT } = process.env;
 const HOST =
   ENV === "production"
     ? HOSTNAME
     : ENV === "development"
     ? `${HOSTNAME}:${PORT_SSL}`
-    : `${HOSTNAME}:${POST_CLIENT}`;
+    : `${HOSTNAME}:${PORT_CLIENT}`;
 
 /**
  * Get the user

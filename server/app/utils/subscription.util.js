@@ -5,7 +5,6 @@ const User = db.user;
 const Note = db.note;
 const Doctor = db.doctor;
 const Patient = db.patient;
-const Pricing = db.pricing;
 const Bonus = db.bonus;
 const Referral = db.referral;
 const Appointment = db.appointment;
@@ -120,22 +119,17 @@ async function setPatientLimit(userId, by, transaction) {
 /**
  * Set the storage limit for the subscription
  * @param {number} userId - The user's id
+ * @param {string} type - type of resource (note, appointmet)
+ * @param {number} by - The value to increment or decrement
  * @param {object} transaction - The transaction object
  */
-async function setStorageLimit(userId, transaction) {
+async function setStorageLimit(userId, type, by, transaction) {
   // Get the subscription
   const subscription = await Subscription.findOne({
     where: {
       UserId: userId,
       Status: "active",
     },
-    include: [
-      {
-        model: Pricing,
-        as: "pricing",
-        attributes: ["StorageSize"],
-      },
-    ],
     transaction,
   });
   // Check if the subscription exists
@@ -148,35 +142,12 @@ async function setStorageLimit(userId, transaction) {
     error.code = 402;
     throw error;
   }
-  // Get the resources
-  const appointmentCount = await Appointment.count({
-    include: [
-      {
-        model: Patient,
-        as: "patient",
-        where: { UserId: userId },
-      },
-    ],
-    transaction,
-  });
-  const noteCount = await Note.count({
-    include: [
-      {
-        model: Patient,
-        as: "patient",
-        where: { UserId: userId },
-      },
-    ],
-    transaction,
-  });
+
   // Calculate the storage size
-  const maxStorageSize = subscription.pricing.StorageSize;
-  const storageSize = Math.floor(
-    APPOINTMENT_SIZE * appointmentCount + NOTE_SIZE * noteCount
-  );
+  const storageSize = type === "note" ? NOTE_SIZE * by : APPOINTMENT_SIZE * by;
 
   // Check if the limit is exceeded
-  if (maxStorageSize - storageSize < 0) {
+  if (subscription.Storage + storageSize < 0) {
     log.app.error(`Set storage limit failed: Limit exceeded`, {
       success: false,
       userId: userId,
@@ -192,7 +163,7 @@ async function setStorageLimit(userId, transaction) {
 
   // Update the limit
   await subscription.update(
-    { Storage: maxStorageSize - storageSize },
+    { Storage: subscription.Storage + storageSize },
     { transaction }
   );
 }
@@ -248,7 +219,37 @@ async function setSMSLimit(userId, by, transaction) {
  * @return {object} - The remaining limits
  */
 async function calcLimits(userId, pricing) {
-  const bonus = (await Bonus.findOne({
+  const [bonus] = await Bonus.findAll({
+    attributes: [
+      [
+        Sequelize.cast(
+          Sequelize.fn("SUM", Sequelize.col("DoctorCount")),
+          "INTEGER"
+        ),
+        "DoctorCount",
+      ],
+      [
+        Sequelize.cast(
+          Sequelize.fn("SUM", Sequelize.col("PatientCount")),
+          "INTEGER"
+        ),
+        "PatientCount",
+      ],
+      [
+        Sequelize.cast(
+          Sequelize.fn("SUM", Sequelize.col("StorageSize")),
+          "FLOAT"
+        ),
+        "StorageSize",
+      ],
+      [
+        Sequelize.cast(
+          Sequelize.fn("SUM", Sequelize.col("SMSCount")),
+          "INTEGER"
+        ),
+        "SMSCount",
+      ],
+    ],
     where: {
       UserId: userId,
       EndDate: {
@@ -258,7 +259,9 @@ async function calcLimits(userId, pricing) {
         },
       },
     },
-  })) ?? { DoctorCount: 0, PatientCount: 0, StorageSize: 0, SMSCount: 0 };
+    group: ["UserId"],
+    raw: true,
+  });
 
   // Calculate the remainings if the subscription not exists
   const [remainDoctors, remainPatients, remainStorage, remainSMS] =
@@ -352,9 +355,8 @@ async function calcRemainingStorage(userId, maxStorageSize) {
     ],
   });
 
-  const storageSize = Math.floor(
-    APPOINTMENT_SIZE * appointmentCount + NOTE_SIZE * noteCount
-  );
+  const storageSize =
+    APPOINTMENT_SIZE * appointmentCount + NOTE_SIZE * noteCount;
   return Math.max(0, maxStorageSize - storageSize);
 }
 

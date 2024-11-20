@@ -292,7 +292,7 @@ exports.saveAppointment = async (req, res) => {
     // Create Appointment record and update the storage limit
     const appointment = await sequelize.transaction(async (t) => {
       const appointment = await Appointment.create(values, { transaction: t });
-      await setStorageLimit(userId, t);
+      await setStorageLimit(userId, "appointment", -1, t);
       return {
         id: appointment.AppointmentId,
         patientId: appointment.PatientId,
@@ -518,7 +518,7 @@ exports.deleteAppointment = async (req, res) => {
     if (appointment) {
       await sequelize.transaction(async (t) => {
         await appointment.destroy({ transaction: t });
-        await setStorageLimit(userId, t);
+        await setStorageLimit(userId, "appointment", 1, t);
       });
 
       res.status(200).send({ id: appointmentId });

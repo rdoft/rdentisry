@@ -33,12 +33,6 @@ module.exports = (sequelize, Sequelize) => {
       },
     },
     {
-      indexes: [
-        {
-          unique: true,
-          fields: ["UserId"],
-        },
-      ],
       timestamps: false,
       tableName: "Bonus",
     }

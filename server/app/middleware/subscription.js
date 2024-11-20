@@ -1,5 +1,4 @@
 const log = require("../config/log.config");
-const { Sequelize } = require("../models");
 const db = require("../models");
 const Subscription = db.subscription;
 
@@ -202,79 +201,10 @@ const checkSMSLimit = async (req, res, next) => {
   }
 };
 
-// Set a limit for the number of patients and doctors that can be list
-// TODO: Apply this to necessary routes
-const setLimit = async (req, res, next) => {
-  try {
-    if (!req.user) {
-      res.status(401).send({
-        message: "Yetkilendirme hatası. Lütfen tekrar giriş yapın.",
-      });
-      log.access.warn("Payment required: Unauthorized access", {
-        action: "ACCESS",
-        success: false,
-        request: {
-          ip: req.headers["x-forwarded-for"],
-          url: req.originalUrl,
-          method: req.method,
-          status: 401,
-          agent: req.headers["user-agent"],
-        },
-      });
-      return;
-    }
-
-    const subscription = await Subscription.findOne({
-      where: {
-        UserId: req.user.UserId,
-        Status: "active",
-      },
-      include: [
-        {
-          model: Pricing,
-          as: "pricing",
-        },
-        {
-          model: Bonus,
-          as: "bonus",
-          where: {
-            EndDate: {
-              [Sequelize.Op.gte]: new Date(),
-            },
-          },
-        },
-      ],
-    });
-
-    if (!subscription) {
-      req.limit = {
-        maxDoctors: 1,
-        maxPatients: 75,
-      };
-    } else {
-      req.limit = {
-        maxDoctors:
-          (subscription.pricing?.DoctorCount ?? 1) +
-          (pricing?.bonus?.DoctorCount ?? 0),
-        maxPatients:
-          (subscription.pricing.PatientCount ?? 75) +
-          (pricing?.bonus?.PatientCount ?? 0),
-      };
-    }
-
-    next();
-  } catch (error) {
-    res.status(500).send(error);
-    log.error.error(error);
-    return;
-  }
-};
-
 module.exports = {
   isSubActive,
   checkPatientLimit,
   checkDoctorLimit,
   checkStorageLimit,
   checkSMSLimit,
-  setLimit,
 };

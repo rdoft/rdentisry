@@ -267,8 +267,8 @@ db.billing.belongsTo(db.user, {
 });
 
 // User - Bonus
-db.user.hasOne(db.bonus, {
-  as: "bonus",
+db.user.hasMany(db.bonus, {
+  as: "bonuses",
   foreignKey: "UserId",
   onDelete: "cascade",
   hooks: true,

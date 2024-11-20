@@ -178,7 +178,7 @@ exports.saveNote = async (req, res) => {
     // Create Note record and update the storage limit
     const note = await sequelize.transaction(async (t) => {
       const note = await Note.create(values, { transaction: t });
-      await setStorageLimit(userId, t);
+      await setStorageLimit(userId, "note", -1, t);
       return {
         id: note.NoteId,
         patientId: note.PatientId,
@@ -334,7 +334,7 @@ exports.deleteNote = async (req, res) => {
     if (note) {
       await sequelize.transaction(async (t) => {
         await note.destroy({ transaction: t });
-        await setStorageLimit(userId, t);
+        await setStorageLimit(userId, "note", 1, t);
       });
 
       res.status(200).send({ id: noteId });

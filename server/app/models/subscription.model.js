@@ -37,21 +37,33 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 1,
+        validate: {
+          min: 0,
+        },
       },
       Patients: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 75,
+        validate: {
+          min: 0,
+        },
       },
       SMS: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 150,
+        validate: {
+          min: 0,
+        },
       },
       Storage: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.FLOAT,
         allowNull: false,
-        defaultValue: 1024, // in MB
+        defaultValue: 1024.0, // in MB
+        validate: {
+          min: 0,
+        },
       },
       PaymentToken: {
         type: Sequelize.STRING,
