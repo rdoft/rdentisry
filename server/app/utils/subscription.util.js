@@ -219,7 +219,7 @@ async function setSMSLimit(userId, by, transaction) {
  * @return {object} - The remaining limits
  */
 async function calcLimits(userId, pricing) {
-  const [bonus] = await Bonus.findAll({
+  let [bonus] = await Bonus.findAll({
     attributes: [
       [
         Sequelize.cast(
@@ -262,6 +262,12 @@ async function calcLimits(userId, pricing) {
     group: ["UserId"],
     raw: true,
   });
+  bonus = bonus ?? {
+    DoctorCount: 0,
+    PatientCount: 0,
+    StorageSize: 0,
+    SMSCount: 0,
+  };
 
   // Calculate the remainings if the subscription not exists
   const [remainDoctors, remainPatients, remainStorage, remainSMS] =

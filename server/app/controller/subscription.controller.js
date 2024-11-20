@@ -324,12 +324,13 @@ exports.callback = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).send(error);
+    res.redirect(
+      `https://${HOST_CLIENT}/checkout/result?status=failed&message=${error}`
+    );
     log.error.error(error);
   }
 };
 
-// TODO: Test if the iyziEventType's are correct for the renewSuccess and renewFailure functions
 /**
  * Monthly successfull renew proccess for the subscription
  * Get the renew status and update the subscription and billing status accordingly
