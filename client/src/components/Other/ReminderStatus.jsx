@@ -37,7 +37,8 @@ function ReminderStatus({ status, errorMessage, ...props }) {
   ];
 
   // Set status of the reminder
-  const reminderStatus = statusItems.find((item) => item.status === status);
+  const _status = status !== "approved" && errorMessage ? "failed" : status;
+  const reminderStatus = statusItems.find((item) => item.status === _status);
 
   return (
     reminderStatus && (
@@ -46,12 +47,14 @@ function ReminderStatus({ status, errorMessage, ...props }) {
           <i
             className={reminderStatus.icon}
             style={{
-              backgroundColor: errorMessage
-                ? theme.palette.background.error
-                : theme.palette.text.event,
-              color: errorMessage
-                ? theme.palette.text.error
-                : theme.palette.common.white,
+              backgroundColor:
+                _status === "failed"
+                  ? theme.palette.background.error
+                  : theme.palette.text.event,
+              color:
+                _status === "failed"
+                  ? theme.palette.text.error
+                  : theme.palette.common.white,
               fontWeight: "bold",
               fontSize: "0.7rem",
               padding: "0.25rem",

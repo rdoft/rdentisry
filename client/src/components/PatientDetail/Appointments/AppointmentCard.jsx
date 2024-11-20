@@ -182,14 +182,14 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit, onReminder }) {
         <Grid item xs={2} textAlign="center">
           {appointment.status === "active" && (
             <ReminderStatus
-              status={
-                appointment.sms?.error ? "failed" : appointment.reminderStatus
-              }
+              status={appointment.reminderStatus}
               errorMessage={appointment.sms?.error}
               style={{
-                backgroundColor: appointment.sms?.error
-                  ? theme.palette.background.error
-                  : theme.palette.text.primary,
+                backgroundColor:
+                  appointment.sms?.error &&
+                  appointment.reminderStatus !== "approved"
+                    ? theme.palette.background.error
+                    : theme.palette.text.primary,
                 padding: "0.5rem",
               }}
             />

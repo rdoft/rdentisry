@@ -258,7 +258,7 @@ function MonthEvent({ initEvent = {}, onSubmit }) {
 
                 {e.status === "active" && (
                   <ReminderStatus
-                    status={e.sms?.error ? "failed" : e.reminderStatus}
+                    status={e.reminderStatus}
                     errorMessage={e.sms?.error}
                   />
                 )}
