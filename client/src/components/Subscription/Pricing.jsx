@@ -25,10 +25,11 @@ function Pricing() {
   const theme = useTheme();
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
-  const { pricing, selectPricing } = usePaymentContext();
+  const { selectPricing } = usePaymentContext();
   const { refresh } = useSubscription();
 
   // Set the default values
+  const [pricing, setPricing] = useState(null);
   const [pricings, setPricings] = useState([]);
   const [subscription, setSubscription] = useState(null);
   const [dialog, setDialog] = useState({
@@ -103,13 +104,14 @@ function Pricing() {
   // HANDLERS ---------------------------------------------------------------------------------------------------------
   // onSelect handler for the pricing card
   const handleSelect = (pricing) => {
-    selectPricing(pricing);
     if (subscription) {
+      setPricing(pricing);
       setDialog({
         ...dialog,
         upgrade: true,
       });
     } else {
+      selectPricing(pricing);
       navigate("/checkout");
     }
   };
@@ -132,6 +134,7 @@ function Pricing() {
 
   // Hide the upgrade dialog
   const hideUpgradeDialog = () => {
+    setPricing(null);
     setDialog({
       ...dialog,
       upgrade: false,
@@ -156,9 +159,7 @@ function Pricing() {
 
   // onSubmit handler for the upgrade dialog
   const handleUpgradeSubmit = async () => {
-    if (pricing) {
-      await upgrade();
-    }
+    pricing && (await upgrade());
     setDialog({
       ...dialog,
       upgrade: false,

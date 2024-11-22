@@ -43,6 +43,7 @@ const PublicRoute = ({ element: Component, ...rest }) => {
     }
   }, [location.search]);
 
+  // Redirect
   if (loading) {
     return <Loading />;
   } else if (isAuthenticated) {

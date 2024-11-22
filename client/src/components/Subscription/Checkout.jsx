@@ -5,6 +5,7 @@ import { Grid, Typography, Link } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useLoading } from "context/LoadingProvider";
 import { usePaymentContext } from "context/PaymentProvider";
+import { useSubscription } from "context/SubscriptionProvider";
 import { Prev } from "components/Button";
 import SubscriptionToolbar from "./SubscriptionToolbar";
 import PricingCard from "./PricingCard";
@@ -21,6 +22,7 @@ function Checkout() {
   const theme = useTheme();
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
+  const { isSubscribed } = useSubscription();
   const { pricing, userDetail, clearPricing } = usePaymentContext();
 
   const [checkoutForm, setCheckoutForm] = useState(null);
@@ -44,6 +46,7 @@ function Checkout() {
       if (response?.data?.checkoutForm) {
         // Adjust the checkout form and redirect to the payment page
         setCheckoutForm(response.data.checkoutForm);
+        clearPricing();
       } else {
         toast.error("Ödeme sayfasına yönlendirilemedi. Lütfen tekrar deneyin.");
       }
@@ -60,7 +63,7 @@ function Checkout() {
     navigate("/pricing");
   };
 
-  return !pricing ? (
+  return isSubscribed || (!checkoutForm && !pricing) ? (
     <Navigate to="/pricing" />
   ) : (
     <Grid
