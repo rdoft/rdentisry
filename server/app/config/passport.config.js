@@ -121,7 +121,7 @@ passport.use(
           });
 
           // Create referral record if referral code exists
-          const { referralCode } = req.query;
+          const { referralCode } = JSON.parse(req.query.state) || {};
           if (referralCode) {
             const referrer = await User.findOne({
               where: {

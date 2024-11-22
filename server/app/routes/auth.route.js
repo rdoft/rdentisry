@@ -50,7 +50,13 @@ module.exports = function (app) {
     /**
      * Google login
      */
-    .get(passport.authenticate("google", { scope: ["profile", "email"] }));
+    .get((req, res, next) => {
+      const scope = ["profile", "email"];
+      const state = JSON.stringify({
+        referralCode: req.query?.referralCode || null,
+      });
+      passport.authenticate("google", { scope, state })(req, res, next);
+    });
 
   router
     .route(`/google/callback`)
