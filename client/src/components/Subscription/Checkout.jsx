@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, Navigate } from "react-router-dom";
 import { Grid, Typography, Link } from "@mui/material";
@@ -21,9 +21,15 @@ function Checkout() {
   const theme = useTheme();
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
-  const { pricing, userDetail } = usePaymentContext();
+  const { pricing, userDetail, clearPricing } = usePaymentContext();
 
   const [checkoutForm, setCheckoutForm] = useState(null);
+
+  useEffect(() => {
+    return () => {
+      clearPricing();
+    };
+  }, [clearPricing]);
 
   // SERVICES -----------------------------------------------------------------
   // Init checkout proccess and redirect to the payment page
