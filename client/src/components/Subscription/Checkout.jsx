@@ -22,7 +22,7 @@ function Checkout() {
   const theme = useTheme();
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
-  const { isSubscribed } = useSubscription();
+  const { isSubscribed, isFree } = useSubscription();
   const { pricing, userDetail, clearPricing } = usePaymentContext();
 
   const [checkoutForm, setCheckoutForm] = useState(null);
@@ -63,7 +63,7 @@ function Checkout() {
     navigate("/pricing");
   };
 
-  return isSubscribed || (!checkoutForm && !pricing) ? (
+  return isSubscribed & !isFree || (!checkoutForm && !pricing) ? (
     <Navigate to="/pricing" />
   ) : (
     <Grid
