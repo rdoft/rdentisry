@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
