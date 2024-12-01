@@ -30,6 +30,7 @@ services:
         REACT_APP_POLICY_URL: ${REACT_APP_POLICY_URL}
         REACT_APP_TERMS_URL: ${REACT_APP_TERMS_URL}
         REACT_APP_PRICING_URL: ${REACT_APP_PRICING_URL}
+        REACT_APP_GA_ID: ${REACT_APP_GA_ID}
     container_name: client
     image: recepdemrci/dishekime-client:${VERSION}
     ports:
