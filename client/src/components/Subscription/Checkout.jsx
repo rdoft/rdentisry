@@ -7,6 +7,7 @@ import { useLoading } from "context/LoadingProvider";
 import { usePaymentContext } from "context/PaymentProvider";
 import { useSubscription } from "context/SubscriptionProvider";
 import { Prev } from "components/Button";
+import ReactGA from "react-ga4";
 import SubscriptionToolbar from "./SubscriptionToolbar";
 import PricingCard from "./PricingCard";
 import BillingForm from "./BillingForm";
@@ -47,6 +48,12 @@ function Checkout() {
         // Adjust the checkout form and redirect to the payment page
         setCheckoutForm(response.data.checkoutForm);
         clearPricing();
+        // Google Analytics
+        ReactGA.event({
+          category: "Subscription",
+          action: "CHECKOUT",
+          label: pricing?.referenceCode || "-",
+        });
       } else {
         toast.error("Ödeme sayfasına yönlendirilemedi. Lütfen tekrar deneyin.");
       }

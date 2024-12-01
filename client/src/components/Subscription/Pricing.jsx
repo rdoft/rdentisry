@@ -13,6 +13,7 @@ import {
   SubscriptionUpgradeDialog,
   SubscriptionCancelDialog,
 } from "components/Dialog";
+import ReactGA from "react-ga4";
 import PricingCard from "./PricingCard";
 import SubscriptionToolbar from "./SubscriptionToolbar";
 
@@ -159,7 +160,14 @@ function Pricing() {
 
   // onSubmit handler for the upgrade dialog
   const handleUpgradeSubmit = async () => {
-    pricing && (await upgrade());
+    if (pricing) {
+      await upgrade();
+      ReactGA.event({
+        category: "Subscription",
+        action: "PURCHASE_UPGRADE",
+        label: pricing.referenceCode || "-",
+      });
+    }
     setDialog({
       ...dialog,
       upgrade: false,
@@ -169,6 +177,10 @@ function Pricing() {
   // onSubmit handler for the cancel dialog
   const handleCancelSubmit = async () => {
     await cancel();
+    ReactGA.event({
+      category: "Subscription",
+      action: "PURCHASE_CANCEL",
+    });
     setDialog({
       ...dialog,
       cancel: false,

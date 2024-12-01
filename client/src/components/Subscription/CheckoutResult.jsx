@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { Subscribe } from "components/Button";
+import ReactGA from "react-ga4";
 import SubscriptionToolbar from "./SubscriptionToolbar";
 
 // assets
@@ -20,6 +21,15 @@ function CheckoutResult() {
   const status = query.get("status");
   const message = query.get("message");
   const referenceCode = query.get("referenceCode");
+
+  useEffect(() => {
+    // Google Analytics
+    ReactGA.event({
+      category: "Subscription",
+      action: status === "success" ? "PURCHASE_SUCCESS" : "PURCHASE_FAIL",
+      label: referenceCode || "-",
+    });
+  }, [status, referenceCode]);
 
   // HANDLERS ---------------------------------------------------------------------------------------------------------
   // onClick handler for try again

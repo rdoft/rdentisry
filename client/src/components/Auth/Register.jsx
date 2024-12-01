@@ -5,6 +5,7 @@ import { Grid, Typography } from "@mui/material";
 import { InputText, Button, Password, Divider } from "primereact";
 import { useAuth } from "context/AuthProvider";
 import { useSubscription } from "context/SubscriptionProvider";
+import ReactGA from "react-ga4";
 
 // assets
 import svgGoogle from "assets/svg/google.svg";
@@ -117,6 +118,10 @@ function Register() {
 
   // Register with google
   const handleRegisterGoogle = () => {
+    ReactGA.event({
+      category: "User",
+      action: "REGISTER_GOOGLE"
+    });
     window.location.href = referralCode
       ? `${GOOGLE_AUTH}?referralCode=${referralCode}`
       : GOOGLE_AUTH;
@@ -124,6 +129,10 @@ function Register() {
 
   // Register handler
   const handleRegister = () => {
+    ReactGA.event({
+      category: "User",
+      action: "REGISTER"
+    });
     register({
       name: user.name,
       email: user.email,

@@ -8248,6 +8248,11 @@
   dependencies:
     "@babel/runtime" "^7.15.4"
 
+"react-ga4@^2.1.0":
+  "integrity" "sha512-ZKS7PGNFqqMd3PJ6+C2Jtz/o1iU9ggiy8Y8nUeksgVuvNISbmrQtJiZNvC/TjDsqD0QlU5Wkgs7i+w9+OjHhhQ=="
+  "resolved" "https://registry.npmjs.org/react-ga4/-/react-ga4-2.1.0.tgz"
+  "version" "2.1.0"
+
 "react-hot-toast@^2.4.1":
   "integrity" "sha512-j8z+cQbWIM5LY37pR6uZR6D4LfseplqnuAO4co4u8917hBUvXlEqyP1ZzqVLcqoyUesZZv/ImreoCeHVDpE5pQ=="
   "resolved" "https://registry.npmjs.org/react-hot-toast/-/react-hot-toast-2.4.1.tgz"
