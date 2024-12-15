@@ -44,7 +44,7 @@ module.exports = (sequelize, Sequelize) => {
       IsSMS: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: false,
+        defaultValue: true,
       },
     },
     {
