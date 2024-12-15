@@ -17,7 +17,7 @@ function PatientDialog({ initPatient = {}, onHide, onSubmit }) {
     surname: "",
     phone: "",
     birthYear: "",
-    isSMS: false,
+    isSMS: true,
     ...initPatient,
   });
   const [isValid, setIsValid] = useState(false);
