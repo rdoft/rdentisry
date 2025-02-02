@@ -149,7 +149,7 @@ async function status(smsId) {
       log.app.info(`SMS status request for ${smsId} successful: delivered.`);
       return;
     } else if (smsStatus === "0") {
-      if (sms.Retry < 3) {
+      if (sms.Retry < 12) {
         sms.increment("Retry");
         log.app.warn(`SMS status request for ${smsId} successful: Pending.`);
         const error = new Error("SMS Beklemede");
