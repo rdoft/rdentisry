@@ -317,15 +317,10 @@ exports.saveAppointment = async (req, res) => {
       },
     });
   } catch (error) {
-    if (
-      error instanceof Sequelize.ValidationError &&
-      error.name === "SequelizeUniqueConstraintError"
-    ) {
-      res.status(400).send({
-        message: "Aynı doktora veya hastaya aynı saatte randevu oluşturulamaz",
-      });
+    if (error instanceof Sequelize.ValidationError) {
+      res.status(400).send({ message: error.message });
       log.audit.warn(
-        "Save appointment failed: There is an appointment for the same doctor or patient at the current time",
+        "Save appointment failed: There is an active appointment for the same doctor or patient at the current time",
         {
           userId,
           action: "POST",
@@ -459,15 +454,10 @@ exports.updateAppointment = async (req, res) => {
       });
     }
   } catch (error) {
-    if (
-      error instanceof Sequelize.ValidationError &&
-      error.name === "SequelizeUniqueConstraintError"
-    ) {
-      res.status(400).send({
-        message: "Aynı doktora veya hastaya aynı saatte randevu oluşturulamaz",
-      });
+    if (error instanceof Sequelize.ValidationError) {
+      res.status(400).send({ message: error.message });
       log.audit.warn(
-        "Update appointment failed: There is an appointment for the same doctor or patient at the current time",
+        "Update appointment failed: There is an active appointment for the same doctor or patient at the current time",
         {
           userId,
           action: "PUT",

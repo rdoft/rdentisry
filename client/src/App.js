@@ -19,11 +19,13 @@ const App = () => {
   const location = useLocation();
 
   useEffect(() => {
-    ReactGA.initialize(GA_ID);
-    ReactGA.send({
-      hitType: "pageview",
-      page: location.pathname + location.search,
-    });
+    if (GA_ID) {
+      ReactGA.initialize(GA_ID);
+      ReactGA.send({
+        hitType: "pageview",
+        page: location.pathname + location.search,
+      });
+    }
   }, [location]);
 
   return (

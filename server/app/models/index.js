@@ -502,6 +502,112 @@ db.user.afterCreate(async (user) => {
   });
 });
 
+// Prevent overlapping appointments when creating new appointment
+db.appointment.beforeCreate(async (appointment) => {
+  const overlappingAppointment = await db.appointment.findOne({
+    where: {
+      [Sequelize.Op.or]: [
+        {
+          PatientId: appointment.PatientId,
+          Date: appointment.Date,
+          Status: "active",
+          [Sequelize.Op.and]: [
+            {
+              StartTime: {
+                [Sequelize.Op.lt]: appointment.EndTime,
+              },
+            },
+            {
+              EndTime: {
+                [Sequelize.Op.gt]: appointment.StartTime,
+              },
+            },
+          ],
+        },
+        {
+          DoctorId: appointment.DoctorId,
+          Date: appointment.Date,
+          Status: "active",
+          [Sequelize.Op.and]: [
+            {
+              StartTime: {
+                [Sequelize.Op.lt]: appointment.EndTime,
+              },
+            },
+            {
+              EndTime: {
+                [Sequelize.Op.gt]: appointment.StartTime,
+              },
+            },
+          ],
+        },
+      ],
+    },
+  });
+
+  if (overlappingAppointment) {
+    throw new Sequelize.ValidationError(
+      "Seçilen zaman aralığında doktor ya da hasta için mevcut bir aktif randevu bulunuyor. Lütfen çakışmayan bir zaman aralığı seçin."
+    );
+  }
+});
+
+// Prevent overlapping appointments when updating appointment
+db.appointment.beforeUpdate(async (appointment) => {
+  const overlappingAppointment = await db.appointment.findOne({
+    where: {
+      [Sequelize.Op.or]: [
+        {
+          PatientId: appointment.PatientId,
+          Date: appointment.Date,
+          Status: "active",
+          [Sequelize.Op.and]: [
+            {
+              StartTime: {
+                [Sequelize.Op.lt]: appointment.EndTime,
+              },
+            },
+            {
+              EndTime: {
+                [Sequelize.Op.gt]: appointment.StartTime,
+              },
+            },
+          ],
+          AppointmentId: {
+            [Sequelize.Op.ne]: appointment.AppointmentId,
+          },
+        },
+        {
+          DoctorId: appointment.DoctorId,
+          Date: appointment.Date,
+          Status: "active",
+          [Sequelize.Op.and]: [
+            {
+              StartTime: {
+                [Sequelize.Op.lt]: appointment.EndTime,
+              },
+            },
+            {
+              EndTime: {
+                [Sequelize.Op.gt]: appointment.StartTime,
+              },
+            },
+          ],
+          AppointmentId: {
+            [Sequelize.Op.ne]: appointment.AppointmentId,
+          },
+        },
+      ],
+    },
+  });
+
+  if (overlappingAppointment) {
+    throw new Sequelize.ValidationError(
+      "Seçilen zaman aralığında doktor ya da hasta için mevcut bir aktif randevu bulunuyor. Lütfen çakışmayan bir zaman aralığı seçin."
+    );
+  }
+});
+
 // Create pricing records when application starts
 db.sequelize.sync().then(async () => {
   const pricingCount = await db.pricing.count();
