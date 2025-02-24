@@ -556,11 +556,3 @@ exports.deleteAppointment = async (req, res) => {
     log.error.error(error);
   }
 };
-
-/**
- * Get the statuses
- */
-exports.getStatuses = async (req, res) => {
-  let statuses = ["active", "completed", "canceled", "absent"];
-  res.status(200).send(statuses);
-};

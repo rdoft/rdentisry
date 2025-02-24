@@ -43,8 +43,9 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.TEXT,
       },
       Status: {
-        type: Sequelize.STRING,
+        type: Sequelize.ENUM,
         allowNull: false,
+        values: ["active", "completed", "canceled", "absent"],
       },
       ReminderStatus: {
         type: Sequelize.ENUM,
