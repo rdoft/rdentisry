@@ -118,8 +118,12 @@ dist
 # TernJS port file
 .tern-port
 
+# IDE
+.cursor/
+
 # certificates
 certs
 
+# data
 db
 backup
