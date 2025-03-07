@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { handleError } from "utils";
-import { Grid, Typography } from "@mui/material";
-import { InputText, Button, Password, Divider } from "primereact";
+import {
+  Typography,
+  Box,
+  useTheme,
+  useMediaQuery,
+  Card,
+  CardContent,
+  Divider,
+} from "@mui/material";
+import { InputText, Button, Password } from "primereact";
 import { useAuth } from "context/AuthProvider";
 import { useSubscription } from "context/SubscriptionProvider";
 import ReactGA from "react-ga4";
@@ -21,6 +29,8 @@ function Register() {
   const location = useLocation();
   const { authenticate } = useAuth();
   const { refresh } = useSubscription();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const GOOGLE_AUTH = `${process.env.REACT_APP_AUTH_URL}google`;
 
@@ -120,7 +130,7 @@ function Register() {
   const handleRegisterGoogle = () => {
     ReactGA.event({
       category: "User",
-      action: "REGISTER_GOOGLE"
+      action: "REGISTER_GOOGLE",
     });
     window.location.href = referralCode
       ? `${GOOGLE_AUTH}?referralCode=${referralCode}`
@@ -131,7 +141,7 @@ function Register() {
   const handleRegister = () => {
     ReactGA.event({
       category: "User",
-      action: "REGISTER"
+      action: "REGISTER",
     });
     register({
       name: user.name,
@@ -153,153 +163,338 @@ function Register() {
   const passwordFooter = (
     <>
       <ul className="pl-2 ml-2 mt-0 line-height-3">
-        <li>8 veya daha fazla karakter</li>
-        <li>Büyük ve küçük harf</li>
+        <li>En az 8 karakter</li>
+        <li>En az bir büyük harf ve bir küçük harf</li>
         <li>En az bir rakam</li>
       </ul>
     </>
   );
 
   return (
-    <Grid container my={10} justifyContent="center" alignItems="center">
-      <Grid item sm={9} md={4} lg={3} className="p-fluid">
-        <div className="flex mb-7" style={{ justifyContent: "center" }}>
-          <Logo style={{ width: "85%" }} />
-        </div>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        px: { xs: 2, sm: 3 },
+        py: { xs: 4, sm: 5 },
+        backgroundColor: theme.palette.background.primary,
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          mb: { xs: 4, sm: 5 },
+        }}
+      >
+        <Logo
+          style={{
+            width: isMobile ? "80%" : "100%",
+            maxWidth: isMobile ? "240px" : "280px",
+          }}
+        />
+      </Box>
 
-        <div className="field mb-4">
-          <Typography variant="h2" fontWeight="light">
-            Hesap oluştur
-          </Typography>
-        </div>
-
-        {error && (
-          <div className="field mb-2">
-            <Typography variant="body2" color="error">
-              {error}
+      <Card
+        sx={{
+          width: "100%",
+          maxWidth: { xs: "100%", sm: "450px" },
+          boxShadow: theme.shadows[3],
+          borderRadius: "16px",
+          overflow: "visible",
+          backgroundColor: theme.palette.common.white,
+        }}
+      >
+        <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+          <Box sx={{ mb: 4, textAlign: "center" }}>
+            <Typography
+              variant="h4"
+              fontWeight="500"
+              sx={{
+                fontSize: { xs: "1.75rem", sm: "2rem" },
+                lineHeight: 1.2,
+                mb: 1,
+                color: theme.palette.text.primary,
+              }}
+            >
+              Hesap oluştur
             </Typography>
-          </div>
-        )}
+            <Typography
+              variant="body2"
+              sx={{
+                fontSize: "16px",
+                color: theme.palette.grey[600],
+              }}
+            >
+              Yeni bir hesap oluşturun
+            </Typography>
+          </Box>
 
-        <div className="field mb-3">
-          <InputText
-            id="name"
-            name="name"
-            type="text"
-            placeholder="Kullanıcı adı"
-            value={user.name}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-          />
-        </div>
-
-        <div className="field mb-3">
-          <InputText
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Email *"
-            keyfilter="email"
-            value={user.email}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            required
-          />
-          {isError.email && (
-            <small id="email-help" className="p-error">
-              Geçersiz email adresi
-            </small>
-          )}
-        </div>
-
-        <div className="field mb-3">
-          <Password
-            id="password"
-            name="password"
-            placeholder="Parola *"
-            value={user.password}
-            toggleMask
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            required
-            maxLength={20}
-            weakLabel="Zayıf"
-            mediumLabel="Orta"
-            strongLabel="Güçlü"
-            promptLabel="Parolanız şunları içermelidir:"
-            footer={passwordFooter}
-            {...(isError.password && { className: "p-invalid" })}
-          />
-        </div>
-
-        <div className="field mb-4">
-          <Password
-            id="confirm-password"
-            name="confirmPassword"
-            placeholder="Parola (Tekrar) *"
-            value={user.confirmPassword}
-            toggleMask
-            feedback={false}
-            onChange={handleChange}
-            onPaste={(e) => e.preventDefault()}
-            onKeyDown={handleKeyDown}
-            required
-            maxLength={20}
-            {...(isError.confirmPassword && { className: "p-invalid" })}
-          />
-          {isError.confirmPassword && (
-            <small id="repassword-help" className="p-error">
-              Parolalar eşleşmiyor
-            </small>
-          )}
-        </div>
-
-        <div className="field mb-4">
-          {loading ? (
-            <Button label=<i className="pi pi-spin pi-spinner" /> disabled />
-          ) : (
+          <Box sx={{ mb: 4 }}>
             <Button
-              label="Kayıt Ol"
-              onClick={handleRegister}
-              disabled={!isValid}
+              className="flex p-button-outlined p-button-secondary"
+              style={{
+                justifyContent: "center",
+                height: "48px",
+                fontSize: "16px",
+                width: "100%",
+                marginBottom: "12px",
+                borderRadius: "8px",
+              }}
+              onClick={handleRegisterGoogle}
+            >
+              <img src={svgGoogle} alt="Google" style={{ width: "22px" }} />
+              <span className="px-2">Google ile devam et</span>
+            </Button>
+          </Box>
+
+          <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
+            <Divider sx={{ flexGrow: 1 }} />
+            <Typography
+              variant="caption"
+              sx={{
+                px: 2,
+                color: theme.palette.grey[600],
+                fontSize: "14px",
+              }}
+            >
+              veya
+            </Typography>
+            <Divider sx={{ flexGrow: 1 }} />
+          </Box>
+
+          {error && (
+            <Box
+              sx={{
+                mb: 3,
+                p: 2,
+                backgroundColor: theme.palette.background.error,
+                borderRadius: "8px",
+                border: `1px solid ${theme.palette.text.error}`,
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{ fontSize: "15px", color: theme.palette.text.error }}
+              >
+                {error}
+              </Typography>
+            </Box>
+          )}
+
+          <Box sx={{ mb: 3 }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                mb: 1,
+                fontSize: "15px",
+                fontWeight: 500,
+                color: theme.palette.text.primary,
+              }}
+            >
+              Klinik/Doktor Adı
+            </Typography>
+            <InputText
+              id="name"
+              name="name"
+              type="text"
+              placeholder="Klinik/Doktor Adı"
+              value={user.name}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              required
+              style={{
+                fontSize: "16px",
+                padding: "0.75rem 1rem",
+                width: "100%",
+                borderRadius: "8px",
+              }}
             />
-          )}
-        </div>
+          </Box>
 
-        <div className="field mb-3" align="center">
-          <Typography variant="caption">veya</Typography>
-        </div>
+          <Box sx={{ mb: 3 }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                mb: 1,
+                fontSize: "15px",
+                fontWeight: 500,
+                color: theme.palette.text.primary,
+              }}
+            >
+              Email
+            </Typography>
+            <InputText
+              id="email"
+              name="email"
+              type="email"
+              placeholder="mail@example.com"
+              keyfilter="email"
+              value={user.email}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              required
+              style={{
+                fontSize: "16px",
+                padding: "0.75rem 1rem",
+                width: "100%",
+                borderRadius: "8px",
+              }}
+              className={isError.email ? "p-invalid" : ""}
+            />
+            {isError.email && (
+              <Typography
+                variant="caption"
+                color="error"
+                sx={{ fontSize: "14px", mt: 0.5, display: "block" }}
+              >
+                Geçersiz email adresi
+              </Typography>
+            )}
+          </Box>
 
-        <div className="field mb-4">
-          <Button
-            className="flex p-text p-button-outlined p-button-secondary"
-            style={{ justifyContent: "center" }}
-            onClick={handleRegisterGoogle}
+          <Box sx={{ mb: 3 }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                mb: 1,
+                fontSize: "15px",
+                fontWeight: 500,
+                color: theme.palette.text.primary,
+              }}
+            >
+              Şifre
+            </Typography>
+            <Password
+              id="password"
+              name="password"
+              placeholder="••••••••"
+              value={user.password}
+              toggleMask
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              required
+              maxLength={20}
+              weakLabel="Zayıf"
+              mediumLabel="Orta"
+              strongLabel="Güçlü"
+              promptLabel="Şifreniz şunları içermelidir:"
+              footer={passwordFooter}
+              inputStyle={{
+                fontSize: "16px",
+                padding: "0.75rem 1rem",
+                borderRadius: "8px",
+                width: "calc(100% - 2.5rem)",
+              }}
+              style={{ width: "100%" }}
+              {...(isError.password && { className: "p-invalid" })}
+            />
+          </Box>
+
+          <Box sx={{ mb: 4 }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                mb: 1,
+                fontSize: "15px",
+                fontWeight: 500,
+                color: theme.palette.text.primary,
+              }}
+            >
+              Şifre (Tekrar)
+            </Typography>
+            <Password
+              id="confirm-password"
+              name="confirmPassword"
+              placeholder="••••••••"
+              value={user.confirmPassword}
+              toggleMask
+              feedback={false}
+              onChange={handleChange}
+              onPaste={(e) => e.preventDefault()}
+              onKeyDown={handleKeyDown}
+              required
+              maxLength={20}
+              inputStyle={{
+                fontSize: "16px",
+                padding: "0.75rem 1rem",
+                borderRadius: "8px",
+                width: "calc(100% - 2.5rem)",
+              }}
+              style={{ width: "100%" }}
+              {...(isError.confirmPassword && { className: "p-invalid" })}
+            />
+            {isError.confirmPassword && (
+              <Typography
+                variant="caption"
+                color="error"
+                sx={{ fontSize: "14px", mt: 0.5, display: "block" }}
+              >
+                Şifreler eşleşmiyor
+              </Typography>
+            )}
+          </Box>
+
+          <Box sx={{ mb: 4 }}>
+            {loading ? (
+              <Button
+                label=<i className="pi pi-spin pi-spinner" />
+                disabled
+                style={{
+                  height: "48px",
+                  fontSize: "16px",
+                  width: "100%",
+                  borderRadius: "8px",
+                }}
+              />
+            ) : (
+              <Button
+                label="Devam"
+                onClick={handleRegister}
+                disabled={!isValid}
+                style={{
+                  height: "48px",
+                  fontSize: "16px",
+                  width: "100%",
+                  borderRadius: "8px",
+                }}
+              />
+            )}
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 0.5,
+            }}
           >
-            <img src={svgGoogle} alt="Google" style={{ width: "25px" }} />
-            <span className="px-3">Google ile devam et</span>
-          </Button>
-        </div>
-
-        <Divider className="field mt-5" />
-
-        <div
-          className="flex mb-4"
-          style={{ justifyContent: "center", alignItems: "center" }}
-        >
-          <div className="mr-3">
-            <Typography variant="body1">Zaten bir hesabınız var mı?</Typography>
-          </div>
-          <div>
+            <Typography
+              variant="body2"
+              sx={{ fontSize: "15px", color: theme.palette.grey[600] }}
+            >
+              Zaten hesabınız var mı?
+            </Typography>
             <Button
-              label="Oturum aç"
+              label="Giriş yap"
               onClick={() => navigate("/login")}
               className="p-button-text p-button-secondary"
+              style={{
+                fontSize: "15px",
+                padding: "0.25rem 0.5rem",
+                height: "auto",
+                color: theme.palette.text.secondary,
+                fontWeight: 500,
+              }}
             />
-          </div>
-        </div>
-      </Grid>
-    </Grid>
+          </Box>
+        </CardContent>
+      </Card>
+    </Box>
   );
 }
 

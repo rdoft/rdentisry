@@ -1,8 +1,16 @@
 import React, { useState } from "react";
 import { handleError } from "utils";
 import { useNavigate, Link } from "react-router-dom";
-import { Grid, Typography } from "@mui/material";
-import { InputText, Button, Password, Divider } from "primereact";
+import {
+  Typography,
+  Box,
+  useTheme,
+  useMediaQuery,
+  Card,
+  CardContent,
+  Divider,
+} from "@mui/material";
+import { InputText, Button, Password } from "primereact";
 import { useAuth } from "context/AuthProvider";
 import { useSubscription } from "context/SubscriptionProvider";
 
@@ -19,6 +27,8 @@ function Login() {
   const navigate = useNavigate();
   const { authenticate } = useAuth();
   const { refresh } = useSubscription();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const GOOGLE_AUTH = `${process.env.REACT_APP_AUTH_URL}google`;
 
@@ -44,9 +54,7 @@ function Login() {
       res.data.verified ? navigate("/") : navigate("/verify");
     } catch (error) {
       const { status, message } = handleError(error);
-      status === 401
-        ? setError("Kullanıcı adı veya parola hatalı")
-        : setError(message);
+      status === 401 ? setError("Email veya şifre hatalı") : setError(message);
     } finally {
       setLoading(false);
     }
@@ -93,110 +101,266 @@ function Login() {
   };
 
   return (
-    <Grid container my={10} justifyContent="center" alignItems="center">
-      <Grid item sm={9} md={4} lg={3} className="p-fluid">
-        <div className="flex mb-7" style={{ justifyContent: "center" }}>
-          <Logo style={{ width: "85%" }} />
-        </div>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        px: { xs: 2, sm: 3 },
+        py: { xs: 4, sm: 5 },
+        backgroundColor: theme.palette.background.primary,
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          mb: { xs: 4, sm: 5 },
+        }}
+      >
+        <Logo
+          style={{
+            width: isMobile ? "80%" : "100%",
+            maxWidth: isMobile ? "240px" : "280px",
+          }}
+        />
+      </Box>
 
-        <div className="flex mb-4">
-          <Typography variant="h2" fontWeight="light">
-            Oturum aç
-          </Typography>
-        </div>
-
-        {error && (
-          <div className="field mb-2">
-            <Typography variant="body2" color="error">
-              {error}
-            </Typography>
-          </div>
-        )}
-
-        <div className="field mb-3">
-          <InputText
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Email"
-            keyfilter="email"
-            value={auth.email}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            required
-          />
-        </div>
-
-        <div className="field mb-2">
-          <Password
-            id="password"
-            name="password"
-            placeholder="Parola"
-            value={auth.password}
-            toggleMask
-            feedback={false}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            required
-          />
-        </div>
-
-        <div className="flex mb-4" style={{ justifyContent: "end" }}>
-          <label htmlFor="reset-password">
-            <Link
-              to="/forgot"
-              style={{
-                textDecoration: "none",
-                cursor: "pointer",
+      <Card
+        sx={{
+          width: "100%",
+          maxWidth: { xs: "100%", sm: "450px" },
+          boxShadow: theme.shadows[3],
+          borderRadius: "16px",
+          overflow: "visible",
+          backgroundColor: theme.palette.common.white,
+        }}
+      >
+        <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+          <Box sx={{ mb: 4, textAlign: "center" }}>
+            <Typography
+              variant="h4"
+              fontWeight="500"
+              sx={{
+                fontSize: { xs: "1.75rem", sm: "2rem" },
+                lineHeight: 1.2,
+                mb: 1,
+                color: theme.palette.text.primary,
               }}
             >
-              <Typography variant="body1">Şifrenizi mi unuttunuz?</Typography>
-            </Link>
-          </label>
-        </div>
+              Giriş yap
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{
+                fontSize: "16px",
+                color: theme.palette.grey[600],
+              }}
+            >
+              Hesabınıza erişmek için giriş yapın
+            </Typography>
+          </Box>
 
-        <div className="field mb-3">
-          {loading ? (
-            <Button label=<i className="pi pi-spin pi-spinner" /> disabled />
-          ) : (
-            <Button label="Devam" onClick={handleLogin} disabled={!isValid} />
+          <Box sx={{ mb: 4 }}>
+            <Button
+              className="flex p-button-outlined p-button-secondary"
+              style={{
+                justifyContent: "center",
+                height: "48px",
+                fontSize: "16px",
+                width: "100%",
+                marginBottom: "12px",
+                borderRadius: "8px",
+              }}
+              onClick={handleLoginGoogle}
+            >
+              <img src={svgGoogle} alt="Google" style={{ width: "22px" }} />
+              <span className="px-2">Google ile devam et</span>
+            </Button>
+          </Box>
+
+          <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
+            <Divider sx={{ flexGrow: 1 }} />
+            <Typography
+              variant="caption"
+              sx={{
+                px: 2,
+                color: theme.palette.grey[600],
+                fontSize: "14px",
+              }}
+            >
+              veya
+            </Typography>
+            <Divider sx={{ flexGrow: 1 }} />
+          </Box>
+
+          {error && (
+            <Box
+              sx={{
+                mb: 3,
+                p: 2,
+                backgroundColor: theme.palette.background.error,
+                borderRadius: "8px",
+                border: `1px solid ${theme.palette.text.error}`,
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{ fontSize: "15px", color: theme.palette.text.error }}
+              >
+                {error}
+              </Typography>
+            </Box>
           )}
-        </div>
 
-        <div className="field mb-3" align="center">
-          <Typography variant="caption">veya</Typography>
-        </div>
+          <Box sx={{ mb: 3 }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                mb: 1,
+                fontSize: "15px",
+                fontWeight: 500,
+                color: theme.palette.text.primary,
+              }}
+            >
+              Email
+            </Typography>
+            <InputText
+              id="email"
+              name="email"
+              type="email"
+              placeholder="mail@example.com"
+              keyfilter="email"
+              value={auth.email}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              required
+              style={{
+                fontSize: "16px",
+                padding: "0.75rem 1rem",
+                width: "100%",
+                borderRadius: "8px",
+              }}
+            />
+          </Box>
 
-        <div className="field mb-4">
-          <Button
-            className="flex p-text p-button-outlined p-button-secondary"
-            style={{ justifyContent: "center" }}
-            onClick={handleLoginGoogle}
+          <Box sx={{ mb: 4 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 1,
+              }}
+            >
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  fontSize: "15px",
+                  fontWeight: 500,
+                  color: theme.palette.text.primary,
+                }}
+              >
+                Şifre
+              </Typography>
+              <Link
+                to="/forgot"
+                style={{
+                  textDecoration: "none",
+                  cursor: "pointer",
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontSize: "14px",
+                    color: theme.palette.text.secondary,
+                    fontWeight: 500,
+                  }}
+                >
+                  Şifremi unuttum
+                </Typography>
+              </Link>
+            </Box>
+            <Password
+              id="password"
+              name="password"
+              placeholder="••••••••"
+              value={auth.password}
+              toggleMask
+              feedback={false}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              required
+              inputStyle={{
+                fontSize: "16px",
+                padding: "0.75rem 1rem",
+                borderRadius: "8px",
+                width: "calc(100% - 2.5rem)",
+              }}
+              style={{ width: "100%" }}
+            />
+          </Box>
+
+          <Box sx={{ mb: 4 }}>
+            {loading ? (
+              <Button
+                label=<i className="pi pi-spin pi-spinner" />
+                disabled
+                style={{
+                  height: "48px",
+                  fontSize: "16px",
+                  width: "100%",
+                  borderRadius: "8px",
+                }}
+              />
+            ) : (
+              <Button
+                label="Devam"
+                onClick={handleLogin}
+                disabled={!isValid}
+                style={{
+                  height: "48px",
+                  fontSize: "16px",
+                  width: "100%",
+                  borderRadius: "8px",
+                }}
+              />
+            )}
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 0.5,
+            }}
           >
-            <img src={svgGoogle} alt="Google" style={{ width: "25px" }} />
-            <span className="px-3">Google ile devam et</span>
-          </Button>
-        </div>
-
-        <Divider className="field mt-5" />
-
-        <div
-          className="flex"
-          style={{ justifyContent: "center", alignItems: "center" }}
-        >
-          <div className="mr-3">
-            <Typography variant="body1">Hesabınız yok mu? </Typography>
-          </div>
-          <div>
+            <Typography
+              variant="body2"
+              sx={{ fontSize: "15px", color: theme.palette.grey[600] }}
+            >
+              Hesabınız yok mu?
+            </Typography>
             <Button
               label="Hesap oluştur"
               onClick={handleRegister}
               className="p-button-text p-button-secondary"
+              style={{
+                fontSize: "15px",
+                padding: "0.25rem 0.5rem",
+                height: "auto",
+                color: theme.palette.text.secondary,
+                fontWeight: 500,
+              }}
             />
-          </div>
-        </div>
-      </Grid>
-    </Grid>
+          </Box>
+        </CardContent>
+      </Card>
+    </Box>
   );
 }
 
