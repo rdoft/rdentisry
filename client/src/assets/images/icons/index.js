@@ -37,6 +37,10 @@ import FacebookIcon from "assets/images/icons/social/facebook.png";
 import PricingIcon from "assets/images/icons/pricing.png";
 import PremiumIcon from "assets/images/icons/premium.png";
 import BonusIcon from "assets/images/icons/bonus.png";
+import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import ErrorRoundedIcon from "@mui/icons-material/ErrorRounded";
+import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 
 export {
   CalendarActiveIcon,
@@ -78,4 +82,8 @@ export {
   PricingIcon,
   PremiumIcon,
   BonusIcon,
+  InfoRoundedIcon,
+  StarRoundedIcon,
+  ErrorRoundedIcon,
+  WarningAmberRoundedIcon,
 };

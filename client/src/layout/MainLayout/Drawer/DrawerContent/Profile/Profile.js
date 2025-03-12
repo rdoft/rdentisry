@@ -2,10 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { Divider } from "primereact";
 import { useAuth } from "context/AuthProvider";
 import { useSubscription } from "context/SubscriptionProvider";
-import { useSelector } from "react-redux";
 import {
   Avatar,
   Box,
@@ -19,6 +17,7 @@ import {
   Tabs,
   Stack,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
@@ -71,12 +70,12 @@ const Profile = () => {
   const navigate = useNavigate();
   const { unauthenticate } = useAuth();
   const { refresh } = useSubscription();
-  const menu = useSelector((state) => state.menu);
-  const { drawerOpen } = menu;
+  const matchDownSM = useMediaQuery(theme.breakpoints.down("sm"));
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("Profil");
+  const [email, setEmail] = useState("");
   const [value, setValue] = useState(0);
 
   // Arrange user name for the profile
@@ -93,6 +92,7 @@ const Profile = () => {
     UserService.getUser({ signal })
       .then((res) => {
         setName(res.data.name);
+        setEmail(res.data.email);
       })
       .catch((error) => {
         error.message && toast.error(error.message);
@@ -122,8 +122,6 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await AuthService.logout();
-
-      // Set Unauthenticated for all routes
       unauthenticate();
       refresh();
       navigate(`/login`);
@@ -132,195 +130,207 @@ const Profile = () => {
     }
   };
 
+  const popperPlacement = matchDownSM ? "top" : "right-start";
+
   return (
-    <Box
-      sx={{
-        flexShrink: 0,
-        px: 1.5,
-        mb: 2,
-      }}
-    >
+    <Box sx={{ width: "100%" }}>
       <ButtonBase
         sx={{
+          p: 1.5,
           borderRadius: 1.5,
-          px: drawerOpen && 1,
-          width: drawerOpen ? 1 : 36,
-          justifyContent: drawerOpen && "flex-start",
-          height: 62,
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-start",
           color: open
             ? theme.palette.text.secondary
             : theme.palette.text.primary,
           bgcolor: open ? theme.palette.background.secondary : "transparent",
-          "&:hover": { bgcolor: theme.palette.background.secondary },
-          border: "1px solid",
-          borderColor: theme.palette.background.primary,
+          "&:hover": {
+            bgcolor: theme.palette.background.secondary,
+          },
+          border: `1px solid ${theme.palette.divider}`,
+          mx: "auto",
         }}
         aria-label="open profile"
         ref={anchorRef}
-        aria-controls={open.current ? "profile-grow" : undefined}
+        aria-controls={open ? "profile-grow" : undefined}
         aria-haspopup="true"
         onClick={handleToggle}
       >
         <Avatar
           alt="profile user"
           src={dentalSvg}
-          sx={{ width: 24, height: 24, padding: "1px" }}
+          sx={{
+            width: 28,
+            height: 28,
+            bgcolor: theme.palette.background.default,
+          }}
         />
-        {drawerOpen && (
-          <Stack sx={{ paddingLeft: "10px", textAlign: "start" }}>
-            <Typography variant="h6" fontWeight="bold">
-              Hesap
-            </Typography>
-            <Typography variant="caption" sx={{ fontWeight: "light" }} noWrap>
-              {username}
-            </Typography>
-          </Stack>
-        )}
+        <Stack
+          spacing={0}
+          sx={{
+            ml: 1.5,
+            flex: 1,
+            overflow: "hidden",
+            alignItems: "flex-start",
+          }}
+        >
+          <Typography
+            variant="h6"
+            noWrap
+            sx={{
+              fontWeight: 600,
+              color: theme.palette.text.primary,
+              lineHeight: 1.2,
+            }}
+          >
+            {username}
+          </Typography>
+          <Typography
+            variant="caption"
+            noWrap
+            sx={{
+              color: theme.palette.grey[600],
+              lineHeight: 1.2,
+            }}
+          >
+            {email}
+          </Typography>
+        </Stack>
       </ButtonBase>
       <Popper
-        placement="right-start"
+        placement={popperPlacement}
         open={open}
         anchorEl={anchorRef.current}
         role={undefined}
         transition
+        disablePortal={matchDownSM}
         popperOptions={{
           modifiers: [
             {
               name: "offset",
               options: {
-                offset: [0, 9],
+                offset: [0, matchDownSM ? 0 : 9],
               },
             },
           ],
         }}
-        sx={{ zIndex: 1300 }}
+        sx={{
+          zIndex: theme.zIndex.drawer + 1,
+          width: matchDownSM ? "100%" : 320,
+          ...(matchDownSM && {
+            position: "fixed",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            px: 2,
+            pb: 2,
+          }),
+        }}
       >
         {({ TransitionProps }) => (
           <Transitions type="fade" in={open} {...TransitionProps}>
-            {open && (
-              <Paper
-                sx={{
-                  boxShadow: theme.customShadows.z1,
-                  width: 360,
-                  minWidth: 240,
-                  maxWidth: 360,
-                  [theme.breakpoints.down("md")]: {
-                    maxWidth: 250,
-                  },
-                }}
-              >
-                <ClickAwayListener onClickAway={handleClose}>
-                  <MainCard elevation={0} border={false} content={false}>
-                    <CardContent sx={{ px: 2.5, pt: 3 }}>
-                      <Grid
-                        container
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        <Grid item>
-                          <Stack
-                            direction="row"
-                            spacing={1.25}
-                            alignItems="center"
-                          >
-                            <Avatar
-                              alt="profile user"
-                              src={dentalSvg}
-                              sx={{ width: 32, height: 32 }}
-                            />
-                            <Stack>
-                              <Typography variant="h5" fontWeight="light">
-                                {username}
-                              </Typography>
-                            </Stack>
-                          </Stack>
-                        </Grid>
+            <Paper
+              sx={{
+                boxShadow: "0px 4px 24px rgba(0, 0, 0, 0.12)",
+                width: "100%",
+                borderRadius: "16px",
+                border: `1px solid ${theme.palette.divider}`,
+                ...(matchDownSM && {
+                  borderRadius: "16px 16px 0 0",
+                  py: 1.5,
+                }),
+              }}
+            >
+              <ClickAwayListener onClickAway={handleClose}>
+                <MainCard
+                  elevation={0}
+                  border={false}
+                  content={false}
+                  sx={{
+                    bgcolor: "transparent",
+                    borderRadius: "inherit",
+                  }}
+                >
+                  <CardContent sx={{ p: 2, pb: 2 }}>
+                    <Grid container spacing={1.5} alignItems="center">
+                      <Grid item>
+                        <Avatar
+                          alt="profile user"
+                          src={dentalSvg}
+                          sx={{
+                            width: 32,
+                            height: 32,
+                            bgcolor: theme.palette.background.default,
+                          }}
+                        />
                       </Grid>
-                    </CardContent>
-                    {open && (
-                      <>
-                        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                          <Tabs
-                            variant="fullWidth"
-                            value={value}
-                            onChange={handleChange}
-                            aria-label="profile tabs"
-                            sx={{
-                              borderBottom: 1,
-                              borderColor: "divider",
-                              "& .MuiTabs-indicator": {
-                                bgcolor: theme.palette.text.secondary,
-                              },
-                            }}
-                          >
-                            <Tab
-                              sx={{
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                textTransform: "capitalize",
-                                "&:hover": {
-                                  bgcolor: theme.palette.background.secondary,
-                                  borderRadius: "10px",
-                                },
-                                "&.Mui-selected": {
-                                  color: theme.palette.text.secondary,
-                                },
-                              }}
-                              icon={
-                                <UserOutlined
-                                  style={{
-                                    marginBottom: 0,
-                                    marginRight: "10px",
-                                  }}
-                                />
-                              }
-                              label="Profil"
-                              {...a11yProps(0)}
-                            />
-                            <Tab
-                              sx={{
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                textTransform: "capitalize",
-                                "&:hover": {
-                                  bgcolor: theme.palette.background.secondary,
-                                  borderRadius: "10px",
-                                },
-                                "&.Mui-selected": {
-                                  color: theme.palette.text.secondary,
-                                },
-                              }}
-                              icon={
-                                <SettingOutlined
-                                  style={{
-                                    marginBottom: 0,
-                                    marginRight: "10px",
-                                  }}
-                                />
-                              }
-                              label="Ayarlar"
-                              {...a11yProps(1)}
-                            />
-                          </Tabs>
-                        </Box>
-                        <TabPanel value={value} index={0} dir={theme.direction}>
-                          <ProfileTab name={name} setName={setName} />
-                        </TabPanel>
-                        <TabPanel value={value} index={1} dir={theme.direction}>
-                          <SettingTab />
-                        </TabPanel>
-                        <Divider className="mt-3 mb-1" />
-                        <Logout onClick={handleLogout} style={{ margin: 4 }} />
-                      </>
-                    )}
-                  </MainCard>
-                </ClickAwayListener>
-              </Paper>
-            )}
+                      <Grid item xs>
+                        <Typography variant="h5" color="text.primary">
+                          {username}
+                        </Typography>
+                        <Typography variant="caption" color="grey.600">
+                          {email}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                  <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                    <Tabs
+                      variant="fullWidth"
+                      value={value}
+                      onChange={handleChange}
+                      aria-label="profile tabs"
+                      sx={{
+                        "& .MuiTab-root": {
+                          minHeight: 40,
+                          py: 0,
+                          color: theme.palette.text.primary,
+                        },
+                      }}
+                    >
+                      <Tab
+                        icon={
+                          <UserOutlined
+                            style={{ fontSize: "1rem", marginRight: "6px" }}
+                          />
+                        }
+                        label="Profil"
+                        {...a11yProps(0)}
+                      />
+                      <Tab
+                        icon={
+                          <SettingOutlined
+                            style={{ fontSize: "1rem", marginRight: "6px" }}
+                          />
+                        }
+                        label="Ayarlar"
+                        {...a11yProps(1)}
+                      />
+                    </Tabs>
+                  </Box>
+                  <TabPanel value={value} index={0} dir={theme.direction}>
+                    <ProfileTab name={name} setName={setName} />
+                  </TabPanel>
+                  <TabPanel value={value} index={1} dir={theme.direction}>
+                    <SettingTab />
+                  </TabPanel>
+                  <Box
+                    sx={{
+                      p: 2,
+                      pt: 1,
+                      borderTop: 1,
+                      borderColor: "divider",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Logout onClick={handleLogout} />
+                  </Box>
+                </MainCard>
+              </ClickAwayListener>
+            </Paper>
           </Transitions>
         )}
       </Popper>

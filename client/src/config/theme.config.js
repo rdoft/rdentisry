@@ -9,8 +9,10 @@ const config = {
   mode: "light",
   presetColor: "default",
   themeDirection: "ltr",
+  drawer: {
+    width: 280,
+    miniWidth: 280 / 3,
+  },
 };
 
 export default config;
-export const drawerWidth = 200;
-export const drawerWidthMini= 200 / 3;

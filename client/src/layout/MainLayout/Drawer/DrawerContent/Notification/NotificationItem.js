@@ -7,19 +7,18 @@ import {
   ListItemButton,
   ListItemAvatar,
   ListItemText,
-  ListItemSecondaryAction,
   Typography,
 } from "@mui/material";
 import { Read } from "components/Button";
-
-// assets
-import {
-  LiraDangerIcon,
-  LiraWarningIcon,
-  LiraInfoIcon,
-  BonusIcon,
-} from "assets/images/icons";
 import { useTheme } from "@mui/material/styles";
+
+// icons
+import {
+  WarningAmberRoundedIcon,
+  ErrorRoundedIcon,
+  InfoRoundedIcon,
+  StarRoundedIcon,
+} from "assets/images/icons";
 
 // services
 import { NotificationService } from "services";
@@ -35,24 +34,38 @@ function NotificationItem({ notification, getNotifications, onClose }) {
     day: "numeric",
   });
 
-  // Notification icons
-  let icon;
-  switch (notification.notificationEvent.event) {
-    case "overdue":
-      icon = LiraWarningIcon;
-      break;
-    case "upcoming":
-      icon = LiraInfoIcon;
-      break;
-    case "dept":
-      icon = LiraDangerIcon;
-      break;
-    case "bonus":
-      icon = BonusIcon;
-      break;
-    default:
-      break;
-  }
+  // Notification icons and colors
+  const getIconConfig = () => {
+    switch (notification.notificationEvent.event) {
+      case "overdue":
+        return {
+          icon: <WarningAmberRoundedIcon sx={{ fontSize: 16 }} />,
+          color: theme.palette.warning.main,
+        };
+      case "dept":
+        return {
+          icon: <ErrorRoundedIcon sx={{ fontSize: 16 }} />,
+          color: theme.palette.error.main,
+        };
+      case "upcoming":
+        return {
+          icon: <InfoRoundedIcon sx={{ fontSize: 16 }} />,
+          color: theme.palette.info.main,
+        };
+      case "bonus":
+        return {
+          icon: <StarRoundedIcon sx={{ fontSize: 16 }} />,
+          color: theme.palette.success.main,
+        };
+      default:
+        return {
+          icon: <InfoRoundedIcon sx={{ fontSize: 16 }} />,
+          color: theme.palette.primary.main,
+        };
+    }
+  };
+
+  const { icon, color } = getIconConfig();
 
   // SERVICES -----------------------------------------------------------------
   // Update the notification
@@ -96,42 +109,73 @@ function NotificationItem({ notification, getNotifications, onClose }) {
   return (
     <ListItemButton
       sx={{
-        margin: "0.2rem",
+        mx: 0,
+        my: "0.2rem",
         borderRadius: "10px",
         bgcolor:
           notification.status === "sent"
             ? theme.palette.background.secondary
             : "transparent",
+        "&:hover": {
+          bgcolor: theme.palette.action.hover,
+        },
+        px: 1.5,
       }}
       onClick={handleClickNotification}
     >
-      <ListItemAvatar>
+      <ListItemAvatar
+        sx={{
+          minWidth: 28,
+          mr: 1,
+        }}
+      >
         <Avatar
-          src={icon}
-          sx={{ width: "30px !important", height: "30px !important" }}
-        ></Avatar>
+          sx={{
+            width: 20,
+            height: 20,
+            bgcolor: `${color}20`,
+            color: color,
+          }}
+        >
+          {icon}
+        </Avatar>
       </ListItemAvatar>
       <ListItemText
         primary={
-          <Typography variant="subtitle">{notification.message}</Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: "13px",
+              lineHeight: 1.3,
+              mb: 0.5,
+            }}
+          >
+            {notification.message}
+          </Typography>
+        }
+        secondary={
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ fontSize: "11px" }}
+          >
+            {date}
+          </Typography>
         }
       />
-      <ListItemSecondaryAction
-        sx={{ alignSelf: "center !important", paddingLeft: "1rem" }}
-      >
-        <ListItemText
-          primary={
-            <Typography variant="caption" textAlign="end" noWrap>
-              {date}
-            </Typography>
-          }
-          secondary={notification.status === "read" ? "Okundu" : ""}
-        />
-      </ListItemSecondaryAction>
-      {notification.status === "read" || (
-        <ListItemSecondaryAction sx={{ alignSelf: "center !important" }}>
-          <Read onClick={handleClickRead} style={{ zIndex: 100 }} />
-        </ListItemSecondaryAction>
+      {notification.status === "read" ? (
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{
+            ml: 1,
+            fontSize: "11px",
+          }}
+        >
+          Okundu
+        </Typography>
+      ) : (
+        <Read onClick={handleClickRead} size="small" sx={{ ml: 1 }} />
       )}
     </ListItemButton>
   );

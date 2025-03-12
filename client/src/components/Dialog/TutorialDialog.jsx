@@ -35,13 +35,7 @@ function TutorialDialog({ open, onClose }) {
         },
       }}
     >
-      <DialogTitle
-        textAlign="center"
-        variant="h2"
-        fontWeight="light"
-        mt={1}
-        mb={2}
-      >
+      <DialogTitle textAlign="center" variant="h3" mt={1} mb={2}>
         Eğitim Videoları
       </DialogTitle>
 

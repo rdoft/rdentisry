@@ -10,6 +10,7 @@ import Palette from "./palette";
 import Typography from "./typography";
 import CustomShadows from "./shadows";
 import componentsOverride from "./overrides";
+import config from "config/theme.config";
 
 // ==============================|| DEFAULT THEME - MAIN  ||============================== //
 
@@ -38,6 +39,84 @@ export default function ThemeCustomization({ children }) {
           paddingTop: 8,
           paddingBottom: 8,
         },
+        drawer: {
+          width: config.drawer.width,
+          closedWidth: 72,
+          openedMixin: (theme) => ({
+            width: config.drawer.width,
+            transition: theme.transitions.create(["width", "margin"], {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
+            overflowX: "hidden",
+            boxShadow: theme.shadows[2],
+            backgroundColor: theme.palette.background.paper,
+            [theme.breakpoints.down("sm")]: {
+              width: "100%",
+              position: "fixed",
+              left: 0,
+            },
+            [theme.breakpoints.between("sm", "md")]: {
+              width: 240,
+            },
+            [theme.breakpoints.up("md")]: {
+              width: config.drawer.width,
+            },
+          }),
+          closedMixin: (theme) => ({
+            transition: theme.transitions.create(["width", "margin"], {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.leavingScreen,
+            }),
+            overflowX: "hidden",
+            width: theme.spacing(7),
+            backgroundColor: theme.palette.background.paper,
+            [theme.breakpoints.up("sm")]: {
+              width: theme.spacing(9),
+            },
+            "& .MuiListItemIcon-root": {
+              transition: theme.transitions.create(["margin"], {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.leavingScreen,
+              }),
+              marginLeft: "auto",
+              marginRight: "auto",
+            },
+          }),
+          mobileDrawer: {
+            xs: {
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: "100%",
+                height: "calc(100% - 56px)",
+                borderTopLeftRadius: 16,
+                borderTopRightRadius: 16,
+                borderWidth: 0,
+                backgroundColor: "background.paper",
+                marginTop: "auto",
+              },
+            },
+            sm: {
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: 240,
+                borderWidth: 0,
+                backgroundColor: "background.paper",
+                boxShadow: theme.shadows[8],
+              },
+            },
+          },
+        },
+      },
+      transitions: {
+        duration: {
+          enteringScreen: 200,
+          leavingScreen: 150,
+        },
+      },
+      zIndex: {
+        drawer: 1200,
+        appBar: 1100,
       },
       palette: theme.palette,
       customShadows: themeCustomShadows,

@@ -13,7 +13,6 @@ import {
   Popper,
   Typography,
   useMediaQuery,
-  Grid,
   Divider,
 } from "@mui/material";
 import { InputSwitch } from "primereact";
@@ -31,12 +30,6 @@ import { NotificationService } from "services";
 import notificationSvg from "assets/svg/profile/notification.svg";
 
 // sx styles
-const avatarSX = {
-  width: 36,
-  height: 36,
-  fontSize: "1rem",
-};
-
 const actionSX = {
   mt: "6px",
   ml: 1,
@@ -144,7 +137,11 @@ const Notification = () => {
         p: 0,
         "& .MuiListItemButton-root": {
           py: 0.5,
-          "& .MuiAvatar-root": avatarSX,
+          "& .MuiAvatar-root": {
+            width: 20,
+            height: 20,
+            fontSize: "0.75rem",
+          },
           "& .MuiListItemSecondaryAction-root": {
             ...actionSX,
             position: "relative",
@@ -161,7 +158,6 @@ const Notification = () => {
                 getNotifications={getNotifications}
                 onClose={handleClose}
               />
-              {/* <Divider /> */}
             </React.Fragment>
           );
         })
@@ -207,6 +203,9 @@ const Notification = () => {
             "& .MuiBadge-badge": {
               backgroundColor: theme.palette.text.secondary,
               color: "white",
+              fontSize: "10px",
+              minWidth: "16px",
+              height: "16px",
             },
           }}
         >
@@ -224,22 +223,34 @@ const Notification = () => {
       </IconButton>
 
       <Popper
-        placement={"right-start"}
+        placement={matchesXs ? "top" : "right-start"}
         open={open}
         anchorEl={anchorRef.current}
         role={undefined}
         transition
+        disablePortal={matchesXs}
         popperOptions={{
           modifiers: [
             {
               name: "offset",
               options: {
-                offset: [matchesXs ? -5 : 0, 9],
+                offset: [0, matchesXs ? 0 : 9],
               },
             },
           ],
         }}
-        sx={{ zIndex: 1300 }}
+        sx={{
+          zIndex: theme.zIndex.drawer + 1,
+          width: matchesXs ? "100%" : "auto",
+          ...(matchesXs && {
+            position: "fixed",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            px: 1,
+            pb: 2,
+          }),
+        }}
       >
         {({ TransitionProps }) => (
           <Transitions type="fade" in={open} {...TransitionProps}>
@@ -247,11 +258,10 @@ const Notification = () => {
               sx={{
                 boxShadow: theme.customShadows.z1,
                 width: "100%",
-                minWidth: 500,
-                maxWidth: 500,
-                [theme.breakpoints.down("md")]: {
-                  maxWidth: 300,
-                },
+                minWidth: matchesXs ? "100%" : 320,
+                maxWidth: matchesXs ? "100%" : 320,
+                borderRadius: matchesXs ? "16px 16px 0 0" : "16px",
+                border: `1px solid ${theme.palette.divider}`,
               }}
             >
               <ClickAwayListener onClickAway={handleClose}>
@@ -260,49 +270,95 @@ const Notification = () => {
                   elevation={0}
                   border={false}
                   content={false}
-                  sx={{ maxHeight: 600, overflowY: "auto" }}
+                  sx={{
+                    maxHeight: matchesXs ? "calc(80vh - 100px)" : 600,
+                    overflowY: "auto",
+                    bgcolor: "transparent",
+                    borderRadius: "inherit",
+                    "& .MuiCardHeader-root": {
+                      p: matchesXs ? "12px 16px" : 2,
+                    },
+                    "& .MuiCardHeader-content": {
+                      overflow: "hidden",
+                    },
+                  }}
                   secondary={
-                    <Grid
-                      container
-                      mt={2}
-                      alignItems="center"
-                      justifyContent="space-between"
+                    <Box
+                      sx={{
+                        width: "100%",
+                        px: matchesXs ? 1 : 2,
+                        pt: 1,
+                      }}
                     >
-                      {/* Mark all as read */}
-                      <Grid item xs="auto">
-                        <Read onClick={handleClickRead} />
-                      </Grid>
-                      <Grid item xs={5}>
-                        <Typography
-                          variant="caption"
-                          sx={{ color: theme.palette.text.primary }}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                          }}
                         >
-                          Hepsini okundu olarak işaretle
-                        </Typography>
-                      </Grid>
-                      {/* Show unread */}
-                      <Grid container item xs={4} justifyContent="end">
-                        <Typography
-                          variant="caption"
-                          sx={{ color: theme.palette.text.primary }}
+                          <Read
+                            onClick={handleClickRead}
+                            size="small"
+                            sx={{
+                              minWidth: "unset",
+                              p: "4px",
+                            }}
+                          />
+                          <Typography
+                            variant="caption"
+                            color="text.primary"
+                            sx={{ whiteSpace: "wrap" }}
+                          >
+                            Hepsini okundu olarak işaretle
+                          </Typography>
+                        </Box>
+
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                          }}
                         >
-                          Okunanları göster
-                        </Typography>
-                      </Grid>
-                      <Grid container item xs="auto" justifyContent="end">
-                        <InputSwitch
-                          checked={checked}
-                          onChange={handleChecked}
-                          style={{ transform: "scale(0.6)" }}
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Divider />
-                      </Grid>
-                    </Grid>
+                          <InputSwitch
+                            checked={checked}
+                            onChange={handleChecked}
+                            style={{
+                              transform: "scale(0.6)",
+                              margin: 0,
+                            }}
+                          />
+                          <Typography
+                            variant="caption"
+                            color="text.primary"
+                            sx={{ whiteSpace: "wrap" }}
+                          >
+                            Okunanları göster
+                          </Typography>
+                        </Box>
+                      </Box>
+                      <Divider sx={{ mt: 1 }} />
+                    </Box>
                   }
                 >
-                  {notificationList}
+                  <Box
+                    sx={{
+                      px: 0,
+                      py: 1,
+                    }}
+                  >
+                    {notificationList}
+                  </Box>
                 </MainCard>
               </ClickAwayListener>
             </Paper>
