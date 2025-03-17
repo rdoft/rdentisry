@@ -1,13 +1,68 @@
-const smsAPI = require("../config/sms.config");
+const netgsm = require("../config/sms.config");
 const log = require("../config/log.config");
 const { Sequelize, sequelize } = require("../models");
 const db = require("../models");
 const SMS = db.sms;
 
-const xml2js = require("xml2js");
 const { setSMSLimit } = require("../utils/subscription.util");
 
+const SMS_SENDER = process.env.SMS_SENDER;
 const COOLDOWN = 4 * 60 * 60 * 1000; // cooldown time
+const TURKISH_CHARS = [
+  "ç",
+  "Ç",
+  "ğ",
+  "Ğ",
+  "ı",
+  "İ",
+  "ö",
+  "Ö",
+  "ş",
+  "Ş",
+  "ü",
+  "Ü",
+];
+
+/**
+ * Calculates the SMS package size based on message length
+ * - 0-150 characters: 1 package
+ * - 151-291 characters: 2 packages
+ * - and so on...
+ *
+ * Note: Turkish characters and new lines count as 2 characters
+ *
+ * @param {string} message - The SMS message content
+ * @returns {number} - The number of SMS packages required
+ */
+function calculateSMSSize(message) {
+  if (!message) return 1;
+
+  let effectiveLength = 0;
+
+  // Count each character
+  for (let i = 0; i < message.length; i++) {
+    const char = message[i];
+
+    // Check if it's a Turkish character
+    if (TURKISH_CHARS.includes(char)) {
+      effectiveLength += 2;
+    }
+    // Check if it's a new line
+    else if (char === "\n" || char === "\r") {
+      effectiveLength += 2;
+    }
+    // Regular character
+    else {
+      effectiveLength += 1;
+    }
+  }
+
+  // Calculate package size
+  // 1-150 chars: 1 package, 151-291 chars: 2 packages, 292+ chars: 3 packages
+  if (effectiveLength <= 150) return 1;
+  if (effectiveLength <= 291) return 2;
+  return 3;
+}
 
 /**
  * Sends an SMS message via the NetGSM API.
@@ -43,19 +98,24 @@ async function send(userId, to, message, type, isAuto) {
       throw error;
     }
 
-    // Send SMS
-    const response = await smsAPI.post("/send/xml", { to, message });
+    // Calculate SMS package size
+    const size = calculateSMSSize(message);
+
+    // Send SMS using the netgsm package
+    const response = await netgsm.sendRestSms({
+      msgheader: SMS_SENDER,
+      encoding: "TR",
+      messages: [{ msg: message, no: to }],
+    });
 
     // Handle response
-    const [smsStatus, referenceCode] =
-      response?.data?.toString()?.split(" ") ?? [];
-    if (smsStatus === "00" || smsStatus === "01" || smsStatus === "02") {
-      // Create the SMS and update the SMS limit
+    if (response && response.jobid) {
+      // Create the SMS and update the SMS limit based on package size
       await sequelize.transaction(async (t) => {
         await SMS.create(
           {
             UserId: userId,
-            ReferenceCode: referenceCode,
+            ReferenceCode: response.jobid,
             Phone: to,
             Status: "sent",
             Message: message,
@@ -64,49 +124,76 @@ async function send(userId, to, message, type, isAuto) {
           },
           { transaction: t }
         );
-        await setSMSLimit(userId, -1, t);
+        await setSMSLimit(userId, -size, t);
       });
 
-      log.app.info(`SMS successfully sent to ${to}.`);
-      return referenceCode;
-    } else if (smsStatus === "20") {
-      log.app.warn(
-        `Send SMS to ${to} failed: Exceeded character limit or other issue.`
-      );
-      const error = new Error(
-        "Karakter sınırını aştınız veya başka bir sorun var"
-      );
-      error.code = 400;
-      throw error;
-    } else if (smsStatus === "30") {
-      log.app.warn(
-        `Send SMS to ${to} failed: Invalid username/password or IP access restrictions.`
-      );
-      const error = new Error(
-        "Geçersiz kullanıcı adı/şifre veya IP erişim kısıtlamaları"
-      );
-      error.code = 400;
-      throw error;
-    } else if (smsStatus === "40") {
-      log.app.warn(`Send SMS to ${to} failed: Sender name not registered.`);
-      const error = new Error("Gönderici adı kayıtlı değil");
-      error.code = 400;
-      throw error;
-    } else if (smsStatus === "70") {
-      log.app.warn(
-        `Send SMS to ${to} failed: One or more required fields are missing.`
-      );
-      const error = new Error("Bir veya daha fazla zorunlu alan eksik");
-      error.code = 400;
-      throw error;
+      log.app.info(`SMS successfully sent to ${to}. Package size: ${size}`);
+      return response.jobid;
     } else {
-      log.app.warn(`Send SMS to ${to} failed: Unknown error, ${result}`);
-      const error = new Error("Bilinmeyen hata");
+      log.app.warn(
+        `Send SMS to ${to} failed: Unknown error, ${JSON.stringify(response)}`
+      );
+      const error = new Error("SMS gönderilemedi: bilinmeyen hata");
       error.code = 400;
       throw error;
     }
   } catch (error) {
-    !error.code && log.error.error(error);
+    if (!error.code) {
+      log.error.error(error);
+      throw error;
+    }
+
+    // Handle Netgsm API error codes
+    switch (error.code) {
+      case "20":
+        log.app.warn(
+          `Send SMS to ${to} failed: Character limit exceeded or message problem.`
+        );
+        error = new Error(
+          "Karakter sınırını aştınız veya mesaj metninde sorun var"
+        );
+        break;
+      case "30":
+        log.app.warn(
+          `Send SMS to ${to} failed: Invalid credentials or IP restriction.`
+        );
+        error = new Error(
+          "Geçersiz kullanıcı adı/şifre veya IP erişim kısıtlamaları"
+        );
+        break;
+      case "40":
+        log.app.warn(`Send SMS to ${to} failed: Sender name not registered.`);
+        error = new Error("Gönderici adı kayıtlı değil");
+        break;
+      case "50":
+        log.app.warn(
+          `Send SMS to ${to} failed: IYS controlled submissions issue.`
+        );
+        error = new Error("IYS kontrollü gönderimler sorunu");
+        break;
+      case "51":
+        log.app.warn(`Send SMS to ${to} failed: No IYS Brand information.`);
+        error = new Error("IYS Marka bilgisi bulunamadı");
+        break;
+      case "70":
+        log.app.warn(`Send SMS to ${to} failed: Invalid parameters.`);
+        error = new Error("Geçersiz parametreler veya eksik zorunlu alan");
+        break;
+      case "80":
+        log.app.warn(`Send SMS to ${to} failed: Sending limit exceeded.`);
+        error = new Error("Gönderim limiti aşıldı");
+        break;
+      case "85":
+        log.app.warn(
+          `Send SMS to ${to} failed: Duplicate sending limit exceeded.`
+        );
+        error = new Error("Tekrarlı gönderim limiti aşıldı");
+        break;
+      default:
+        log.app.warn(`Send SMS to ${to} failed: ${error.message}`);
+    }
+
+    error.code = 400;
     throw error;
   }
 }
@@ -132,25 +219,26 @@ async function status(smsId) {
       throw error;
     }
 
-    // Send status request
-    const response = await smsAPI.post("/report", {
-      status: true,
-      referenceCode: sms.ReferenceCode,
+    // Calculate SMS package size
+    const size = calculateSMSSize(sms.Message);
+
+    // Get SMS report using the new Netgsm package
+    const response = await netgsm.getReport({
+      bulkIds: [sms.ReferenceCode],
+      reportType: 1, // SINGLE_BULKID
     });
 
     // Handle response
-    const result = await xml2js.parseStringPromise(
-      response?.data?.toString() || ""
-    );
-    const smsStatus = result?.response?.job?.[0]?.status?.[0] ?? null;
+    const smsStatus = response?.jobs?.[0]?.status ?? null;
 
-    if (smsStatus === "1") {
-      sms.update({ Status: "delivered", DeliveredDate: new Date() });
+    // 0: Pending, 1: Delivered, 2: Failed, 3: Invalid number, etc.
+    if (smsStatus === 1) {
+      await sms.update({ Status: "delivered", DeliveredDate: new Date() });
       log.app.info(`SMS status request for ${smsId} successful: delivered.`);
       return;
-    } else if (smsStatus === "0") {
+    } else if (smsStatus === 0) {
       if (sms.Retry < 12) {
-        sms.increment("Retry");
+        await sms.increment("Retry");
         log.app.warn(`SMS status request for ${smsId} successful: Pending.`);
         const error = new Error("SMS Beklemede");
         error.code = 400;
@@ -161,37 +249,25 @@ async function status(smsId) {
             { Status: "failed", Error: "SMS gönderilemedi: zaman aşımı" },
             { transaction: t }
           );
-          await setSMSLimit(sms.UserId, 1, t);
+          await setSMSLimit(sms.UserId, size, t);
         });
         log.app.warn(`SMS status request for ${smsId} successful: Timeout.`);
         const error = new Error("SMS gönderimi zaman aşımına uğradı");
         error.code = 400;
         throw error;
       }
-    } else if (smsStatus === "3") {
+    } else if (smsStatus === 3) {
       await sequelize.transaction(async (t) => {
         await sms.update(
           { Status: "failed", Error: "SMS gönderilemedi: hatalı numara" },
           { transaction: t }
         );
-        await setSMSLimit(sms.UserId, 1, t);
+        await setSMSLimit(sms.UserId, size, t);
       });
       log.app.warn(
         `SMS status request for ${smsId} successful: Invalid number.`
       );
       const error = new Error("SMS gönderilemedi: hatalı numara");
-      error.code = 400;
-      throw error;
-    } else if (smsStatus === "13") {
-      await sequelize.transaction(async (t) => {
-        await sms.update(
-          { Status: "failed", Error: "SMS gönderilemedi: tekrarlı SMS hatası" },
-          { transaction: t }
-        );
-        await setSMSLimit(sms.UserId, 1, t);
-      });
-      log.app.info(`SMS status request for ${smsId} successful: Duplicate.`);
-      const error = new Error("SMS gönderilemedi: tekrarlı SMS hatası");
       error.code = 400;
       throw error;
     } else {
@@ -200,10 +276,12 @@ async function status(smsId) {
           { Status: "failed", Error: "SMS gönderilemedi: bilinmeyen hata" },
           { transaction: t }
         );
-        await setSMSLimit(sms.UserId, 1, t);
+        await setSMSLimit(sms.UserId, size, t);
       });
       log.app.warn(
-        `SMS status request for ${smsId} failed: Unknown status, ${result}`
+        `SMS status request for ${smsId} failed: Unknown status, ${JSON.stringify(
+          response
+        )}`
       );
       const error = new Error("SMS gönderilemedi: bilinmeyen hata");
       error.code = 400;
@@ -218,4 +296,5 @@ async function status(smsId) {
 module.exports = {
   send,
   status,
+  calculateSMSSize,
 };
