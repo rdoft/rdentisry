@@ -371,7 +371,6 @@ function Register() {
             <Password
               id="password"
               name="password"
-              placeholder="••••••••"
               value={user.password}
               toggleMask
               onChange={handleChange}
@@ -409,7 +408,6 @@ function Register() {
             <Password
               id="confirm-password"
               name="confirmPassword"
-              placeholder="••••••••"
               value={user.confirmPassword}
               toggleMask
               feedback={false}

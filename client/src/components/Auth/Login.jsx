@@ -271,6 +271,7 @@ function Login() {
                   textDecoration: "none",
                   cursor: "pointer",
                 }}
+                tabIndex="-1"
               >
                 <Typography
                   variant="caption"
@@ -287,7 +288,6 @@ function Login() {
             <Password
               id="password"
               name="password"
-              placeholder="••••••••"
               value={auth.password}
               toggleMask
               feedback={false}
