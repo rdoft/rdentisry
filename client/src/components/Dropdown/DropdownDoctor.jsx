@@ -5,6 +5,8 @@ import { useLoading } from "context/LoadingProvider";
 import { SkeletonDropdown } from "components/Skeleton";
 import { SubscriptionController } from "components/Subscription";
 import DropdownDoctorItem from "./DropdownItem/DropdownDoctorItem";
+import { useTheme } from "@mui/material";
+import config from "config/theme.config";
 
 // assets
 import "assets/styles/Other/Dropdown.css";
@@ -18,6 +20,8 @@ function DropdownDoctor({
   ...props
 }) {
   const { loading } = useLoading();
+  const theme = useTheme();
+  const modalZIndex = theme.zIndex?.modal || config.zIndex?.modal || 1300;
 
   const [doctor, setDoctor] = useState(value);
   const doctors = options;
@@ -77,7 +81,7 @@ function DropdownDoctor({
       panelFooterTemplate={doctorDropdownFooter}
       onKeyDown={handleKeyDown}
       onChange={handleChange}
-      className={props?.className}
+      className={`doctor-selection-dropdown ${props?.className || ''}`}
       style={props?.style}
       filter
       filterBy="name,surname,fullName"
@@ -86,6 +90,7 @@ function DropdownDoctor({
       emptyMessage="Sonuç bulunamadı"
       emptyFilterMessage="Sonuç bulunamadı"
       showClear
+      panelStyle={{ zIndex: modalZIndex }}
     />
   );
 }

@@ -376,7 +376,7 @@ const AppointmentCalendar = () => {
           setPatients={setPatients}
           onHide={hideAppointmentDialog}
           onSubmit={saveAppointment}
-          onDelete={appointment && deleteAppointment}
+          onDelete={appointment.id && deleteAppointment}
         />
       )}
     </>

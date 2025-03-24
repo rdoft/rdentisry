@@ -1,0 +1,53 @@
+/* Dialog Styles */
+.p-dialog-mask {
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1400 !important; /* Match the dialog z-index from theme config */
+}
+
+.p-dialog {
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  z-index: 1400 !important; /* Match the dialog z-index from theme config */
+}
+
+.p-dialog .p-dialog-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .p-dialog {
+    width: 90vw !important;
+    max-height: 90vh;
+  }
+
+  .p-dialog .p-dialog-footer {
+    padding: 0.75rem 1rem;
+  }
+}
+
+
+/* Override PrimeReact dropdown z-index to be lower than dialog */
+.p-dropdown-panel {
+  z-index: 1300 !important; /* Lower than dialog z-index */
+}
+
+.p-datepicker {
+  z-index: 1300 !important; /* Lower than dialog z-index */
+}
+
+/* Ensure all overlays are below dialogs */
+.p-component-overlay {
+  z-index: 1300 !important; /* Lower than dialog z-index */
+}
+
+/* Fix for nested dialogs */
+.p-dialog-mask + .p-dialog-mask {
+  z-index: 1401 !important; /* Increment for nested dialogs */
+}
+
+.p-dialog-mask + .p-dialog-mask + .p-dialog-mask {
+  z-index: 1402 !important; /* Increment for deeply nested dialogs */
+}

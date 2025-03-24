@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Password, Divider } from "primereact";
 import { DialogTemp } from "components/Dialog";
+import { Box } from "@mui/material";
 
 // schema
 import schema from "schemas/user.schema";
@@ -85,69 +86,93 @@ function ResetPassword({ onSubmit, onHide }) {
       onHide={handleHide}
       onSubmit={handleSubmit}
       header="Şifre Yenileme"
-      style={{ height: "fit-content" }}
+      style={{ width: "clamp(280px, 90%, 550px)" }}
     >
-      <Divider type="solid" className="mt-0" />
+      <Box sx={{ p: { xs: 1, sm: 2 } }}>
+        <Divider type="solid" className="mt-0" />
 
-      <div className="field mb-3">
-        <Password
-          id="oldPassword"
-          name="oldPassword"
-          placeholder="Eski Parola *"
-          value={user.oldPassword}
-          toggleMask
-          onChange={handleChange}
-          required
-          maxLength={20}
-          feedback={false}
-        />
-      </div>
-
-      <div className="flex">
-        <div className="field mr-2">
+        <Box sx={{ mb: 3, mt: 2 }}>
           <Password
-            id="password"
-            name="password"
-            placeholder="Parola *"
-            value={user.password}
+            id="oldPassword"
+            name="oldPassword"
+            placeholder="Eski Şifre *"
+            value={user.oldPassword}
             toggleMask
             onChange={handleChange}
             required
             maxLength={20}
-            weakLabel="Zayıf"
-            mediumLabel="Orta"
-            strongLabel="Güçlü"
-            promptLabel="Parolanız şunları içermelidir:"
-            footer={passwordFooter}
-            {...(isError.password && { className: "p-invalid" })}
-          />
-        </div>
-
-        <div className="field ml-2">
-          <Password
-            id="confirm-password"
-            name="confirmPassword"
-            placeholder="Parola (Tekrar) *"
-            value={user.confirmPassword}
-            toggleMask
             feedback={false}
-            onChange={handleChange}
-            onPaste={(e) => e.preventDefault()}
-            required
-            maxLength={20}
-            {...(isError.confirmPassword && { className: "p-invalid" })}
-          />
-          <small
-            id="repassword-help"
-            className="p-error"
-            style={{
-              visibility: isError.confirmPassword ? "visible" : "hidden",
+            style={{ 
+              width: "100%",
+              fontSize: "1rem",
+              minHeight: "40px"
             }}
-          >
-            Parolalar eşleşmiyor
-          </small>
-        </div>
-      </div>
+          />
+        </Box>
+
+        <Box sx={{ 
+          display: "flex", 
+          flexDirection: { xs: "column", sm: "row" },
+          gap: { xs: 2, sm: 1 }
+        }}>
+          <Box sx={{ flex: 1 }}>
+            <Password
+              id="password"
+              name="password"
+              placeholder="Şifre *"
+              value={user.password}
+              toggleMask
+              onChange={handleChange}
+              required
+              maxLength={20}
+              weakLabel="Zayıf"
+              mediumLabel="Orta"
+              strongLabel="Güçlü"
+              promptLabel="Şifreniz şunları içermelidir:"
+              footer={passwordFooter}
+              {...(isError.password && { className: "p-invalid" })}
+              style={{ 
+                width: "100%",
+                fontSize: "1rem",
+                minHeight: "40px"
+              }}
+            />
+          </Box>
+
+          <Box sx={{ flex: 1 }}>
+            <Password
+              id="confirm-password"
+              name="confirmPassword"
+              placeholder="Şifre (Tekrar) *"
+              value={user.confirmPassword}
+              toggleMask
+              feedback={false}
+              onChange={handleChange}
+              onPaste={(e) => e.preventDefault()}
+              required
+              maxLength={20}
+              {...(isError.confirmPassword && { className: "p-invalid" })}
+              style={{ 
+                width: "100%",
+                fontSize: "1rem",
+                minHeight: "40px"
+              }}
+            />
+            <small
+              id="repassword-help"
+              className="p-error"
+              style={{
+                visibility: isError.confirmPassword ? "visible" : "hidden",
+                fontSize: "0.875rem",
+                display: "block",
+                marginTop: "0.25rem"
+              }}
+            >
+              Şifreler eşleşmiyor
+            </small>
+          </Box>
+        </Box>
+      </Box>
     </DialogTemp>
   );
 }

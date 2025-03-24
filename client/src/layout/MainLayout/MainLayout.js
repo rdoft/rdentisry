@@ -52,6 +52,7 @@ const MainLayout = () => {
         minHeight: "100vh",
         backgroundColor: theme.palette.background.default,
         overflow: "hidden",
+        position: "relative",
       }}
     >
       <ToggleDrawer open={open} handleDrawerToggle={handleDrawerToggle} />

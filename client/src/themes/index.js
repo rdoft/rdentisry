@@ -115,8 +115,11 @@ export default function ThemeCustomization({ children }) {
         },
       },
       zIndex: {
-        drawer: 1200,
-        appBar: 1100,
+        appBar: config.zIndex?.appBar || 1100,
+        drawer: config.zIndex?.drawer || 1200,
+        modal: config.zIndex?.modal || 1300,
+        dialog: config.zIndex?.dialog || 1400,
+        tooltip: config.zIndex?.tooltip || 1500,
       },
       palette: theme.palette,
       customShadows: themeCustomShadows,

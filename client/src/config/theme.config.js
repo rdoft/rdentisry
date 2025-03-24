@@ -13,6 +13,14 @@ const config = {
     width: 280,
     miniWidth: 280 / 3,
   },
+  // z-index values for consistent layering
+  zIndex: {
+    appBar: 1100,
+    drawer: 1200,
+    modal: 1300,
+    dialog: 1400,
+    tooltip: 1500
+  }
 };
 
 export default config;

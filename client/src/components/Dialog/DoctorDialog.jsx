@@ -50,30 +50,27 @@ function DoctorDialog({ initDoctor = {}, onHide, onSubmit }) {
       {/* Divider */}
       <Divider type="solid" className="mt-0" />
 
-      {/* Form */}
-      <div className="flex">
-        <div className="field mr-2">
-          <label className="font-bold">
-            Ad <small className="p-error">*</small>
-          </label>
-          <InputText
-            id="name"
-            value={doctor.name}
-            name="name"
-            onChange={handleChange}
-          />
-        </div>
-        <div className="field ml-2">
-          <label className="font-bold">
-            Soyad <small className="p-error">*</small>
-          </label>
-          <InputText
-            id="surname"
-            value={doctor.surname}
-            name="surname"
-            onChange={handleChange}
-          />
-        </div>
+      <div className="field mb-3">
+        <label className="font-bold">
+          Ad <small className="p-error">*</small>
+        </label>
+        <InputText
+          id="name"
+          value={doctor.name}
+          name="name"
+          onChange={handleChange}
+        />
+      </div>
+      <div className="field">
+        <label className="font-bold">
+          Soyad <small className="p-error">*</small>
+        </label>
+        <InputText
+          id="surname"
+          value={doctor.surname}
+          name="surname"
+          onChange={handleChange}
+        />
       </div>
     </DialogTemp>
   );

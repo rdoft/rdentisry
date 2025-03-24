@@ -15,3 +15,46 @@
 .p-dropdown-label {
   color: var(--palette-text-primary);
 }
+
+/* Dropdown Styles */
+/* Doctor selection dropdown */
+.doctor-selection-dropdown .p-dropdown-panel {
+  z-index: 1300 !important; /* Lower than dialog z-index */
+}
+
+/* Search dropdown */
+.search-dropdown {
+  z-index: 1300 !important; /* Lower than dialog z-index */
+}
+
+/* Ensure all dropdown panels are below dialogs */
+.p-dropdown-panel,
+.p-multiselect-panel,
+.p-autocomplete-panel {
+  z-index: 1300 !important; /* Lower than dialog z-index */
+}
+
+/* Ensure all overlay components are below dialogs */
+.p-overlaypanel,
+.p-menu,
+.p-tooltip {
+  z-index: 1300 !important; /* Lower than dialog z-index */
+}
+
+/* Calendar/datepicker panels */
+.p-datepicker,
+.p-calendar-panel {
+  z-index: 1300 !important; /* Lower than dialog z-index */
+}
+
+/* Ensure all PrimeReact overlays are below dialogs */
+.p-component-overlay {
+  z-index: 1300 !important; /* Lower than dialog z-index */
+}
+
+/* Ensure all MUI components are also below dialogs */
+.MuiPopover-root,
+.MuiMenu-root,
+.MuiDrawer-root {
+  z-index: 1300 !important; /* Lower than dialog z-index */
+}

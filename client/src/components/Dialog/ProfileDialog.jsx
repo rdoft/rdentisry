@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Avatar } from "@mui/material";
+import { Avatar, Box } from "@mui/material";
 import { InputText } from "primereact";
 import { DialogTemp } from "components/Dialog";
 
@@ -46,28 +46,49 @@ function ProfileDialog({ initProfile = {}, onSubmit, onHide }) {
       onHide={handleHide}
       onSubmit={handleSubmit}
       header="Profil Düzenle"
+      style={{ width: "clamp(280px, 90%, 450px)" }}
     >
-      {/* Avatar icon */}
-      <Avatar
-        alt="dentalSvg"
-        src={dentalSvg}
-        sx={{ width: 100, height: 100, mb: 4, mx: "auto" }}
-      />
-      {/* Form */}
-      <div className="flex">
-        <div className="field mr-2">
-          <label className="font-bold">
-            Ad <small className="p-error">*</small>
-          </label>
-          <InputText
-            id="name"
-            name="name"
-            value={profile.name}
-            onChange={handleChange}
-            autoComplete="off"
-          />
-        </div>
-      </div>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          p: { xs: 1, sm: 2 },
+        }}
+      >
+        {/* Avatar icon */}
+        <Avatar
+          alt="dentalSvg"
+          src={dentalSvg}
+          sx={{
+            width: { xs: 80, sm: 100 },
+            height: { xs: 80, sm: 100 },
+            mb: { xs: 2, sm: 4 },
+            mx: "auto",
+          }}
+        />
+        {/* Form */}
+        <Box sx={{ width: "100%" }}>
+          <div className="field">
+            <label className="font-bold" style={{ fontSize: "1rem" }}>
+              Ad <small className="p-error">*</small>
+            </label>
+            <InputText
+              id="name"
+              name="name"
+              value={profile.name}
+              onChange={handleChange}
+              autoComplete="off"
+              style={{
+                fontSize: "1rem",
+                padding: "0.75rem",
+                width: "100%",
+                minHeight: "40px",
+              }}
+            />
+          </div>
+        </Box>
+      </Box>
     </DialogTemp>
   );
 }

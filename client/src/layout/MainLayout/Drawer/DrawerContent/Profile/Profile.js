@@ -130,8 +130,7 @@ const Profile = () => {
     }
   };
 
-  const popperPlacement = matchDownSM ? "top" : "right-start";
-
+  
   return (
     <Box sx={{ width: "100%" }}>
       <ButtonBase
@@ -200,7 +199,7 @@ const Profile = () => {
         </Stack>
       </ButtonBase>
       <Popper
-        placement={popperPlacement}
+        placement={matchDownSM ? "top" : "right-start"}
         open={open}
         anchorEl={anchorRef.current}
         role={undefined}
@@ -217,7 +216,7 @@ const Profile = () => {
           ],
         }}
         sx={{
-          zIndex: theme.zIndex.drawer + 1,
+          zIndex: theme.zIndex.modal,
           width: matchDownSM ? "100%" : 320,
           ...(matchDownSM && {
             position: "fixed",
@@ -233,7 +232,7 @@ const Profile = () => {
           <Transitions type="fade" in={open} {...TransitionProps}>
             <Paper
               sx={{
-                boxShadow: "0px 4px 24px rgba(0, 0, 0, 0.12)",
+                boxShadow: theme.customShadows.z1,
                 width: "100%",
                 borderRadius: "16px",
                 border: `1px solid ${theme.palette.divider}`,

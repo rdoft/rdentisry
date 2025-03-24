@@ -1,0 +1,35 @@
+/* ConfirmDialog Styles */
+.p-confirm-dialog {
+  z-index: 1400 !important; /* Match the dialog z-index from theme config */
+}
+
+.p-confirm-dialog-mask {
+  z-index: 1400 !important; /* Match the dialog z-index from theme config */
+  backdrop-filter: blur(4px);
+  background-color: var(--palette-background-default);
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .p-confirm-dialog {
+    width: 90vw !important;
+    max-height: 90vh;
+  }
+  
+  .p-confirm-dialog .p-dialog-header {
+    padding: 1rem;
+  }
+  
+  .p-confirm-dialog .p-dialog-content {
+    padding: 1rem;
+  }
+  
+  .p-confirm-dialog .p-dialog-footer {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Ensure confirm dialog is above other elements */
+.p-confirm-dialog-mask + .p-dialog-mask {
+  z-index: 1401 !important; /* Increment for nested dialogs */
+} 

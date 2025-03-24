@@ -43,7 +43,7 @@ const actionSX = {
 
 const Notification = () => {
   const theme = useTheme();
-  const matchesXs = useMediaQuery(theme.breakpoints.down("md"));
+  const matchDownSM = useMediaQuery(theme.breakpoints.down("sm"));
   const menu = useSelector((state) => state.menu);
   const { drawerOpen } = menu;
 
@@ -223,26 +223,26 @@ const Notification = () => {
       </IconButton>
 
       <Popper
-        placement={matchesXs ? "top" : "right-start"}
+        placement={matchDownSM ? "top" : "right-start"}
         open={open}
         anchorEl={anchorRef.current}
         role={undefined}
         transition
-        disablePortal={matchesXs}
+        disablePortal={matchDownSM}
         popperOptions={{
           modifiers: [
             {
               name: "offset",
               options: {
-                offset: [0, matchesXs ? 0 : 9],
+                offset: [0, matchDownSM ? 0 : 9],
               },
             },
           ],
         }}
         sx={{
-          zIndex: theme.zIndex.drawer + 1,
-          width: matchesXs ? "100%" : "auto",
-          ...(matchesXs && {
+          zIndex: theme.zIndex.modal,
+          width: matchDownSM ? "100%" : "auto",
+          ...(matchDownSM && {
             position: "fixed",
             left: 0,
             right: 0,
@@ -258,10 +258,14 @@ const Notification = () => {
               sx={{
                 boxShadow: theme.customShadows.z1,
                 width: "100%",
-                minWidth: matchesXs ? "100%" : 320,
-                maxWidth: matchesXs ? "100%" : 320,
-                borderRadius: matchesXs ? "16px 16px 0 0" : "16px",
+                minWidth: matchDownSM ? "100%" : 400,
+                maxWidth: matchDownSM ? "100%" : 400,
+                borderRadius: "16px",
                 border: `1px solid ${theme.palette.divider}`,
+                ...(matchDownSM && {
+                  borderRadius: "16px 16px 0 0",
+                  py: 1.5,
+                }),
               }}
             >
               <ClickAwayListener onClickAway={handleClose}>
@@ -271,12 +275,12 @@ const Notification = () => {
                   border={false}
                   content={false}
                   sx={{
-                    maxHeight: matchesXs ? "calc(80vh - 100px)" : 600,
+                    maxHeight: matchDownSM ? "calc(80vh - 100px)" : 600,
                     overflowY: "auto",
                     bgcolor: "transparent",
                     borderRadius: "inherit",
                     "& .MuiCardHeader-root": {
-                      p: matchesXs ? "12px 16px" : 2,
+                      p: matchDownSM ? "12px 16px" : 2,
                     },
                     "& .MuiCardHeader-content": {
                       overflow: "hidden",
@@ -286,7 +290,7 @@ const Notification = () => {
                     <Box
                       sx={{
                         width: "100%",
-                        px: matchesXs ? 1 : 2,
+                        px: matchDownSM ? 1 : 2,
                         pt: 1,
                       }}
                     >

@@ -1,7 +1,12 @@
 import React from "react";
 import { Dialog } from "primereact";
-import { ClickAwayListener } from "@mui/material";
+import { ClickAwayListener, useTheme } from "@mui/material";
 import { DialogFooter } from "components/DialogFooter";
+import config from "config/theme.config";
+
+// assets
+import "assets/styles/Other/Dialog.css";
+import "assets/styles/Other/ConfirmDialog.css";
 
 function DialogTemp({
   children,
@@ -11,6 +16,9 @@ function DialogTemp({
   onDelete,
   ...props
 }) {
+  const theme = useTheme();
+  const dialogZIndex = theme.zIndex?.dialog || config.zIndex?.dialog || 1400;
+
   // HANDLERS -----------------------------------------------------------------
   // OnKeyDown handler
   const handleKeyDown = (event) => {
@@ -55,7 +63,10 @@ function DialogTemp({
         modal
         className="p-fluid"
         position={props.position || "bottom-right"}
-        style={props.style}
+        style={{
+          ...props.style,
+          zIndex: dialogZIndex,
+        }}
         header={props.header}
         onHide={handleHide}
         onKeyDown={handleKeyDown}
@@ -71,6 +82,13 @@ function DialogTemp({
             controlSubscription={props.controlSubscription}
           />
         }
+        maskStyle={{
+          backdropFilter: "blur(4px)",
+          backgroundColor: theme.palette.background.default,
+          zIndex: dialogZIndex - 1,
+        }}
+        breakpoints={{ '960px': '80vw', '640px': '90vw' }}
+        blockScroll
       >
         {children}
       </Dialog>
