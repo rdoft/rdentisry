@@ -17,6 +17,9 @@ const HOST =
     : `${HOSTNAME}:${PORT_CLIENT}`;
 // Define the reminder link expiration time in milliseconds
 const LINK_EXPIRATION_TIME = 172800000; // 2 gün
+// Define the maximum length of the patient and client names
+const MAX_PATIENT_LENGTH = 30;
+const MAX_CLIENT_LENGTH = 75;
 
 /**
  * Send reminder for given appointment
@@ -38,9 +41,14 @@ async function sendAppointmentReminder(appointment) {
     user = patient.user;
 
     // Prepare the message
-    fullName = `${patient.name} ${patient.surname}`.toLocaleUpperCase("TR");
+    fullName = `${patient.name} ${patient.surname.substring(
+      0,
+      1
+    )}`.toLocaleUpperCase("TR");
     fullName =
-      fullName.length > 30 ? fullName.substring(0, 30) + "..." : fullName;
+      fullName.length > MAX_PATIENT_LENGTH
+        ? fullName.substring(0, MAX_PATIENT_LENGTH - 1) + "*"
+        : fullName + "*";
     time = new Date(`1970-01-01T${appointment.startTime}Z`).toLocaleTimeString(
       "tr-TR",
       {
@@ -55,8 +63,10 @@ async function sendAppointmentReminder(appointment) {
       day: "numeric",
     });
     client = user.name
-      ? user.name.toLocaleUpperCase("TR").length > 30
-        ? user.name.toLocaleUpperCase("TR").substring(0, 30) + "..."
+      ? user.name.toLocaleUpperCase("TR").length > MAX_CLIENT_LENGTH
+        ? user.name
+            .toLocaleUpperCase("TR")
+            .substring(0, MAX_CLIENT_LENGTH - 1) + "*"
         : user.name.toLocaleUpperCase("TR")
       : null;
 
@@ -104,12 +114,19 @@ async function sendPaymentReminder(patient) {
 
   try {
     // Prepare the message
-    fullName = `${patient.name} ${patient.surname}`.toLocaleUpperCase("TR");
+    fullName = `${patient.name} ${patient.surname.substring(
+      0,
+      1
+    )}`.toLocaleUpperCase("TR");
     fullName =
-      fullName.length > 30 ? fullName.substring(0, 30) + "..." : fullName;
+      fullName.length > MAX_PATIENT_LENGTH
+        ? fullName.substring(0, MAX_PATIENT_LENGTH - 1) + "*"
+        : fullName + "*";
     client = patient.user.name
-      ? patient.user.name.toLocaleUpperCase("TR").length > 30
-        ? patient.user.name.toLocaleUpperCase("TR").substring(0, 30) + "..."
+      ? patient.user.name.toLocaleUpperCase("TR").length > MAX_CLIENT_LENGTH
+        ? patient.user.name
+            .toLocaleUpperCase("TR")
+            .substring(0, MAX_CLIENT_LENGTH - 1) + "*"
         : patient.user.name.toLocaleUpperCase("TR")
       : null;
 
@@ -141,14 +158,14 @@ async function sendPaymentReminder(patient) {
 function createAppointmentMessage(fullName, date, time, client, url) {
   if (url) {
     return (
-      `Sn. ${fullName},\\n${date} ${time} tarihindeki diş hekimi randevunuza katılım durumunuzu bildiriniz.` +
-      `\\n\\nOnay, İptal veya Değişiklik için:\\n${url} \\n` +
-      (client ? `\\n${client}` : "") +
+      `Sn. ${fullName}\\n${date} ${time} tarihindeki diş hekimi randevunuzu onaylamanız gerekmektedir.` +
+      `\\n\\nOnay/İptal/Değişiklik için tıklayın:\\n${url}` +
+      (client ? `\\n\\n${client}` : "") +
       `\\nSaygılarımızla.`
     );
   } else {
     return (
-      `Sn. ${fullName},\\n${date} ${time} tarihindeki diş hekimi randevunuzu hatırlatırız.\\n` +
+      `Sn. ${fullName}\\n${date} ${time} tarihindeki diş hekimi randevunuzu hatırlatırız.\\n` +
       (client ? `\\n${client}` : "") +
       `\\nSaygılarımızla.`
     );
@@ -165,13 +182,13 @@ function createAppointmentMessage(fullName, date, time, client, url) {
 function createPaymentMessage(fullName, client, dept) {
   if (dept > 0) {
     return (
-      `Sn. ${fullName},\\nDiş tedavinizden kalan ${dept} TL tutarında bir ödemeniz bulunmaktadır. En kısa sürede ödeme yapmanızı rica ederiz.\\n` +
+      `Sn. ${fullName}\\nDiş tedavinizden ${dept} TL tutarında ödemeniz bulunmaktadır. En kısa sürede ödeme işleminizi tamamlayınız.\\n` +
       (client ? `\\n${client}` : "") +
       `\\nSaygılarımızla.`
     );
   } else {
     return (
-      `Sn. ${fullName},\\nDiş tedavinizle ilgili tarihi geçmiş bir ödemeniz bulunmaktadır. Ödemenizi en kısa sürede yapmanızı rica ederiz.\\n` +
+      `Sn. ${fullName}\\nTarihi geçmiş bir ödemeniz bulunmaktadır. En kısa sürede ödeme işleminizi tamamlayınız.\\n` +
       (client ? `\\n${client}` : "") +
       `\\nSaygılarımızla.`
     );
@@ -211,7 +228,7 @@ async function createApprovalLink(userId, appointmentId) {
       });
     }
 
-    return `https://${HOST}/confirm/${token}`;
+    return `${HOST}/confirm/${token}`;
   } catch (error) {
     log.error.error(error);
     throw new Error(error);
