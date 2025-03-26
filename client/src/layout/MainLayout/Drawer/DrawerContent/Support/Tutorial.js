@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { useSelector } from "react-redux";
-import { Box, IconButton, Avatar, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import { TutorialDialog } from "components/Dialog";
-
-// assets
-import tutorialSvg from "assets/svg/profile/tutorial.svg";
 
 const Tutorial = () => {
   const theme = useTheme();
@@ -37,11 +34,15 @@ const Tutorial = () => {
           }}
           onClick={handleClick}
         >
-          <Avatar
-            alt="tutorial"
-            src={tutorialSvg}
-            sx={{ width: 24, height: 24, padding: "1px" }}
-          />
+          <i
+            className="fi fi-rr-clapperboard-play"
+            style={{
+              fontSize: "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          ></i>
           {drawerOpen && (
             <Typography variant="h6" sx={{ px: "10px" }}>
               Eğitim

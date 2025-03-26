@@ -17,7 +17,7 @@ const finance = {
       title: "Üyelik",
       type: "item",
       url: "/pricing",
-      icon: PricingIcon,
+      icon: "fi fi-rr-gem",
       breadcrumbs: true,
     },
   ],

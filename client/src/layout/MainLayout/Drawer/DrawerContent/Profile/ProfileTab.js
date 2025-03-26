@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import {
-  Avatar,
   List,
   ListItemButton,
   ListItemIcon,
@@ -10,9 +9,6 @@ import {
 import { ProfileDialog } from "components/Dialog";
 import { useTheme } from "@mui/material/styles";
 import { useLoading } from "context/LoadingProvider";
-
-// assets
-import editSvg from "assets/svg/profile/edit.svg";
 
 // services
 import { UserService } from "services";
@@ -59,7 +55,7 @@ const ProfileTab = ({ name, setName }) => {
           p: 0,
           "& .MuiListItemIcon-root": {
             minWidth: 32,
-            color: theme.palette.grey[500],
+            color: theme.palette.text.secondary,
           },
         }}
       >
@@ -83,7 +79,15 @@ const ProfileTab = ({ name, setName }) => {
           }}
         >
           <ListItemIcon>
-            <Avatar src={editSvg} sx={{ width: 16, height: 16 }} />
+            <i
+              className="fi fi-rr-text-box-edit"
+              style={{
+                fontSize: "20px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            ></i>
           </ListItemIcon>
           <ListItemText primary="Adı Güncelle" />
         </ListItemButton>

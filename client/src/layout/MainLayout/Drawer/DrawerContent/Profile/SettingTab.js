@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { InputSwitch } from "primereact";
 import {
-  Avatar,
   List,
   ListItem,
   ListItemButton,
@@ -14,10 +13,6 @@ import { ResetPasswordDialog } from "components/Dialog";
 import { useTheme } from "@mui/material/styles";
 import { useLoading } from "context/LoadingProvider";
 import { useSubscription } from "context/SubscriptionProvider";
-
-// assets
-import lockSvg from "assets/svg/profile/lock.svg";
-import reminderSvg from "assets/svg/profile/reminder.svg";
 
 // services
 import { UserService } from "services";
@@ -131,7 +126,15 @@ const SettingTab = () => {
           }}
         >
           <ListItemIcon>
-            <Avatar src={lockSvg} sx={{ width: 16, height: 16 }} />
+            <i
+              className="fi fi-rr-otp"
+              style={{
+                fontSize: "20px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            ></i>
           </ListItemIcon>
           <ListItemText primary="Şifreyi Değiştir" />
         </ListItemButton>
@@ -139,7 +142,15 @@ const SettingTab = () => {
         {/* Reminder preferece */}
         <ListItem>
           <ListItemIcon>
-            <Avatar src={reminderSvg} sx={{ width: 16, height: 16 }} />
+            <i
+              className="fi fi-rr-comment-sms"
+              style={{
+                fontSize: "20px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            ></i>
           </ListItemIcon>
           <ListItemText
             primary="Otomatik Hatırlatma"
@@ -149,9 +160,7 @@ const SettingTab = () => {
             <SubscriptionController type="sms" top={0} right={0}>
               <InputSwitch
                 checked={
-                  isSubscribed &&
-                  limits.sms > 0 &&
-                  settings.appointmentReminder
+                  isSubscribed && limits.sms > 0 && settings.appointmentReminder
                 }
                 onChange={handleChangeReminder}
               />

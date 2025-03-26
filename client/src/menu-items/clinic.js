@@ -20,7 +20,7 @@ const clinic = {
       title: "Hastalar",
       type: "item",
       url: "/patients",
-      icon: PatientListActiveIcon,
+      icon: "fi fi-rr-id-card-clip-alt",
       breadcrumbs: true,
     },
     {
@@ -28,7 +28,7 @@ const clinic = {
       title: "Tedaviler",
       type: "item",
       url: "/procedures",
-      icon: ProcedureActiveIcon,
+      icon: "fi fi-rr-stethoscope",
       breadcrumbs: true,
     },
   ],

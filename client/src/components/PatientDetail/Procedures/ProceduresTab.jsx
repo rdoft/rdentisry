@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
-import { Grid, Tabs, Tab, Avatar } from "@mui/material";
+import { Grid, Tabs, Tab, useTheme } from "@mui/material";
 import ReactToPrint from "react-to-print";
 import { ProcedureDialog } from "components/Dialog";
 import { Add, SplitItem, Print } from "components/Button";
@@ -15,8 +15,6 @@ import ProcedureList from "./ProcedureList/ProcedureList";
 
 // assets
 import "assets/styles/PatientDetail/ProceduresTab.css";
-import teethSvg from "assets/svg/tab/teeth.svg";
-import listSvg from "assets/svg/tab/list.svg";
 
 // services
 import {
@@ -36,6 +34,7 @@ function ProceduresTab({
   counts,
   setCounts,
 }) {
+  const theme = useTheme();
   const { startLoading, stopLoading } = useLoading();
   const dt = useRef(null);
 
@@ -489,9 +488,54 @@ function ProceduresTab({
             onChange={handleTabChange}
             centered
             orientation="vertical"
+            sx={{
+              '& .MuiTabs-indicator': {
+                display: 'none', // Make the indicator (tab line) invisible
+              },
+              borderLeft: `1px solid ${theme.palette.divider}`,
+              marginLeft: 2,
+              paddingLeft: 1,
+              '& .MuiTab-root': {
+                minWidth: 'auto',
+                padding: '6px',
+                marginBottom: 1,
+              }
+            }}
           >
-            <Tab value={0} icon={<Avatar src={teethSvg} />} disableRipple />
-            <Tab value={1} icon={<Avatar src={listSvg} />} disableRipple />
+            <Tab
+              value={0}
+              icon={
+                <i
+                  className={
+                    tabIndex === 0 ? "fi fi-sr-tooth" : "fi fi-rr-tooth"
+                  }
+                  style={{
+                    fontSize: "22px",
+                    color:
+                      tabIndex === 0 ? theme.palette.text.secondary : "inherit",
+                  }}
+                ></i>
+              }
+              disableRipple
+            />
+            <Tab
+              value={1}
+              icon={
+                <i
+                  className={
+                    tabIndex === 1
+                      ? "fi fi-sr-rectangle-list"
+                      : "fi fi-rr-rectangle-list"
+                  }
+                  style={{
+                    fontSize: "22px",
+                    color:
+                      tabIndex === 1 ? theme.palette.text.secondary : "inherit",
+                  }}
+                ></i>
+              }
+              disableRipple
+            />
           </Tabs>
         </Grid>
       </Grid>

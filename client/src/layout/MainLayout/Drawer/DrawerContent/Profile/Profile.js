@@ -30,7 +30,6 @@ import SettingTab from "./SettingTab";
 
 // assets
 import dentalSvg from "assets/svg/profile/dental.svg";
-import { SettingOutlined, UserOutlined } from "@ant-design/icons";
 
 // services
 import { AuthService, UserService } from "services";
@@ -286,22 +285,27 @@ const Profile = () => {
                           py: 0,
                           color: theme.palette.text.primary,
                         },
+                        "& .MuiTab-root.Mui-selected": {
+                          color: theme.palette.text.secondary,
+                        },
                       }}
                     >
                       <Tab
                         icon={
-                          <UserOutlined
-                            style={{ fontSize: "1rem", marginRight: "6px" }}
-                          />
+                          <i
+                            className="fi fi-rr-clipboard-user"
+                            style={{ fontSize: "1rem" }}
+                          ></i>
                         }
                         label="Profil"
                         {...a11yProps(0)}
                       />
                       <Tab
                         icon={
-                          <SettingOutlined
-                            style={{ fontSize: "1rem", marginRight: "6px" }}
-                          />
+                          <i
+                            className="fi fi-rr-settings"
+                            style={{ fontSize: "1rem" }}
+                          ></i>
                         }
                         label="Ayarlar"
                         {...a11yProps(1)}

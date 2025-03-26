@@ -17,7 +17,7 @@ const overview = {
       title: "Takvim",
       type: "item",
       url: "/",
-      icon: CalendarActiveIcon,
+      icon: "fi fi-rr-calendar-day",
       breadcrumbs: true,
     },
   ],

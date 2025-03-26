@@ -3,7 +3,6 @@ import { toast } from "react-hot-toast";
 import { useTheme } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 import {
-  Avatar,
   Badge,
   Box,
   ClickAwayListener,
@@ -25,9 +24,6 @@ import NotificationItem from "./NotificationItem";
 
 // services
 import { NotificationService } from "services";
-
-// assets
-import notificationSvg from "assets/svg/profile/notification.svg";
 
 // sx styles
 const actionSX = {
@@ -209,11 +205,15 @@ const Notification = () => {
             },
           }}
         >
-          <Avatar
-            alt="notification"
-            src={notificationSvg}
-            sx={{ width: 24, height: 24, padding: "1px" }}
-          />
+          <i
+            className="fi fi-rr-bell-notification-social-media"
+            style={{
+              fontSize: "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          ></i>
           {drawerOpen && (
             <Typography variant="h6" sx={{ px: "10px" }}>
               Bildirim

@@ -10,6 +10,9 @@ import "primeflex/primeflex.css";
 // scroll bar
 import "simplebar/dist/simplebar.css";
 
+// flaticon uicons
+import '@flaticon/flaticon-uicons/css/all/all.css';
+
 // third-party
 import { Provider as ReduxProvider } from "react-redux";
 

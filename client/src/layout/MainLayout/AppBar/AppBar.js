@@ -1,11 +1,13 @@
 import { useTheme } from "@mui/material/styles";
-import { AppBar as MuiAppBar, Box, IconButton, Toolbar, Divider } from "@mui/material";
+import {
+  AppBar as MuiAppBar,
+  IconButton,
+  Toolbar,
+  Divider,
+} from "@mui/material";
 import PropTypes from "prop-types";
 import Breadcrumbs from "./Breadcrumbs";
 import config from "config/theme.config";
-
-// assets
-import { SidebarIcon } from "assets/images/icons";
 
 const AppBar = ({ open, handleDrawerToggle }) => {
   const theme = useTheme();
@@ -22,14 +24,14 @@ const AppBar = ({ open, handleDrawerToggle }) => {
         }),
         width: {
           xs: "100%",
-          lg: open 
-            ? `calc(100% - ${config.drawer.width}px - 8px)` 
+          lg: open
+            ? `calc(100% - ${config.drawer.width}px - 8px)`
             : `calc(100% - ${config.drawer.miniWidth}px - 8px)`,
         },
         marginLeft: {
           xs: "0",
-          lg: open 
-            ? `${config.drawer.width + 8}px` 
+          lg: open
+            ? `${config.drawer.width + 8}px`
             : `${config.drawer.miniWidth + 8}px`,
         },
         borderBottom: `1px solid ${theme.palette.divider}`,
@@ -48,8 +50,8 @@ const AppBar = ({ open, handleDrawerToggle }) => {
             sm: "12px",
             lg: "8px",
           },
-          display: 'flex',
-          alignItems: 'center',
+          display: "flex",
+          alignItems: "center",
         }}
       >
         <IconButton
@@ -61,29 +63,24 @@ const AppBar = ({ open, handleDrawerToggle }) => {
             color: theme.palette.text.primary,
             padding: 0.5,
             ml: 0,
-            display: 'flex',
+            display: "flex",
           }}
         >
-          <Box
-            component="img"
-            src={SidebarIcon}
-            alt="Toggle Sidebar"
-            sx={{ width: 16, height: 16 }}
-          />
+          <i className="fi fi-rr-sidebar" style={{ width: 16, height: 16 }}></i>
         </IconButton>
-        
-        <Divider 
-          orientation="vertical" 
+
+        <Divider
+          orientation="vertical"
           variant="middle"
           flexItem
-          sx={{ 
-            mx: 0.75, 
-            height: 16, 
-            alignSelf: 'center',
+          sx={{
+            mx: 0.75,
+            height: 16,
+            alignSelf: "center",
             color: theme.palette.text.primary,
-          }} 
+          }}
         />
-        
+
         <Breadcrumbs />
       </Toolbar>
     </MuiAppBar>
@@ -95,4 +92,4 @@ AppBar.propTypes = {
   handleDrawerToggle: PropTypes.func,
 };
 
-export default AppBar; 
+export default AppBar;

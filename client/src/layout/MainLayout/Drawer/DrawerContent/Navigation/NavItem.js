@@ -100,11 +100,12 @@ const NavItem = ({ item, level }) => {
             }),
         }}
       >
-        <Avatar
-          src={item.icon}
-          shape="circle"
-          style={{ width: "24px", height: "24px", padding: "1px" }}
-        />
+        <i className={item.icon} style={{ 
+          fontSize: "20px", 
+          display: "flex", 
+          justifyContent: "center", 
+          alignItems: "center" 
+        }}></i>
       </ListItemIcon>
 
       {(drawerOpen || (!drawerOpen && level !== 1)) && (
@@ -117,6 +118,7 @@ const NavItem = ({ item, level }) => {
                   ? theme.palette.text.secondary
                   : theme.palette.text.primary,
                 paddingLeft: "10px",
+                fontWeight: isSelected ? 'bold' : 'normal',
               }}
             >
               {item.title}
