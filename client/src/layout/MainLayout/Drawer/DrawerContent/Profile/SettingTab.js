@@ -1,18 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { toast } from "react-hot-toast";
-import { InputSwitch } from "primereact";
 import {
   List,
-  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { SubscriptionController } from "components/Subscription";
 import { ResetPasswordDialog } from "components/Dialog";
 import { useTheme } from "@mui/material/styles";
 import { useLoading } from "context/LoadingProvider";
-import { useSubscription } from "context/SubscriptionProvider";
 
 // services
 import { UserService } from "services";
@@ -22,29 +18,8 @@ import { UserService } from "services";
 const SettingTab = () => {
   const theme = useTheme();
   const { startLoading, stopLoading } = useLoading();
-  const { isSubscribed, limits } = useSubscription();
 
   const [passwordDialog, setPasswordDialog] = useState(false);
-  const [settings, setSettings] = useState({ appointmentReminder: false });
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    startLoading("SettingTab");
-    UserService.getUser({ signal })
-      .then((res) => {
-        const response = res.data;
-        setSettings(response.userSetting);
-      })
-      .catch((error) => {
-        error.message && toast.error(error.message);
-      })
-      .finally(() => stopLoading("SettingTab"));
-    return () => {
-      controller.abort();
-    };
-  }, [startLoading, stopLoading]);
 
   // SERVICES ----------------------------------------------------------------
   // Change password
@@ -61,19 +36,6 @@ const SettingTab = () => {
     }
   };
 
-  // Save user settings
-  const saveSettings = async (settings) => {
-    startLoading("save");
-    try {
-      await UserService.saveSettings(settings);
-      setSettings(settings);
-    } catch (error) {
-      error.message && toast.error(error.message);
-    } finally {
-      stopLoading("save");
-    }
-  };
-
   // HANDLERS ------------------------------------------------------------------------------------------------
   // Show change password dialog
   const showPasswordDialog = () => {
@@ -83,14 +45,6 @@ const SettingTab = () => {
   // Hide change password dialog
   const hidePasswordDialog = () => {
     setPasswordDialog(false);
-  };
-
-  // Handler for reminder settings
-  const handleChangeReminder = (event) => {
-    saveSettings({
-      ...settings,
-      appointmentReminder: event.value,
-    });
   };
 
   return (
@@ -138,35 +92,6 @@ const SettingTab = () => {
           </ListItemIcon>
           <ListItemText primary="Şifreyi Değiştir" />
         </ListItemButton>
-
-        {/* Reminder preferece */}
-        <ListItem>
-          <ListItemIcon>
-            <i
-              className="fi fi-rr-comment-sms"
-              style={{
-                fontSize: "20px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            ></i>
-          </ListItemIcon>
-          <ListItemText
-            primary="Otomatik Hatırlatma"
-            secondary="SMS izni verdiğiniz hastalara otomatik randevu hatırlatma mesajı gönderilir."
-          />
-          <div style={{ marginLeft: "10px" }}>
-            <SubscriptionController type="sms" top={0} right={0}>
-              <InputSwitch
-                checked={
-                  isSubscribed && limits.sms > 0 && settings.appointmentReminder
-                }
-                onChange={handleChangeReminder}
-              />
-            </SubscriptionController>
-          </div>
-        </ListItem>
       </List>
 
       {/* Change Password Dialog */}

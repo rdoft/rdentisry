@@ -4,6 +4,7 @@ import SimpleBar from "components/SimpleBar";
 import Profile from "./Profile/Profile";
 import Notification from "./Notification/Notification";
 import Tutorial from "./Support/Tutorial";
+import Automation from "./Automation/Automation";
 
 // ==============================|| DRAWER CONTENT ||============================== //
 
@@ -25,6 +26,7 @@ const DrawerContent = () => {
       }}
     >
       <Box sx={{ mb: 1.5 }}>
+        <Automation />
         <Tutorial />
         <Notification />
       </Box>
