@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
-import { CardTitle } from "components/cards";
+import { CardTitle } from "components/Cards";
 import { Reduce } from "components/Button";
 
 function PaymentAmount({ amount, paid, isReduce, onChange }) {

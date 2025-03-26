@@ -26,12 +26,13 @@ const MainDrawer = ({ open, handleDrawerToggle, window }) => {
   const drawerContent = useMemo(() => <DrawerContent />, []);
   const drawerHeader = useMemo(() => <DrawerHeader open={open} />, [open]);
 
-  // drawer styles
+  // drawer styles for large screens
   const drawerStyles = {
-    width: config.drawer.width,
+    width: open ? config.drawer.width : config.drawer.miniWidth,
     flexShrink: 0,
     whiteSpace: "nowrap",
     boxSizing: "border-box",
+    zIndex: config.zIndex.drawer,
     ...(open && {
       ...theme.mixins.drawer.openedMixin(theme),
       "& .MuiDrawer-paper": {
@@ -42,6 +43,7 @@ const MainDrawer = ({ open, handleDrawerToggle, window }) => {
         overflow: "hidden",
         margin: { md: "8px 0 8px 8px" },
         height: { md: "calc(100vh - 16px)" },
+        width: config.drawer.width - 8,
       },
     }),
     ...(!open && {
@@ -54,6 +56,7 @@ const MainDrawer = ({ open, handleDrawerToggle, window }) => {
         overflow: "hidden",
         margin: { md: "8px 0 8px 8px" },
         height: { md: "calc(100vh - 16px)" },
+        width: config.drawer.miniWidth - 8,
       },
     }),
   };
@@ -63,7 +66,7 @@ const MainDrawer = ({ open, handleDrawerToggle, window }) => {
       component="nav"
       sx={{
         flexShrink: { md: 0 },
-        zIndex: theme.zIndex.drawer,
+        zIndex: config.zIndex.drawer,
       }}
       aria-label="mailbox folders"
     >
@@ -75,7 +78,7 @@ const MainDrawer = ({ open, handleDrawerToggle, window }) => {
       ) : (
         <SwipeableDrawer
           container={container}
-          anchor={matchDownSM ? "left" : "left"}
+          anchor="left"
           open={open}
           onClose={handleDrawerToggle}
           onOpen={handleDrawerToggle}
@@ -101,24 +104,13 @@ const MainDrawer = ({ open, handleDrawerToggle, window }) => {
               width: config.drawer.width,
               backgroundColor: theme.palette.background.paper,
               backgroundImage: "none",
-              ...(matchDownSM
-                ? {
-                    height: "calc(100% - 16px)",
-                    margin: "8px",
-                    borderRadius: "16px",
-                    "& > *": {
-                      padding: "0 8px",
-                    },
-                  }
-                : {
-                    height: "calc(100% - 16px)",
-                    margin: "8px",
-                    borderRadius: "16px",
-                    border: "none",
-                    "& > *": {
-                      padding: "0 8px",
-                    },
-                  }),
+              height: "calc(100% - 16px)",
+              margin: "8px",
+              borderRadius: "16px",
+              border: "none",
+              "& > *": {
+                padding: "0 8px",
+              },
             },
           }}
         >

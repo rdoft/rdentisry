@@ -2,20 +2,12 @@ import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useSubscription } from "context/SubscriptionProvider";
-
-// material-ui
 import { useTheme } from "@mui/material/styles";
 import { Box, useMediaQuery } from "@mui/material";
-
-// project import
-import navigation from "menu-items";
 import Drawer from "./Drawer/Drawer";
-import ToggleDrawer from "./ToggleDrawer/ToggleDrawer";
-import Breadcrumbs from "components/@extended/Breadcrumbs";
+import AppBar from "./AppBar/AppBar";
 import { PremiumDialog } from "components/Dialog";
 import config from "config/theme.config";
-
-// types
 import { openDrawer } from "store/reducers/menu";
 
 // ==============================|| MAIN LAYOUT ||============================== //
@@ -24,18 +16,15 @@ const MainLayout = () => {
   const theme = useTheme();
   const { dialog } = useSubscription();
   const matchDownLG = useMediaQuery(theme.breakpoints.down("xl"));
-
   const dispatch = useDispatch();
   const { drawerOpen } = useSelector((state) => state.menu);
 
-  // drawer toggler
   const [open, setOpen] = useState(drawerOpen);
   const handleDrawerToggle = () => {
     setOpen(!open);
     dispatch(openDrawer({ drawerOpen: !open }));
   };
 
-  // set media wise responsive drawer
   useEffect(() => {
     setOpen(!matchDownLG);
     dispatch(openDrawer({ drawerOpen: !matchDownLG }));
@@ -55,7 +44,7 @@ const MainLayout = () => {
         position: "relative",
       }}
     >
-      <ToggleDrawer open={open} handleDrawerToggle={handleDrawerToggle} />
+      <AppBar open={open} handleDrawerToggle={handleDrawerToggle} />
       <Drawer open={open} handleDrawerToggle={handleDrawerToggle} />
 
       <Box
@@ -64,7 +53,9 @@ const MainLayout = () => {
           flexGrow: 1,
           width: {
             xs: "100%",
-            lg: `calc(100% - ${open ? config.drawer.width + 32 : 0}px)`,
+            lg: open 
+              ? `calc(100% - ${config.drawer.width}px - 8px)` 
+              : `calc(100% - ${config.drawer.miniWidth}px - 8px)`,
           },
           transition: theme.transitions.create(["width", "margin"], {
             easing: theme.transitions.easing.sharp,
@@ -77,27 +68,19 @@ const MainLayout = () => {
             lg: 3,
           },
           pt: {
-            xs: "calc(56px + 1rem)",
-            sm: "calc(64px + 1.5rem)",
-            md: "calc(64px + 2rem)",
+            xs: "calc(48px + 0.25rem)",
+            sm: "calc(48px + 0.25rem)",
+            md: "calc(48px + 0.5rem)",
+            lg: "calc(48px + 0.5rem)",
           },
+          ml: 0,
+          mr: 0,
           pr: { lg: 3 },
           minHeight: "100vh",
           overflow: "auto",
+          maxWidth: "100%",
         }}
       >
-        <Breadcrumbs
-          navigation={navigation}
-          title
-          titleBottom
-          card={false}
-          divider={false}
-          sx={{
-            mb: { xs: 1.5, sm: 2, md: 2.5 },
-            bgcolor: "transparent",
-            px: { xs: 0.5, sm: 1 },
-          }}
-        />
         <Box
           sx={{
             position: "relative",

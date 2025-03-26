@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
 import { Divider } from "primereact";
-import { CardTitle } from "components/cards";
+import { CardTitle } from "components/Cards";
 
 function NoteCard({ note, onClick }) {
   // Set values as desired format

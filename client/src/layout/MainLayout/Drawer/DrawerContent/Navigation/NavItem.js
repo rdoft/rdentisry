@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
-import { forwardRef, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { forwardRef } from "react";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 // material-ui
 import { useTheme } from "@mui/material/styles";
@@ -14,15 +14,10 @@ import {
   Typography,
 } from "@mui/material";
 
-// project import
-import { activeItem } from "store/reducers/menu";
-
 // ==============================|| NAVIGATION - LIST ITEM ||============================== //
 
 const NavItem = ({ item, level }) => {
-  const location = useLocation();
   const theme = useTheme();
-  const dispatch = useDispatch();
   const menu = useSelector((state) => state.menu);
   const { drawerOpen, openItem } = menu;
 
@@ -40,33 +35,12 @@ const NavItem = ({ item, level }) => {
     listItemProps = { component: "a", href: item.url, target: itemTarget };
   }
 
-  const itemHandler = (id) => {
-    dispatch(activeItem({ openItem: [id] }));
-  };
-
   const isSelected = openItem.findIndex((id) => id === item.id) > -1;
-
-  // active menu item on page load
-  useEffect(() => {
-    if (document.location.pathname === "/") {
-      dispatch(activeItem({ openItem: ["calendar"] }));
-    } else {
-      const currentIndex = document.location.pathname
-        .toString()
-        .split("/")
-        .findIndex((id) => id === item.id);
-      if (currentIndex > -1) {
-        dispatch(activeItem({ openItem: [item.id] }));
-      }
-    }
-    // eslint-disable-next-line
-  }, [location]);
 
   return (
     <ListItemButton
       {...listItemProps}
       disabled={item.disabled}
-      onClick={() => itemHandler(item.id)}
       selected={isSelected}
       sx={{
         zIndex: 1201,

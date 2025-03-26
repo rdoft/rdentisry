@@ -18,7 +18,7 @@ const finance = {
       type: "item",
       url: "/pricing",
       icon: PricingIcon,
-      breadcrumbs: false,
+      breadcrumbs: true,
     },
   ],
 };

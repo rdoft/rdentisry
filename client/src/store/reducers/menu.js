@@ -7,6 +7,7 @@ const initialState = {
   openComponent: "buttons",
   drawerOpen: false,
   componentDrawerOpen: true,
+  breadcrumbs: [],
 };
 
 // ==============================|| SLICE - MENU ||============================== //
@@ -19,21 +20,20 @@ const menu = createSlice({
       state.openItem = action.payload.openItem;
     },
 
-    activeComponent(state, action) {
-      state.openComponent = action.payload.openComponent;
-    },
-
     openDrawer(state, action) {
       state.drawerOpen = action.payload.drawerOpen;
     },
-
-    openComponentDrawer(state, action) {
-      state.componentDrawerOpen = action.payload.componentDrawerOpen;
+    
+    setBreadcrumbs(state, action) {
+      state.breadcrumbs = action.payload.breadcrumbs;
     },
   },
 });
 
 export default menu.reducer;
 
-export const { activeItem, activeComponent, openDrawer, openComponentDrawer } =
-  menu.actions;
+export const { 
+  activeItem, 
+  openDrawer,
+  setBreadcrumbs,
+} = menu.actions;

@@ -11,7 +11,7 @@ const config = {
   themeDirection: "ltr",
   drawer: {
     width: 280,
-    miniWidth: 280 / 3,
+    miniWidth: 280 / 4,
   },
   // z-index values for consistent layering
   zIndex: {

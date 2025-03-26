@@ -23,8 +23,8 @@ import { useTheme } from "@mui/material/styles";
 
 // project import
 import { Logout } from "components/Button";
-import { MainCard } from "components/cards";
-import Transitions from "components/@extended/Transitions";
+import { MainCard } from "components/Cards";
+import { Transitions } from "components/Other";
 import ProfileTab from "./ProfileTab";
 import SettingTab from "./SettingTab";
 
@@ -130,7 +130,6 @@ const Profile = () => {
     }
   };
 
-  
   return (
     <Box sx={{ width: "100%" }}>
       <ButtonBase

@@ -41,6 +41,7 @@ import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import ErrorRoundedIcon from "@mui/icons-material/ErrorRounded";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
+import SidebarIcon from "assets/images/icons/sidebar.png";
 
 export {
   CalendarActiveIcon,
@@ -86,4 +87,5 @@ export {
   StarRoundedIcon,
   ErrorRoundedIcon,
   WarningAmberRoundedIcon,
+  SidebarIcon,
 };

@@ -21,7 +21,7 @@ const clinic = {
       type: "item",
       url: "/patients",
       icon: PatientListActiveIcon,
-      breadcrumbs: false,
+      breadcrumbs: true,
     },
     {
       id: "procedures",
@@ -29,7 +29,7 @@ const clinic = {
       type: "item",
       url: "/procedures",
       icon: ProcedureActiveIcon,
-      breadcrumbs: false,
+      breadcrumbs: true,
     },
   ],
 };

@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import { CardTitle } from "components/cards";
+import { CardTitle } from "components/Cards";
 import { PressKeyText } from "components/Text";
 import { Tooth } from "components/Button";
 

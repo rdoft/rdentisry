@@ -70,7 +70,7 @@ function Checkout() {
     navigate("/pricing");
   };
 
-  return isSubscribed & !isFree || (!checkoutForm && !pricing) ? (
+  return (isSubscribed && !isFree) || (!checkoutForm && !pricing) ? (
     <Navigate to="/pricing" />
   ) : (
     <Grid

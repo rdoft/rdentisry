@@ -12,21 +12,13 @@ const overview = {
   title: "GENEL",
   type: "group",
   children: [
-    // {
-    //   id: "overview",
-    //   title: "Genel",
-    //   type: "item",
-    //   url: "/overview",
-    //   icon: icons.DashboardOutlined,
-    //   breadcrumbs: false,
-    // },
     {
       id: "calendar",
       title: "Takvim",
       type: "item",
       url: "/",
       icon: CalendarActiveIcon,
-      breadcrumbs: false,
+      breadcrumbs: true,
     },
   ],
 };

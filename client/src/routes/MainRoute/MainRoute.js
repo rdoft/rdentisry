@@ -5,7 +5,6 @@ import ProtectedRoute from "routes/ProtectedRoute";
 import PublicRoute from "routes/PublicRoute";
 
 // render - pages
-// const Overview = Loadable(lazy(() => import("pages/Overview/OverviewPage")));
 const Patients = Loadable(lazy(() => import("pages/Patients/PatientsPage")));
 const Patient = Loadable(lazy(() => import("pages/Patients/PatientPage")));
 const Calendar = Loadable(
@@ -73,10 +72,6 @@ const MainRoutes = [
         path: "/",
         element: <ProtectedRoute element={Calendar} />,
       },
-      // {
-      //   path: "/overview",
-      //   element: <Overview />,
-      // },
       {
         path: "patients",
         element: <ProtectedRoute element={Patients} />,

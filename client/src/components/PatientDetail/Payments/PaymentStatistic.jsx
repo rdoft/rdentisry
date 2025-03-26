@@ -1,7 +1,7 @@
 import React from "react";
 import { ProgressBar } from "primereact";
 import { Grid } from "@mui/material";
-import { StatisticCard } from "components/cards";
+import { StatisticCard } from "components/Cards";
 import { Reminder } from "components/Button";
 import { SubscriptionController } from "components/Subscription";
 

@@ -1,8 +1,6 @@
 import React, { useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { activeItem } from "store/reducers/menu";
 import { useLoading } from "context/LoadingProvider";
 import { useSubscription } from "context/SubscriptionProvider";
 import { Menu, Divider } from "primereact";
@@ -29,7 +27,6 @@ import { ReminderService } from "services";
 function Event({ initEvent = {}, step, onSubmit }) {
   const theme = useTheme();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { startLoading, stopLoading } = useLoading();
   const { refresh } = useSubscription();
 
@@ -101,7 +98,6 @@ function Event({ initEvent = {}, step, onSubmit }) {
   // onClick patient handler
   const handleClickPatient = () => {
     id && navigate(`/patients/${id}`);
-    dispatch(activeItem({ openItem: ["patients"] }));
   };
 
   // onClick send reminder handler

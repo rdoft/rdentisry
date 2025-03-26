@@ -5,7 +5,7 @@ import { Timeline, Divider } from "primereact";
 import { useLoading } from "context/LoadingProvider";
 import { useSubscription } from "context/SubscriptionProvider";
 import { calcProgress } from "utils";
-import { CardTitle } from "components/cards";
+import { CardTitle } from "components/Cards";
 import { PaymentDialog, PaymentPlanDialog } from "components/Dialog";
 import { Add } from "components/Button";
 import { NotFoundText } from "components/Text";

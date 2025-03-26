@@ -19,8 +19,8 @@ import { InputSwitch } from "primereact";
 import { Read } from "components/Button";
 
 // project import
-import { MainCard } from "components/cards";
-import Transitions from "components/@extended/Transitions";
+import { MainCard } from "components/Cards";
+import { Transitions } from "components/Other";
 import NotificationItem from "./NotificationItem";
 
 // services

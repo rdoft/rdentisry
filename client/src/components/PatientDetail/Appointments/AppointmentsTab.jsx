@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 import { Grid } from "@mui/material";
 import { DataScroller } from "primereact";
 import { AppointmentDialog } from "components/Dialog";
-import { CardTitle } from "components/cards";
+import { CardTitle } from "components/Cards";
 import { Add } from "components/Button";
 import { LoadingController } from "components/Loadable";
 import { SkeletonAppointmentsTab } from "components/Skeleton";

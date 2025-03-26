@@ -12,6 +12,7 @@ const openedMixin = (theme) => ({
   overflowX: "hidden",
   boxShadow: "none",
   backgroundColor: "transparent",
+  zIndex: config.zIndex.drawer,
 });
 
 const closedMixin = (theme) => ({
@@ -23,6 +24,7 @@ const closedMixin = (theme) => ({
   width: config.drawer.miniWidth,
   boxShadow: "none",
   backgroundColor: "transparent",
+  zIndex: config.zIndex.drawer,
   [theme.breakpoints.down("lg")]: {
     width: 0,
   },
@@ -33,10 +35,11 @@ const closedMixin = (theme) => ({
 const MiniDrawerStyled = styled(Drawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
-  width: config.drawer.width,
+  width: open ? config.drawer.width : config.drawer.miniWidth,
   flexShrink: 0,
   whiteSpace: "nowrap",
   boxSizing: "border-box",
+  zIndex: config.zIndex.drawer,
   ...(open && {
     ...openedMixin(theme),
     "& .MuiDrawer-paper": openedMixin(theme),
