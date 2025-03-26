@@ -8,7 +8,6 @@ import {
   Grid,
   Typography,
   Box,
-  Avatar,
   Tooltip,
   ClickAwayListener,
 } from "@mui/material";
@@ -17,7 +16,6 @@ import { LoadingIcon, ReminderStatus } from "components/Other";
 import { SubscriptionController } from "components/Subscription";
 
 // assets
-import { doctorAvatar } from "assets/images/avatars";
 import { useTheme } from "@mui/material/styles";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
@@ -299,12 +297,14 @@ function Event({ initEvent = {}, step, onSubmit }) {
           {lg && dname && (
             <Grid item xs={12}>
               <Box display="flex" gap={1} alignItems="start">
-                <Avatar
-                  alt="avatar"
-                  src={doctorAvatar}
-                  shape="circle"
-                  style={{ width: "18px", height: "18px", padding: "1px" }}
-                />
+                <i
+                  className="fi fi-rr-user-md"
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                ></i>
                 <Typography variant="caption" noWrap>
                   {`Dt. ${dname} ${dsurname}`}
                 </Typography>
@@ -315,7 +315,14 @@ function Event({ initEvent = {}, step, onSubmit }) {
           {lg && e.description && (
             <Grid item xs={12}>
               <Box display="flex" gap={1} alignItems="start">
-                <Typography variant="h6">🖋</Typography>
+                <i
+                  className="fi fi-rr-comment"
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                ></i>
                 <Typography variant="caption">
                   {e.description.includes("\n") ||
                   e.description.split(/\n/)[0].length > 24

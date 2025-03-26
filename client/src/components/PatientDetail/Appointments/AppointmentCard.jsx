@@ -1,13 +1,12 @@
 import React, { useState, useRef } from "react";
 import { Menu, Divider } from "primereact";
-import { Grid, Typography, Box, Avatar } from "@mui/material";
+import { Grid, Typography, Box } from "@mui/material";
 import { More, Reminder } from "components/Button";
 import { LoadingIcon, ReminderStatus } from "components/Other";
 import { SubscriptionController } from "components/Subscription";
 import AppointmentStatus from "./AppointmentStatus";
 
 // assets
-import { doctorAvatar } from "assets/images/avatars";
 import { useTheme } from "@mui/material/styles";
 
 function AppointmentCard({ appointment, onClickEdit, onSubmit, onReminder }) {
@@ -212,23 +211,38 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit, onReminder }) {
           </Box>
 
           {/* Time */}
-          <Box display="flex" alignItems="center">
-            <Typography variant="h6" mr={1}>
-              ⏱️
-            </Typography>
-            <Typography variant="h5" mr={"3px"}>{`${duration}`}</Typography>
+          <Box display="flex" gap={1} alignItems="center">
+            <i
+              className={`fi ${
+                duration <= 15
+                  ? "fi-rr-time-quarter-past"
+                  : duration <= 30
+                  ? "fi-rr-time-half-past"
+                  : duration <= 45
+                  ? "fi-rr-time-quarter-to"
+                  : "fi-rr-time-oclock"
+              }`}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            ></i>
+            <Typography variant="h5">{`${duration}`}</Typography>
             <Typography variant="caption">dk.</Typography>
           </Box>
 
           {/* Doctor */}
           {dname && dsurname && (
             <Box display="flex" gap={1} alignItems="center">
-              <Avatar
-                alt="avatar"
-                src={doctorAvatar}
-                shape="circle"
-                style={{ width: "16px", height: "16px", padding: "1px" }}
-              />
+              <i
+                className="fi fi-rr-user-md"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              ></i>
               <Typography variant="caption" fontWeight="bolder" noWrap>
                 {`Dt. ${dname} ${dsurname}`}
               </Typography>
@@ -238,7 +252,14 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit, onReminder }) {
           {/* Description */}
           {description && (
             <Box display="flex" gap={1} alignItems="start">
-              <Typography variant="h6">🖋</Typography>
+              <i
+                className="fi fi-rr-comment"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              ></i>
               <Box display="flex" flexDirection="column">
                 {description.split("\n").map((line, index) => (
                   <Typography key={index} variant="body2">
