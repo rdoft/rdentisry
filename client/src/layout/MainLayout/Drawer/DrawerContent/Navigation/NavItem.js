@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import { forwardRef } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { openDrawer } from "store/reducers/menu";
 
 // material-ui
 import { useTheme } from "@mui/material/styles";
@@ -12,12 +13,15 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 
 // ==============================|| NAVIGATION - LIST ITEM ||============================== //
 
 const NavItem = ({ item, level }) => {
   const theme = useTheme();
+  const dispatch = useDispatch();
+  const matchDownLG = useMediaQuery(theme.breakpoints.down("lg"));
   const menu = useSelector((state) => state.menu);
   const { drawerOpen, openItem } = menu;
 
@@ -37,11 +41,19 @@ const NavItem = ({ item, level }) => {
 
   const isSelected = openItem.findIndex((id) => id === item.id) > -1;
 
+  // Function to handle click on navigation item
+  const handleClick = () => {
+    if (matchDownLG && drawerOpen) {
+      dispatch(openDrawer({ drawerOpen: false }));
+    }
+  };
+
   return (
     <ListItemButton
       {...listItemProps}
       disabled={item.disabled}
       selected={isSelected}
+      onClick={handleClick}
       sx={{
         zIndex: 1201,
         pl: drawerOpen ? level * 3 : 1.5,
@@ -100,12 +112,15 @@ const NavItem = ({ item, level }) => {
             }),
         }}
       >
-        <i className={item.icon} style={{ 
-          fontSize: "20px", 
-          display: "flex", 
-          justifyContent: "center", 
-          alignItems: "center" 
-        }}></i>
+        <i
+          className={item.icon}
+          style={{
+            fontSize: "20px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        ></i>
       </ListItemIcon>
 
       {(drawerOpen || (!drawerOpen && level !== 1)) && (
@@ -118,7 +133,7 @@ const NavItem = ({ item, level }) => {
                   ? theme.palette.text.secondary
                   : theme.palette.text.primary,
                 paddingLeft: "10px",
-                fontWeight: isSelected ? 'bold' : 'normal',
+                fontWeight: isSelected ? "bold" : "normal",
               }}
             >
               {item.title}
