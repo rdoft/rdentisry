@@ -134,7 +134,7 @@ const Profile = () => {
       <ButtonBase
         sx={{
           p: 1.5,
-          borderRadius: 1.5,
+          borderRadius: 4,
           width: "100%",
           display: "flex",
           alignItems: "center",

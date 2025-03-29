@@ -104,7 +104,10 @@ const MainDrawer = ({ open, handleDrawerToggle, window }) => {
               width: config.drawer.width,
               backgroundColor: theme.palette.background.paper,
               backgroundImage: "none",
-              height: "calc(100% - 16px)",
+              maxHeight: { 
+                xs: "calc(100% - 16px)", 
+                sm: "calc(100% - 16px)" 
+              },
               margin: "8px",
               borderRadius: "16px",
               border: "none",

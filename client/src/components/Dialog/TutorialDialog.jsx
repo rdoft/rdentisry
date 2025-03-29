@@ -6,7 +6,10 @@ import {
   DialogContent,
   DialogActions,
   DialogTitle,
+  Typography,
+  useMediaQuery,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 // assets
 import {
@@ -24,6 +27,9 @@ const playlistLink =
   "https://www.youtube.com/embed/videoseries?si=e0kLST0M0J7NStC5&amp;list=PLgsv5B-Bql8VK1tx13nkRVOBZjwh2MxgV";
 
 function TutorialDialog({ open, onClose }) {
+  const theme = useTheme();
+  const matchDownSM = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
     <Dialog
       open={open}
@@ -31,15 +37,48 @@ function TutorialDialog({ open, onClose }) {
       fullWidth
       PaperProps={{
         sx: {
-          borderRadius: "20px",
+          borderRadius: "8px",
+          maxHeight: "90vh",
         },
       }}
+      sx={{
+        zIndex: theme.zIndex.dialog || 1400,
+      }}
     >
-      <DialogTitle textAlign="center" variant="h3" mt={1} mb={2}>
-        Eğitim Videoları
+      <DialogTitle
+        sx={{
+          px: 2,
+          py: 1,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h5">Eğitim Videoları</Typography>
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            color: theme.palette.text.primary,
+          }}
+        >
+          <i
+            className="fi fi-rr-cross-small"
+            style={{
+              fontSize: "16px",
+            }}
+          ></i>
+        </IconButton>
       </DialogTitle>
 
-      <DialogContent>
+      <DialogContent
+        sx={{
+          p: matchDownSM ? 2 : 3,
+          "&:first-of-type": {
+            pt: matchDownSM ? 2 : 3,
+          },
+        }}
+      >
         <iframe
           width="100%"
           height="400"
@@ -52,7 +91,11 @@ function TutorialDialog({ open, onClose }) {
         ></iframe>
       </DialogContent>
       <DialogActions
-        sx={{ justifyContent: "center", borderTop: "0.5px solid" }}
+        sx={{
+          justifyContent: "center",
+          borderTop: `1px solid ${theme.palette.divider}`,
+          p: matchDownSM ? 2 : 3,
+        }}
       >
         <IconButton href={youtubeLink} target="_blank" rel="noreferrer">
           <Avatar

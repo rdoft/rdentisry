@@ -10,11 +10,13 @@ import UserAgreementDialog from "./UserAgreementDialog";
 import ProfileDialog from "./ProfileDialog";
 import ResetPasswordDialog from "./ResetPasswordDialog";
 import PatientPermissionDialog from "./PatientPermissionDialog";
-import TutorialDialog from "./TutorialDialog";
 import SubscriptionUpgradeDialog from "./SubscriptionUpgradeDialog";
 import SubscriptionCancelDialog from "./SubscriptionCancelDialog";
 import PremiumDialog from "./PremiumDialog";
 import ReferDialog from "./ReferDialog";
+import TutorialDialog from "./TutorialDialog";
+import AutomationDialog from "./AutomationDialog";
+import NotificationDialog from "./NotificationDialog";
 
 export {
   DialogTemp,
@@ -29,9 +31,11 @@ export {
   ProfileDialog,
   ResetPasswordDialog,
   PatientPermissionDialog,
-  TutorialDialog,
   SubscriptionUpgradeDialog,
   SubscriptionCancelDialog,
   PremiumDialog,
   ReferDialog,
+  TutorialDialog,
+  AutomationDialog,
+  NotificationDialog,
 };
