@@ -9,7 +9,7 @@ import { useLoading } from "context/LoadingProvider";
 import { LoadingController } from "components/Loadable";
 import { SkeletonProceduresTab } from "components/Skeleton";
 import { SubscriptionController } from "components/Subscription";
-import ProcedureToolbar from "./ProcedureToolbar";
+import { ProcedureToolbar } from "components/Toolbar";
 import DentalChart from "./DentalChart";
 import ProcedureList from "./ProcedureList/ProcedureList";
 
@@ -489,17 +489,17 @@ function ProceduresTab({
             centered
             orientation="vertical"
             sx={{
-              '& .MuiTabs-indicator': {
-                display: 'none', // Make the indicator (tab line) invisible
+              "& .MuiTabs-indicator": {
+                display: "none", // Make the indicator (tab line) invisible
               },
               borderLeft: `1px solid ${theme.palette.divider}`,
               marginLeft: 2,
               paddingLeft: 1,
-              '& .MuiTab-root': {
-                minWidth: 'auto',
-                padding: '6px',
+              "& .MuiTab-root": {
+                minWidth: "auto",
+                padding: "6px",
                 marginBottom: 1,
-              }
+              },
             }}
           >
             <Tab

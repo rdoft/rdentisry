@@ -14,7 +14,7 @@ import { useLoading } from "context/LoadingProvider";
 import { useSubscription } from "context/SubscriptionProvider";
 import { LoadingController } from "components/Loadable";
 import { SkeletonDataTable } from "components/Skeleton";
-import PatientTableToolbar from "./PatientTableToolbar";
+import { PatientTableToolbar } from "components/Toolbar";
 
 // assets
 import { useTheme } from "@mui/material/styles";

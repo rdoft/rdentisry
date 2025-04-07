@@ -9,7 +9,7 @@ import { useLoading } from "context/LoadingProvider";
 import { useSubscription } from "context/SubscriptionProvider";
 
 // assets
-import "assets/styles/PatientDetail/PatientDetailToolbar.css";
+import "assets/styles/Toolbar/PatientDetailToolbar.css";
 
 // services
 import { PatientService } from "services";

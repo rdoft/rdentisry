@@ -11,7 +11,7 @@ import { useSubscription } from "context/SubscriptionProvider";
 import { DoctorService } from "services";
 
 // assets
-import "assets/styles/AppointmentCalendar/CalendarToolbar.css";
+import "assets/styles/Toolbar/CalendarToolbar.css";
 
 function CalendarToolbar({
   showAll,

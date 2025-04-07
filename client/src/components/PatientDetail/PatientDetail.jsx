@@ -6,13 +6,15 @@ import { TabView, TabPanel } from "primereact";
 import { Grid } from "@mui/material";
 import { useLoading } from "context/LoadingProvider";
 import { Loader } from "components/Loadable";
+import {
+  PatientDetailToolbar,
+  PatientDetailToolbarAction,
+} from "components/Toolbar";
 import NotesTab from "./Notes/NotesTab";
 import PaymentsTab from "./Payments/PaymentsTab";
 import ProceduresTab from "./Procedures/ProceduresTab";
 import AppointmentsTab from "./Appointments/AppointmentsTab";
 import TabHeader from "./TabHeader";
-import PatientDetailToolbar from "./PatientDetailToolbar";
-import PatientDetailToolbarAction from "./PatientDetailToolbarAction";
 
 // assets
 import "assets/styles/PatientDetail/PatientDetail.css";

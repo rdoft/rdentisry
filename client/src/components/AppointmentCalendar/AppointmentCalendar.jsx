@@ -6,6 +6,7 @@ import { getEventTime, setEventTime } from "utils";
 import { AppointmentDialog } from "components/Dialog";
 import { useLoading } from "context/LoadingProvider";
 import { Loader } from "components/Loadable";
+import { CalendarToolbar } from "components/Toolbar";
 import moment from "moment";
 import Event from "./Event";
 import MonthEvent from "./MonthEvent";
@@ -13,7 +14,6 @@ import DayHeader from "./DayHeader";
 import TimeGutter from "./TimeGutter";
 import TimeGutterHeader from "./TimeGutterHeader";
 import RBCToolbar from "./RBCToolbar";
-import CalendarToolbar from "./CalendarToolbar";
 
 // assets
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
