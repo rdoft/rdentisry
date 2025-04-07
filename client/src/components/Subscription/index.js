@@ -5,7 +5,6 @@ import PaymentForm from "./PaymentForm";
 import Pricing from "./Pricing";
 import PricingCard from "./PricingCard";
 import SubscriptionController from "./SubscriptionController";
-import SubscriptionToolbar from "./SubscriptionToolbar";
 
 export {
   BillingForm,
@@ -15,5 +14,4 @@ export {
   Pricing,
   PricingCard,
   SubscriptionController,
-  SubscriptionToolbar,
 };

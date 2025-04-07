@@ -55,4 +55,4 @@ function SubscriptionToolbar({ index, onClickRefer }) {
   );
 }
 
-export default SubscriptionToolbar;
+export default SubscriptionToolbar; 

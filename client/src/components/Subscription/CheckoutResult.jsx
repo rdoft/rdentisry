@@ -3,8 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { Subscribe } from "components/Button";
+import { SubscriptionToolbar } from "components/Toolbar";
 import ReactGA from "react-ga4";
-import SubscriptionToolbar from "./SubscriptionToolbar";
 
 // assets
 import {

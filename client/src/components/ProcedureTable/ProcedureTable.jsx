@@ -9,10 +9,10 @@ import { useLoading } from "context/LoadingProvider";
 import { LoadingController } from "components/Loadable";
 import { SkeletonDataTable } from "components/Skeleton";
 import { SubscriptionController } from "components/Subscription";
+import { ProcedureTableToolbar } from "components/Toolbar";
 import PriceColumn from "./PriceColumn";
 import CategoryColumn from "./CategoryColumn";
 import NameColumn from "./NameColumn";
-import ProcedureTableToolbar from "./ProcedureTableToolbar";
 
 // services
 import { ProcedureService, ProcedureCategoryService } from "services";

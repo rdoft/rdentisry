@@ -13,9 +13,9 @@ import {
   SubscriptionUpgradeDialog,
   SubscriptionCancelDialog,
 } from "components/Dialog";
+import { SubscriptionToolbar } from "components/Toolbar";
 import ReactGA from "react-ga4";
 import PricingCard from "./PricingCard";
-import SubscriptionToolbar from "./SubscriptionToolbar";
 
 // services
 import { SubscriptionService } from "services";
