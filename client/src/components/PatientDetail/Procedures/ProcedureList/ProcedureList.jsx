@@ -288,7 +288,7 @@ function ProcedureList({
           body={(procedure) =>
             procedure.id === rowIndex && !procedure.visit.approvedDate ? (
               <SubscriptionController>
-                <Delete onClick={() => handleDelete(procedure)} />
+                <Delete size="small" onClick={() => handleDelete(procedure)} />
               </SubscriptionController>
             ) : null
           }

@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { Subscribe } from "components/Button";
-import { SubscriptionToolbar } from "components/Toolbar";
 import ReactGA from "react-ga4";
 
 // assets
@@ -38,12 +37,7 @@ function CheckoutResult() {
   };
 
   return (
-    <Grid container item rowSpacing={4.5} columnSpacing={2.75}>
-      {/* Toolbar */}
-      <Grid item xs={12}>
-        <SubscriptionToolbar index={3} />
-      </Grid>
-
+    <Grid container item rowSpacing={4.5} columnSpacing={2.75} mt={1}>
       {/* Result */}
       <Grid
         container
@@ -108,10 +102,7 @@ function CheckoutResult() {
             <Subscribe
               label="Ödeme Sayfasına Dön"
               onClick={handleClickAgain}
-              style={{
-                backgroundColor: theme.palette.text.secondary,
-                color: theme.palette.common.white,
-              }}
+              variant="main"
             />
           </Grid>
         )}

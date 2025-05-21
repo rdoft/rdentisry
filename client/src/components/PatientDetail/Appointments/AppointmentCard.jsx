@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Menu, Divider } from "primereact";
 import { Grid, Typography, Box } from "@mui/material";
-import { More, Reminder } from "components/Button";
+import { More, Reminder, Basic, Delete } from "components/Button";
 import { LoadingIcon, ReminderStatus } from "components/Other";
 import { SubscriptionController } from "components/Subscription";
 import AppointmentStatus from "./AppointmentStatus";
@@ -9,16 +9,22 @@ import AppointmentStatus from "./AppointmentStatus";
 // assets
 import { useTheme } from "@mui/material/styles";
 
-function AppointmentCard({ appointment, onClickEdit, onSubmit, onReminder }) {
+function AppointmentCard({
+  appointment,
+  onClickEdit,
+  onSubmit,
+  onReminder,
+  onDelete,
+}) {
   const theme = useTheme();
   const menu = useRef(null);
 
   const [loading, setLoading] = useState(false);
-  const [isHover, setIsHover] = useState(false);
 
   // Set values as desired format
   const { description, duration, date, status, reminderStatus } = appointment;
   const { name: dname = "", surname: dsurname = "" } = appointment.doctor || {};
+  const { isSMS = false } = appointment.patient || {};
   const month = new Date(date).toLocaleDateString("tr-TR", {
     month: "long",
   });
@@ -35,16 +41,6 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit, onReminder }) {
   const showApprove = status === "active" && reminderStatus !== "approved";
 
   // HANDLERS -----------------------------------------------------------------
-  // onMouseEnter handler for display buttons
-  const handleMouseEnter = () => {
-    setIsHover(true);
-  };
-
-  // onMouseLeave handler for hide buttons
-  const handleMouseLeave = () => {
-    setIsHover(false);
-  };
-
   // onClickEdit handler
   const handleClickEdit = () => {
     onClickEdit(appointment);
@@ -80,15 +76,18 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit, onReminder }) {
     await onReminder(appointment);
   };
 
+  // onDelete handler
+  const handleDelete = () => {
+    onDelete(appointment);
+  };
+
   // TEMPLATES ----------------------------------------------------------------
   const actionButton = (
     <>
       <More
-        style={{
-          width: "2rem",
-          height: "2rem",
-          color: theme.palette.text.primary,
-        }}
+        variant="text"
+        severity="secondary"
+        size="small"
         onClick={(event) => {
           menu.current.toggle(event);
         }}
@@ -96,27 +95,50 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit, onReminder }) {
       <Menu
         model={[
           {
-            label: "Görüntüle / Düzenle",
-            icon: "pi pi-external-link",
-            style: { fontSize: "0.8rem" },
-            command: handleClickEdit,
+            template: () => (
+              <Basic
+                label="Görüntüle / Düzenle"
+                icon="pi pi-external-link"
+                onClick={handleClickEdit}
+              />
+            ),
           },
           ...(showApprove
             ? [
                 {
-                  label: "Onayla",
-                  icon: "pi pi-check",
-                  style: { fontSize: "0.8rem" },
-                  command: () => handleChangeReminderStatus("approved"),
+                  template: () => (
+                    <Basic
+                      label="Onayla"
+                      icon="pi pi-check"
+                      severity="primary"
+                      onClick={() => handleChangeReminderStatus("approved")}
+                    />
+                  ),
                 },
               ]
             : showRemoveApprove
             ? [
                 {
-                  label: "Onayı Kaldır",
-                  icon: "pi pi-times",
-                  style: { fontSize: "0.8rem" },
-                  command: () => handleChangeReminderStatus(null),
+                  template: () => (
+                    <Basic
+                      label="Onayı Kaldır"
+                      icon="pi pi-times"
+                      onClick={() => handleChangeReminderStatus(null)}
+                    />
+                  ),
+                },
+              ]
+            : []),
+          ...(onDelete
+            ? [
+                {
+                  template: () => (
+                    <Delete
+                      label="Sil"
+                      onClick={handleDelete}
+                      style={{ width: "100%", textAlign: "start" }}
+                    />
+                  ),
                 },
               ]
             : []),
@@ -126,10 +148,13 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit, onReminder }) {
                   template: () => (
                     <>
                       <Divider type="solid" className="my-2" />
-                      <SubscriptionController type="sms">
+                      <SubscriptionController
+                        type="sms"
+                        style={{ width: "100%" }}
+                      >
                         <Reminder
                           label="Hatırlatma Gönder"
-                          style={{ width: "100%" }}
+                          disabled={!isSMS}
                           onClick={sendReminder}
                         />
                       </SubscriptionController>
@@ -144,11 +169,14 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit, onReminder }) {
                   template: () => (
                     <>
                       <Divider type="solid" className="my-2" />
-                      <SubscriptionController type="sms">
+                      <SubscriptionController
+                        type="sms"
+                        style={{ width: "100%" }}
+                      >
                         <Reminder
                           label="Hasta Onayına Gönder"
                           icon="pi pi-send"
-                          style={{ width: "100%" }}
+                          disabled={!isSMS}
                           onClick={sendReminder}
                         />
                       </SubscriptionController>
@@ -161,7 +189,7 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit, onReminder }) {
         ref={menu}
         id="popup_menu"
         popup
-        style={{ padding: "0.5rem" }}
+        style={{ padding: "0.25rem" }}
       />
     </>
   );
@@ -173,8 +201,6 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit, onReminder }) {
         alignItems="center"
         justifyContent="space-around"
         style={{ marginTop: "1em", marginBottom: "1em" }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
         onContextMenu={handleRightClick}
       >
         {/* Reminder Status */}
@@ -285,7 +311,7 @@ function AppointmentCard({ appointment, onClickEdit, onSubmit, onReminder }) {
 
         {/* Edit Button */}
         <Grid item xl={1} xs={1} textAlign="end">
-          {isHover && actionButton}
+          {actionButton}
         </Grid>
       </Grid>
 

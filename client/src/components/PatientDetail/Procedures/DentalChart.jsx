@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Badge, Divider } from "primereact";
 import { Grid, ImageList } from "@mui/material";
 import { PressKeyText } from "components/Text";
-import { SwitchTeeth } from "components/Button";
+import { Basic } from "components/Button";
 import { SkeletonDentalChart } from "components/Skeleton";
 import { cacheImages } from "utils";
 import StatusBadge from "./StatusBadge";
@@ -101,7 +101,7 @@ function DentalChart({
             keypad={"ESC"}
           />
         ) : (
-          <PressKeyText text="Dişleri seçmek için üzerine tıklayın" />
+          <PressKeyText text="Seçmek istediğiniz dişlere tıklayın" />
         )}
       </Grid>
 
@@ -152,9 +152,12 @@ function DentalChart({
 
       {/* Divider */}
       <Divider align="center" style={{ margin: 0 }}>
-        <SwitchTeeth
+        <Basic
           label={adult ? "Yetişkin" : "Çocuk"}
           onClick={onToggleType}
+          variant="outlined"
+          severity="primary"
+          size="xsmall"
         />
       </Divider>
 

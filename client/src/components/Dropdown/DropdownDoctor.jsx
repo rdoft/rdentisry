@@ -60,10 +60,10 @@ function DropdownDoctor({
   // Dropdown panel footer
   const doctorDropdownFooter = () => {
     return (
-      <div className="m-2">
+      <div className="m-2" style={{ textAlign: "center" }}>
         <Divider className="mt-0 mb-2" />
-        <SubscriptionController type="doctors" >
-          <Add label="Doktor Ekle" onClick={onClickAdd} />
+        <SubscriptionController type="doctors">
+          <Add size="small" label="Doktor Ekle" onClick={onClickAdd} />
         </SubscriptionController>
       </div>
     );
@@ -81,7 +81,7 @@ function DropdownDoctor({
       panelFooterTemplate={doctorDropdownFooter}
       onKeyDown={handleKeyDown}
       onChange={handleChange}
-      className={`doctor-selection-dropdown ${props?.className || ''}`}
+      className={`doctor-selection-dropdown ${props?.className || ""}`}
       style={props?.style}
       filter
       filterBy="name,surname,fullName"

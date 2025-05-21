@@ -243,14 +243,7 @@ function NotificationDialog({
               gap: 0.5,
             }}
           >
-            <Read
-              onClick={handleClickRead}
-              size="small"
-              sx={{
-                minWidth: "unset",
-                p: "4px",
-              }}
-            />
+            <Read onClick={handleClickRead} size="small" />
             <Typography
               variant="caption"
               color="text.primary"

@@ -1,32 +1,34 @@
 import React from "react";
-import { Button } from "primereact";
+import BaseButton from "./BaseButton";
 import { useLoading } from "context/LoadingProvider";
 
-// assets
-import { useTheme } from "@mui/material/styles";
-
-function Subscribe({ label, onClick, disabled, ...props }) {
-  const theme = useTheme();
+function Subscribe({
+  label,
+  onClick,
+  variant = "outlined",
+  severity = "primary",
+  size = "large",
+  disabled,
+  ...props
+}) {
   const { loading } = useLoading();
 
   return (
-    <Button
-      outlined
-      size="small"
-      label={label}
-      disabled={disabled || loading.save}
-      icon={loading.save ? "pi pi-spin pi-spinner" : "pi pi-arrow-right"}
+    <BaseButton
+      icon={"pi pi-arrow-right"}
       iconPos="right"
+      label={label}
       onClick={onClick}
+      variant={variant}
+      severity={severity}
+      size={size}
+      disabled={disabled}
+      loading={loading.save}
       style={{
-        color: theme.palette.text.primary,
-        opacity: disabled || loading.save ? 0.5 : 1,
-        border: `1px solid ${theme.palette.grey[300]}`,
         width: "100%",
-        height: "3rem",
-        fontSize: "1rem",
         ...props.style,
       }}
+      {...props}
     />
   );
 }

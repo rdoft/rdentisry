@@ -1,27 +1,41 @@
 import React from "react";
-import { Button } from "primereact";
+import BaseButton from "./BaseButton";
 
-// assets
-import { useTheme } from "@mui/material/styles";
-
-function Today({ label, onClick, ...props }) {
-  const theme = useTheme();
-
-  return (
-    <Button
-      text
-      size="small"
-      label={label}
-      severity={props.severity || "secondary"}
-      onClick={onClick}
-      style={{
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.background.primary,
-        padding: "0.5rem 1rem",
-        ...props.style,
-      }}
-    />
-  );
+function Basic({
+  label,
+  onClick,
+  icon,
+  variant = "text",
+  severity = "secondary",
+  ...props
+}) {
+  if (label) {
+    return (
+      <BaseButton
+        icon={icon}
+        variant={variant}
+        severity={severity}
+        label={label}
+        onClick={onClick}
+        style={{
+          width: "100%",
+          textAlign: "start",
+          ...props.style,
+        }}
+        {...props}
+      />
+    );
+  } else {
+    return (
+      <BaseButton
+        icon={icon}
+        variant={variant}
+        severity={severity}
+        onClick={onClick}
+        {...props}
+      />
+    );
+  }
 }
 
-export default Today;
+export default Basic;

@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Divider, InputText } from "primereact";
 import { Grid, Box, Typography } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import { usePaymentContext } from "context/PaymentProvider";
 import { Subscribe } from "components/Button";
 // schemas
 import schema from "schemas/subscription.schema";
 
 function BillingForm({ onSubmit }) {
-  const theme = useTheme();
-  const { userDetail, saveUserDetail } = usePaymentContext();
+  const { userDetail } = usePaymentContext();
 
   // Set the default values
-  const [isValid, setIsValid] = useState();
+  const [user, setUser] = useState(userDetail);
+  const [isValid, setIsValid] = useState(false);
   const [isError, setIsError] = useState({
     idNumber: false,
     name: false,
@@ -24,39 +23,32 @@ function BillingForm({ onSubmit }) {
   });
 
   useEffect(() => {
-    const _isValid = schema.billing.validate(userDetail).error ? false : true;
+    const _isValid = schema.billing.validate(user).error ? false : true;
     setIsValid(_isValid);
-  }, [userDetail]);
+  }, [user]);
 
   // HANDLERS ---------------------------------------------------------------------------------------------------------
   // onClick handler for Submit
   const handleSubmit = () => {
-    isValid && onSubmit();
+    if (isValid) {
+      onSubmit(user);
+    }
   };
 
   // onChange handler for user
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    // user
-    const _user = {
-      ...userDetail,
+    setUser((prev) => ({
+      ...prev,
       [name]: value,
-    };
+    }));
 
     // error
-    const _isError = {
-      ...isError,
+    setIsError((prev) => ({
+      ...prev,
       [name]: schema[name].validate(value).error ? true : false,
-    };
-
-    // validation
-    const _isValid = schema.billing.validate(_user).error ? false : true;
-
-    // Set isError and user
-    saveUserDetail(_user);
-    setIsError(_isError);
-    setIsValid(_isValid);
+    }));
   };
 
   return (
@@ -77,7 +69,7 @@ function BillingForm({ onSubmit }) {
           <InputText
             id="idNumber"
             name="idNumber"
-            value={userDetail.idNumber || ""}
+            value={user.idNumber || ""}
             onChange={handleChange}
             keyfilter="num"
             placeholder="TC Kimlik Numarası"
@@ -95,7 +87,7 @@ function BillingForm({ onSubmit }) {
             id="name"
             name="name"
             type="text"
-            value={userDetail.name || ""}
+            value={user.name || ""}
             placeholder="Ad"
             onChange={handleChange}
             style={{ width: "100%" }}
@@ -108,7 +100,7 @@ function BillingForm({ onSubmit }) {
             id="surname"
             name="surname"
             type="text"
-            value={userDetail.surname || ""}
+            value={user.surname || ""}
             placeholder="Soyad"
             onChange={handleChange}
             style={{ width: "100%" }}
@@ -125,7 +117,7 @@ function BillingForm({ onSubmit }) {
           <InputText
             id="phone"
             name="phone"
-            value={userDetail.phone || ""}
+            value={user.phone || ""}
             keyfilter="num"
             placeholder="5xxxxxxxxx"
             maxLength={10}
@@ -146,7 +138,7 @@ function BillingForm({ onSubmit }) {
             <InputText
               id="city"
               name="city"
-              value={userDetail.city || ""}
+              value={user.city || ""}
               type="text"
               placeholder="Şehir"
               onChange={handleChange}
@@ -157,7 +149,7 @@ function BillingForm({ onSubmit }) {
             <InputText
               id="country"
               name="country"
-              value={userDetail.country || ""}
+              value={user.country || ""}
               type="text"
               style={{ width: "48%" }}
               disabled
@@ -166,7 +158,7 @@ function BillingForm({ onSubmit }) {
           <InputText
             id="address"
             name="address"
-            value={userDetail.address || ""}
+            value={user.address || ""}
             type="text"
             placeholder="Adres"
             onChange={handleChange}
@@ -181,11 +173,8 @@ function BillingForm({ onSubmit }) {
           <Subscribe
             label={"Şimdi Öde"}
             onClick={handleSubmit}
+            variant={"main"}
             disabled={!isValid}
-            style={{
-              color: theme.palette.common.white,
-              backgroundColor: theme.palette.text.secondary,
-            }}
           />
         </Grid>
       </Grid>

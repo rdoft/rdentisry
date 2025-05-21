@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { Toolbar, Divider } from "primereact";
-import { Typography, Stack } from "@mui/material";
+import { Toolbar } from "primereact";
+import { Box } from "@mui/material";
 import { DropdownPatient } from "components/Dropdown";
 import { PatientDialog } from "components/Dialog";
 import { useLoading } from "context/LoadingProvider";
@@ -96,53 +96,39 @@ function PatientDetailToolbar({ patient, patients, setPatients, endContent }) {
   };
 
   // TEMPLATES ----------------------------------------------------------------
-  // Get title
-  const getTitle = () => {
-    return (
-      <Stack>
-        <Typography variant="h3">Hasta</Typography>
-        <Typography variant="caption" style={{ color: "gray" }}>
-          Hastalar{" "}
-          <i className="pi pi-angle-right" style={{ fontSize: "0.7rem" }} />{" "}
-          Hasta Detayı
-        </Typography>
-      </Stack>
-    );
-  };
-
-  // Toolbar content thats are on left
-  const centerContent = (
-    <div
-      style={{
-        position: "absolute",
-        left: "50%",
-        transform: "translateX(-50%)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+  // Toolbar content that's on left
+  const startContent = () => (
+    <Box sx={{ display: "flex", alignItems: "center", marginLeft: "0.25rem" }}>
       <DropdownPatient
         key={patient?.id}
         value={patient}
         options={patients}
         onChange={handleChange}
         onClickAdd={showPatientDialog}
-        style={{ alignItems: "center", height: "3rem" }}
+        style={{
+          alignItems: "center",
+          height: "2.5rem",
+          width: "18rem",
+          backgroundColor: "transparent",
+          padding: "1.5rem 0",
+        }}
       />
-    </div>
+    </Box>
   );
 
   return (
     <>
       <Toolbar
         className="p-1"
-        start={getTitle}
-        center={centerContent}
+        start={startContent}
         end={endContent}
-        style={{ border: "none" }}
+        style={{
+          border: "none",
+          padding: "0.5rem 1rem",
+          minHeight: "3.25rem",
+          backgroundColor: "transparent",
+        }}
       />
-      <Divider className="m-1 p-1" />
       {patientDialog && (
         <PatientDialog onHide={hidePatientDialog} onSubmit={savePatient} />
       )}

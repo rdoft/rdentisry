@@ -9,7 +9,7 @@ import {
   PatientPermissionDialog,
 } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
-import { More, Delete } from "components/Button";
+import { More, Delete, Basic } from "components/Button";
 import { useLoading } from "context/LoadingProvider";
 import { useSubscription } from "context/SubscriptionProvider";
 import { LoadingController } from "components/Loadable";
@@ -36,7 +36,6 @@ function PatientsTable() {
   const [patient, setPatient] = useState(null);
   const [patients, setPatients] = useState(null);
   const [selectedPatients, setSelectedPatients] = useState(null);
-  const [rowIndex, setRowIndex] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [dialogs, setDialogs] = useState({
     patient: false,
@@ -291,16 +290,6 @@ function PatientsTable() {
     navigate(`/patients/${event.data.id}`);
   };
 
-  // onRowMouseEnter handler for display buttons
-  const handleRowMouseEnter = (event) => {
-    setRowIndex(event.data.id);
-  };
-
-  // onRowMouseLeave handler for hide buttons
-  const handleRowMouseLeave = () => {
-    setRowIndex(null);
-  };
-
   // Save permission
   const handleSavePermission = (permission) => {
     hidePermissionDialog();
@@ -312,16 +301,15 @@ function PatientsTable() {
 
   // TEMPLATES -----------------------------------------------------------------
   // Menu item for the patient action buttons
-  const actionButton = (patient) => {
+  const actionButton = (patient_) => {
     return (
       <>
         <More
-          style={{
-            width: "2rem",
-            height: "2rem",
-            color: theme.palette.text.primary,
-          }}
+          variant="text"
+          severity="secondary"
+          size="small"
           onClick={(event) => {
+            setPatient(patient_);
             event.stopPropagation();
             menu.current.toggle(event);
           }}
@@ -329,28 +317,41 @@ function PatientsTable() {
         <Menu
           model={[
             {
-              label: "Görüntüle / Düzenle",
-              icon: "pi pi-external-link",
-              style: { fontSize: "0.9rem" },
-              command: () => showPatientDialog(patient),
+              template: () => (
+                <Basic
+                  label="Görüntüle / Düzenle"
+                  icon="pi pi-external-link"
+                  onClick={() => showPatientDialog(patient)}
+                />
+              ),
+            },
+
+            {
+              template: () => (
+                <Basic
+                  label="Hastaya Git"
+                  icon="pi pi-arrow-circle-right"
+                  onClick={() => navigate(`/patients/${patient.id}`)}
+                />
+              ),
             },
             {
-              label: "Hastaya Git",
-              icon: "pi pi-arrow-circle-right",
-              style: { fontSize: "0.9rem" },
-              command: () => navigate(`/patients/${patient.id}`),
+              template: () => (
+                <Basic
+                  label="Randevu Ekle"
+                  icon="pi pi-calendar-plus"
+                  onClick={() => showAppointmentDialog(patient)}
+                />
+              ),
             },
             {
-              label: "Randevu Ekle",
-              icon: "pi pi-calendar-plus",
-              style: { fontSize: "0.9rem" },
-              command: () => showAppointmentDialog(patient),
-            },
-            {
-              label: "İzinleri Yönet",
-              icon: "pi pi-key",
-              style: { fontSize: "0.9rem" },
-              command: () => showPermissionDialog(patient),
+              template: () => (
+                <Basic
+                  label="İzinleri Yönet"
+                  icon="pi pi-key"
+                  onClick={() => showPermissionDialog(patient)}
+                />
+              ),
             },
             {
               template: () => (
@@ -365,6 +366,9 @@ function PatientsTable() {
           ref={menu}
           id="popup_menu"
           popup
+          style={{
+            padding: "0.25rem",
+          }}
         />
       </>
     );
@@ -474,15 +478,12 @@ function PatientsTable() {
             globalFilter={globalFilter}
             selection={selectedPatients}
             onSelectionChange={handleChangeSelection}
-            onRowMouseEnter={handleRowMouseEnter}
-            onRowMouseLeave={handleRowMouseLeave}
             onRowClick={handleRowClick}
             selectionMode="checkbox"
             responsiveLayout="scroll"
             dataKey="id"
             paginator
             rows={10}
-            rowHover={true}
             dragSelection={true}
             currentPageReportTemplate="({totalRecords} hasta)"
             emptyMessage="Hiçbir sonuç bulunamadı"
@@ -528,9 +529,7 @@ function PatientsTable() {
             ></Column>
             {/* Action buttons */}
             <Column
-              body={(patient) =>
-                patient.id === rowIndex ? actionButton(patient) : null
-              }
+              body={actionButton}
               style={{ width: "10rem", textAlign: "end" }}
             ></Column>
           </DataTable>
@@ -543,6 +542,7 @@ function PatientsTable() {
           initPatient={patient}
           onHide={hidePatientDialog}
           onSubmit={savePatient}
+          onDelete={patient && deletePatient}
         />
       )}
 

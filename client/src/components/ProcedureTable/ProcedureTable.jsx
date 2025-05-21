@@ -332,6 +332,7 @@ function ProcedureTable() {
                 procedure.id === rowIndex ? (
                   <SubscriptionController>
                     <Delete
+                      size="small"
                       onClick={() => showDeleteProcedureDialog(procedure)}
                     />
                   </SubscriptionController>

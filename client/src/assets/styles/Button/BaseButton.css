@@ -1,0 +1,136 @@
+.base-button {
+  border-radius: 8px !important;
+  text-transform: none !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease-in-out !important;
+  cursor: pointer !important;
+  -webkit-tap-highlight-color: transparent !important;
+  touch-action: manipulation !important;
+  user-select: none !important;
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+}
+
+.base-button-icon-only {
+  gap: 0 !important;
+}
+
+/* Override PrimeReact button styles */
+.base-button.p-button,
+.base-button.p-button .p-button-label {
+  font-weight: 600 !important;
+}
+
+/* Icon Styles */
+.base-button span[class^="pi-"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+/* Severity Colors */
+.base-button-primary {
+  --button-color: var(--palette-text-secondary) !important;
+  --button-color-hover: var(--palette-text-secondaryDark) !important;
+  --button-color-active: var(--palette-text-secondaryDark) !important;
+  --button-background-color: var(--palette-background-secondary) !important;
+}
+
+.base-button-secondary {
+  --button-color: var(--palette-text-primary) !important;
+  --button-color-hover: var(--palette-text-primaryDark) !important;
+  --button-color-active: var(--palette-text-primaryDark) !important;
+  --button-background-color: var(--palette-background-primary) !important;
+}
+
+.base-button-danger {
+  --button-color: var(--palette-text-error) !important;
+  --button-color-hover: var(--palette-text-errorDark) !important;
+  --button-color-active: var(--palette-text-errorDark) !important;
+  --button-background-color: var(--palette-background-error) !important;
+}
+
+.base-button-warning {
+  --button-color: var(--palette-text-warning) !important;
+  --button-color-hover: var(--palette-text-warningDark) !important;
+  --button-color-active: var(--palette-text-warningDark) !important;
+  --button-background-color: var(--palette-background-warning) !important;
+}
+
+.base-button-success {
+  --button-color: var(--palette-text-success) !important;
+  --button-color-hover: var(--palette-text-successDark) !important;
+  --button-color-active: var(--palette-text-successDark) !important;
+  --button-background-color: var(--palette-background-success) !important;
+}
+
+/* Main Variant */
+.base-button-main {
+  color: var(--palette-common-white) !important;
+  background-color: var(--button-color) !important;
+  border: 1px solid var(--button-color) !important;
+}
+
+.base-button-main:hover {
+  background-color: var(--button-color-hover) !important;
+  border: 1px solid var(--button-color-hover) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.base-button-main:active {
+  background-color: var(--button-color-active) !important;
+  border: 1px solid var(--button-color-active) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(1px) !important;
+}
+
+/* Outlined Variant */
+.base-button-outlined {
+  color: var(--button-color) !important;
+  background-color: transparent !important;
+  border: 1px solid var(--palette-grey-300) !important;
+}
+
+.base-button-outlined:hover {
+  color: var(--button-color-hover) !important;
+  border: 1px solid var(--button-color-hover) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.base-button-outlined:active {
+  color: var(--button-color-active) !important;
+  border: 1px solid var(--button-color-active) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(1px) !important;
+}
+
+/* Text Variant */
+.base-button-text {
+  color: var(--button-color) !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.base-button-text:hover {
+  color: var(--button-color-hover) !important;
+  background-color: var(--button-background-color) !important;
+  box-shadow: none !important;
+}
+
+.base-button-text:active {
+  color: var(--button-color-active) !important;
+  background-color: var(--button-background-color) !important;
+  box-shadow: none !important;
+  transform: translateY(1px) !important;
+}
+
+/* Disabled State */
+.base-button:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}

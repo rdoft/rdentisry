@@ -1,6 +1,6 @@
 import React from "react";
-import { Toolbar, Divider } from "primereact";
-import { Typography } from "@mui/material";
+import { Toolbar } from "primereact";
+import { Box } from "@mui/material";
 import { Add, Delete } from "components/Button";
 import { SubscriptionController } from "components/Subscription";
 import Search from "components/Search";
@@ -11,57 +11,52 @@ function ProcedureTableToolbar({
   onClickDelete,
   onInput,
 }) {
-  // Get title
-  const getTitle = () => {
-    return <Typography variant="h3">Tedaviler</Typography>;
-  };
-
-  // Get Add/Delete procedure buttons
-  const getActionButton = () => {
+  // Get search Input
+  const startContent = () => {
     return (
-      <>
-        <Delete
-          label="Sil"
-          onClick={onClickDelete}
-          style={{ visibility: visibleDelete ? "visible" : "hidden" }}
-        />
-        <SubscriptionController type="storage">
-          <Add label="Tedavi Ekle" default={true} onClick={onClickAdd} />
-        </SubscriptionController>
-      </>
+      <Box
+        sx={{ display: "flex", alignItems: "center", marginLeft: "0.25rem" }}
+      >
+        <Search onInput={onInput} />
+      </Box>
     );
   };
 
-  // Get search Input
-  const getSearchInput = () => {
+  // Get Add/Delete procedure buttons
+  const endContent = () => {
     return (
-      <div
-        style={{
-          position: "absolute",
-          left: "50%",
-          transform: "translateX(-50%)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Search onInput={onInput} />
-      </div>
+      <Box sx={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <Delete
+          label="Sil"
+          variant="outlined"
+          onClick={onClickDelete}
+          style={{
+            visibility: visibleDelete ? "visible" : "hidden",
+          }}
+        />
+        <SubscriptionController type="storage">
+          <Add
+            label="Tedavi Ekle"
+            onClick={onClickAdd}
+          />
+        </SubscriptionController>
+      </Box>
     );
   };
 
   return (
-    <>
-      <Toolbar
-        className="p-2"
-        start={getTitle}
-        center={getSearchInput}
-        end={getActionButton}
-        style={{ border: "none" }}
-      />
-      <Divider className="m-1 p-1" />
-    </>
+    <Toolbar
+      className="p-2"
+      start={startContent}
+      end={endContent}
+      style={{
+        border: "none",
+        padding: "0.5rem 1rem",
+        minHeight: "3.25rem",
+        backgroundColor: "transparent",
+      }}
+    />
   );
 }
 
-export default ProcedureTableToolbar; 
+export default ProcedureTableToolbar;

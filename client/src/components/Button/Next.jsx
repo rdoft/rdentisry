@@ -1,26 +1,15 @@
 import React from "react";
-import { Button } from "primereact";
+import BaseButton from "./BaseButton";
 
-// assets
-import { useTheme } from "@mui/material/styles";
-
-function Next({ label, onClick, ...props }) {
-  const theme = useTheme();
-
+function Next({ onClick, ...props }) {
   return (
-    <Button
-      text
-      size="small"
+    <BaseButton
       icon="pi pi-angle-right"
-      label={label}
-      severity={props.severity || "secondary"}
       onClick={onClick}
-      style={{
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.background.primary,
-        padding: "0.5rem",
-        ...props.style,
-      }}
+      variant="text"
+      severity="secondary"
+      size="small"
+      {...props}
     />
   );
 }

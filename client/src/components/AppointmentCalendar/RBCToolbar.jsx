@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, Typography, Box } from "@mui/material";
-import { Next, Prev, Basic, SelectButton } from "components/Button";
+import { Next, Prev, Today, SelectButton } from "components/Button";
 
 // assets
 import { useTheme } from "@mui/material/styles";
@@ -47,17 +47,17 @@ const CalendarToolbar = ({ date, label, view, views, onNavigate, onView }) => {
   return (
     <Grid container item alignItems="center" pb={1}>
       <Grid item xs={3}>
-        <Box display="flex" gap={0.5}>
+        <Box display="flex" gap={0.4}>
+          <Today onClick={() => handleNavigate("TODAY")} />
           <Prev onClick={() => handleNavigate("PREV")} />
-          <Basic label={"Bugün"} onClick={() => handleNavigate("TODAY")} />
           <Next onClick={() => handleNavigate("NEXT")} />
         </Box>
       </Grid>
 
       <Grid item xs={6} textAlign="center">
         <Typography
-          variant="h3"
-          fontWeight="bolder"
+          variant="h4"
+          fontWeight="bold"
           sx={{ color: theme.palette.text.primary }}
         >
           {label}

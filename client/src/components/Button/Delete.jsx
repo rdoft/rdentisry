@@ -1,22 +1,40 @@
 import React from "react";
-import { Button } from "primereact";
 import { Tooltip } from "@mui/material";
+import BaseButton from "./BaseButton";
 
-function Delete({ label, onClick, ...props }) {
-  return (
-    <Tooltip title="Sil" placement="bottom" enterDelay={750}>
-      <Button
-        text
-        outlined
-        size="small"
+function Delete({
+  label,
+  onClick,
+  variant = "text",
+  severity = "danger",
+  ...props
+}) {
+  if (label) {
+    return (
+      <BaseButton
         icon="pi pi-trash"
+        variant={variant}
+        severity={severity}
         label={label}
-        severity={props.severity || "danger"}
         onClick={onClick}
-        style={props.style}
+        {...props}
       />
-    </Tooltip>
-  );
+    );
+  } else {
+    return (
+      <Tooltip title="Sil" placement="bottom" enterDelay={750}>
+        <span>
+          <BaseButton
+            icon="pi pi-trash"
+            variant={variant}
+            severity={severity}
+            onClick={onClick}
+            {...props}
+          />
+        </span>
+      </Tooltip>
+    );
+  }
 }
 
 export default Delete;

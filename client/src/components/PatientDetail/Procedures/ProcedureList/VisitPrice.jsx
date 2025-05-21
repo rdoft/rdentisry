@@ -82,7 +82,10 @@ function VisitPrice({ visit, onSubmit }) {
         </ClickAwayListener>
       </Grid>
       <Grid item xs={2}>
-        <Cancel onClick={handleCancel} />
+        <Cancel
+          onClick={handleCancel}
+          style={{ marginLeft: "0.25rem" }}
+        />
       </Grid>
     </Grid>
   ) : (

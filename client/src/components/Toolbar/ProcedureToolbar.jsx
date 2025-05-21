@@ -1,6 +1,5 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import { CardTitle } from "components/Cards";
 import { PressKeyText } from "components/Text";
 import { Tooth } from "components/Button";
 
@@ -14,11 +13,8 @@ function ProcedureToolbar({ selectedTeeth, onChangeTeeth }) {
   return (
     <Grid container item alignItems="center">
       {selectedTeeth.includes(0) ? (
-        <Grid item xs={8}>
-          {/* All procedure */}
-          <CardTitle variant="h3" style={{ backgroundColor: "transparent" }}>
-            Tüm Tedaviler
-          </CardTitle>
+        <Grid item xs={12} textAlign="center">
+          <PressKeyText text="Seçmek istediğiniz dişe tıklayın" />
         </Grid>
       ) : (
         <>

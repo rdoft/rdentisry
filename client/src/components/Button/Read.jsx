@@ -1,27 +1,23 @@
 import React from "react";
-import { Button } from "primereact";
 import { Tooltip } from "@mui/material";
+import BaseButton from "./BaseButton";
 
-// assets
-import { useTheme } from "@mui/material/styles";
-
-function Read({ label, onClick, ...props }) {
-  const theme = useTheme();
-
+function Read({
+  label,
+  onClick,
+  variant = "text",
+  severity = "primary",
+  ...props
+}) {
   return (
-    <Tooltip title="Okundu" placement="bottom" enterDelay={500}>
-      <Button
-        text
-        outlined
-        size="small"
+    <Tooltip title="Okundu yap" placement="bottom" enterDelay={500}>
+      <BaseButton
         icon="pi pi-check-circle"
         label={label}
-        severity={props.severity || "secondary"}
+        variant={variant}
+        severity={severity}
         onClick={onClick}
-        style={{
-          color: theme.palette.text.secondary,
-          ...props.style,
-        }}
+        {...props}
       />
     </Tooltip>
   );

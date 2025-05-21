@@ -170,7 +170,7 @@ function NotesTab({
           {/* Add note */}
           <Grid item xs={12} mt={3} style={{ textAlign: "center" }}>
             <SubscriptionController type="storage" >
-              <Add border label="Not Ekle" onClick={showDialog} />
+              <Add variant="outlined" label="Not Ekle" onClick={showDialog} />
             </SubscriptionController>
           </Grid>
         </Grid>

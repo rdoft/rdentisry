@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
-import { Grid, Tabs, Tab, useTheme } from "@mui/material";
+import { Grid } from "@mui/material";
 import ReactToPrint from "react-to-print";
 import { ProcedureDialog } from "components/Dialog";
-import { Add, SplitItem, Print } from "components/Button";
+import { Add, SplitItem, Print, SelectButton } from "components/Button";
 import { AppointmentDialog } from "components/Dialog";
 import { useLoading } from "context/LoadingProvider";
 import { LoadingController } from "components/Loadable";
@@ -34,7 +34,6 @@ function ProceduresTab({
   counts,
   setCounts,
 }) {
-  const theme = useTheme();
   const { startLoading, stopLoading } = useLoading();
   const dt = useRef(null);
 
@@ -53,6 +52,18 @@ function ProceduresTab({
       ? false
       : true
   );
+
+  // Define tab options for SelectButton
+  const tabOptions = [
+    {
+      value: 0,
+      label: "Diş Şeması",
+    },
+    {
+      value: 1,
+      label: "Tedavi Listesi",
+    },
+  ];
 
   // Add keydown event listener
   // when component mounts and remove it when unmounts
@@ -278,10 +289,10 @@ function ProceduresTab({
     await getVisits(patientId);
   };
 
-  // onChange handler for the tabs
-  const handleTabChange = (event, newValue) => {
-    setTabIndex(newValue);
-    localStorage.setItem("activeTabIndexProcedure", newValue);
+  // Update tab change handler
+  const handleTabChange = (option) => {
+    setTabIndex(option.value);
+    localStorage.setItem("activeTabIndexProcedure", option.value);
   };
 
   // onSelect handler for the visit of patientProcedure
@@ -369,109 +380,143 @@ function ProceduresTab({
         justifyContent="center"
         sx={{ borderRadius: 2, backgroundColor: "white" }}
       >
-        <Grid container item xl={11} xs={10} py={3} justifyContent="center">
-          {tabIndex === 0 && (
-            <DentalChart
-              procedures={procedures}
-              adult={adult}
-              selectedTeeth={selectedTeeth}
-              onToggleType={handleToggleType}
-              onChangeTeeth={handleChangeTeeth}
-            />
-          )}
-          {tabIndex === 1 && (
+        <Grid container item xl={12} xs={12} p={2} justifyContent="center">
+          {/* Header Section with Tabs and Print Button */}
+          <Grid
+            container
+            item
+            xs={12}
+            mb={3}
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Grid item xs={2} />
+            <Grid item xs={8} display="flex" justifyContent="center">
+              <SelectButton
+                value={tabIndex}
+                options={tabOptions}
+                onChange={handleTabChange}
+              />
+            </Grid>
+            <Grid item xs={2} display="flex" justifyContent="flex-end">
+              {tabIndex === 1 && procedures?.length > 0 && (
+                <ReactToPrint
+                  trigger={() => <Print label="Yazdır" />}
+                  content={() => dt.current}
+                  pageStyle="@page { size: landscape, A4; margin: 0.4cm 0.8cm; }"
+                  onBeforeGetContent={() => {
+                    startLoading("print");
+                  }}
+                  onAfterPrint={() => {
+                    stopLoading("print");
+                  }}
+                />
+              )}
+            </Grid>
+          </Grid>
+
+          {/* Tab Content */}
+          <Grid item xs={12}>
+            {tabIndex === 0 && (
+              <DentalChart
+                procedures={procedures}
+                adult={adult}
+                selectedTeeth={selectedTeeth}
+                onToggleType={handleToggleType}
+                onChangeTeeth={handleChangeTeeth}
+              />
+            )}
+            {tabIndex === 1 && (
+              <Grid
+                container
+                item
+                justifyContent="space-between"
+                alignItems="end"
+              >
+                <Grid item xs={12} pb={3}>
+                  <ProcedureToolbar
+                    selectedTeeth={selectedTeeth}
+                    onChangeTeeth={handleChangeTeeth}
+                  />
+                </Grid>
+                <Grid item xs={12} ref={dt}>
+                  <ProcedureList
+                    patient={patient}
+                    procedures={filteredProcedures}
+                    selectedProcedures={selectedProcedures}
+                    setSelectedProcedures={setSelectedProcedures}
+                    selectedTeeth={selectedTeeth}
+                    onChangeTeeth={handleChangeTeeth}
+                    onSubmit={saveProcedures}
+                    onDelete={deleteProcedure}
+                    onUpdated={handleUpdated}
+                  />
+                </Grid>
+              </Grid>
+            )}
+
+            {/* Action buttons */}
             <Grid
               container
-              item
-              justifyContent="space-between"
-              alignItems="end"
+              spacing={2}
+              justifyContent="center"
+              mt={3}
+              px={{ xs: 1, md: 2 }}
             >
-              <Grid item xs={10} pb={3}>
-                <ProcedureToolbar
-                  selectedTeeth={selectedTeeth}
-                  onChangeTeeth={handleChangeTeeth}
-                />
-              </Grid>
-              <Grid item alignItems="center" pb={3}>
-                {procedures?.length > 0 && (
-                  <ReactToPrint
-                    trigger={() => <Print label="Yazdır" />}
-                    content={() => dt.current}
-                    pageStyle="@page { size: landscape, A4; margin: 0.4cm 0.8cm; }"
-                    onBeforeGetContent={() => {
-                      startLoading("print");
-                    }}
-                    onAfterPrint={() => {
-                      stopLoading("print");
-                    }}
-                  />
-                )}
-              </Grid>
-              <Grid item xs={12} ref={dt}>
-                <ProcedureList
-                  patient={patient}
-                  procedures={filteredProcedures}
-                  selectedProcedures={selectedProcedures}
-                  setSelectedProcedures={setSelectedProcedures}
-                  selectedTeeth={selectedTeeth}
-                  onChangeTeeth={handleChangeTeeth}
-                  onSubmit={saveProcedures}
-                  onDelete={deleteProcedure}
-                  onUpdated={handleUpdated}
-                />
-              </Grid>
-            </Grid>
-          )}
-
-          {/* Action buttons */}
-          <Grid container spacing={1} justifyContent="center">
-            {tabIndex === 1 && (
-              <>
-                <Grid
-                  item
-                  xs={3}
-                  mt={3}
-                  sx={{ display: "flex", justifyContent: "end" }}
-                >
-                  <SubscriptionController type="storage">
-                    <SplitItem
-                      label="Randevu Ekle"
-                      options={approvedVisits}
-                      disabled={!(approvedVisits?.length > 0)}
-                      onClick={handleCreateAppointment}
-                      tooltip={
-                        !(approvedVisits?.length > 0) &&
-                        "Randevu eklemek için en az bir seansı onaylayın"
-                      }
-                    />
-                  </SubscriptionController>
-                </Grid>
-                <Grid
-                  item
-                  xs={3}
-                  mt={3}
-                  sx={{ display: "flex", justifyContent: "start" }}
-                >
-                  <SubscriptionController type="storage">
-                    <SplitItem
-                      label="Seans Ekle"
-                      options={pendingVisits}
-                      disabled={!(selectedProcedures?.length > 0)}
-                      onClick={handleCreateVisit}
-                      tooltip={
-                        !(selectedProcedures?.length > 0) &&
-                        "Seans ekleme/düzenleme yapmak için tedavi seçin"
-                      }
-                    />
-                  </SubscriptionController>
-                </Grid>
-              </>
-            )}
-            <Grid item xs={6} md={5}>
-              <Grid item xs={12} mt={3} style={{ textAlign: "center" }}>
+              {tabIndex === 1 && (
+                <>
+                  <Grid
+                    item
+                    xs={6}
+                    md={4}
+                    display="flex"
+                    justifyContent={{ xs: "center", md: "flex-end" }}
+                  >
+                    <SubscriptionController type="storage">
+                      <SplitItem
+                        label="Randevu Ekle"
+                        options={approvedVisits}
+                        disabled={!(approvedVisits?.length > 0)}
+                        onClick={handleCreateAppointment}
+                        tooltip={
+                          !(approvedVisits?.length > 0) &&
+                          "Randevu eklemek için en az bir seansı onaylayın"
+                        }
+                      />
+                    </SubscriptionController>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={6}
+                    md={4}
+                    display="flex"
+                    justifyContent={{ xs: "center", md: "flex-start" }}
+                  >
+                    <SubscriptionController type="storage">
+                      <SplitItem
+                        label="Seans Ekle"
+                        options={pendingVisits}
+                        disabled={!(selectedProcedures?.length > 0)}
+                        onClick={handleCreateVisit}
+                        tooltip={
+                          !(selectedProcedures?.length > 0) &&
+                          "Seans ekleme/düzenleme yapmak için tedavi seçin"
+                        }
+                      />
+                    </SubscriptionController>
+                  </Grid>
+                </>
+              )}
+              <Grid
+                item
+                xs={12}
+                md={tabIndex === 1 ? 4 : 12}
+                display="flex"
+                justifyContent="center"
+              >
                 <SubscriptionController type="storage">
                   <Add
-                    border
+                    variant="outlined"
                     label="Tedavi Ekle"
                     onClick={showProcedureDialog}
                   />
@@ -480,67 +525,9 @@ function ProceduresTab({
             </Grid>
           </Grid>
         </Grid>
-
-        {/* Tabs */}
-        <Grid item xs="auto" py={3}>
-          <Tabs
-            value={tabIndex}
-            onChange={handleTabChange}
-            centered
-            orientation="vertical"
-            sx={{
-              "& .MuiTabs-indicator": {
-                display: "none", // Make the indicator (tab line) invisible
-              },
-              borderLeft: `1px solid ${theme.palette.divider}`,
-              marginLeft: 2,
-              paddingLeft: 1,
-              "& .MuiTab-root": {
-                minWidth: "auto",
-                padding: "6px",
-                marginBottom: 1,
-              },
-            }}
-          >
-            <Tab
-              value={0}
-              icon={
-                <i
-                  className={
-                    tabIndex === 0 ? "fi fi-sr-tooth" : "fi fi-rr-tooth"
-                  }
-                  style={{
-                    fontSize: "22px",
-                    color:
-                      tabIndex === 0 ? theme.palette.text.secondary : "inherit",
-                  }}
-                ></i>
-              }
-              disableRipple
-            />
-            <Tab
-              value={1}
-              icon={
-                <i
-                  className={
-                    tabIndex === 1
-                      ? "fi fi-sr-rectangle-list"
-                      : "fi fi-rr-rectangle-list"
-                  }
-                  style={{
-                    fontSize: "22px",
-                    color:
-                      tabIndex === 1 ? theme.palette.text.secondary : "inherit",
-                  }}
-                ></i>
-              }
-              disableRipple
-            />
-          </Tabs>
-        </Grid>
       </Grid>
 
-      {/* Procedure Dialog */}
+      {/* Dialogs */}
       {procedureDialog && (
         <ProcedureDialog
           initPatientProcedure={{ patient }}
@@ -552,7 +539,6 @@ function ProceduresTab({
         />
       )}
 
-      {/* Appointment Dialog */}
       {appointmentDialog && (
         <AppointmentDialog
           initAppointment={{ description, patient }}

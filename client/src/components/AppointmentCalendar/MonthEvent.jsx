@@ -11,19 +11,17 @@ import {
   Tooltip,
   ClickAwayListener,
 } from "@mui/material";
-import { More, Reminder } from "components/Button";
+import { Reminder, Basic, Delete } from "components/Button";
 import { LoadingIcon, ReminderStatus } from "components/Other";
 import { SubscriptionController } from "components/Subscription";
 
 // assets
-import { useTheme } from "@mui/material/styles";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 // services
 import { ReminderService } from "services";
 
-function MonthEvent({ initEvent = {}, onSubmit }) {
-  const theme = useTheme();
+function MonthEvent({ initEvent = {}, onSubmit, onDelete }) {
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
   const { refresh } = useSubscription();
@@ -96,14 +94,12 @@ function MonthEvent({ initEvent = {}, onSubmit }) {
   };
 
   // onClick send reminder handler
-  const handleClickSendReminder = (event) => {
-    event.stopPropagation();
+  const handleClickSendReminder = () => {
     e.id && sendReminder(e.id);
   };
 
   // onClick send approvement handler
-  const handleClickSendApprovement = (event) => {
-    event.stopPropagation();
+  const handleClickSendApprovement = () => {
     e.id && sendReminder(e.id, "sent");
   };
 
@@ -119,103 +115,132 @@ function MonthEvent({ initEvent = {}, onSubmit }) {
     menu.current.hide();
   };
 
+  // onDelete handler
+  const handleDelete = (event) => {
+    event.stopPropagation();
+    onDelete(e);
+  };
+
   // TEMPLATES -----------------------------------------------------------------
   // Action button (more)
   const actionButton = (
-    <>
-      <More
-        style={{
-          width: "1.4rem",
-          height: "1.2rem",
-          padding: "0.25rem 0.5rem",
-          color: theme.palette.text.event,
-        }}
-        onClick={(event) => {
-          event.stopPropagation();
-          menu.current.toggle(event);
-        }}
-      />
-      <Menu
-        model={[
-          {
-            label: "Görüntüle / Düzenle",
-            icon: "pi pi-external-link",
-            style: { fontSize: "0.8rem" },
-          },
-          {
-            label: "Hastaya Git",
-            icon: "pi pi-arrow-circle-right",
-            style: { fontSize: "0.8rem" },
-            command: handleClickPatient,
-          },
-          ...(showApprove
-            ? [
-                {
-                  label: "Onayla",
-                  icon: "pi pi-check",
-                  style: { fontSize: "0.8rem" },
-                  command: (event) =>
-                    handleChangeReminderStatus(event.originalEvent, "approved"),
-                },
-              ]
-            : showRemoveApprove
-            ? [
-                {
-                  label: "Onayı Kaldır",
-                  icon: "pi pi-times",
-                  style: { fontSize: "0.8rem" },
-                  command: (event) =>
-                    handleChangeReminderStatus(event.originalEvent, null),
-                },
-              ]
-            : []),
-          ...(showSendReminder
-            ? [
-                {
-                  template: () => (
-                    <>
-                      <Divider type="solid" className="my-2" />
-                      <SubscriptionController type="sms">
+    <Menu
+      model={[
+        {
+          template: () => (
+            <Basic label="Görüntüle / Düzenle" icon="pi pi-external-link" />
+          ),
+        },
+        {
+          template: () => (
+            <Basic
+              label="Hastaya Git"
+              icon="pi pi-arrow-circle-right"
+              onClick={handleClickPatient}
+            />
+          ),
+        },
+        ...(showApprove
+          ? [
+              {
+                template: () => (
+                  <Basic
+                    label="Onayla"
+                    icon="pi pi-check"
+                    severity="primary"
+                    onClick={(event) =>
+                      handleChangeReminderStatus(event, "approved")
+                    }
+                  />
+                ),
+              },
+            ]
+          : showRemoveApprove
+          ? [
+              {
+                template: () => (
+                  <Basic
+                    label="Onayı Kaldır"
+                    icon="pi pi-times"
+                    onClick={(event) => handleChangeReminderStatus(event, null)}
+                  />
+                ),
+              },
+            ]
+          : []),
+        ...(onDelete
+          ? [
+              {
+                template: () => (
+                  <Delete
+                    label="Sil"
+                    onClick={(event) => handleDelete(event)}
+                    style={{ width: "100%", textAlign: "start" }}
+                  />
+                ),
+              },
+            ]
+          : []),
+        ...(showSendReminder
+          ? [
+              {
+                template: () => (
+                  <>
+                    <Divider type="solid" className="my-2" />
+                    <SubscriptionController
+                      type="sms"
+                      style={{ width: "100%" }}
+                    >
+                      <div
+                        onClick={(e) => e.stopPropagation()}
+                        style={{ width: "100%" }}
+                      >
                         <Reminder
                           label="Hatırlatma Gönder"
                           icon="pi pi-bell"
                           disabled={!isSMS}
-                          style={{ width: "100%" }}
                           onClick={handleClickSendReminder}
                         />
-                      </SubscriptionController>
-                    </>
-                  ),
-                },
-              ]
-            : []),
-          ...(showSendApprove
-            ? [
-                {
-                  template: () => (
-                    <>
-                      <Divider type="solid" className="my-2" />
-                      <SubscriptionController type="sms">
+                      </div>
+                    </SubscriptionController>
+                  </>
+                ),
+              },
+            ]
+          : []),
+        ...(showSendApprove
+          ? [
+              {
+                template: () => (
+                  <>
+                    <Divider type="solid" className="my-2" />
+                    <SubscriptionController
+                      type="sms"
+                      style={{ width: "100%" }}
+                    >
+                      <div
+                        onClick={(e) => e.stopPropagation()}
+                        style={{ width: "100%" }}
+                      >
                         <Reminder
                           label="Hasta Onayına Gönder"
                           icon="pi pi-send"
                           disabled={!isSMS}
-                          style={{ width: "100%" }}
                           onClick={handleClickSendApprovement}
                         />
-                      </SubscriptionController>
-                    </>
-                  ),
-                },
-              ]
-            : []),
-        ]}
-        ref={menu}
-        id="popup_menu"
-        popup
-        style={{ padding: "0.5rem" }}
-      />
-    </>
+                      </div>
+                    </SubscriptionController>
+                  </>
+                ),
+              },
+            ]
+          : []),
+      ]}
+      ref={menu}
+      id="popup_menu"
+      popup
+      style={{ padding: "0.25rem" }}
+    />
   );
 
   return e.temp ? (
@@ -224,31 +249,15 @@ function MonthEvent({ initEvent = {}, onSubmit }) {
     <ClickAwayListener onClickAway={handleClickAway}>
       <Tooltip title={`${startHours}-${endHours}`} placement="top" arrow>
         <Grid container position="relative" onContextMenu={handleRightClick}>
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="end"
-            position="absolute"
-            top={3}
-            right={3}
-          >
-            {actionButton}
-          </Box>
-
           <Grid container>
-            <Grid item xs={10}>
+            <Grid item xs={12}>
               <Box
                 display="flex"
                 gap={1}
                 alignItems="center"
                 justifyContent="space-between"
-                style={{
-                  border: `0.5px solid ${theme.palette.text.eventBorder} `,
-                  borderRadius: "5px",
-                  padding: "0.1rem 0.2rem",
-                }}
               >
-                <Typography variant="h6" fontWeight="bolder" noWrap>
+                <Typography variant="caption" fontWeight="bold" noWrap>
                   {`${pname} ${psurname}`}
                 </Typography>
 
@@ -261,6 +270,7 @@ function MonthEvent({ initEvent = {}, onSubmit }) {
               </Box>
             </Grid>
           </Grid>
+          {actionButton}
         </Grid>
       </Tooltip>
     </ClickAwayListener>

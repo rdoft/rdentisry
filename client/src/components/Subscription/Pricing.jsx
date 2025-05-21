@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useLoading } from "context/LoadingProvider";
 import { usePaymentContext } from "context/PaymentProvider";
@@ -13,7 +13,7 @@ import {
   SubscriptionUpgradeDialog,
   SubscriptionCancelDialog,
 } from "components/Dialog";
-import { SubscriptionToolbar } from "components/Toolbar";
+import { Basic } from "components/Button";
 import ReactGA from "react-ga4";
 import PricingCard from "./PricingCard";
 
@@ -188,16 +188,7 @@ function Pricing() {
   };
 
   return (
-    <Grid container item rowSpacing={4.5} columnSpacing={2.75}>
-      <Grid item xs={12}>
-        {/* Toolbar */}
-        {subscription ? (
-          <SubscriptionToolbar index={1} onClickRefer={handleRefer} />
-        ) : (
-          <SubscriptionToolbar index={1} />
-        )}
-      </Grid>
-
+    <Grid container item rowSpacing={4.5} columnSpacing={2.75} mt={1}>
       {/* Pricing Plan */}
       <LoadingController name="Pricing" skeleton={<Loading />}>
         <Grid
@@ -211,10 +202,33 @@ function Pricing() {
           }}
         >
           {/* Header */}
-          <Grid item xs={11} textAlign="center">
+          <Grid
+            item
+            xs={11}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              position: "relative",
+            }}
+          >
             <Typography variant="h3" fontWeight="light">
               Kendinize uygun planı seçin.
             </Typography>
+            {subscription && (
+              <Box sx={{ 
+                position: "absolute", 
+                right: 0
+              }}>
+                <Basic
+                  icon="pi pi-gift"
+                  label="Paylaş - Kazan"
+                  variant="outlined"
+                  severity="primary"
+                  onClick={handleRefer}
+                />
+              </Box>
+            )}
           </Grid>
 
           {/* Pricing Cards */}

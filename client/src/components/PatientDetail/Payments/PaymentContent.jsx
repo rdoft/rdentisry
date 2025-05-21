@@ -1,26 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Grid, Typography } from "@mui/material";
-import { ConfirmDialog } from "primereact";
+import { ConfirmDialog, Menu } from "primereact";
 import { DialogFooter } from "components/DialogFooter";
-import { Edit, Delete, Pay } from "components/Button";
+import { Delete, Pay, More, Basic } from "components/Button";
 import { SubscriptionController } from "components/Subscription";
 import PaymentAmount from "./PaymentAmount";
 
 function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
-  const [isHover, setIsHover] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
+  const menu = useRef(null);
 
   // HANDLERS -----------------------------------------------------------------
-  // onMouseEnter handler for display buttons
-  const handleMouseEnter = () => {
-    setIsHover(true);
-  };
-
-  // onMouseLeave handler for hide buttons
-  const handleMouseLeave = () => {
-    setIsHover(false);
-  };
-
   // onClickEdit handler
   const handleEdit = () => {
     onClickEdit(payment);
@@ -77,15 +67,73 @@ function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
     />
   );
 
+  // Action button with menu
+  const actionButton = (
+    <>
+      <More
+        variant="text"
+        severity="secondary"
+        size="small"
+        onClick={(event) => {
+          menu.current.toggle(event);
+        }}
+      />
+      <Menu
+        model={[
+          {
+            template: () => (
+              <Basic
+                label="Görüntüle / Düzenle"
+                icon="pi pi-external-link"
+                onClick={handleEdit}
+              />
+            ),
+          },
+          ...(payment.plannedDate && payment.amount > payment.paid
+            ? [
+                {
+                  template: () => (
+                    <SubscriptionController
+                      type="storage"
+                      style={{ width: "100%" }}
+                    >
+                      <Pay
+                        label={`Öde (₺${payment.amount - payment.paid})`}
+                        style={{ width: "100%", textAlign: "start" }}
+                        onClick={handlePay}
+                      />
+                    </SubscriptionController>
+                  ),
+                },
+              ]
+            : []),
+          {
+            template: () => (
+              <SubscriptionController style={{ width: "100%" }}>
+                <Delete
+                  label="Sil"
+                  style={{ width: "100%", textAlign: "start" }}
+                  onClick={handleDelete}
+                />
+              </SubscriptionController>
+            ),
+          },
+        ]}
+        ref={menu}
+        id="popup_menu"
+        popup
+        style={{ padding: "0.25rem" }}
+      />
+    </>
+  );
+
   return (
     <>
-      <Grid
-        container
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        paddingBottom={4}
-      >
-        <Grid item xs={12}>
+      <Grid container gap={0.25} pb={4} ml={-1}>
+        <Grid item xs="auto">
+          {actionButton}
+        </Grid>
+        <Grid item xs>
           {payment.plannedDate ? (
             <PaymentAmount amount={payment.amount} paid={payment.paid} />
           ) : (
@@ -94,29 +142,6 @@ function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
               isReduce={payment.isPlanned}
               onChange={handleChangeReduce}
             />
-          )}
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          style={{ visibility: isHover ? "visible" : "hidden" }}
-        >
-          {/* Edit button */}
-          <Edit onClick={handleEdit} />
-
-          {/* Delete button */}
-          <SubscriptionController>
-            <Delete onClick={handleDelete} />
-          </SubscriptionController>
-
-          {/* Pay button */}
-          {payment.plannedDate && payment.amount > payment.paid && (
-            <SubscriptionController type="storage">
-              <Pay
-                label={"₺" + (payment.amount - payment.paid)}
-                onClick={handlePay}
-              />
-            </SubscriptionController>
           )}
         </Grid>
       </Grid>

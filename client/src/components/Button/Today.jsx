@@ -1,22 +1,17 @@
 import React from "react";
 import BaseButton from "./BaseButton";
 
-function Logout({ label, onClick, ...props }) {
+function Today({ onClick, ...props }) {
   return (
     <BaseButton
-      icon="pi pi-sign-out"
-      label="Çıkış Yap"
+      label="Bugün"
       onClick={onClick}
       variant="outlined"
       severity="secondary"
       size="medium"
-      style={{
-        width: "100%",
-        ...props.style,
-      }}
       {...props}
     />
   );
 }
 
-export default Logout;
+export default Today;

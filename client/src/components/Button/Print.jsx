@@ -1,27 +1,23 @@
 import React from "react";
-import { Button } from "primereact";
 import { Tooltip } from "@mui/material";
-
-// assets
-import { useTheme } from "@mui/material/styles";
+import BaseButton from "./BaseButton";
 
 function Print({ label, onClick, ...props }) {
-  const theme = useTheme();
-
   return (
     <Tooltip title="PDF" placement="bottom" enterDelay={750}>
-      <Button
-        outlined
-        size="small"
-        icon="pi pi-print"
-        label={label}
-        onClick={onClick}
-        style={{
-          color: theme.palette.text.secondary,
-          padding: "0.3rem",
-          ...props.style,
-        }}
-      />
+      <span>
+        <BaseButton
+          variant="outlined"
+          size="small"
+          icon="pi pi-print"
+          label={label}
+          onClick={onClick}
+          style={{
+            ...props.style,
+          }}
+          {...props}
+        />
+      </span>
     </Tooltip>
   );
 }

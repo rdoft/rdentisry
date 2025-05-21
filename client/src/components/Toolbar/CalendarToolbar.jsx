@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { Typography } from "@mui/material";
-import { Toolbar, Divider, InputSwitch } from "primereact";
+import { Typography, Box } from "@mui/material";
+import { Toolbar, InputSwitch } from "primereact";
 import { DropdownDoctor } from "components/Dropdown";
 import { DoctorDialog } from "components/Dialog";
 import { useLoading } from "context/LoadingProvider";
@@ -131,55 +131,70 @@ function CalendarToolbar({
   };
 
   // TEMPLATES -----------------------------------------------------------------
-  // Get title
-  const getTitle = () => {
-    return (
-      <Typography variant="h3" style={{ paddingRight: "50px" }}>
-        Takvim
-      </Typography>
-    );
-  };
-
   // Get doctor dropdown
-  const centerContent = () => (
-    <DropdownDoctor
-      key={doctor?.id}
-      value={doctor}
-      options={doctors}
-      onChange={handleChangeDoctor}
-      onClickAdd={showDoctorDialog}
-      onClickDelete={deleteDoctor}
-      style={{ alignItems: "center", height: "2.5rem", width: "20rem" }}
-    />
+  const startContent = () => (
+    <Box sx={{ display: "flex", alignItems: "center" }}>
+      <DropdownDoctor
+        key={doctor?.id}
+        value={doctor}
+        options={doctors}
+        onChange={handleChangeDoctor}
+        onClickAdd={showDoctorDialog}
+        onClickDelete={deleteDoctor}
+        style={{
+          alignItems: "center",
+          height: "2.5rem",
+          width: "18rem",
+          backgroundColor: "transparent",
+          padding: "1.2rem 0",
+        }}
+      />
+    </Box>
   );
 
   // Get showAll switch
   const endContent = () => (
-    <>
-      <Typography variant="subtitle2" margin={1}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        padding: "0.25rem 0.5rem",
+        borderRadius: "4px",
+      }}
+    >
+      <Typography
+        variant="body2"
+        sx={{
+          marginRight: 1,
+          fontSize: "0.85rem",
+          fontWeight: 500,
+        }}
+      >
         Geçmiş randevu
       </Typography>
       <InputSwitch
         checked={showAll}
         onChange={handleChangeSwitch}
         style={{
-          margin: 5,
-          transform: "scale(0.8)",
+          transform: "scale(0.75)",
         }}
       />
-    </>
+    </Box>
   );
 
   return (
     <>
       <Toolbar
         className="p-2"
-        start={getTitle}
-        center={centerContent}
+        start={startContent}
         end={endContent}
-        style={{ border: "none" }}
+        style={{
+          border: "none",
+          padding: "0.5rem 1rem",
+          minHeight: "3.25rem",
+          backgroundColor: "transparent",
+        }}
       />
-      <Divider className="m-1 p-1" />
       {doctorDialog && (
         <DoctorDialog onHide={hideDoctorDialog} onSubmit={saveDoctor} />
       )}

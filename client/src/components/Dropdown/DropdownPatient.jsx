@@ -45,10 +45,10 @@ function DropdownPatient({ value, options, onChange, onClickAdd, ...props }) {
   const patientDropdownFooter = () => {
     return (
       onClickAdd && (
-        <div className="m-2">
+        <div className="m-2" style={{ textAlign: "center" }}>
           <Divider className="mt-0 mb-2" />
-          <SubscriptionController type="patients" >
-            <Add label="Hasta Ekle" onClick={onClickAdd} />
+          <SubscriptionController type="patients">
+            <Add size="small" label="Hasta Ekle" onClick={onClickAdd} />
           </SubscriptionController>
         </div>
       )

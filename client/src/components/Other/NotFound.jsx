@@ -5,10 +5,8 @@ import { Goto } from "components/Button";
 
 // assets
 import svg404 from "assets/svg/404.svg";
-import { useTheme } from "@mui/material/styles";
 
 function NotFound() {
-  const theme = useTheme();
   const navigate = useNavigate();
 
   // onClick handler
@@ -22,16 +20,7 @@ function NotFound() {
         <img src={svg404} alt="404" />
       </Grid>
       <Grid item xs={12} textAlign="center">
-        <Goto
-          onClick={handleClick}
-          label="Ana sayfa git"
-          severity="info"
-          style={{
-            color: theme.palette.common.white,
-            backgroundColor: theme.palette.text.event,
-            fontSize: "1.2rem",
-          }}
-        />
+        <Goto onClick={handleClick} size="large" label="Ana sayfa git" />
       </Grid>
     </Grid>
   );

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { Grid } from "@mui/material";
-import { DataScroller } from "primereact";
+import { Grid, Typography } from "@mui/material";
+import { DataScroller, ConfirmDialog } from "primereact";
 import { AppointmentDialog } from "components/Dialog";
 import { CardTitle } from "components/Cards";
 import { Add } from "components/Button";
 import { LoadingController } from "components/Loadable";
 import { SkeletonAppointmentsTab } from "components/Skeleton";
 import { SubscriptionController } from "components/Subscription";
+import { DialogFooter } from "components/DialogFooter";
 import { useLoading } from "context/LoadingProvider";
 import { useSubscription } from "context/SubscriptionProvider";
 
@@ -39,6 +40,7 @@ function AppointmentsTab({
   const [appointments, setAppointments] = useState([]);
   const [appointment, setAppointment] = useState(null);
   const [doctors, setDoctors] = useState(null);
+  const [deleteDialog, setDeleteDialog] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -163,6 +165,26 @@ function AppointmentsTab({
     hideDialog();
   };
 
+  // Show delete confirmation dialog
+  const showDeleteDialog = (appointment) => {
+    setAppointment(appointment);
+    setDeleteDialog(true);
+  };
+
+  // Hide delete confirmation dialog
+  const hideDeleteDialog = () => {
+    setDeleteDialog(false);
+    setAppointment(null);
+  };
+
+  // Handle delete confirmation
+  const handleDeleteConfirm = async () => {
+    if (appointment) {
+      await deleteAppointment(appointment);
+      hideDeleteDialog();
+    }
+  };
+
   // TEMPLATES ----------------------------------------------------------------
   const appointmentTemplate = (appointment) => {
     if (!appointment) {
@@ -175,6 +197,7 @@ function AppointmentsTab({
         onClickEdit={handleSelectAppointment}
         onSubmit={saveAppointment}
         onReminder={sendReminder}
+        onDelete={showDeleteDialog}
       />
     );
   };
@@ -216,7 +239,11 @@ function AppointmentsTab({
             {/* Add appointment */}
             <Grid item xs={12} mt={3} style={{ textAlign: "center" }}>
               <SubscriptionController type="storage">
-                <Add border label="Randevu Ekle" onClick={showDialog} />
+                <Add
+                  variant="outlined"
+                  label="Randevu Ekle"
+                  onClick={showDialog}
+                />
               </SubscriptionController>
             </Grid>
           </Grid>
@@ -253,12 +280,34 @@ function AppointmentsTab({
             {/* Add appointment */}
             <Grid item xs={12} mt={3} style={{ textAlign: "center" }}>
               <SubscriptionController type="storage">
-                <Add border label="Randevu Ekle" onClick={showDialog} />
+                <Add
+                  variant="outlined"
+                  label="Randevu Ekle"
+                  onClick={showDialog}
+                />
               </SubscriptionController>
             </Grid>
           </Grid>
         </Grid>
       </Grid>
+
+      {/* Delete confirmation dialog */}
+      <ConfirmDialog
+        visible={deleteDialog}
+        onHide={hideDeleteDialog}
+        message={
+          <Typography variant="body1">
+            Randevuyu silmek istediğinizden emin misiniz?
+          </Typography>
+        }
+        header="Randevuyu Sil"
+        footer={
+          <DialogFooter
+            onHide={hideDeleteDialog}
+            onDelete={handleDeleteConfirm}
+          />
+        }
+      />
 
       {/* Appointment dialog */}
       {appointmentDialog && (

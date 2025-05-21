@@ -4,10 +4,11 @@ import { Cancel } from "components/Button";
 
 // assets
 import toothSvg from "assets/svg/tooth/tooth.svg";
-import { useTheme } from "@mui/material/styles";
+import { useTheme, useMediaQuery } from "@mui/material";
 
 function Tooth({ number, removable, onClick, onRemove, ...props }) {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [isHover, setIsHover] = useState(false);
 
   // TEMPLATES ---------------------------------------------------------
@@ -16,14 +17,18 @@ function Tooth({ number, removable, onClick, onRemove, ...props }) {
       <img
         src={toothSvg}
         alt="tooth"
-        style={{ width: "18px", height: "18px", marginRight: "0.1rem" }}
+        style={{
+          width: isMobile ? "24px" : "18px",
+          height: isMobile ? "24px" : "18px",
+          marginRight: isMobile ? "0.2rem" : "0.1rem",
+        }}
       />
       <span
         style={{
           color: theme.palette.text.secondary,
-          fontSize: "small",
+          fontSize: isMobile ? "medium" : "small",
           fontWeight: "bold",
-          paddingRight: "0.6rem",
+          paddingRight: isMobile ? "0.8rem" : "0.6rem",
         }}
       >
         {number ? number : "Genel"}
@@ -31,12 +36,12 @@ function Tooth({ number, removable, onClick, onRemove, ...props }) {
       {removable && (
         <Cancel
           onClick={onRemove}
+          severity="primary"
+          size="xsmall"
           style={{
-            color: theme.palette.text.secondary,
-            width: "18px",
-            height: "18px",
-            paddingLeft: "0.5rem",
-            paddingRight: "0.6rem",
+            padding: isMobile ? "0.2rem" : "0.1rem",
+            minWidth: isMobile ? "1.4rem" : "1rem",
+            height: isMobile ? "1.4rem" : "1rem",
           }}
         />
       )}
@@ -56,9 +61,9 @@ function Tooth({ number, removable, onClick, onRemove, ...props }) {
             : "transparent",
         border: "1px solid var(--palette-text-secondary)",
         borderRadius: "0.5rem",
-        margin: "0.3rem",
+        margin: isMobile ? "0.4rem" : "0.3rem",
         paddingRight: 0,
-        paddingLeft: "1rem",
+        paddingLeft: isMobile ? "1.2rem" : "1rem",
         cursor: onClick && number ? "pointer" : "default",
         ...props.style,
       }}

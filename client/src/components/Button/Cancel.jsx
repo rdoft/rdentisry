@@ -1,18 +1,23 @@
 import React from "react";
-import { Button } from "primereact";
+import BaseButton from "./BaseButton";
 
-function Cancel({ label, rounded, onClick, ...props }) {
+function Cancel({
+  label,
+  onClick,
+  variant = "text",
+  severity = "secondary",
+  size = "small",
+  ...props
+}) {
   return (
-    <Button
-      text
-      outlined
-      label={label}
-      rounded={rounded}
-      size="small"
+    <BaseButton
       icon="pi pi-times"
-      severity={props.severity || "secondary"}
+      variant={variant}
+      severity={severity}
+      label={label}
       onClick={onClick}
-      style={props.style}
+      size={size}
+      {...props}
     />
   );
 }

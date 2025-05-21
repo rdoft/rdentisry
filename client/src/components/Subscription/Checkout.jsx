@@ -7,7 +7,6 @@ import { useLoading } from "context/LoadingProvider";
 import { usePaymentContext } from "context/PaymentProvider";
 import { useSubscription } from "context/SubscriptionProvider";
 import { Prev } from "components/Button";
-import { SubscriptionToolbar } from "components/Toolbar";
 import ReactGA from "react-ga4";
 import PricingCard from "./PricingCard";
 import BillingForm from "./BillingForm";
@@ -24,7 +23,7 @@ function Checkout() {
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
   const { isSubscribed, isFree } = useSubscription();
-  const { pricing, userDetail, clearPricing } = usePaymentContext();
+  const { pricing, clearPricing, saveUserDetail } = usePaymentContext();
 
   const [checkoutForm, setCheckoutForm] = useState(null);
 
@@ -36,17 +35,18 @@ function Checkout() {
 
   // SERVICES -----------------------------------------------------------------
   // Init checkout proccess and redirect to the payment page
-  const checkout = async () => {
+  const checkout = async (user) => {
     startLoading("save");
     try {
       const response = await SubscriptionService.checkout({
         pricingId: pricing.id,
-        ...userDetail,
+        ...user,
       });
 
       if (response?.data?.checkoutForm) {
         // Adjust the checkout form and redirect to the payment page
         setCheckoutForm(response.data.checkoutForm);
+        saveUserDetail(user);
         clearPricing();
         // Google Analytics
         ReactGA.event({
@@ -79,12 +79,8 @@ function Checkout() {
       rowSpacing={4.5}
       columnSpacing={2.75}
       justifyContent="space-around"
+      mt={1}
     >
-      {/* Toolbar */}
-      <Grid item xs={12}>
-        <SubscriptionToolbar index={2} />
-      </Grid>
-
       {checkoutForm ? (
         <PaymentForm content={checkoutForm} />
       ) : (
@@ -118,10 +114,7 @@ function Checkout() {
             <Grid item>
               <Prev
                 label={"Geri"}
-                style={{
-                  color: theme.palette.text.secondary,
-                  backgroundColor: theme.palette.background.secondary,
-                }}
+                severity="primary"
                 onClick={handleClickBack}
               />
             </Grid>
@@ -134,6 +127,8 @@ function Checkout() {
               <Typography variant="body2" align="center">
                 <Link
                   href={POLICY_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{
                     color: theme.palette.text.secondary,
                     textDecoration: "none",
@@ -157,6 +152,8 @@ function Checkout() {
                 </Typography>{" "}
                 <Link
                   href={TERMS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{
                     color: theme.palette.text.secondary,
                     textDecoration: "none",

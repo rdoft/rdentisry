@@ -1,9 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
+import { ConfirmDialog } from "primereact";
+import { Typography } from "@mui/material";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { getEventTime, setEventTime } from "utils";
 import { AppointmentDialog } from "components/Dialog";
+import { DialogFooter } from "components/DialogFooter";
 import { useLoading } from "context/LoadingProvider";
 import { Loader } from "components/Loadable";
 import { CalendarToolbar } from "components/Toolbar";
@@ -44,6 +47,7 @@ const AppointmentCalendar = () => {
   const [appointment, setAppointment] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
   const [doctors, setDoctors] = useState(null);
   const [patients, setPatients] = useState(null);
   const [doctor, setDoctor] = useState(
@@ -107,8 +111,7 @@ const AppointmentCalendar = () => {
     } finally {
       // Get and set the list of appointments
       await getAppointments();
-      setAppointmentDialog(false);
-      setAppointment(null);
+      hideAppointmentDialog();
       stopLoading("save");
     }
   };
@@ -121,8 +124,7 @@ const AppointmentCalendar = () => {
 
       // Get and set the updated list of appointments
       await getAppointments();
-      setAppointmentDialog(false);
-      setAppointment(null);
+      hideAppointmentDialog();
     } catch (error) {
       error.message && toast.error(error.message);
     } finally {
@@ -232,6 +234,26 @@ const AppointmentCalendar = () => {
     });
   };
 
+  // Show delete confirmation dialog
+  const showDeleteDialog = (appointment) => {
+    setAppointment(appointment);
+    setDeleteDialog(true);
+  };
+
+  // Hide delete confirmation dialog
+  const hideDeleteDialog = () => {
+    setDeleteDialog(false);
+    setAppointment(null);
+  };
+
+  // Handle delete confirmation
+  const handleDeleteConfirm = async () => {
+    if (appointment) {
+      await deleteAppointment(appointment);
+      hideDeleteDialog();
+    }
+  };
+
   // TEMPLATES -----------------------------------------------------------------
   // Style the today background
   const dayPropGetter = (date) => ({
@@ -250,18 +272,20 @@ const AppointmentCalendar = () => {
     timeGutterWrapper: TimeGutter,
     event: ({ event }) => (
       <Event
-        key={event.id}
+        key={`${event.id}-${event.patient?.id}-${event.doctor?.id}`}
         initEvent={event}
         step={step.current}
         onSubmit={saveAppointment}
+        onDelete={showDeleteDialog}
       />
     ),
     month: {
       event: ({ event }) => (
         <MonthEvent
-          key={event.id}
+          key={`${event.id}-${event.patient?.id}-${event.doctor?.id}`}
           initEvent={event}
           onSubmit={saveAppointment}
+          onDelete={showDeleteDialog}
         />
       ),
     },
@@ -367,6 +391,28 @@ const AppointmentCalendar = () => {
         onEventResize={handleResizeEvent}
         onEventDrop={handleDropEvent}
       />
+
+      {/* Delete confirmation dialog */}
+      <ConfirmDialog
+        visible={deleteDialog}
+        onHide={hideDeleteDialog}
+        message={
+          <Typography variant="body1">
+            <strong>
+              {appointment?.patient?.name} {appointment?.patient?.surname}
+            </strong>{" "}
+            isimli hastanın randevusunu silmek istediğinizden emin misiniz?
+          </Typography>
+        }
+        header="Randevuyu Sil"
+        footer={
+          <DialogFooter
+            onHide={hideDeleteDialog}
+            onDelete={handleDeleteConfirm}
+          />
+        }
+      />
+
       {appointmentDialog && (
         <AppointmentDialog
           initAppointment={{ doctor, ...appointment }}

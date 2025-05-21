@@ -8,7 +8,6 @@
   --palette-common-white: #ffffff;
 
   /* Background colors */
-  --palette-background-white: #ffffff;
   --palette-background-primary: #f5f5f5;
   --palette-background-secondary: #eff2fd;
   --palette-background-event: #f8f5ff;
@@ -19,15 +18,33 @@
   --palette-background-today: #ebeff4;
 
   /* Text colors */
-  --palette-text-black: #000000;
   --palette-text-primary: #21273d;
+  --palette-text-primaryDark: #1a1f30;
   --palette-text-secondary: #143cf7;
+  --palette-text-secondaryDark: #0f2dc4;
   --palette-text-event: #6d40d3;
+  --palette-text-eventDark: #5633a9;
   --palette-text-eventBorder: #b092ef;
+  --palette-text-eventBorderDark: #8d74bf;
   --palette-text-success: #22a06a;
+  --palette-text-successDark: #1b8054;
   --palette-text-error: #ef4444;
+  --palette-text-errorDark: #be3636;
   --palette-text-warning: #a44800;
+  --palette-text-warningDark: #833a00;
   --palette-text-info: #1e7afc;
+  --palette-text-infoDark: #1862c9;
+
+  /* Grey colors */
+  --palette-grey-50: #fafafa;
+  --palette-grey-100: #f5f5f5;
+  --palette-grey-200: #f0f0f0;
+  --palette-grey-300: #d9d9d9;
+  --palette-grey-400: #bfbfbf;
+  --palette-grey-500: #8c8c8c;
+  --palette-grey-600: #595959;
+  --palette-grey-700: #262626;
+  --palette-grey-800: #141414;
 }
 
 .MuiTypography-root {

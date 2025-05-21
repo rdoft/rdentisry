@@ -165,12 +165,11 @@ function PricingCard({ pricing, subscription, selected, onSelect, onCancel }) {
                 <Grid item xs="auto">
                   <Cancel
                     label="İptal Et"
+                    variant="outlined"
+                    severity="danger"
                     onClick={handleCancel}
                     style={{
-                      padding: "0.5rem",
                       marginRight: "0.5rem",
-                      fontSize: "0.8rem",
-                      color: theme.palette.text.error,
                     }}
                   />
                 </Grid>
@@ -179,12 +178,7 @@ function PricingCard({ pricing, subscription, selected, onSelect, onCancel }) {
               <Subscribe
                 label="Seç"
                 onClick={handleSelect}
-                style={
-                  emphesis && {
-                    color: theme.palette.common.white,
-                    backgroundColor: theme.palette.text.secondary,
-                  }
-                }
+                variant={emphesis ? "main" : "outlined"}
               />
             )}
           </Grid>

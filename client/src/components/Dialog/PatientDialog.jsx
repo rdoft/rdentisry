@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { Avatar } from "@mui/material";
-import { InputText, Divider } from "primereact";
+import { InputText, Divider, ConfirmDialog, confirmDialog } from "primereact";
 import { DialogTemp, PatientPermissionDialog } from "components/Dialog";
-import { Permission } from "components/Button";
+import { Basic } from "components/Button";
+import { DialogFooter } from "components/DialogFooter";
 
 // assets
 import avatarPatient from "assets/images/avatars/patient-avatar.png";
 
 import schema from "schemas/patient.schema";
 
-function PatientDialog({ initPatient = {}, onHide, onSubmit }) {
+function PatientDialog({ initPatient = {}, onHide, onSubmit, onDelete }) {
   const [patient, setPatient] = useState({
     id: null,
     idNumber: "",
@@ -85,12 +86,37 @@ function PatientDialog({ initPatient = {}, onHide, onSubmit }) {
     hidePermissionDialog();
   };
 
+  // onDelete handler
+  const handleDelete = async () => {
+    await onDelete(patient);
+    handleHide();
+  };
+
+  const handleDeleteConfirm =
+    onDelete &&
+    (() => {
+      confirmDialog({
+        message: (
+          <p>
+            <strong>
+              {patient.name} {patient.surname}
+            </strong>{" "}
+            isimli hastayı silmek istediğinizden emin misiniz?
+          </p>
+        ),
+        header: "Hastayı Sil",
+        footer: <DialogFooter onHide={handleHide} onDelete={handleDelete} />,
+      });
+    });
+
   return (
     <>
+      <ConfirmDialog />
       <DialogTemp
         isValid={isValid}
         onHide={handleHide}
         onSubmit={handleSubmit}
+        onDelete={handleDeleteConfirm}
         style={{ width: "450px" }}
         header={!patient.id ? "Yeni Hasta" : "Hasta Bilgileri"}
         controlSubscription
@@ -195,10 +221,11 @@ function PatientDialog({ initPatient = {}, onHide, onSubmit }) {
 
         {/* Permission */}
         <div className="field mb-3" style={{ width: "fit-content" }}>
-          <Permission
+          <Basic
+            icon="pi pi-key"
             label="İzinler"
-            border
-            style={{ margin: "0" }}
+            variant="outlined"
+            severity="primary"
             onClick={showPermissionDialog}
           />
         </div>

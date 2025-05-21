@@ -175,7 +175,7 @@ function NotificationItem({ notification, getNotifications, onClose }) {
           Okundu
         </Typography>
       ) : (
-        <Read onClick={handleClickRead} size="small" sx={{ ml: 1 }} />
+        <Read onClick={handleClickRead} size="small" />
       )}
     </ListItemButton>
   );

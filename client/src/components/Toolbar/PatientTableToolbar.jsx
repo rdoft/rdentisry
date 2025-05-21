@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
-import { Toolbar, Divider, Menu } from "primereact";
-import { Typography } from "@mui/material";
-import { Add, Delete, More } from "components/Button";
+import { Toolbar, Menu } from "primereact";
+import { Box } from "@mui/material";
+import { Add, Delete, More, Basic } from "components/Button";
 import { SubscriptionController } from "components/Subscription";
 import Search from "components/Search";
 
@@ -26,20 +26,35 @@ function PatientTableToolbar({
   };
 
   // TEMPLATES ------------------------------------------------------------------
-  // Get title
-  const getTitle = () => {
-    return <Typography variant="h3">Hastalar</Typography>;
+  // Get search Input
+  const startContent = () => {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          marginLeft: "0.25rem",
+        }}
+      >
+        <Search onInput={onInput} />
+      </Box>
+    );
   };
 
   // Get Add/More patient buttons
-  const actionButton = () => {
+  const endContent = () => {
     return (
-      <>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem",
+        }}
+      >
         {selectedCount > 0 && (
           <>
             <More
               label={`Seçilen Hastalar (${selectedCount})`}
-              border
               icon="pi pi-angle-down"
               onClick={(event) => {
                 menu.current.toggle(event);
@@ -48,16 +63,22 @@ function PatientTableToolbar({
             <Menu
               model={[
                 {
-                  label: "SMS İzni Ver",
-                  icon: "pi pi-check-circle",
-                  style: { fontSize: "0.9rem" },
-                  command: () => handleClickPermission({ isSMS: true }),
+                  template: () => (
+                    <Basic
+                      label="SMS İzni Ver"
+                      icon="pi pi-check-circle"
+                      onClick={() => handleClickPermission({ isSMS: true })}
+                    />
+                  ),
                 },
                 {
-                  label: "SMS İznini Kaldır",
-                  icon: "pi pi-ban",
-                  style: { fontSize: "0.9rem" },
-                  command: () => handleClickPermission({ isSMS: false }),
+                  template: () => (
+                    <Basic
+                      label="SMS İzni Kaldır"
+                      icon="pi pi-ban"
+                      onClick={() => handleClickPermission({ isSMS: false })}
+                    />
+                  ),
                 },
                 {
                   template: () => (
@@ -75,45 +96,31 @@ function PatientTableToolbar({
               ref={menu}
               id="popup_menu"
               popup
+              style={{
+                padding: "0.25rem",
+              }}
             />
           </>
         )}
         <SubscriptionController type="patients">
-          <Add default label="Hasta Ekle" onClick={handleClickAdd} />
+          <Add label="Hasta Ekle" onClick={handleClickAdd} />
         </SubscriptionController>
-      </>
-    );
-  };
-
-  // Get search Input
-  const searchInput = () => {
-    return (
-      <div
-        style={{
-          position: "absolute",
-          left: "50%",
-          transform: "translateX(-50%)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Search onInput={onInput} />
-      </div>
+      </Box>
     );
   };
 
   return (
-    <>
-      <Toolbar
-        className="p-2"
-        start={getTitle}
-        center={searchInput}
-        end={actionButton}
-        style={{ border: "none" }}
-      />
-      <Divider className="m-1 p-1" />
-    </>
+    <Toolbar
+      className="p-2"
+      start={startContent}
+      end={endContent}
+      style={{
+        border: "none",
+        padding: "0.5rem 1rem",
+        minHeight: "3.25rem",
+        backgroundColor: "transparent",
+      }}
+    />
   );
 }
 

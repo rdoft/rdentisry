@@ -1,3 +1,4 @@
+import BaseButton from "./BaseButton";
 import Add from "./Add";
 import Edit from "./Edit";
 import More from "./More";
@@ -6,6 +7,7 @@ import Read from "./Read";
 import Pay from "./Pay";
 import Next from "./Next";
 import Prev from "./Prev";
+import Today from "./Today";
 import Cancel from "./Cancel";
 import SplitItem from "./SplitItem";
 import Goto from "./Goto";
@@ -14,16 +16,13 @@ import Basic from "./Basic";
 import SelectButton from "./SelectButton";
 import Tooth from "./Tooth";
 import Print from "./Print";
-import SwitchTeeth from "./SwitchTeeth";
 import Logout from "./Logout";
-import Permission from "./Permission";
 import Reminder from "./Reminder";
 import Subscribe from "./Subscribe";
-import Refer from "./Refer";
 import Copy from "./Copy";
-import Share from "./Share";
 
 export {
+  BaseButton,
   Add,
   Edit,
   More,
@@ -32,6 +31,7 @@ export {
   Pay,
   Next,
   Prev,
+  Today,
   Cancel,
   SplitItem,
   Goto,
@@ -40,12 +40,8 @@ export {
   SelectButton,
   Tooth,
   Print,
-  SwitchTeeth,
   Logout,
-  Permission,
   Reminder,
   Subscribe,
-  Refer,
   Copy,
-  Share,
 };

@@ -1,22 +1,40 @@
 import React from "react";
-import { Button } from "primereact";
 import { Tooltip } from "@mui/material";
+import BaseButton from "./BaseButton";
 
-function Edit({ label, onClick, ...props }) {
-  return (
-    <Tooltip title="Görüntüle / Düzenle" placement="bottom" enterDelay={750}>
-      <Button
-        text
-        outlined
-        size="small"
+function Edit({
+  label,
+  onClick,
+  variant = "text",
+  severity = "secondary",
+  ...props
+}) {
+  if (label) {
+    return (
+      <BaseButton
         icon="pi pi-external-link"
-        severity={props.severity || "secondary"}
+        variant={variant}
+        severity={severity}
         label={label}
         onClick={onClick}
-        style={props.style}
+        {...props}
       />
-    </Tooltip>
-  );
+    );
+  } else {
+    return (
+      <Tooltip title="Görüntüle / Düzenle" placement="bottom" enterDelay={750}>
+        <span>
+          <BaseButton
+            icon="pi pi-external-link"
+            variant={variant}
+            severity={severity}
+            onClick={onClick}
+            {...props}
+          />
+        </span>
+      </Tooltip>
+    );
+  }
 }
 
 export default Edit;

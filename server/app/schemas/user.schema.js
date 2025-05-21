@@ -10,7 +10,7 @@ const register = Joi.object({
     .regex(/[a-z]/, "küçük harf")
     .regex(/[A-Z]/, "büyük harf")
     .regex(/\d/, "rakam")
-    .regex(/[@$!%*?&#.^()_+\-={};':"|,.<>?]/, "özel karakter")
+    // .regex(/[@$!%*?&#.^()_+\-={};':"|,.<>?]/, "özel karakter")
     .required(),
   referralCode: Joi.string().trim().empty("").allow(null),
 });
@@ -32,7 +32,7 @@ const reset = Joi.object({
     .regex(/[a-z]/, "küçük harf")
     .regex(/[A-Z]/, "büyük harf")
     .regex(/\d/, "rakam")
-    .regex(/[@$!%*?&#.^()_+\-={};':"|,.<>?]/, "özel karakter")
+    // .regex(/[@$!%*?&#.^()_+\-={};':"|,.<>?]/, "özel karakter")
     .required(),
 });
 
@@ -48,7 +48,7 @@ const password = Joi.string()
   .regex(/[a-z]/, "küçük harf")
   .regex(/[A-Z]/, "büyük harf")
   .regex(/\d/, "rakam")
-  .regex(/[@$!%*?&#.^()_+\-={};':"|,.<>?]/, "özel karakter")
+  // .regex(/[@$!%*?&#.^()_+\-={};':"|,.<>?]/, "özel karakter")
   .required();
 
 const user = Joi.object({
@@ -59,8 +59,8 @@ const user = Joi.object({
     .max(20)
     .regex(/[a-z]/, "küçük harf")
     .regex(/[A-Z]/, "büyük harf")
-    .regex(/\d/, "rakam")
-    .regex(/[@$!%*?&#.^()_+\-={};':"|,.<>?]/, "özel karakter"),
+    .regex(/\d/, "rakam"),
+  // .regex(/[@$!%*?&#.^()_+\-={};':"|,.<>?]/, "özel karakter"),
 }).unknown(true);
 
 module.exports = {

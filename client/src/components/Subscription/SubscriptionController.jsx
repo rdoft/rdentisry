@@ -67,6 +67,7 @@ const SubscriptionController = ({ type, children, disabled, ...props }) => {
           right: props.right ?? 12,
           top: props.top ?? 6,
         },
+        ...props.style,
       }}
     >
       {cloneElement(children, {

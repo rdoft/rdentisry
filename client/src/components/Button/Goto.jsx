@@ -1,19 +1,20 @@
 import React from "react";
-import { Button } from "primereact";
 import { Tooltip } from "@mui/material";
+import BaseButton from "./BaseButton";
 
 function Goto({ label, onClick, tooltip, ...props }) {
   return (
     <Tooltip title={tooltip} placement="bottom" enterDelay={750}>
-      <Button
-        text
-        size="small"
-        icon="pi pi-arrow-circle-right"
-        severity={props.severity || "secondary"}
-        label={label}
-        onClick={onClick}
-        style={props.style}
-      />
+      <span>
+        <BaseButton
+          icon="pi pi-arrow-circle-right"
+          label={label}
+          onClick={onClick}
+          variant="outlined"
+          size="medium"
+          {...props}
+        />
+      </span>
     </Tooltip>
   );
 }

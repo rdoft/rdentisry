@@ -21,7 +21,6 @@ import { Copy } from "components/Button";
 // services
 import { UserService } from "services";
 
-
 function ReferDialog({ onHide }) {
   const qrRef = useRef(null);
   const theme = useTheme();
@@ -130,7 +129,7 @@ function ReferDialog({ onHide }) {
       </DialogTitle>
       <DialogContent>
         <LoadingController name="ReferDialog" skeleton={<Loading />}>
-          <Grid container spacing={1}>
+          <Grid container spacing={1} alignItems="center">
             {/* Referral Link */}
             <Grid item xs={12}>
               <Typography variant="h6" fontWeight="bold">

@@ -1,24 +1,26 @@
 import React from "react";
-import { Button } from "primereact";
-import { Tooltip } from "@mui/material";
 import { useLoading } from "context/LoadingProvider";
+import BaseButton from "./BaseButton";
 
-function Pay({ label, onClick, ...props }) {
+function Pay({
+  label,
+  onClick,
+  variant = "text",
+  severity = "primary",
+  ...props
+}) {
   const { loading } = useLoading();
 
   return (
-    <Tooltip title="Öde" placement="bottom" enterDelay={500}>
-      <Button
-        text
-        outlined
-        size="small"
-        loading={loading.save}
-        label={!loading.save ? label : ""}
-        severity={props.severity || "success"}
-        onClick={onClick}
-        style={props.style}
-      />
-    </Tooltip>
+    <BaseButton
+      icon="pi pi-credit-card"
+      variant={variant}
+      severity={severity}
+      loading={loading.save}
+      label={!loading.save ? label : ""}
+      onClick={onClick}
+      {...props}
+    />
   );
 }
 

@@ -16,6 +16,7 @@ function PaymentStatistic({
   remaining,
   overdue,
   dept,
+  isSMS,
   onSendReminder,
 }) {
   const theme = useTheme();
@@ -103,7 +104,11 @@ function PaymentStatistic({
         {allowReminder && (
           <Grid item xs={12} textAlign="center" pt={1}>
             <SubscriptionController type="sms">
-              <Reminder label="Hatırlatma Gönder" onClick={onSendReminder} />
+              <Reminder
+                label="Hatırlatma Gönder"
+                disabled={!isSMS}
+                onClick={onSendReminder}
+              />
             </SubscriptionController>
           </Grid>
         )}

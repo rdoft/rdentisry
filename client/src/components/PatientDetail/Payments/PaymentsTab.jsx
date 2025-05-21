@@ -303,6 +303,7 @@ function PaymentsTab({
             remaining={remainingAmount}
             overdue={overdueAmount}
             dept={deptAmount}
+            isSMS={patient.isSMS}
             onSendReminder={sendReminder}
           />
 
@@ -348,7 +349,7 @@ function PaymentsTab({
               <Grid item xs={12} mt={3} style={{ textAlign: "center" }}>
                 <SubscriptionController type="storage">
                   <Add
-                    border
+                    variant="outlined"
                     label="Ödeme Planı Ekle"
                     onClick={handlePlanDialog}
                   />
@@ -393,7 +394,7 @@ function PaymentsTab({
               <Grid item xs={12} mt={3} style={{ textAlign: "center" }}>
                 <SubscriptionController type="storage">
                   <Add
-                    border
+                    variant="outlined"
                     label="Ödeme Ekle"
                     onClick={handlePaymentDialog}
                   />

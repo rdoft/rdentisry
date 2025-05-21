@@ -1,28 +1,14 @@
 import React, { useState } from "react";
-import { Typography, Avatar, Grid } from "@mui/material";
+import { Typography, Grid } from "@mui/material";
 import { ConfirmDialog } from "primereact";
 import { SubscriptionController } from "components/Subscription";
 import { DialogFooter } from "components/DialogFooter";
 import { Delete } from "components/Button";
 
-// assets
-import { doctorAvatar } from "assets/svg/avatars";
-
 function DropdownDoctorItem({ option, onDelete }) {
-  const [isHover, setIsHover] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
 
   // HANDLERS -----------------------------------------------------------------
-  // onMouseEnter handler for display buttons
-  const handleMouseEnter = () => {
-    setIsHover(true);
-  };
-
-  // onMouseLeave handler for hide buttons
-  const handleMouseLeave = () => {
-    setIsHover(false);
-  };
-
   // onDelete handler
   const handleDelete = (event) => {
     event.stopPropagation();
@@ -61,21 +47,18 @@ function DropdownDoctorItem({ option, onDelete }) {
   );
 
   return option ? (
-    <Grid
-      container
-      alignItems="center"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      {/* Avatar icon */}
+    <Grid container alignItems="center">
+      {/* Doctor icon */}
       <Grid item>
-        <Avatar
-          alt="avatar"
-          className="mr-2"
-          src={doctorAvatar}
-          shape="circle"
-          sx={{ padding: "4px 8px 4px 0" }}
-        />
+        <i
+          className="mr-1 fi fi-rr-user-md-chat"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "4px 8px 4px 0",
+          }}
+        ></i>
       </Grid>
 
       {/* Option info */}
@@ -87,12 +70,11 @@ function DropdownDoctorItem({ option, onDelete }) {
 
       {/* Delete icon */}
       <Grid item xs={1}>
-        {onDelete &&
-          (isHover || window.matchMedia("(hover: none)").matches) && (
-            <SubscriptionController>
-              <Delete onClick={handleDelete} />
-            </SubscriptionController>
-          )}
+        {onDelete && (
+          <SubscriptionController>
+            <Delete size="small" onClick={handleDelete} />
+          </SubscriptionController>
+        )}
       </Grid>
 
       {/* Confirm delete dialog */}
