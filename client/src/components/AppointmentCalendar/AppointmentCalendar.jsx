@@ -154,12 +154,12 @@ const AppointmentCalendar = () => {
 
   // onView handler for set view
   const handleView = (view) => {
-    setResizable(view === "week");
+    setResizable(view !== "month");
   };
 
   // onSelectSlot handler for add new appointment
   const handleSelectSlot = ({ start, end, action }) => {
-    if (action === "select") {
+    if (action === "select" || action === "click") {
       // Set date, start-end time and duration
       const { date, startTime, endTime, duration } = getEventTime({
         start,
@@ -374,7 +374,8 @@ const AppointmentCalendar = () => {
         endAccessor={"end"}
         timeslots={timeslots.current}
         step={step.current / timeslots.current}
-        showAllEvents={true}
+        showAllEvents
+        selectable
         length="7"
         allDayAccessor={null}
         min={
@@ -384,7 +385,6 @@ const AppointmentCalendar = () => {
           new Date(today.getFullYear(), today.getMonth(), today.getDate(), 22)
         }
         formats={formats}
-        selectable="ignoreEvents"
         resizable={resizable}
         onView={handleView}
         onSelectEvent={handleSelectEvent}
