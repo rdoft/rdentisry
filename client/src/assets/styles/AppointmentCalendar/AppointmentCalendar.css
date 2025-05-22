@@ -62,14 +62,14 @@
 }
 
 .rbc-current-time-indicator {
-  background-color: var(--palette-text-secondary);
+  background-color: var(--palette-text-error);
   width: 100%;
   height: 2px;
 }
 
 .rbc-current-time-indicator::before {
   content: "";
-  background-color: var(--palette-text-secondary);
+  background-color: var(--palette-text-error);
   width: 10px;
   height: 10px;
   border-radius: 50%;

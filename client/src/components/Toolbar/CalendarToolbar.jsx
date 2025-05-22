@@ -1,30 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { Typography, Box } from "@mui/material";
-import { Toolbar, InputSwitch } from "primereact";
-import { DropdownDoctor } from "components/Dropdown";
+import { Grid, Typography, Box, useMediaQuery, Divider } from "@mui/material";
+import { Next, Prev, Today, SelectButton } from "components/Button";
 import { DoctorDialog } from "components/Dialog";
+import { DropdownDoctor } from "components/Dropdown";
 import { useLoading } from "context/LoadingProvider";
 import { useSubscription } from "context/SubscriptionProvider";
+
+// assets
+import { useTheme } from "@mui/material/styles";
 
 // services
 import { DoctorService } from "services";
 
-// assets
-import "assets/styles/Toolbar/CalendarToolbar.css";
-
-function CalendarToolbar({
-  showAll,
+const CalendarToolbar = ({
+  label,
+  view,
+  views,
+  onNavigate,
+  onView,
   doctor,
   doctors,
   setDoctor,
   setDoctors,
-  setShowAll,
-}) {
+}) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { startLoading, stopLoading } = useLoading();
   const { refresh } = useSubscription();
 
-  // Set the default values
   const [doctorDialog, setDoctorDialog] = useState(false);
 
   // Get doctors on loading
@@ -45,20 +49,52 @@ function CalendarToolbar({
     };
   }, [setDoctors, startLoading, stopLoading]);
 
+  // Filter views and set the default view
+  views = views.filter((view) => (isMobile ? view === "day" : view !== "day"));
+  useEffect(() => {
+    if (!views.includes(view)) {
+      onView(views[0]);
+    }
+  }, [views, view, onView]);
+
+  const options = views.map((item) => {
+    switch (item) {
+      case "month":
+        return {
+          value: item,
+          label: "Ay",
+        };
+      case "week":
+        return {
+          value: item,
+          label: "Hafta",
+        };
+      case "day":
+        return {
+          value: item,
+          label: "Gün",
+        };
+      default:
+        return {
+          value: item,
+          label: item,
+        };
+    }
+  });
+
   // SERVICES -----------------------------------------------------------------
   // Get the list of doctors and set doctors value
   const getDoctors = async () => {
     let response;
-    let doctors;
 
     try {
+      startLoading("doctors");
       response = await DoctorService.getDoctors();
-      doctors = response.data;
-      // Set new doctors
-      setDoctors(doctors);
-      // !doctor && setDoctor(doctors?.[0]);
+      setDoctors(response.data);
     } catch (error) {
-      // Set error status and show error toast message
+      // pass
+    } finally {
+      stopLoading("doctors");
     }
   };
 
@@ -86,12 +122,9 @@ function CalendarToolbar({
 
   // Delete the doctor
   const deleteDoctor = async (doctor) => {
-    let response;
-
     try {
       startLoading("delete");
-      response = await DoctorService.deleteDoctor(doctor.id);
-      doctor = response.data;
+      await DoctorService.deleteDoctor(doctor.id);
 
       // Get and set the updated list of doctors
       await getDoctors();
@@ -106,10 +139,14 @@ function CalendarToolbar({
   };
 
   // HANDLERS -----------------------------------------------------------------
-  // onChange handler for showAll switch
-  const handleChangeSwitch = (event) => {
-    localStorage.setItem("showAllAppointment", event.value);
-    setShowAll(event.value);
+  // Navigate to previous date
+  const handleNavigate = (action) => {
+    onNavigate(action);
+  };
+
+  // Change the view
+  const handleView = (event) => {
+    onView(event.value);
   };
 
   // onChange handler for doctor dropdown
@@ -130,76 +167,100 @@ function CalendarToolbar({
     setDoctorDialog(false);
   };
 
-  // TEMPLATES -----------------------------------------------------------------
-  // Get doctor dropdown
-  const startContent = () => (
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <DropdownDoctor
-        key={doctor?.id}
-        value={doctor}
-        options={doctors}
-        onChange={handleChangeDoctor}
-        onClickAdd={showDoctorDialog}
-        onClickDelete={deleteDoctor}
-        style={{
-          alignItems: "center",
-          height: "2.5rem",
-          width: "18rem",
-          backgroundColor: "transparent",
-          padding: "1.2rem 0",
-        }}
-      />
-    </Box>
-  );
-
-  // Get showAll switch
-  const endContent = () => (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        padding: "0.25rem 0.5rem",
-        borderRadius: "4px",
-      }}
-    >
-      <Typography
-        variant="body2"
-        sx={{
-          marginRight: 1,
-          fontSize: "0.85rem",
-          fontWeight: 500,
-        }}
-      >
-        Geçmiş randevu
-      </Typography>
-      <InputSwitch
-        checked={showAll}
-        onChange={handleChangeSwitch}
-        style={{
-          transform: "scale(0.75)",
-        }}
-      />
-    </Box>
-  );
-
   return (
     <>
-      <Toolbar
-        className="p-2"
-        start={startContent}
-        end={endContent}
-        style={{
-          border: "none",
-          padding: "0.5rem 1rem",
-          minHeight: "3.25rem",
-          backgroundColor: "transparent",
-        }}
-      />
+      <Grid
+        container
+        alignItems="center"
+        spacing={1}
+        py={1}
+        justifyContent="space-between"
+      >
+        <Grid item xs={6} sm={3} md={4} order={{ xs: 1, sm: 0 }}>
+          <Typography
+            variant={isMobile ? "h5" : "h3"}
+            fontWeight="bolder"
+            sx={{ color: theme.palette.text.primary }}
+          >
+            {label}
+          </Typography>
+        </Grid>
+
+        <Grid
+          item
+          xs={6}
+          sm={4}
+          md={4}
+          order={{ xs: 2, sm: 1 }}
+          sx={{
+            display: "flex",
+            justifyContent: { xs: "flex-end", sm: "center" },
+            alignItems: "center",
+          }}
+        >
+          {options.length > 1 && (
+            <>
+              <SelectButton
+                value={view}
+                onChange={handleView}
+                options={options}
+              />
+              <Divider
+                orientation="vertical"
+                sx={{
+                  mx: 1,
+                  height: "24px",
+                  alignSelf: "center",
+                  border: `0.5px solid ${theme.palette.grey[300]}`,
+                }}
+              />
+            </>
+          )}
+          <Box display="flex" gap={0.4}>
+            <Today onClick={() => handleNavigate("TODAY")} />
+            <Prev onClick={() => handleNavigate("PREV")} />
+            <Next onClick={() => handleNavigate("NEXT")} />
+          </Box>
+        </Grid>
+
+        {/* Doctor selection at the end */}
+        <Grid
+          item
+          xs={12}
+          sm={4}
+          md={4}
+          order={{ xs: 0, sm: 2 }}
+          sx={{
+            display: "flex",
+            justifyContent: { md: "flex-end", sm: "center" },
+          }}
+        >
+          <DropdownDoctor
+            key={doctor?.id}
+            value={doctor}
+            options={doctors}
+            onChange={handleChangeDoctor}
+            onClickAdd={showDoctorDialog}
+            onClickDelete={deleteDoctor}
+            style={{
+              alignItems: "center",
+              height: isMobile ? "2.5rem" : "2.2rem",
+              width: isMobile ? "100%" : "18rem",
+              backgroundColor: "transparent",
+              border: `1px solid ${theme.palette.divider}`,
+              "&:focus": {
+                border: `1px solid ${theme.palette.text.secondary}`,
+              },
+            }}
+          />
+        </Grid>
+      </Grid>
+
       {doctorDialog && (
         <DoctorDialog onHide={hideDoctorDialog} onSubmit={saveDoctor} />
       )}
     </>
   );
-}
+};
 
 export default CalendarToolbar;

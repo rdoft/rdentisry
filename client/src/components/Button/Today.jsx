@@ -8,7 +8,7 @@ function Today({ onClick, ...props }) {
       onClick={onClick}
       variant="outlined"
       severity="secondary"
-      size="medium"
+      size="small"
       {...props}
     />
   );

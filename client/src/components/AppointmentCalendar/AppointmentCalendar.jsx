@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { ConfirmDialog } from "primereact";
 import { Typography } from "@mui/material";
@@ -7,16 +7,15 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { getEventTime, setEventTime } from "utils";
 import { AppointmentDialog } from "components/Dialog";
 import { DialogFooter } from "components/DialogFooter";
+import { CalendarToolbar } from "components/Toolbar";
 import { useLoading } from "context/LoadingProvider";
 import { Loader } from "components/Loadable";
-import { CalendarToolbar } from "components/Toolbar";
 import moment from "moment";
 import Event from "./Event";
 import MonthEvent from "./MonthEvent";
 import DayHeader from "./DayHeader";
 import TimeGutter from "./TimeGutter";
 import TimeGutterHeader from "./TimeGutterHeader";
-import RBCToolbar from "./RBCToolbar";
 
 // assets
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
@@ -41,15 +40,12 @@ const AppointmentCalendar = () => {
 
   // const [step, setStep] = useState(30);
   const [resizable, setResizable] = useState(true);
-  const [showAll, setShowAll] = useState(
-    localStorage.getItem("showAllAppointment") === "true"
-  );
   const [appointment, setAppointment] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
-  const [doctors, setDoctors] = useState(null);
   const [patients, setPatients] = useState(null);
+  const [doctors, setDoctors] = useState(null);
   const [doctor, setDoctor] = useState(
     JSON.parse(localStorage.getItem("doctor")) || null
   );
@@ -73,12 +69,10 @@ const AppointmentCalendar = () => {
     };
   }, [startLoading, stopLoading]);
 
-  // And filter only active appointments if "show all" not selected
-  // And filter by doctor if doctor selected
+  // Filter appointments by doctor if doctor selected and only non-canceled appointments
   const filteredAppointments = appointments.filter(
     (appointment) =>
       (!doctor || appointment.doctor?.id === doctor?.id) &&
-      (showAll || appointment.status === "active") &&
       appointment.status !== "canceled"
   );
 
@@ -259,14 +253,28 @@ const AppointmentCalendar = () => {
   const dayPropGetter = (date) => ({
     ...(today.toLocaleDateString() === date.toLocaleDateString() && {
       style: {
-        backgroundColor: theme.palette.background.today,
+        backgroundColor: theme.palette.background.default,
       },
     }),
   });
 
-  // custom components
+  // Create toolbar component with useCallback
+  const toolbar = useCallback(
+    (toolbarProps) => (
+      <CalendarToolbar
+        {...toolbarProps}
+        doctor={doctor}
+        doctors={doctors}
+        setDoctor={setDoctor}
+        setDoctors={setDoctors}
+      />
+    ),
+    [doctor, doctors, setDoctor, setDoctors]
+  );
+
+  // Custom components
   const components = {
-    toolbar: RBCToolbar,
+    toolbar: toolbar,
     header: DayHeader,
     timeGutterHeader: TimeGutterHeader,
     timeGutterWrapper: TimeGutter,
@@ -349,17 +357,10 @@ const AppointmentCalendar = () => {
       {/* Loading */}
       {Object.values(loading).some((value) => value === true) && <Loader />}
 
-      <CalendarToolbar
-        showAll={showAll}
-        doctor={doctor}
-        doctors={doctors}
-        setDoctor={setDoctor}
-        setDoctors={setDoctors}
-        setShowAll={setShowAll}
-      />
       <DnDCalendar
+        key={doctors ? doctors.length : 0}
         style={{
-          height: "calc(100vh - 130px)",
+          height: "calc(100vh - 65px)",
         }}
         messages={messages}
         localizer={localizer}
@@ -367,7 +368,7 @@ const AppointmentCalendar = () => {
         dayPropGetter={dayPropGetter}
         components={components}
         tooltipAccessor={null}
-        views={["month", "week"]}
+        views={["month", "week", "day"]}
         defaultView={"week"}
         startAccessor={"start"}
         endAccessor={"end"}

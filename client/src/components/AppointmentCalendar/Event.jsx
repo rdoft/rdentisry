@@ -63,6 +63,9 @@ function Event({ initEvent = {}, step, onSubmit, onDelete }) {
   const showRemoveApprove =
     e.status === "active" && e.reminderStatus === "approved";
   const showApprove = e.status === "active" && e.reminderStatus !== "approved";
+  
+  // Check if event is in the past
+  const isPastEvent = new Date() > new Date(e.end);
 
   // SERVICES -----------------------------------------------------------------
   // Send appointment reminder
@@ -259,7 +262,10 @@ function Event({ initEvent = {}, step, onSubmit, onDelete }) {
           position="relative"
           onContextMenu={handleRightClick}
           alignItems="start"
-          sx={{ height: "100%" }}
+          sx={{ 
+            height: "100%",
+            opacity: isPastEvent ? 0.5 : 1
+          }}
         >
           <Grid container>
             {/* Time */}

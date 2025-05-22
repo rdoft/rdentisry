@@ -58,6 +58,9 @@ function MonthEvent({ initEvent = {}, onSubmit, onDelete }) {
   const showRemoveApprove =
     e.status === "active" && e.reminderStatus === "approved";
   const showApprove = e.status === "active" && e.reminderStatus !== "approved";
+  
+  // Check if event is in the past
+  const isPastEvent = new Date() > new Date(e.end);
 
   // SERVICES -----------------------------------------------------------------
   // Send appointment reminder
@@ -248,7 +251,12 @@ function MonthEvent({ initEvent = {}, onSubmit, onDelete }) {
   ) : (
     <ClickAwayListener onClickAway={handleClickAway}>
       <Tooltip title={`${startHours}-${endHours}`} placement="top" arrow>
-        <Grid container position="relative" onContextMenu={handleRightClick}>
+        <Grid 
+          container 
+          position="relative" 
+          onContextMenu={handleRightClick}
+          sx={{ opacity: isPastEvent ? 0.5 : 1 }}
+        >
           <Grid container>
             <Grid item xs={12}>
               <Box

@@ -62,7 +62,7 @@ function DropdownDoctorItem({ option, onDelete }) {
       </Grid>
 
       {/* Option info */}
-      <Grid item xs={8}>
+      <Grid item xs={9}>
         <Typography variant="h6" fontWeight="bold" noWrap>
           Dt. {option.name} {option.surname}
         </Typography>

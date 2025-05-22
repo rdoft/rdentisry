@@ -24,12 +24,10 @@ function SelectButton({ value, options, onChange, style = {}, ...props }) {
               border: "none",
               outline: "none",
               background: selected ? theme.palette.common.white : "transparent",
-              color: selected
-                ? theme.palette.text.secondary
-                : theme.palette.text.primary,
+              color: theme.palette.text.primary,
               opacity: selected ? 1 : 0.5,
               fontWeight: 500,
-              fontSize: "0.75rem",
+              fontSize: "0.8rem",
               padding: "0.4rem 1.4rem",
               borderRadius: "8px",
               boxShadow: selected
