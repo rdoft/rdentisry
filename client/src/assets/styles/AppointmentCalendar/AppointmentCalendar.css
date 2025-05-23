@@ -136,9 +136,32 @@
   z-index: 5;
 }
 
-/* For touch devices */
-@media (pointer: coarse) {
-  /* Active state for touch devices */
+/* For iOS-specific touch handling */
+@supports (-webkit-touch-callout: none) {
+  .rbc-event {
+    -webkit-touch-callout: none !important; /* iOS Safari - prevent context menu */
+  }
+}
+
+/* For touch devices  */
+@media (pointer: coarse), (hover: none) {
+  * {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  }
+
+  /* Prevent any hover styles from sticking on touch devices */
+  .rbc-day-slot .rbc-time-slot:hover:not(:active) {
+    background-color: transparent !important;
+    color: inherit !important;
+    font-weight: normal !important;
+  }
+
+  .rbc-day-slot .rbc-time-slot:hover:not(:active):before {
+    content: none !important;
+    display: none !important;
+  }
+
+  /* Keep touch feedback only during active state */
   .rbc-day-slot .rbc-time-slot:active {
     font-weight: 700;
     color: var(--palette-text-secondary);
@@ -158,9 +181,61 @@
     z-index: 5;
   }
 
-  /* Prevent hover effects from staying active on touch devices */
-  .rbc-day-slot .rbc-time-slot:hover:not(:active):before {
-    content: none;
+  /* Fix touch dragging for events */
+  .rbc-event {
+    touch-action: none !important; /* Prevent browser handling of drag */
+    cursor: grab !important;
+    user-select: none !important;
+    -webkit-user-select: none !important; /* For Safari */
+  }
+
+  /* Make events slightly larger for better touch targets */
+  .rbc-event {
+    min-height: 30px !important;
+    padding: 8px !important;
+  }
+
+  /* Make sure events can be dragged */
+  .rbc-event-content {
+    pointer-events: auto !important;
+    touch-action: none !important;
+  }
+
+  /* Ensure containers allow drag & drop */
+  .rbc-day-slot .rbc-events-container {
+    pointer-events: auto !important;
+  }
+
+  /* Fix potential issues with event layers */
+  .rbc-addons-dnd .rbc-event {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 25 !important; /* Higher z-index for touch devices */
+  }
+
+  /* Add visual indication for draggable events */
+  .rbc-addons-dnd .rbc-event::after {
+    content: "≡";
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    font-size: 14px;
+    opacity: 0.7;
+    color: var(--palette-text-primary);
+  }
+
+  /* Fix any potential issues with touch event propagation */
+  .rbc-time-content,
+  .rbc-time-view,
+  .rbc-day-slot,
+  .rbc-time-column {
+    touch-action: pan-y !important;
+    position: relative !important;
+  }
+
+  /* React-specific fix for touch events */
+  .rbc-addons-dnd-draggable {
+    touch-action: none !important;
   }
 }
 

@@ -10,6 +10,7 @@ import {
   Box,
   Tooltip,
   ClickAwayListener,
+  useMediaQuery,
 } from "@mui/material";
 import { Reminder, Basic, Delete } from "components/Button";
 import { LoadingIcon, ReminderStatus } from "components/Other";
@@ -27,6 +28,7 @@ function Event({ initEvent = {}, step, onSubmit, onDelete }) {
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
   const { refresh } = useSubscription();
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
 
   const menu = useRef(null);
   const [e, setEvent] = useState({
@@ -63,7 +65,7 @@ function Event({ initEvent = {}, step, onSubmit, onDelete }) {
   const showRemoveApprove =
     e.status === "active" && e.reminderStatus === "approved";
   const showApprove = e.status === "active" && e.reminderStatus !== "approved";
-  
+
   // Check if event is in the past
   const isPastEvent = new Date() > new Date(e.end);
 
@@ -89,11 +91,21 @@ function Event({ initEvent = {}, step, onSubmit, onDelete }) {
   };
 
   // HANDLERS -----------------------------------------------------------------
-  // onClick handler
+  // onClick handler for right-click (desktop) or regular click (touch)
   const handleRightClick = (event) => {
     event.stopPropagation();
     event.preventDefault();
     menu.current.toggle(event);
+  };
+
+  // Touch-specific click handler
+  const handleClick = (event) => {
+    if (isTablet) {
+      // On touch devices, open context menu on regular click
+      event.stopPropagation();
+      event.preventDefault();
+      menu.current.toggle(event);
+    }
   };
 
   // onClick patient handler
@@ -261,10 +273,11 @@ function Event({ initEvent = {}, step, onSubmit, onDelete }) {
           container
           position="relative"
           onContextMenu={handleRightClick}
+          onClick={handleClick}
           alignItems="start"
-          sx={{ 
+          sx={{
             height: "100%",
-            opacity: isPastEvent ? 0.5 : 1
+            opacity: isPastEvent ? 0.5 : 1,
           }}
         >
           <Grid container>

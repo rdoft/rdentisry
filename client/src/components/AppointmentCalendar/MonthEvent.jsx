@@ -10,21 +10,25 @@ import {
   Box,
   Tooltip,
   ClickAwayListener,
+  useMediaQuery,
 } from "@mui/material";
 import { Reminder, Basic, Delete } from "components/Button";
 import { LoadingIcon, ReminderStatus } from "components/Other";
 import { SubscriptionController } from "components/Subscription";
 
 // assets
+import { useTheme } from "@mui/material/styles";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 // services
 import { ReminderService } from "services";
 
 function MonthEvent({ initEvent = {}, onSubmit, onDelete }) {
+  const theme = useTheme();
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
   const { refresh } = useSubscription();
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
 
   const menu = useRef(null);
   const [e, setEvent] = useState({
@@ -58,7 +62,7 @@ function MonthEvent({ initEvent = {}, onSubmit, onDelete }) {
   const showRemoveApprove =
     e.status === "active" && e.reminderStatus === "approved";
   const showApprove = e.status === "active" && e.reminderStatus !== "approved";
-  
+
   // Check if event is in the past
   const isPastEvent = new Date() > new Date(e.end);
 
@@ -84,11 +88,21 @@ function MonthEvent({ initEvent = {}, onSubmit, onDelete }) {
   };
 
   // HANDLERS -----------------------------------------------------------------
-  // onClick handler
+  // onClick handler for right-click (desktop) or regular click (touch)
   const handleRightClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
     menu.current.toggle(event);
+  };
+
+  // Touch-specific click handler
+  const handleClick = (event) => {
+    if (isTablet) {
+      // On touch devices, open context menu on regular click
+      event.stopPropagation();
+      event.preventDefault();
+      menu.current.toggle(event);
+    }
   };
 
   // onClick patient handler
@@ -251,10 +265,11 @@ function MonthEvent({ initEvent = {}, onSubmit, onDelete }) {
   ) : (
     <ClickAwayListener onClickAway={handleClickAway}>
       <Tooltip title={`${startHours}-${endHours}`} placement="top" arrow>
-        <Grid 
-          container 
-          position="relative" 
+        <Grid
+          container
+          position="relative"
           onContextMenu={handleRightClick}
+          onClick={handleClick}
           sx={{ opacity: isPastEvent ? 0.5 : 1 }}
         >
           <Grid container>

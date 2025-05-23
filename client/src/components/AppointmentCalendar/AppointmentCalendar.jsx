@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { ConfirmDialog } from "primereact";
-import { Typography } from "@mui/material";
+import { Typography, useMediaQuery } from "@mui/material";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { getEventTime, setEventTime } from "utils";
@@ -34,6 +34,7 @@ const today = new Date();
 const AppointmentCalendar = () => {
   const theme = useTheme();
   const { loading, startLoading, stopLoading } = useLoading();
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
 
   const step = useRef(30);
   const timeslots = useRef(2);
@@ -385,7 +386,7 @@ const AppointmentCalendar = () => {
           new Date(today.getFullYear(), today.getMonth(), today.getDate(), 22)
         }
         formats={formats}
-        resizable={resizable}
+        resizable={resizable && !isTablet}
         onView={handleView}
         onSelectEvent={handleSelectEvent}
         onSelectSlot={handleSelectSlot}
