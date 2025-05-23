@@ -161,7 +161,40 @@
     display: none !important;
   }
 
-  /* Keep touch feedback only during active state */
+  /* Month view hover prevention for touch devices */
+  .rbc-month-view .rbc-day-bg:hover:not(:active) {
+    background-color: transparent !important;
+    color: inherit !important;
+    font-weight: normal !important;
+    opacity: 1 !important;
+  }
+
+  .rbc-month-view .rbc-day-bg:hover:not(:active):before {
+    content: none !important;
+    display: none !important;
+  }
+
+  /* Month view active state for touch devices */
+  .rbc-month-view .rbc-day-bg:active {
+    background-color: var(--palette-background-secondary) !important;
+    font-weight: 700;
+    color: var(--palette-text-secondary);
+    opacity: 0.7;
+  }
+
+  .rbc-month-view .rbc-day-bg:active:before {
+    content: "+";
+    position: absolute;
+    font-size: 18px;
+    color: var(--palette-text-secondary);
+    font-weight: 700;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+  }
+
+  /* Keep touch feedback only during active state for week/day view */
   .rbc-day-slot .rbc-time-slot:active {
     font-weight: 700;
     color: var(--palette-text-secondary);
@@ -258,4 +291,73 @@
 .rbc-addons-dnd .rbc-event .rbc-addons-dnd-resize-ns-anchor:last-child {
   bottom: -4px !important;
   border-bottom: 2px solid transparent;
+}
+
+/* Month view hover effects - target the entire cell area */
+.rbc-month-view .rbc-day-bg {
+  cursor: pointer !important;
+  transition: background-color 0.2s ease;
+  position: relative;
+  border-radius: 8px;
+  min-height: 100px; /* Ensure full height coverage */
+  height: 100%;
+  width: 100%;
+}
+
+.rbc-month-view .rbc-day-bg:hover {
+  background-color: var(--palette-background-secondary) !important;
+  opacity: 0.7;
+}
+
+.rbc-month-view .rbc-day-bg:hover:before {
+  content: "+";
+  position: absolute;
+  font-size: 18px;
+  color: var(--palette-text-secondary);
+  font-weight: 700;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Ensure the entire month cell is hoverable */
+.rbc-month-view .rbc-date-cell {
+  position: relative;
+  z-index: 1; /* Keep date number visible */
+}
+
+/* Make sure row content doesn't block hover */
+.rbc-month-view .rbc-row-content {
+  pointer-events: none; /* Allow hover to pass through to day-bg */
+  position: relative;
+  z-index: 2;
+}
+
+/* But keep events clickable */
+.rbc-month-view .rbc-event {
+  pointer-events: auto;
+  z-index: 3;
+}
+
+/* Alternative approach - target the entire row background */
+.rbc-month-view .rbc-row-bg .rbc-day-bg {
+  cursor: pointer !important;
+  position: relative;
+  height: 100% !important;
+  min-height: 100px !important;
+}
+
+/* Month view active state for touch devices */
+.rbc-month-view .rbc-day-bg:active:before {
+  content: none !important;
+  display: none !important;
+}
+
+.rbc-month-view .rbc-now .rbc-button-link {
+  background-color: var(--palette-text-error) !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 0.15em 0.2em !important;
 }
