@@ -99,7 +99,10 @@ function AppointmentCard({
               <Basic
                 label="Görüntüle / Düzenle"
                 icon="pi pi-external-link"
-                onClick={handleClickEdit}
+                onClick={(event) => {
+                  menu.current.toggle(event);
+                  handleClickEdit();
+                }}
               />
             ),
           },
@@ -111,7 +114,10 @@ function AppointmentCard({
                       label="Onayla"
                       icon="pi pi-check"
                       severity="primary"
-                      onClick={() => handleChangeReminderStatus("approved")}
+                      onClick={(event) => {
+                        menu.current.toggle(event);
+                        handleChangeReminderStatus("approved");
+                      }}
                     />
                   ),
                 },
@@ -123,7 +129,10 @@ function AppointmentCard({
                     <Basic
                       label="Onayı Kaldır"
                       icon="pi pi-times"
-                      onClick={() => handleChangeReminderStatus(null)}
+                      onClick={(event) => {
+                        menu.current.toggle(event);
+                        handleChangeReminderStatus(null);
+                      }}
                     />
                   ),
                 },
@@ -135,7 +144,10 @@ function AppointmentCard({
                   template: () => (
                     <Delete
                       label="Sil"
-                      onClick={handleDelete}
+                      onClick={(event) => {
+                        menu.current.toggle(event);
+                        handleDelete();
+                      }}
                       style={{ width: "100%", textAlign: "start" }}
                     />
                   ),
@@ -155,7 +167,10 @@ function AppointmentCard({
                         <Reminder
                           label="Hatırlatma Gönder"
                           disabled={!isSMS}
-                          onClick={sendReminder}
+                          onClick={(event) => {
+                            menu.current.toggle(event);
+                            sendReminder();
+                          }}
                         />
                       </SubscriptionController>
                     </>
@@ -177,7 +192,10 @@ function AppointmentCard({
                           label="Hasta Onayına Gönder"
                           icon="pi pi-send"
                           disabled={!isSMS}
-                          onClick={sendReminder}
+                          onClick={(event) => {
+                            menu.current.toggle(event);
+                            sendReminder();
+                          }}
                         />
                       </SubscriptionController>
                     </>

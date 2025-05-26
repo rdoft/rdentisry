@@ -85,7 +85,10 @@ function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
               <Basic
                 label="Görüntüle / Düzenle"
                 icon="pi pi-external-link"
-                onClick={handleEdit}
+                onClick={(event) => {
+                  menu.current.toggle(event);
+                  handleEdit();
+                }}
               />
             ),
           },
@@ -100,7 +103,10 @@ function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
                       <Pay
                         label={`Öde (₺${payment.amount - payment.paid})`}
                         style={{ width: "100%", textAlign: "start" }}
-                        onClick={handlePay}
+                        onClick={(event) => {
+                          menu.current.toggle(event);
+                          handlePay();
+                        }}
                       />
                     </SubscriptionController>
                   ),
@@ -113,7 +119,10 @@ function PaymentContent({ payment, onClickEdit, onSubmit, onDelete }) {
                 <Delete
                   label="Sil"
                   style={{ width: "100%", textAlign: "start" }}
-                  onClick={handleDelete}
+                  onClick={(event) => {
+                    menu.current.toggle(event);
+                    handleDelete();
+                  }}
                 />
               </SubscriptionController>
             ),

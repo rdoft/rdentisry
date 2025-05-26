@@ -321,7 +321,10 @@ function PatientsTable() {
                 <Basic
                   label="Görüntüle / Düzenle"
                   icon="pi pi-external-link"
-                  onClick={() => showPatientDialog(patient)}
+                  onClick={(event) => {
+                    menu.current.toggle(event);
+                    showPatientDialog(patient);
+                  }}
                 />
               ),
             },
@@ -340,7 +343,10 @@ function PatientsTable() {
                 <Basic
                   label="Randevu Ekle"
                   icon="pi pi-calendar-plus"
-                  onClick={() => showAppointmentDialog(patient)}
+                  onClick={(event) => {
+                    menu.current.toggle(event);
+                    showAppointmentDialog(patient);
+                  }}
                 />
               ),
             },
@@ -349,7 +355,10 @@ function PatientsTable() {
                 <Basic
                   label="İzinleri Yönet"
                   icon="pi pi-key"
-                  onClick={() => showPermissionDialog(patient)}
+                  onClick={(event) => {
+                    menu.current.toggle(event);
+                    showPermissionDialog(patient);
+                  }}
                 />
               ),
             },
@@ -358,7 +367,10 @@ function PatientsTable() {
                 <Delete
                   label="Sil"
                   style={{ width: "100%", textAlign: "start" }}
-                  onClick={() => showDeletePatientDialog(patient)}
+                  onClick={(event) => {
+                    menu.current.toggle(event);
+                    showDeletePatientDialog(patient);
+                  }}
                 />
               ),
             },

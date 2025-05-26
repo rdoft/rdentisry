@@ -67,7 +67,10 @@ function PatientTableToolbar({
                     <Basic
                       label="SMS İzni Ver"
                       icon="pi pi-check-circle"
-                      onClick={() => handleClickPermission({ isSMS: true })}
+                      onClick={(event) => {
+                        menu.current.toggle(event);
+                        handleClickPermission({ isSMS: true });
+                      }}
                     />
                   ),
                 },
@@ -76,7 +79,10 @@ function PatientTableToolbar({
                     <Basic
                       label="SMS İzni Kaldır"
                       icon="pi pi-ban"
-                      onClick={() => handleClickPermission({ isSMS: false })}
+                      onClick={(event) => {
+                        menu.current.toggle(event);
+                        handleClickPermission({ isSMS: false });
+                      }}
                     />
                   ),
                 },
@@ -88,7 +94,10 @@ function PatientTableToolbar({
                         width: "100%",
                         textAlign: "start",
                       }}
-                      onClick={onClickDelete}
+                      onClick={(event) => {
+                        menu.current.toggle(event);
+                        onClickDelete();
+                      }}
                     />
                   ),
                 },

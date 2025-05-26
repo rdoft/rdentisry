@@ -145,7 +145,13 @@ function MonthEvent({ initEvent = {}, onSubmit, onDelete }) {
       model={[
         {
           template: () => (
-            <Basic label="Görüntüle / Düzenle" icon="pi pi-external-link" />
+            <Basic
+              label="Görüntüle / Düzenle"
+              icon="pi pi-external-link"
+              onClick={(event) => {
+                menu.current.toggle(event);
+              }}
+            />
           ),
         },
         {
@@ -165,9 +171,10 @@ function MonthEvent({ initEvent = {}, onSubmit, onDelete }) {
                     label="Onayla"
                     icon="pi pi-check"
                     severity="primary"
-                    onClick={(event) =>
-                      handleChangeReminderStatus(event, "approved")
-                    }
+                    onClick={(event) => {
+                      menu.current.toggle(event);
+                      handleChangeReminderStatus(event, "approved");
+                    }}
                   />
                 ),
               },
@@ -179,7 +186,10 @@ function MonthEvent({ initEvent = {}, onSubmit, onDelete }) {
                   <Basic
                     label="Onayı Kaldır"
                     icon="pi pi-times"
-                    onClick={(event) => handleChangeReminderStatus(event, null)}
+                    onClick={(event) => {
+                      menu.current.toggle(event);
+                      handleChangeReminderStatus(event, null);
+                    }}
                   />
                 ),
               },
@@ -191,7 +201,10 @@ function MonthEvent({ initEvent = {}, onSubmit, onDelete }) {
                 template: () => (
                   <Delete
                     label="Sil"
-                    onClick={(event) => handleDelete(event)}
+                    onClick={(event) => {
+                      menu.current.toggle(event);
+                      handleDelete(event);
+                    }}
                     style={{ width: "100%", textAlign: "start" }}
                   />
                 ),
@@ -216,7 +229,10 @@ function MonthEvent({ initEvent = {}, onSubmit, onDelete }) {
                           label="Hatırlatma Gönder"
                           icon="pi pi-bell"
                           disabled={!isSMS}
-                          onClick={handleClickSendReminder}
+                          onClick={(event) => {
+                            menu.current.toggle(event);
+                            handleClickSendReminder();
+                          }}
                         />
                       </div>
                     </SubscriptionController>
@@ -243,7 +259,10 @@ function MonthEvent({ initEvent = {}, onSubmit, onDelete }) {
                           label="Hasta Onayına Gönder"
                           icon="pi pi-send"
                           disabled={!isSMS}
-                          onClick={handleClickSendApprovement}
+                          onClick={(event) => {
+                            menu.current.toggle(event);
+                            handleClickSendApprovement();
+                          }}
                         />
                       </div>
                     </SubscriptionController>
