@@ -25,6 +25,7 @@ function AppointmentDialog({
   onHide,
   onSubmit,
   onDelete,
+  ...props
 }) {
   const { startLoading, stopLoading } = useLoading();
   const { refresh } = useSubscription();
@@ -286,6 +287,7 @@ function AppointmentDialog({
             options={patients}
             onChange={handleChangePatient}
             onClickAdd={showPatientDialog}
+            disabled={props.disablePatient}
             style={{ alignItems: "center", height: "3rem" }}
           />
         </div>

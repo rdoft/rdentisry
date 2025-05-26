@@ -45,7 +45,6 @@ const AppointmentCalendar = () => {
   const [appointments, setAppointments] = useState([]);
   const [appointmentDialog, setAppointmentDialog] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
-  const [patients, setPatients] = useState(null);
   const [doctors, setDoctors] = useState(null);
   const [doctor, setDoctor] = useState(
     JSON.parse(localStorage.getItem("doctor")) || null
@@ -418,10 +417,6 @@ const AppointmentCalendar = () => {
       {appointmentDialog && (
         <AppointmentDialog
           initAppointment={{ doctor, ...appointment }}
-          doctors={doctors}
-          patients={patients}
-          setDoctors={setDoctors}
-          setPatients={setPatients}
           onHide={hideAppointmentDialog}
           onSubmit={saveAppointment}
           onDelete={appointment.id && deleteAppointment}

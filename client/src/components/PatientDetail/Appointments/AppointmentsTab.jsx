@@ -24,9 +24,7 @@ import { AppointmentService, ReminderService } from "services";
 
 function AppointmentsTab({
   patient,
-  patients,
   appointmentDialog,
-  setPatients,
   showDialog,
   hideDialog,
   counts,
@@ -39,7 +37,6 @@ function AppointmentsTab({
   // Set the default values
   const [appointments, setAppointments] = useState([]);
   const [appointment, setAppointment] = useState(null);
-  const [doctors, setDoctors] = useState(null);
   const [deleteDialog, setDeleteDialog] = useState(false);
 
   useEffect(() => {
@@ -313,13 +310,10 @@ function AppointmentsTab({
       {appointmentDialog && (
         <AppointmentDialog
           initAppointment={appointment ? appointment : { patient }}
-          doctors={doctors}
-          patients={patients}
-          setDoctors={setDoctors}
-          setPatients={setPatients}
           onHide={handleHideDialog}
           onSubmit={saveAppointment}
           onDelete={appointment && deleteAppointment}
+          disablePatient={true}
         />
       )}
     </LoadingController>

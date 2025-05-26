@@ -6,15 +6,12 @@ import { TabView, TabPanel } from "primereact";
 import { Grid } from "@mui/material";
 import { useLoading } from "context/LoadingProvider";
 import { Loader } from "components/Loadable";
-import {
-  PatientDetailToolbar,
-  PatientDetailToolbarAction,
-} from "components/Toolbar";
 import NotesTab from "./Notes/NotesTab";
 import PaymentsTab from "./Payments/PaymentsTab";
 import ProceduresTab from "./Procedures/ProceduresTab";
 import AppointmentsTab from "./Appointments/AppointmentsTab";
 import TabHeader from "./TabHeader";
+import { PatientDetailToolbar } from "components/Toolbar";
 
 // assets
 import "assets/styles/PatientDetail/PatientDetail.css";
@@ -29,7 +26,6 @@ function PatientDetail() {
   const { id } = useParams();
   // Set the default values
   const [patient, setPatient] = useState(null);
-  const [patients, setPatients] = useState(null);
   const [activeIndex, setActiveIndex] = useState(
     localStorage.getItem("activeTabIndex")
       ? parseInt(localStorage.getItem("activeTabIndex"))
@@ -73,7 +69,8 @@ function PatientDetail() {
 
   // HANDLERS -----------------------------------------------------------------
   // Show add appointment dialog
-  const showAppointmentDialog = () => {
+  const showAppointmentDialog = (tabChange = false) => {
+    tabChange && setActiveIndex(0);
     setDialog({
       ...dialog,
       appointment: true,
@@ -89,7 +86,8 @@ function PatientDetail() {
   };
 
   // Show add appointment dialog
-  const showPaymentDialog = (type) => {
+  const showPaymentDialog = (type, tabChange = false) => {
+    tabChange && setActiveIndex(1);
     setDialog({
       ...dialog,
       payment: type,
@@ -105,7 +103,8 @@ function PatientDetail() {
   };
 
   // Show add note dialog
-  const showNoteDialog = () => {
+  const showNoteDialog = (tabChange = false) => {
+    tabChange && setActiveIndex(2);
     setDialog({
       ...dialog,
       note: true,
@@ -121,7 +120,8 @@ function PatientDetail() {
   };
 
   // Show add procedure dialog
-  const showProcedureDialog = () => {
+  const showProcedureDialog = (tabChange = false) => {
+    tabChange && setActiveIndex(3);
     setDialog({
       ...dialog,
       procedure: true,
@@ -144,7 +144,7 @@ function PatientDetail() {
 
   return (
     patient && (
-      <Grid container item rowSpacing={4.5} columnSpacing={2.75}>
+      <Grid container item>
         {/* Loading */}
         {Object.values(loading).some((value) => value === true) && <Loader />}
 
@@ -152,20 +152,17 @@ function PatientDetail() {
           {/* Toolbar */}
           <PatientDetailToolbar
             patient={patient}
-            patients={patients}
-            setPatients={setPatients}
-            endContent={
-              <PatientDetailToolbarAction
-                activeIndex={activeIndex}
-                onTabChange={handleTabChange}
-                showAppointmentDialog={showAppointmentDialog}
-                showPaymentDialog={showPaymentDialog}
-                showNoteDialog={showNoteDialog}
-                showProcedureDialog={showProcedureDialog}
-              />
-            }
+            setPatient={setPatient}
+            activeIndex={activeIndex}
+            onTabChange={handleTabChange}
+            showAppointmentDialog={showAppointmentDialog}
+            showPaymentDialog={showPaymentDialog}
+            showNoteDialog={showNoteDialog}
+            showProcedureDialog={showProcedureDialog}
           />
+        </Grid>
 
+        <Grid item xs={12}>
           {/* Tabs */}
           <TabView
             className="rounded-tabview"
@@ -186,8 +183,6 @@ function PatientDetail() {
               <AppointmentsTab
                 key={patient.id}
                 patient={patient}
-                patients={patients}
-                setPatients={setPatients}
                 appointmentDialog={dialog.appointment}
                 showDialog={showAppointmentDialog}
                 hideDialog={hideAppointmentDialog}
